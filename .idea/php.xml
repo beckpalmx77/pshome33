@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/vendor/tcpdf/fonts" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/tcpdf/tools" />
+      <path value="$PROJECT_DIR$/vendor/tcpdf/config" />
+      <path value="$PROJECT_DIR$/vendor/tcpdf/etc" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-datepicker/locales" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-datepicker/css" />
+      <path value="$PROJECT_DIR$/vendor/tcpdf/include" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-datepicker/js" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-touchspin/js" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-touchspin/css" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/scss" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/svgs" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/js" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/scss" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/metadata" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/css" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/sprites" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap/js" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/less" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/webfonts" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free-5.15.4-web/css" />
+      <path value="$PROJECT_DIR$/vendor/php-amqplib/php-amqplib" />
+      <path value="$PROJECT_DIR$/vendor/ttskch/select2-bootstrap4-theme" />
+      <path value="$PROJECT_DIR$/vendor/jquery/53" />
+      <path value="$PROJECT_DIR$/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/vendor/mpdf/psr-http-message-shim" />
+      <path value="$PROJECT_DIR$/vendor/mpdf/psr-log-aware-trait" />
+      <path value="$PROJECT_DIR$/vendor/date-picker-1.9/js" />
+      <path value="$PROJECT_DIR$/vendor/mpdf/mpdf" />
+      <path value="$PROJECT_DIR$/vendor/calendar/locales" />
+      <path value="$PROJECT_DIR$/vendor/date-picker-1.9/locales" />
+      <path value="$PROJECT_DIR$/vendor/date-picker-1.9/css" />
+      <path value="$PROJECT_DIR$/vendor/markbaker/complex" />
+      <path value="$PROJECT_DIR$/vendor/markbaker/matrix" />
+      <path value="$PROJECT_DIR$/vendor/mobiledetect/mobiledetectlib" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/sprites" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/js" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/less" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/svgs" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/webfonts" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/css" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/datepicker" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-select/css" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/daygrid" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/css" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-free/scss" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/jquery" />
+      <path value="$PROJECT_DIR$/vendor/bootstrap-select/js" />
+      <path value="$PROJECT_DIR$/vendor/setasign/fpdi" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/jqueryui" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/interaction" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/bootstrap" />
+      <path value="$PROJECT_DIR$/vendor/fontawesome-4.7/css" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/core" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/colorpicker" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/timegrid" />
+      <path value="$PROJECT_DIR$/vendor/mycalendar/list" />
+      <path value="$PROJECT_DIR$/vendor/alertify/img" />
+      <path value="$PROJECT_DIR$/vendor/datepicker/js" />
+      <path value="$PROJECT_DIR$/vendor/alertify/js" />
+      <path value="$PROJECT_DIR$/vendor/datepicker/css" />
+      <path value="$PROJECT_DIR$/vendor/alertify/css" />
+      <path value="$PROJECT_DIR$/vendor/alertify/fonts" />
+      <path value="$PROJECT_DIR$/vendor/datatables/v11" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+    </include_path>
+  </component>
+  <component name="PhpProjectServersManager">
+    <servers>
+      <server host="localhost" id="6ec32849-2bc6-4b3d-a37c-4ae2b50beaba" name="localhost" port="8888" use_path_mappings="true" />
+    </servers>
+  </component>
+</project>
