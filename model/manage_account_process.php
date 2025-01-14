@@ -16,7 +16,7 @@ if ($_POST["action"] === 'GET_DATA') {
     $sql_get = "SELECT im.*,dm.department_desc,lp.permission_detail FROM ims_user im
     left join mdepartment dm on dm.department_id = im.department_id
     left join ims_permission lp on lp.permission_id = im.account_type  
-    WHERE im.id = " . $id ;
+    WHERE im.id = " . $id;
 
     //$myfile = fopen("macc-param.txt", "w") or die("Unable to open file!");
     //fwrite($myfile,  $sql_get);
@@ -42,7 +42,6 @@ if ($_POST["action"] === 'GET_DATA') {
     }
 
 
-
     echo json_encode($return_arr);
 
 }
@@ -64,7 +63,7 @@ if ($_POST["action"] === 'ADD') {
 
         $role = $_POST["role"];
 
-        if ($role==='HR' || $role==='SUPERVISOR' || $role==='ADMIN') {
+        if ($role === 'HR' || $role === 'SUPERVISOR' || $role === 'ADMIN') {
             $document_dept_cond = "A";
         } else {
             $document_dept_cond = "-";
@@ -80,11 +79,11 @@ if ($_POST["action"] === 'ADD') {
         } else {
             $sql = "INSERT INTO ims_user(user_id,email,password,first_name,last_name,account_type,picture,department_id,approve_permission,document_dept_cond,status,role)
             VALUES (:user_id,:email,:password,:first_name,:last_name,:account_type,:picture,:department_id,:approve_permission,:document_dept_cond,:status,:role)";
-/*
-            $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
-            fwrite($myfile, $sql);
-            fclose($myfile);
-*/
+            /*
+                        $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
+                        fwrite($myfile, $sql);
+                        fclose($myfile);
+            */
 
             $query = $conn->prepare($sql);
             $query->bindParam(':user_id', $user_id, PDO::PARAM_STR);
@@ -129,7 +128,7 @@ if ($_POST["action"] === 'UPDATE') {
         $approve_permission = $_POST["approve_permission"];
         $role = $_POST["role"];
 
-        if ($role==='HR' || $role==='SUPERVISOR' || $role==='ADMIN') {
+        if ($role === 'HR' || $role === 'SUPERVISOR' || $role === 'ADMIN') {
             $document_dept_cond = "A";
         } else {
             $document_dept_cond = "-";
@@ -188,11 +187,11 @@ if ($_POST["action"] === 'CHG') {
     try {
         $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
         $username = $_POST["username"];
-/*
-        $myfile = fopen("pw-param.txt", "w") or die("Unable to open file!");
-        fwrite($myfile,  $_POST['new_password'] . " | " . $password . " | " . $username);
-        fclose($myfile);
-*/
+        /*
+                $myfile = fopen("pw-param.txt", "w") or die("Unable to open file!");
+                fwrite($myfile,  $_POST['new_password'] . " | " . $password . " | " . $username);
+                fclose($myfile);
+        */
 
         $sql_update = "UPDATE ims_user SET password=:password WHERE user_id = :username";
         $query = $conn->prepare($sql_update);
@@ -235,9 +234,11 @@ if ($_POST["action"] === 'GET_ACCOUNT') {
         $columnName = "status," . $columnName;
     }
 
-    //$myfile = fopen("permission-param.txt", "w") or die("Unable to open file!");
-    //fwrite($myfile, "Sort | " . $columnName );
-    //fclose($myfile);
+/*
+    $myfile = fopen("permission-param.txt", "w") or die("Unable to open file!");
+    fwrite($myfile, "Sort | " . $columnName);
+    fclose($myfile);
+*/
 
 ## Search
     $searchQuery = " ";

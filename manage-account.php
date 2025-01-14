@@ -41,11 +41,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="card-body">
                                     <section class="container-fluid">
 
-                                        <!--div class="col-md-12 col-md-offset-2">
-                                            <label for="name_t"
-                                                   class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
-                                        </div-->
-
                                         <div class="col-md-12 col-md-offset-2">
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
@@ -104,7 +99,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <label for="email"
-                                                                               class="control-label">Email Address</label>
+                                                                               class="control-label">Email
+                                                                            Address</label>
                                                                         <input type="text" class="form-control"
                                                                                id="email"
                                                                                name="email"
@@ -198,7 +194,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                 </div>
 
                                                                 <div class=”form-group”>
-                                                                    <label for="role" class="control-label">ROLE การ Approve</label>
+                                                                    <label for="role" class="control-label">ROLE การ
+                                                                        Approve</label>
                                                                     <select id="role" name="role"
                                                                             class="form-control" data-live-search="true"
                                                                             title="Please select">
@@ -211,8 +208,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                 </div>
 
                                                                 <div class="form-group">
-                                                                    <label for="approve_permission" class="control-label">สิทธิ์อนุมัติเอกสาร</label>
-                                                                    <select id="approve_permission" name="approve_permission"
+                                                                    <label for="approve_permission"
+                                                                           class="control-label">สิทธิ์อนุมัติเอกสาร</label>
+                                                                    <select id="approve_permission"
+                                                                            name="approve_permission"
                                                                             class="form-control" data-live-search="true"
                                                                             title="Please select">
                                                                         <option value="N">ไม่มีสิทธิ์</option>
@@ -231,7 +230,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                 </div>
 
                                                                 <div class=”form-group”>
-                                                                    <label for="status" class="control-label">Status</label>
+                                                                    <label for="status"
+                                                                           class="control-label">Status</label>
                                                                     <select id="status" name="status"
                                                                             class="form-control" data-live-search="true"
                                                                             title="Please select">
@@ -239,7 +239,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                         <option>Inactive</option>
                                                                     </select>
                                                                 </div>
-
 
 
                                                             </div>
@@ -598,7 +597,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
         });
     </script>
-
 
 
     </body>
