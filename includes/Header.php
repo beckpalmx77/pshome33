@@ -6,7 +6,7 @@
     <meta name="author" content="">
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
     <link href="../img/logo/logo.png" rel="icon">
-    <title>สงวนออโต้คาร์ | SANGUAN AUTO CAR</title>
+    <title>Home System</title>
 
     <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../js/jquery-3.5.1.min.js"></script-->
