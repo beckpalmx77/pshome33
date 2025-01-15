@@ -296,7 +296,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#recordModal').modal('show');
                 $('#id').val("");
                 $('#house_number').val("");
-                $('#house_number').val("");
+                $('#contact_name').val("");
+                $('#phone_number').val("");
+                $('#alley').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');

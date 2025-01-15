@@ -76,6 +76,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/tcpdf/fonts" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/tcpdf/include" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/tcpdf/tools" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/thiagoalessio/tesseract_ocr" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/ttskch/select2-bootstrap4-theme" />
     </content>
     <orderEntry type="inheritedJdk" />

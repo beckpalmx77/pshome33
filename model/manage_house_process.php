@@ -89,16 +89,18 @@ if ($_POST["action"] === 'UPDATE') {
         $id = $_POST["id"];
         $house_number = $_POST["house_number"];
         $contact_name = $_POST["contact_name"];
+        $phone_number = $_POST["phone_number"];
         $alley = $_POST["alley"];
         $sql_find = "SELECT * FROM ims_house WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_house SET house_number=:house_number,contact_name=:contact_name,alley=:alley            
+            $sql_update = "UPDATE ims_house SET house_number=:house_number,contact_name=:contact_name,alley=:alley,phone_number=:phone_number            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
             $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
             $query->bindParam(':alley', $alley, PDO::PARAM_STR);
+            $query->bindParam(':phone_number', $phone_number, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;

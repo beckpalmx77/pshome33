@@ -3,6 +3,7 @@
         "mobiledetect/mobiledetectlib": "^3.74",
         "mpdf/mpdf": "^8.1",
         "php-amqplib/php-amqplib": "^3.5",
-        "phpoffice/phpspreadsheet": "^2.0"
+        "phpoffice/phpspreadsheet": "^2.0",
+        "thiagoalessio/tesseract_ocr": "^2.13"
     }
 }
