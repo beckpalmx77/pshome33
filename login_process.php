@@ -10,14 +10,14 @@ if ($_SESSION['alogin'] != '') {
     $_SESSION['alogin'] = '';
 }
 
-
 $username = $_POST['username'];
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 $remember = $_POST['remember'];
 
-$sql = "SELECT iu.*,pm.dashboard_page as dashboard_page        
+$sql = "SELECT iu.*,ih.house_number,ih.contact_name,pm.dashboard_page as dashboard_page        
         FROM ims_user iu
-        left join ims_permission pm on pm.permission_id = iu.account_type                        
+        left join ims_permission pm on pm.permission_id = iu.account_type       
+        left join ims_house ih on ih.house_number = iu.user_id 
         WHERE iu.user_id=:username ";
 
 $query = $conn->prepare($sql);
@@ -44,6 +44,13 @@ if ($query->rowCount() == 1) {
             $_SESSION['system_name_2'] = $system_name_2;
             $_SESSION['approve_permission'] = $result->approve_permission;
             $_SESSION['role'] = $result->role;
+            $_SESSION['house_number'] = $result->house_number;
+
+/*
+            $myfile = fopen("login.txt", "w") or die("Unable to open file!");
+            fwrite($myfile, $_SESSION['house_number']);
+            fclose($myfile);
+*/
 
             if ($remember == "on") { // ถ้าติ๊กถูก Login ตลอดไป ให้ทำการสร้าง cookie
                 setcookie("username", $_POST["username"], time() + (86400 * 10000), "/");

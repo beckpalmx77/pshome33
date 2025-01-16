@@ -77,8 +77,8 @@ if ($_POST["action"] === 'ADD') {
         if ($nRows > 0) {
             echo 2;
         } else {
-            $sql = "INSERT INTO ims_user(user_id,email,password,first_name,last_name,account_type,picture,department_id,approve_permission,document_dept_cond,status,role)
-            VALUES (:user_id,:email,:password,:first_name,:last_name,:account_type,:picture,:department_id,:approve_permission,:document_dept_cond,:status,:role)";
+            $sql = "INSERT INTO ims_user(emp_id,user_id,email,password,first_name,last_name,account_type,picture,department_id,approve_permission,document_dept_cond,status,role)
+            VALUES (:emp_id,:user_id,:email,:password,:first_name,:last_name,:account_type,:picture,:department_id,:approve_permission,:document_dept_cond,:status,:role)";
             /*
                         $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
                         fwrite($myfile, $sql);
@@ -86,6 +86,7 @@ if ($_POST["action"] === 'ADD') {
             */
 
             $query = $conn->prepare($sql);
+            $query->bindParam(':emp_id', $user_id, PDO::PARAM_STR);
             $query->bindParam(':user_id', $user_id, PDO::PARAM_STR);
             $query->bindParam(':email', $email, PDO::PARAM_STR);
             $query->bindParam(':password', $password, PDO::PARAM_STR);

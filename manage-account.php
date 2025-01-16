@@ -112,12 +112,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-2">
                                                                         <label for="emp_id"
-                                                                               class="control-label">รหัสพนักงาน</label>
+                                                                               class="control-label">รหัสประจำตัว</label>
                                                                         <input type="text" class="form-control"
                                                                                id="emp_id"
                                                                                name="emp_id"
                                                                                required="required"
-                                                                               placeholder="รหัสพนักงาน">
+                                                                               placeholder="รหัสประจำตัว">
                                                                     </div>
                                                                     <div class="col-sm-5">
                                                                         <label for="first_name"
