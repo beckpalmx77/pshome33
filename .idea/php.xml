@@ -78,6 +78,23 @@
       <path value="$PROJECT_DIR$/vendor/datatables/v11" />
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/thiagoalessio/tesseract_ocr" />
+      <path value="$PROJECT_DIR$/vendor/dompdf/php-svg-lib" />
+      <path value="$PROJECT_DIR$/vendor/dompdf/php-font-lib" />
+      <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-unicode-data" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf-encrypt" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf-page" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-file" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf-font" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-barcode" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf-image" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf-graph" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-unicode" />
+      <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-color" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

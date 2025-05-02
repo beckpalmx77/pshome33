@@ -21,10 +21,10 @@ if ($_POST["action"] === 'GET_DATA') {
             "sub_menu_id" => $result['sub_menu_id'],
             "main_menu_id" => $result['main_menu_id'],
             "label" => $result['label'],
-            "sort" => $result['sort'],
             "main_label" => $result['main_label'],
             "link" => $result['link'],
             "icon" => $result['icon'],
+            "link_target" => $result['link_target'],
             "privilege" => $result['privilege']);
     }
 
@@ -49,20 +49,36 @@ if ($_POST["action"] === 'ADD') {
     if ($_POST["label"] !== '') {
         $main_menu_id = $_POST["main_menu_id"];
         $prefix_menu_id = "S" . substr($_POST["main_menu_id"],3);
-        $sub_menu_id = $prefix_menu_id . sprintf('%02s', LAST_ID_COND($conn, "menu_sub", $prefix_menu_id,'sub_menu_id'));
+
+        $last_id = LAST_ID_COND($conn, "menu_sub", $prefix_menu_id,'sub_menu_id');
+
+        if ($last_id<10) {
+            $sub_menu_id = $prefix_menu_id . sprintf('%02s', $last_id);
+        } else {
+            $sub_menu_id = $prefix_menu_id . sprintf('%2s', $last_id);
+        }
+
+
+        //$myfile = fopen("amenu-param.txt", "w") or die("Unable to open file!");
+        //fwrite($myfile,  $prefix_menu_id . " | " . $last_id . " | " . $main_menu_id);
+        //fclose($myfile);
+
         $label = $_POST["label"];
         $label_en = $_POST["label"];
         $link = $_POST["link"];
         $icon = $_POST["icon"];
+        $link_target = $_POST["link_target"];
         $privilege = $_POST["privilege"];
-        $sql_find = "SELECT * FROM menu_sub WHERE label = '" . $label . "'";
+        $sql_find = "SELECT * FROM menu_sub WHERE label = '" . $label . "' AND sub_menu_id = '" . $sub_menu_id . "'";
+
+        $sort = LAST_ID($conn,"menu_sub","sort");
 
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo $dup;
         } else {
-            $sql = "INSERT INTO menu_sub(sub_menu_id,main_menu_id,label,label_en,link,icon,privilege) 
-            VALUES (:sub_menu_id,:main_menu_id,:label,:label_en,:link,:icon,:privilege)";
+            $sql = "INSERT INTO menu_sub(sub_menu_id,main_menu_id,label,label_en,link,icon,target,link_target,privilege,sort) 
+            VALUES (:sub_menu_id,:main_menu_id,:label,:label_en,:link,:icon,:target,:link_target,:privilege,:sort)";
             $query = $conn->prepare($sql);
             $query->bindParam(':sub_menu_id', $sub_menu_id, PDO::PARAM_STR);
             $query->bindParam(':main_menu_id', $main_menu_id, PDO::PARAM_STR);
@@ -70,8 +86,10 @@ if ($_POST["action"] === 'ADD') {
             $query->bindParam(':label_en', $label_en, PDO::PARAM_STR);
             $query->bindParam(':link', $link, PDO::PARAM_STR);
             $query->bindParam(':icon', $icon, PDO::PARAM_STR);
-            $query->bindParam(':icon', $icon, PDO::PARAM_STR);
+            $query->bindParam(':target', $link_target, PDO::PARAM_STR);
+            $query->bindParam(':link_target', $link_target, PDO::PARAM_STR);
             $query->bindParam(':privilege', $privilege, PDO::PARAM_STR);
+            $query->bindParam(':sort', $sort, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
 
@@ -92,17 +110,20 @@ if ($_POST["action"] === 'UPDATE') {
         $label = $_POST["label"];
         $link = $_POST["link"];
         $icon = $_POST["icon"];
+        $link_target = $_POST["link_target"];
         $privilege = $_POST["privilege"];
         $sql_find = "SELECT * FROM menu_sub WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             $sql_update = "UPDATE menu_sub SET label=:label
-            ,link=:link,icon=:icon,privilege=:privilege
+            ,link=:link,icon=:icon,target=:target,link_target=:link_target,privilege=:privilege
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':label', $label, PDO::PARAM_STR);
             $query->bindParam(':link', $link, PDO::PARAM_STR);
             $query->bindParam(':icon', $icon, PDO::PARAM_STR);
+            $query->bindParam(':target', $link_target, PDO::PARAM_STR);
+            $query->bindParam(':link_target', $link_target, PDO::PARAM_STR);
             $query->bindParam(':privilege', $privilege, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
@@ -186,7 +207,8 @@ if ($_POST["action"] === 'GET_SUB_MENU') {
                 "main_menu_id" => $row['main_menu_id'],
                 "label" => $row['label'],
                 "link" => $row['link'],
-                "sort" => $row['sort'],
+                "target" => $row['target'],
+                "link_target" => $row['link_target'],
                 "icon" => $row['icon'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",

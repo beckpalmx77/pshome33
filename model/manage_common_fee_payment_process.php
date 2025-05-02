@@ -57,9 +57,9 @@ if ($_POST["action"] === 'UPDATE') {
 
         $id = $_POST["id"];
 
-        $payment_status = $_POST["payment_status"]!=="Y"?"N":"Y";
+        $payment_status = $_POST["payment_status"] !== "Y" ? "N" : "Y";
 
-        $sql_find = "SELECT * FROM ims_house_payment WHERE id = " . $id ;
+        $sql_find = "SELECT * FROM ims_house_payment WHERE id = " . $id;
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             $sql_update = "UPDATE ims_house_payment SET payment_status=:payment_status           
@@ -116,21 +116,27 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         );
     }
 
+    $where_house_number = "";
+
+    if (($_SESSION['account_type']) === "house_user") {
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "' ";
+    }
+
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 " . $where_house_number);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE 1 " . $searchQuery . " LIMIT :limit,:offset");
+    $stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset");
 
     /*
         $txt = $searchQuery . " | " . $columnName . " | " . $columnSortOrder;
@@ -167,6 +173,8 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 $color = "green"; // สีเขียว
             }
 
+            $print_disabled = ($row['payment_status'] == 'Y') ? '' : 'disabled';
+
             $data[] = array(
                 "id" => $row['id'],
                 "doc_id" => $row['doc_id'],
@@ -183,10 +191,12 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "period_year" => $row['period_year'],
                 "amount" => $row['amount'],
                 "payment_status" => '<span style="color: ' . $color . ';">' . $message . '</span>',
+                "print" => "<button type='button' name='print' id='" . $row['id'] . "' class='btn btn-outline-success btn-xs print' data-toggle='tooltip' title='Print' $print_disabled>Print</button>",
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "remark" => $row['remark']
             );
+
         } else {
             $data[] = array(
                 "id" => $row['id'],

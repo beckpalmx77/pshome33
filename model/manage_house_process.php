@@ -144,7 +144,6 @@ if ($_POST["action"] === 'GET_HOUSE') {
         fclose($my_file);
     */
 
-
     $searchArray = array();
 
 ## Search
@@ -158,28 +157,43 @@ if ($_POST["action"] === 'GET_HOUSE') {
         );
     }
 
+    $where_house_number = "";
+
+    if (($_SESSION['account_type']) === "house_user") {
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "' ";
+    }
+
+/*
+    $txt = $where_house_number;
+    $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
+    fwrite($my_file, $txt);
+    fclose($my_file);
+*/
+
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house WHERE 1 " . $where_house_number );
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house WHERE 1 " . $where_house_number . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $stmt = $conn->prepare("SELECT * FROM v_ims_house WHERE 1 " . $searchQuery . " LIMIT :limit,:offset");
+    $sql_get_date = "SELECT * FROM v_ims_house WHERE 1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset";
 
-    /*
-        $txt = $searchQuery . " | " . $columnName . " | " . $columnSortOrder;
+    $stmt = $conn->prepare($sql_get_date);
+
+/*
+        $txt = $sql_get_date;
         $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
         fwrite($my_file, $txt);
         fclose($my_file);
-    */
+*/
 
 
 // Bind values

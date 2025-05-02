@@ -5,7 +5,13 @@ error_reporting(0);
 $curr_date = date("d-m-Y");
 include('includes/Header.php');
 
-if (strlen($_SESSION['alogin']) == "") {
+if (($_SESSION['account_type']) === "house_user") {
+    $house_number = $_SESSION['house_number'];
+} else {
+    $house_number = "";
+}
+
+if (strlen($_SESSION['alogin']) === "") {
     header("Location: index.php");
 } else {
     ?>
@@ -63,7 +69,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <input type="text" name="house_number" class="form-control"
                                                                required
                                                                id="house_number"
-                                                               value="<?php echo $_SESSION['house_number']?>">
+                                                               value="<?php echo $house_number ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -101,7 +107,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <div class="row">
                                                 <!-- งวดเดือน -->
                                                 <div class="col-md-4">
-                                                    <label for="period_month_start" class="control-label">เริ่มงวดเดือน</label>
+                                                    <label for="period_month_start"
+                                                           class="control-label">เริ่มงวดเดือน</label>
                                                     <select name="period_month_start" class="form-control" required
                                                             id="period_month_start">
                                                         <option value="">เลือกงวดเดือน</option>
@@ -120,7 +127,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="period_month_to" class="control-label">ถึงงวดเดือน</label>
+                                                    <label for="period_month_to"
+                                                           class="control-label">ถึงงวดเดือน</label>
                                                     <select name="period_month_to" class="form-control" required
                                                             id="period_month_to">
                                                         <option value="">เลือกงวดเดือน</option>
@@ -340,7 +348,6 @@ if (strlen($_SESSION['alogin']) == "") {
             $("input[name='payment_option']").on("change", toggleFields);
         });
     </script>
-
 
 
     </body>

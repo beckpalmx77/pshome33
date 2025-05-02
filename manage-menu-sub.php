@@ -1,6 +1,7 @@
 <?php
 include('includes/Header.php');
-if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
+include('config/connect_db.php');
+if (strlen($_SESSION['alogin']) == "") {
     header("Location: index.php");
 } else {
     ?>
@@ -21,7 +22,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page']?>">Home</a></li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
@@ -150,14 +151,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                                                placeholder="Link">
                                                                     </div>
                                                                     <div class="col-sm-6">
-                                                                        <label for="icon"
-                                                                               class="control-label">Icon</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="icon"
-                                                                               name="icon"
-                                                                               required="required"
-                                                                               placeholder="Icon">
+                                                                        <label for="icon" class="control-label">Icon</label>
+                                                                        <input list="iconList" type="text" class="form-control"
+                                                                               id="icon" name="icon" required="required" placeholder="Icon">
+                                                                        <datalist id="iconList">
+                                                                            <?php
+                                                                            $stmt = $conn->prepare("SELECT DISTINCT icon FROM menu_sub WHERE icon IS NOT NULL AND icon != '' ORDER BY icon ASC");
+                                                                            $stmt->execute();
+                                                                            $icons = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                                                            foreach ($icons as $icon) {
+                                                                                echo '<option value="' . htmlspecialchars($icon) . '">';
+                                                                            }
+                                                                            ?>
+                                                                        </datalist>
                                                                     </div>
+
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="link_target"
+                                                                           class="control-label">Link Target</label>
+                                                                    <select id="link_target" name="link_target"
+                                                                            class="form-control" data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option>_self</option>
+                                                                        <option>_blank</option>
+                                                                    </select>
                                                                 </div>
 
                                                                 <div class="form-group">
@@ -390,6 +409,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#main_menu_id').val("");
                 $('#main_label').val("");
                 $('#link').val("");
+                $('#link_target').val("_self");
                 $('#icon').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
@@ -418,6 +438,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         let main_menu_id = response[i].main_menu_id;
                         let main_label = response[i].main_label;
                         let link = response[i].link;
+                        let link_target = response[i].link_target;
                         let icon = response[i].icon;
                         let privilege = response[i].privilege;
 
@@ -428,6 +449,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#main_menu_id').val(main_menu_id);
                         $('#main_label').val(main_label);
                         $('#link').val(link);
+                        $('#link_target').val(link_target);
                         $('#icon').val(icon);
                         $('#privilege').val(privilege);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
@@ -462,6 +484,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         let main_menu_id = response[i].main_menu_id;
                         let main_label = response[i].main_label;
                         let link = response[i].link;
+                        let link_target = response[i].link_target;
                         let icon = response[i].icon;
                         let privilege = response[i].privilege;
 
@@ -472,6 +495,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#main_menu_id').val(main_menu_id);
                         $('#main_label').val(main_label);
                         $('#link').val(link);
+                        $('#link_target').val(link_target);
                         $('#icon').val(icon);
                         $('#privilege').val(privilege);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");

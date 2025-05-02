@@ -13,8 +13,7 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT im.*,dm.department_desc,lp.permission_detail FROM ims_user im
-    left join mdepartment dm on dm.department_id = im.department_id
+    $sql_get = "SELECT im.*,lp.permission_detail FROM ims_user im    
     left join ims_permission lp on lp.permission_id = im.account_type  
     WHERE im.id = " . $id;
 
@@ -31,12 +30,9 @@ if ($_POST["action"] === 'GET_DATA') {
             "user_id" => $result['user_id'],
             "first_name" => $result['first_name'],
             "last_name" => $result['last_name'],
-            "department_id" => $result['department_id'],
-            "department_desc" => $result['department_desc'],
             "permission_id" => $result['account_type'],
             "permission_detail" => $result['permission_detail'],
             "approve_permission" => $result['approve_permission'],
-            "document_dept_cond" => $result['document_dept_cond'],
             "role" => $result['role'],
             "status" => $result['status']);
     }

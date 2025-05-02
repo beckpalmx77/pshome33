@@ -97,7 +97,7 @@
                     <?php $src = $_SESSION['sex']==="M" ? "img/boy.png" : "img/girl.png"; ?>
                     <img class="img-profile rounded-circle" src="<?php echo $src;?>" style="max-width: 60px">
 
-                    <span class="ml-2 d-none d-lg-inline text-white small"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name'] . " " . $_SESSION['dept_id_approve'] . "-" . $_SESSION['role'] ?></span>
+                    <span class="ml-2 d-none d-lg-inline text-white small"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name'] . " - " . $_SESSION['role'] ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                     <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">

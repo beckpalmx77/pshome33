@@ -67,6 +67,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ยอดชำระ</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -80,6 +81,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ปี</th>
                                                     <th>ยอดชำระ</th>
                                                     <th>สถานะ</th>
+                                                    <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -205,10 +207,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </div>
 
                                                                 <div class="form-group row">
-                                                                    <div class="col-sm-6 zoom-container">
+                                                                    <!--div class="col-sm-6 zoom-container">
                                                                         <img id="preview_image" src="#"
                                                                              alt="Preview Image"
                                                                              style="display: none; margin-top: 10px; max-width: 200px;"/>
+                                                                    </div-->
+                                                                    <div class="col-sm-6 zoom-container">
+                                                                        <img id="preview_image" src="#"
+                                                                             alt="Preview Image"
+                                                                             style="display: none; margin-top: 10px; max-width: 200px; cursor: pointer;"
+                                                                             onclick="openImageInNewWindow(this.src)"/>
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <label>สถานะการอนุมัติ</label><br>
@@ -227,6 +235,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <div class="modal-footer">
                                                             <input type="hidden" name="id" id="id"/>
                                                             <input type="hidden" name="action" id="action" value=""/>
+                                                            <!--button type="button" class="btn btn-success"
+                                                                    id="printButton">Print <i
+                                                                        class="fa fa-print"></i>
+                                                            </button-->
                                                             <button type="button" class="btn btn-primary"
                                                                     id="saveButton">Save <i
                                                                         class="fa fa-check"></i>
@@ -374,6 +386,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'amount'},
                     {data: 'payment_status'},
                     {data: 'update'},
+                    {data: 'print'},
+
                 ]
             });
         });
@@ -485,6 +499,58 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         });
     </script>
 
+    <script>
+        // ฟังก์ชันเปิดรูปในหน้าต่างใหม่
+        function openImageInNewWindow(imageSrc) {
+            if (imageSrc && imageSrc !== "#") {
+                window.open(imageSrc, '_blank');
+            } else {
+                alert('ไม่มีรูปภาพที่จะแสดง');
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#printButton').on('click', function (event) {
+                event.preventDefault();
+
+                // ดึงค่าจากฟอร์ม
+                const formData = $('#recordForm').serializeArray();
+
+                // สร้างฟอร์มชั่วคราวสำหรับ POST
+                const tempForm = $('<form>', {
+                    method: 'POST',
+                    action: 'print_pdf.php',
+                    target: '_blank' // เปิดในแท็บใหม่
+                });
+
+                // เพิ่มข้อมูลเข้าไปในฟอร์ม
+                formData.forEach(function (item) {
+                    tempForm.append($('<input>', {
+                        type: 'hidden',
+                        name: item.name,
+                        value: item.value
+                    }));
+                });
+
+                // เพิ่มฟอร์มชั่วคราวเข้าไปใน DOM และส่งฟอร์ม
+                $('body').append(tempForm);
+                tempForm.submit();
+
+                // ลบฟอร์มชั่วคราวหลังจากส่ง
+                tempForm.remove();
+            });
+        });
+    </script>
+
+    <script>
+        $("#TableRecordList").on('click', '.print', function () {
+            let id = $(this).attr("id");
+            let url = "print_pdf.php?id=" + encodeURIComponent(id);
+            window.open(url, "_blank"); // เปิดหน้าใหม่
+        });
+    </script>
 
     <script>
         $(document).ready(function () {
