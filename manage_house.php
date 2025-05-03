@@ -58,6 +58,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -66,6 +67,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ซอย</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
+                                                    <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -269,7 +271,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'alley'},
                     {data: 'contact_name'},
                     {data: 'phone_number'},
-                    {data: 'update'}
+                    {data: 'update'},
+                    {data: 'delete'}
                 ]
             });
 
@@ -308,6 +311,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#contact_name').val("");
                 $('#phone_number').val("");
                 $('#alley').val("");
+                $('#remark').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -334,6 +338,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let contact_name = response[i].contact_name;
                         let phone_number = response[i].phone_number;
                         let alley = response[i].alley;
+                        let remark = response[i].remark;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -341,6 +346,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#contact_name').val(contact_name);
                         $('#phone_number').val(phone_number);
                         $('#alley').val(alley);
+                        $('#remark').val(remark);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
@@ -372,6 +378,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let contact_name = response[i].contact_name;
                         let phone_number = response[i].phone_number;
                         let alley = response[i].alley;
+                        let remark = response[i].remark;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -379,6 +386,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#contact_name').val(contact_name);
                         $('#phone_number').val(phone_number);
                         $('#alley').val(alley);
+                        $('#remark').val(remark);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');

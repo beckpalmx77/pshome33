@@ -13,76 +13,49 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT im.*,lp.permission_detail FROM ims_user im    
-    left join ims_permission lp on lp.permission_id = im.account_type  
-    WHERE im.id = " . $id;
-
-    //$myfile = fopen("macc-param.txt", "w") or die("Unable to open file!");
-    //fwrite($myfile,  $sql_get);
-    //fclose($myfile);
-
+    $sql_get = "SELECT * FROM ims_user WHERE id = " . $id;
     $statement = $conn->query($sql_get);
     $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+
     foreach ($results as $result) {
+
         $return_arr[] = array("id" => $result['id'],
             "email" => $result['email'],
-            "emp_id" => $result['emp_id'],
-            "user_id" => $result['user_id'],
             "first_name" => $result['first_name'],
             "last_name" => $result['last_name'],
-            "permission_id" => $result['account_type'],
-            "permission_detail" => $result['permission_detail'],
-            "approve_permission" => $result['approve_permission'],
-            "role" => $result['role'],
+            "account_type" => $result['account_type'],
             "status" => $result['status']);
     }
-
 
     echo json_encode($return_arr);
 
 }
 
-if ($_POST["action"] === 'ADD') {
+if ($_POST["action"] === 'ADD' && $_SESSION['account_type'] === 'admin') {
 
-    if ($_POST["user_id"] !== '') {
+    if ($_POST["email"] !== '') {
 
         $email = $_POST["email"];
-        $user_id = $_POST["user_id"];
+        $user_id = $_POST["email"];
         //$password = password_hash($password, PASSWORD_DEFAULT);
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $first_name = $_POST["first_name"];
         $last_name = $_POST["last_name"];
         $account_type = $_POST["account_type"];
-        $department_id = $_POST["department_id"];
+
         $picture = $account_type == 'admin' ? "img/icon/admin-001.png" : "img/icon/user-001.png";
-        $approve_permission = $_POST["approve_permission"];
-
-        $role = $_POST["role"];
-
-        if ($role === 'HR' || $role === 'SUPERVISOR' || $role === 'ADMIN') {
-            $document_dept_cond = "A";
-        } else {
-            $document_dept_cond = "-";
-        }
 
         $status = "Active";
 
-        $sql_find = "SELECT * FROM ims_user WHERE user_id = '" . $user_id . "'";
+        $sql_find = "SELECT * FROM ims_user WHERE email = '" . $email . "'";
 
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
         } else {
-            $sql = "INSERT INTO ims_user(emp_id,user_id,email,password,first_name,last_name,account_type,picture,department_id,approve_permission,document_dept_cond,status,role)
-            VALUES (:emp_id,:user_id,:email,:password,:first_name,:last_name,:account_type,:picture,:department_id,:approve_permission,:document_dept_cond,:status,:role)";
-            /*
-                        $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
-                        fwrite($myfile, $sql);
-                        fclose($myfile);
-            */
-
+            $sql = "INSERT INTO ims_user(user_id,email,password,first_name,last_name,account_type,picture,status)
+            VALUES (:user_id,:email,:password,:first_name,:last_name,:account_type,:picture,:status)";
             $query = $conn->prepare($sql);
-            $query->bindParam(':emp_id', $user_id, PDO::PARAM_STR);
             $query->bindParam(':user_id', $user_id, PDO::PARAM_STR);
             $query->bindParam(':email', $email, PDO::PARAM_STR);
             $query->bindParam(':password', $password, PDO::PARAM_STR);
@@ -90,10 +63,6 @@ if ($_POST["action"] === 'ADD') {
             $query->bindParam(':last_name', $last_name, PDO::PARAM_STR);
             $query->bindParam(':account_type', $account_type, PDO::PARAM_STR);
             $query->bindParam(':picture', $picture, PDO::PARAM_STR);
-            $query->bindParam(':department_id', $department_id, PDO::PARAM_STR);
-            $query->bindParam(':approve_permission', $approve_permission, PDO::PARAM_STR);
-            $query->bindParam(':document_dept_cond', $document_dept_cond, PDO::PARAM_STR);
-            $query->bindParam(':role', $role, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
 
@@ -109,47 +78,29 @@ if ($_POST["action"] === 'ADD') {
 }
 
 
-if ($_POST["action"] === 'UPDATE') {
+if ($_POST["action"] === 'UPDATE' && $_SESSION['account_type'] === 'admin') {
 
-    if ($_POST["user_id"] != '') {
+    if ($_POST["email"] != '') {
 
         $id = $_POST["id"];
-        $user_id = $_POST["user_id"];
         $email = $_POST["email"];
         $first_name = $_POST["first_name"];
         $last_name = $_POST["last_name"];
         $status = $_POST["status"];
-        $account_type = $_POST["permission_id"];
-        $department_id = $_POST["department_id"];
+        $account_type = $_POST["account_type"];
         $picture = $account_type === 'admin' ? "img/icon/admin-001.png" : "img/icon/user-001.png";
-        $approve_permission = $_POST["approve_permission"];
-        $role = $_POST["role"];
-
-        if ($role === 'HR' || $role === 'SUPERVISOR' || $role === 'ADMIN') {
-            $document_dept_cond = "A";
-        } else {
-            $document_dept_cond = "-";
-        }
-
-        $sql_find = "SELECT * FROM ims_user WHERE id = '" . $id . "'";
-
+        $sql_find = "SELECT * FROM ims_user WHERE email = '" . $email . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             $sql_update = "UPDATE ims_user SET first_name=:first_name,last_name=:last_name,status=:status,account_type=:account_type
-            ,picture=:picture,department_id=:department_id,email=:email,approve_permission=:approve_permission,document_dept_cond=:document_dept_cond,role=:role
+            ,picture=:picture
             WHERE id = :id";
-
             $query = $conn->prepare($sql_update);
             $query->bindParam(':first_name', $first_name, PDO::PARAM_STR);
             $query->bindParam(':last_name', $last_name, PDO::PARAM_STR);
-            $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':account_type', $account_type, PDO::PARAM_STR);
             $query->bindParam(':picture', $picture, PDO::PARAM_STR);
-            $query->bindParam(':department_id', $department_id, PDO::PARAM_STR);
-            $query->bindParam(':email', $email, PDO::PARAM_STR);
-            $query->bindParam(':approve_permission', $approve_permission, PDO::PARAM_STR);
-            $query->bindParam(':document_dept_cond', $document_dept_cond, PDO::PARAM_STR);
-            $query->bindParam(':role', $role, PDO::PARAM_STR);
+            $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;
@@ -160,7 +111,7 @@ if ($_POST["action"] === 'UPDATE') {
 
 }
 
-if ($_POST["action"] === 'DELETE') {
+if ($_POST["action"] === 'DELETE' && $_SESSION['account_type'] === 'admin') {
 
     $id = $_POST["id"];
 
@@ -179,26 +130,68 @@ if ($_POST["action"] === 'DELETE') {
     }
 }
 
-
+/*
 if ($_POST["action"] === 'CHG') {
     try {
         $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-        $username = $_POST["username"];
-        /*
-                $myfile = fopen("pw-param.txt", "w") or die("Unable to open file!");
-                fwrite($myfile,  $_POST['new_password'] . " | " . $password . " | " . $username);
-                fclose($myfile);
-        */
+        $email = $_POST["email"];
 
-        $sql_update = "UPDATE ims_user SET password=:password WHERE user_id = :username";
+        //$myfile = fopen("pw-param.txt", "w") or die("Unable to open file!");
+        //fwrite($myfile,  $_POST['new_password'] . " | " . $password . " | " . $id);
+        //fclose($myfile);
+
+        $sql_update = "UPDATE ims_user SET password=:password WHERE email = :email";
         $query = $conn->prepare($sql_update);
         $query->bindParam(':password', $password, PDO::PARAM_STR);
-        $query->bindParam(':username', $username, PDO::PARAM_STR);
+        $query->bindParam(':email', $email, PDO::PARAM_STR);
         $query->execute();
         echo 1;
     } catch (Exception $e) {
         echo 3;
     }
+}
+*/
+
+if ($_POST["action"] === 'CHG') {
+    try {
+        $result = 0;  // Default result value for failure
+        $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+        $email = $_POST["email"];
+
+        // ตรวจสอบว่ามี username อยู่หรือไม่
+        $sql_find = "SELECT COUNT(id) FROM ims_user WHERE email = :email";
+        $query = $conn->prepare($sql_find);
+        $query->bindParam(':email', $email, PDO::PARAM_STR); // เปลี่ยนจาก PDO::PARAM_INT เป็น PDO::PARAM_STR
+        $query->execute();
+        $nRows = $query->fetchColumn(); // ใช้ fetchColumn() เพื่อดึงค่าจำนวนแถว
+
+        if ($nRows > 0) {
+            try {
+                // Update password if user exists
+                $sql_update = "UPDATE ims_user SET password = :password WHERE email = :email";
+                $update_query = $conn->prepare($sql_update);
+                $update_query->bindParam(':password', $password, PDO::PARAM_STR);
+                $update_query->bindParam(':email', $email, PDO::PARAM_STR);
+                $update_query->execute();
+
+                $result = 1;  // Success
+            } catch (Exception $e) {
+                $result = 3;  // Error while updating password
+            }
+        } else {
+            $result = 2;  // User not found
+        }
+    } catch (Exception $e) {
+        $result = 3;  // General error
+    }
+
+    // Log ผลลัพธ์เพื่อ debug
+    /*
+        $logData = "Result: $result | Rows Found: $nRows | Username: $username\n";
+        file_put_contents("chg-param.txt", $logData, FILE_APPEND); // ใช้ file_put_contents() แทน fopen() + fwrite() เพื่อให้โค้ดสั้นลง
+    */
+
+    echo $result;
 }
 
 if ($_POST["action"] === 'CHL') {
@@ -227,29 +220,17 @@ if ($_POST["action"] === 'GET_ACCOUNT') {
     $searchValue = $_POST['search']['value']; // Search value
     $searchArray = array();
 
-    if ($columnName !== "") {
-        $columnName = "status," . $columnName;
-    }
-
-/*
-    $myfile = fopen("permission-param.txt", "w") or die("Unable to open file!");
-    fwrite($myfile, "Sort | " . $columnName);
-    fclose($myfile);
-*/
-
 ## Search
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (user_id LIKE :user_id or 
+        $searchQuery = " AND (email LIKE :email or 
         first_name LIKE :first_name OR
-        last_name LIKE :last_name OR
-        role LIKE :role OR
+        last_name LIKE :last_name OR         
         status LIKE :status ) ";
         $searchArray = array(
-            'user_id' => "%$searchValue%",
+            'email' => "%$searchValue%",
             'first_name' => "%$searchValue%",
             'last_name' => "%$searchValue%",
-            'role' => "%$searchValue%",
             'status' => "%$searchValue%"
         );
     }
@@ -286,10 +267,9 @@ if ($_POST["action"] === 'GET_ACCOUNT') {
 
         $data[] = array(
             "line_no" => $row['line_no'],
-            "user_id" => $row['user_id'],
+            "email" => $row['email'],
             "first_name" => $row['first_name'],
             "last_name" => $row['last_name'],
-            "role" => $row['role'],
             "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
             "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
             "picture" => "<img src = '" . $row['picture'] . "'  width='32' height='32' title='" . $row['account_type'] . "'>",
