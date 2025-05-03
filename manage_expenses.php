@@ -54,9 +54,12 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <thead>
                                                 <tr>
                                                     <th>วันที่</th>
+                                                    <th>เดือน</th>
+                                                    <th>ปี</th>
                                                     <th>รายการ</th>
                                                     <th>ประเภทค่าใช้จ่าย</th>
                                                     <th>จำนวนรายการ</th>
+                                                    <th>หน่วยนับ</th>
                                                     <th>จำนวนเงิน</th>
                                                     <th>การตรวจสอบ</th>
                                                     <th>Action</th>
@@ -66,9 +69,12 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <tfoot>
                                                 <tr>
                                                     <th>วันที่</th>
+                                                    <th>เดือน</th>
+                                                    <th>ปี</th>
                                                     <th>รายการ</th>
                                                     <th>ประเภทค่าใช้จ่าย</th>
                                                     <th>จำนวนรายการ</th>
+                                                    <th>หน่วยนับ</th>
                                                     <th>จำนวนเงิน</th>
                                                     <th>การตรวจสอบ</th>
                                                     <th>Action</th>
@@ -121,15 +127,16 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <input type="hidden" class="form-control"
-                                                                           id="category"
-                                                                           name="category">
+                                                                           id="category_id"
+                                                                           name="category_id">
                                                                     <div class="col-sm-10">
-                                                                        <label for="qty"
+                                                                        <label for="category_name"
                                                                                class="control-label">ประเภทค่าใช้จ่าย</label>
                                                                         <input type="text" class="form-control"
                                                                                id="category_name"
                                                                                name="category_name"
                                                                                required="required"
+                                                                               readonly="true"
                                                                                placeholder="">
                                                                     </div>
 
@@ -165,6 +172,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                                id="unit_name"
                                                                                name="unit_name"
                                                                                required="required"
+                                                                               readonly="true"
                                                                                placeholder="">
                                                                     </div>
 
@@ -188,6 +196,28 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                                id="amount"
                                                                                name="amount"
                                                                                required="required"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-5">
+                                                                        <label for="inv"
+                                                                               class="control-label">หมายเลขใบเสร็จฯ / Invoice</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="inv"
+                                                                               name="inv"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-5">
+                                                                        <label for="remark"
+                                                                               class="control-label">หมายเหตุ</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="remark"
+                                                                               name="remark"
                                                                                placeholder="">
                                                                     </div>
                                                                 </div>
@@ -432,9 +462,12 @@ if (strlen($_SESSION['alogin']) == "") {
                 },
                 'columns': [
                     {data: 'expense_date'},
+                    {data: 'month_name'},
+                    {data: 'exp_year'},
                     {data: 'description'},
-                    {data: 'category'},
+                    {data: 'category_name'},
                     {data: 'qty', className: 'text-right'},
+                    {data: 'unit_name'},
                     {data: 'amount', className: 'text-right'},
                     {data: 'approve_status'},
                     {data: 'update'},
@@ -478,7 +511,12 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#id').val("");
                 $('#expense_date').val(formattedDate);
                 $('#description').val("");
-                $('#description').val("");
+                $('#category_id').val("");
+                $('#category_name').val("");
+                $('#unit_id').val("");
+                $('#unit_name').val("");
+                $('#remark').val("");
+                $('#inv').val("");
                 $('#qty').val("");
                 $('#amount').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
@@ -505,8 +543,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         let id = response[i].id;
                         let expense_date = response[i].expense_date;
                         let description = response[i].description;
-                        let category = response[i].category;
+                        let category_id = response[i].category_id;
+                        let category_name = response[i].category_name;
+                        let inv = response[i].inv;
                         let qty = response[i].qty;
+                        let unit_id = response[i].unit_id;
+                        let unit_name = response[i].unit_name;
                         let amount = response[i].amount;
                         let remark = response[i].remark;
                         let approve_status = response[i].approve_status;
@@ -515,8 +557,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#id').val(id);
                         $('#expense_date').val(expense_date);
                         $('#description').val(description);
-                        $('#category').val(category);
+                        $('#category_id').val(category_id);
+                        $('#category_name').val(category_name);
+                        $('#inv').val(inv);
                         $('#qty').val(qty);
+                        $('#unit_id').val(unit_id);
+                        $('#unit_name').val(unit_name);
                         $('#amount').val(amount);
                         $('#remark').val(remark);
                         $('#approve_status').val(approve_status);
@@ -550,8 +596,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         let id = response[i].id;
                         let expense_date = response[i].expense_date;
                         let description = response[i].description;
-                        let category = response[i].category;
+                        let category_id = response[i].category_id;
+                        let category_name = response[i].category_name;
+                        let inv = response[i].inv;
                         let qty = response[i].qty;
+                        let unit_id = response[i].unit_id;
+                        let unit_name = response[i].unit_name;
                         let amount = response[i].amount;
                         let remark = response[i].remark;
                         let approve_status = response[i].approve_status;
@@ -560,8 +610,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#id').val(id);
                         $('#expense_date').val(expense_date);
                         $('#description').val(description);
-                        $('#category').val(category);
+                        $('#category_id').val(category_id);
+                        $('#category_name').val(category_name);
+                        $('#inv').val(inv);
                         $('#qty').val(qty);
+                        $('#unit_id').val(unit_id);
+                        $('#unit_name').val(unit_name);
                         $('#amount').val(amount);
                         $('#remark').val(remark);
                         $('#approve_status').val(approve_status);
