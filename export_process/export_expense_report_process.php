@@ -34,7 +34,7 @@ $String_Sql = $select_query_daily . $select_where_daily . $select_group_order;
 //fwrite($my_file,$String_Sql);
 //fclose($my_file);
 
-$data = "วันที่ทำรายการ,เดือน,ปี,รายละเอียด,ประเภท,จำนวน,หน่วยนับ,จำนวนเงิน(บาท)\n";
+$data = "วันที่ทำรายการ,เดือน,ปี,รายละเอียด,ประเภท,จำนวน,หน่วยนับ,จำนวนเงิน(บาท),สถานะการอนุมัติ\n";
 
 $query = $conn->prepare($String_Sql);
 $query->execute();
@@ -43,6 +43,8 @@ $results = $query->fetchAll(PDO::FETCH_OBJ);
 if ($query->rowCount() >= 1) {
     foreach ($results as $result) {
 
+        $approve_status_desc =  $result->approve_status==="Y"? "อนุมัติ":"รอการอนุมัติ";
+
         $data .= " " . $result->expense_date . ",";
         $data .= " " . $result->month_name . ",";
         $data .= " " . $result->exp_year . ",";
@@ -50,7 +52,8 @@ if ($query->rowCount() >= 1) {
         $data .= " " . $result->category_name . ",";
         $data .= " " . $result->qty . ",";
         $data .= " " . $result->unit_name . ",";
-        $data .= " " . $result->amount . "\n";
+        $data .= " " . $result->amount . ",";
+        $data .= " " . $approve_status_desc . "\n";
 
         //$data .= str_replace(",", "^", $row['WL_CODE']) . "\n";
     }
