@@ -127,17 +127,23 @@ include('includes/CheckDevice.php');
                                     <h1 class="h4 text-gray-900 mb-4">ระบบข้อมูลบริหารงานหมู่บ้าน</h1>
                                 </div>
                                 <div class="form-group">
+                                    <label for="username">ชื่อผู้ใช้</label>
                                     <input type="text" class="form-control" id="username"
                                            value=""
                                            placeholder="Enter User Name">
                                 </div>
+
                                 <div class="form-group">
-                                    <input type="password" class="form-control" id="password"
-                                           value=""
-                                           placeholder="Password">
-                                    <span class="far fa-eye toggleeye" id="togglePassword"
-                                          style="cursor: pointer;"></span>
+                                    <label for="password">รหัสผ่าน</label>
+                                    <div style="position: relative;">
+                                        <input type="password" class="form-control" id="password"
+                                               value=""
+                                               placeholder="Password">
+                                        <span class="far fa-eye toggleeye" id="togglePassword"
+                                              style="cursor: pointer; position: absolute; top: 50%; right: 10px; transform: translateY(-50%);"></span>
+                                    </div>
                                 </div>
+
 
                                 <div class="form-group row">
                                     <div class="col-sm-12">

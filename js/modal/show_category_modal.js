@@ -1,7 +1,7 @@
 
 $(document).ready(function () {
-    let formData = {action: "GET_PRODUCT_GROUP", sub_action: "GET_SELECT"};
-    let dataRecords = $('#TablePGList').DataTable({
+    let formData = {action: "GET_CATEGORY_GROUP", sub_action: "GET_SELECT"};
+    let dataRecords = $('#TableCatList').DataTable({
         'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
         'language': {
             search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
@@ -19,21 +19,21 @@ $(document).ready(function () {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'model/manage_pgroup_process.php',
+            'url': 'model/manage_category_process.php',
             'data': formData
         },
         'columns': [
-            {data: 'pgroup_id'},
-            {data: 'pgroup_name'},
+            {data: 'category_id'},
+            {data: 'category_name'},
             {data: 'select'}
         ]
     });
 });
 
-$("#TablePGList").on('click', '.select', function () {
+$("#TableCatList").on('click', '.select', function () {
     let data = this.id.split('@');
-    $('#pgroup_id').val(data[0]);
-    $('#pgroup_name').val(data[1]);
+    $('#category_id').val(data[0]);
+    $('#category_name').val(data[1]);
     $('#Search-PG-Modal').modal('hide');
 });
 

@@ -349,6 +349,29 @@ if (strlen($_SESSION['alogin']) === "") {
         });
     </script>
 
+    <script>
+        $(document).ready(function () {
+            function updatePeriodMonthTo() {
+                if ($("#option_monthly").is(":checked")) {
+                    const startMonth = parseInt($("#period_month_start").val());
+                    const paymentMonths = parseInt($("#payment_type").val());
+
+                    if (!isNaN(startMonth) && !isNaN(paymentMonths)) {
+                        let endMonth = startMonth + paymentMonths - 1;
+                        if (endMonth > 12) {
+                            endMonth = endMonth % 12;
+                            if (endMonth === 0) endMonth = 12;
+                        }
+                        $("#period_month_to").val(endMonth);
+                    }
+                }
+            }
+
+            $("#payment_type, #period_month_start").on("input change", updatePeriodMonthTo);
+        });
+
+    </script>
+
 
     </body>
     </html>

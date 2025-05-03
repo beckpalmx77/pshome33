@@ -125,6 +125,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                            placeholder="">
                                                                 </div>
 
+                                                                <div class="form-group">
+                                                                    <label for="remark"
+                                                                           class="control-label">หมายเหตุ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="remark"
+                                                                           name="remark"
+                                                                           placeholder="">
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">

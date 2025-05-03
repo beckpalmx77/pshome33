@@ -68,7 +68,7 @@ $html .= '<table border="1" cellspacing="0" cellpadding="5">
         <th width="10%" align="center"><b>#</b></th>
         <th width="70%" align="center"><b>รายการ</b></th>
         <th width="10%" align="center"><b>จำนวน</b></th>
-        <th width="15%" align="center"><b>ราคา</b></th>
+        <th width="15%" align="center"><b>จำนวนเงิน</b></th>
     </tr>';
 
 $total = 0;
@@ -96,7 +96,8 @@ $html .= '</table><br><br>';
 // ลายเซ็น
 $html .= '<table border="0" cellspacing="0" cellpadding="5">
     <tr>
-        <td align="right"><b>ลงชื่อผู้รับเงิน</b> ________________________</td>
+        <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . $receipt['detail'] . ')</td>
+        <td align="right"><b>ผู้รับเงิน</b> ____________</td>
     </tr>
 </table>';
 
