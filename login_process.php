@@ -4,6 +4,7 @@ error_reporting(0);
 include('config/connect_db.php');
 include('config/lang.php');
 include('util/GetData.php');
+include('includes/CheckDevice.php');
 
 
 if ($_SESSION['alogin'] != '') {
@@ -62,7 +63,13 @@ if ($query->rowCount() == 1) {
                 setcookie("remember_chk", "check", time() + (86400 * 10000), "/");
             }
 
-            echo $result->dashboard_page;
+            //echo $result->dashboard_page;
+
+            if ($_SESSION['deviceType']==='computer' || $_SESSION['deviceType']==='tablet') {
+                echo $result->dashboard_page;
+            } else {
+                echo "payment_transfer_smart";
+            }
 
         } else {
             echo 0;
