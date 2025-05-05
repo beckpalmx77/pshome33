@@ -15,8 +15,7 @@ $stmt = $conn->prepare($sql);
 $stmt->execute();
 $company = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// ดึงข้อมูลใบเสร็จจากฐานข้อมูล (ใช้หมายเลขใบเสร็จเป็นตัวอย่าง)
-
+// ดึงข้อมูลใบเสร็จจากฐานข้อมูล
 $stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE id = :id");
 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
@@ -45,7 +44,7 @@ $pdf->SetFont('THSarabunNew', '', 14);
 // เพิ่มหน้า PDF
 $pdf->AddPage();
 
-// ส่วนหัวใบเสร็จ
+// สร้าง HTML ส่วนหัวใบเสร็จ
 $html = '
 <h2 style="text-align:center;">ใบเสร็จรับเงิน</h2>
 <div style="text-align:center;">
@@ -57,7 +56,7 @@ $html = '
         <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . $receipt['doc_id'] . '</td>
     </tr>
     <tr>
-        <td><b>ที่อยู่:</b> 123 ถนนตัวอย่าง กรุงเทพฯ</td>
+        <td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code'] . '<br><b>โทร:</b> ' . $company['phone'] . '</td>
         <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['payment_date'])) . '</td>
     </tr>
 </table>';
@@ -74,7 +73,9 @@ $html .= '<table border="1" cellspacing="0" cellpadding="5">
 $total = 0;
 foreach ($items as $index => $item) {
 
-    $period_month = $receipt['month_name_start'] == $receipt['month_name_to'] ? $receipt['month_name_start'] : $receipt['month_name_start'] . " - " . $receipt['month_name_to'];
+    $period_month = $receipt['month_name_start'] == $receipt['month_name_to']
+        ? $receipt['month_name_start']
+        : $receipt['month_name_start'] . " - " . $receipt['month_name_to'];
 
     $html .= '<tr>
         <td align="center">' . ($index + 1) . '</td>        

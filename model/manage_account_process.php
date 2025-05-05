@@ -267,6 +267,8 @@ if ($_POST["action"] === 'GET_ACCOUNT') {
 
         $data[] = array(
             "line_no" => $row['line_no'],
+            "user_id" => $row['user_id'],
+            "role" => $row['role'],
             "email" => $row['email'],
             "first_name" => $row['first_name'],
             "last_name" => $row['last_name'],
