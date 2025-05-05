@@ -8,21 +8,43 @@
   <meta name="author" content="PS33">
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="jsconfig/config_in.js"></script>
+  <script src="jsconfig/config_job.js"></script>
   <style>
-    body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333; }
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+      color: #333;
+    }
     .container {
       max-width: 480px;
       margin: auto;
-      background-color: #f9f9f9;
-      padding: 20px;
+      background-color: #ffffff;
+      padding: 30px;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
     }
-    .text-center { text-align: center; margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-weight: bold; }
-    input[type="file"], input[type="text"] {
+    .text-center {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .text-center img {
+      width: 140px;
+      height: 234px;
+    }
+    h4 {
+      font-size: 24px;
+      color: #333;
+      margin-top: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    textarea, input[type="file"], input[type="text"] {
       width: 100%;
       padding: 12px;
       font-size: 16px;
@@ -30,6 +52,9 @@
       border-radius: 8px;
       margin-bottom: 16px;
       box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
     }
     button {
       width: 100%;
@@ -42,8 +67,14 @@
       cursor: pointer;
       box-sizing: border-box;
     }
-    button:hover { background-color: #009600; }
-    #spinner { display: none; text-align: center; margin-top: 20px; }
+    button:hover {
+      background-color: #009600;
+    }
+    #spinner {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
     .loader {
       border: 6px solid #f3f3f3;
       border-top: 6px solid #00B900;
@@ -53,26 +84,32 @@
       animation: spin 1s linear infinite;
       margin: auto;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="text-center">
     <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
-    <h4>📍 Check In</h4>
+    <h4>📍 บันทึกงาน/เหตุการณ์</h4>
   </div>
+
   <form id="checkinForm" enctype="multipart/form-data">
-    <label for="place_name">📌 สถานที่ : </label>
-    <input type="text" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required>
+    <label for="remark">📌 รายละเอียด :</label>
+    <textarea id="remark" placeholder="รายละเอียด" rows="4" required></textarea>
 
-    <input type="text" id="check_type" value="IN" readonly="true">
+    <input type="hidden" id="place_name" value="พฤกษา 33" required>
+    <input type="hidden" id="check_type" value="IN" readonly="true">
 
-    <label for="photoInput">📷 รูปภาพ : </label>
+    <label for="photoInput">📷 รูปภาพ :</label>
     <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple>
 
-    <button type="button" onclick="checkin()">✅ กดเพื่อ Check-in</button>
+    <button type="button" onclick="checkin()">✅ กดเพื่อบันทึกข้อมูล</button>
   </form>
+
   <div id="spinner">
     <div class="loader"></div>
     <p>กำลังอัปโหลด...</p>
@@ -100,6 +137,7 @@
         formData.append("user_id", profile.userId);
         formData.append("check_type", check_type.value);
         formData.append("display_name", profile.displayName);
+        formData.append("remark", remark);
         formData.append("place_name", placeName);
         formData.append("latitude", position.coords.latitude);
         formData.append("longitude", position.coords.longitude);
@@ -109,7 +147,7 @@
         }
 
         document.getElementById("spinner").style.display = "block";
-        fetch("https://ps33.themediathai.com/line_oa/checkin/checkin_api.php", {
+        fetch("https://ps33.themediathai.com/line_oa/checkin/job_record_api.php", {
           method: "POST",
           body: formData
         })
@@ -118,11 +156,10 @@
                   alert("✅ Check-in สำเร็จแล้ว");
                   liff.closeWindow();
                 })
-                .catch(err => alert("❌ ไม่สามารถ Check-in ได้: " + err.message))
+                .catch(err => alert("❌ ไม่สามารถ บันทึก ได้: " + err.message))
                 .finally(() => {
                   document.getElementById("spinner").style.display = "none";
                 });
-
       }, error => alert("❌ ไม่สามารถรับตำแหน่งได้: " + error.message));
     } catch (err) {
       alert("เกิดข้อผิดพลาด: " + err.message);

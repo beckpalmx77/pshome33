@@ -1,1 +1,1 @@
-const LIFF_ID = "2007306340-xL3gmNJY";
+const LIFF_ID = "2007364217-VyKkqZLZ";

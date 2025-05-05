@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#00B900">
-  <meta name="description" content="ระบบจัดการข้อมูลสงวนออโต้คาร์">
-  <meta name="author" content="Sanguan Auto Car">
+  <meta name="description" content="ระบบจัดการข้อมูล">
+  <meta name="author" content="PS33">
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="jsconfig/config_out.js"></script>
@@ -59,19 +59,19 @@
 <body>
 <div class="container">
   <div class="text-center">
-    <img src="../img/logo/logo text-01.png" width="200" height="79" alt="Logo" />
+    <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
     <h4>📍 Check Out</h4>
   </div>
   <form id="checkinForm" enctype="multipart/form-data">
     <label for="place_name">📌 สถานที่ : </label>
-    <input type="text" id="place_name" placeholder="กรอกชื่อสถานที่" required>
+    <input type="text" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required>
 
     <input type="text" id="check_type" value="OUT" readonly="true">
 
     <label for="photoInput">📷 รูปภาพ : </label>
     <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple>
 
-    <button type="button" onclick="checkin()">✅ กดเพื่อ Check-in</button>
+    <button type="button" onclick="checkin()">✅ กดเพื่อ Check-out</button>
   </form>
   <div id="spinner">
     <div class="loader"></div>
@@ -109,7 +109,7 @@
         }
 
         document.getElementById("spinner").style.display = "block";
-        fetch("https://syycp.com/api/checkin/checkin_api.php", {
+        fetch("https://ps33.themediathai.com/line_oa/checkin/checkin_api.php", {
           method: "POST",
           body: formData
         })
