@@ -21,7 +21,7 @@
 <div class="container mt-5 d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow-lg p-4 text-center" style="width: 100%; max-width: 500px;">
         <div class="mb-4">
-            <img src="../img/sac_application.png" style="height: 70px;" alt="SAC Logo">
+            <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
         </div>
         <h4 class="mb-4">ลงทะเบียนระบบ PS33</h4>
 
@@ -78,6 +78,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="jsconfig/config_register.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -89,7 +90,7 @@
             $('#emp_name').val(selected.data('name'));
         });
 
-        liff.init({ liffId: "2007364217-G2VRbv5v" }).then(() => {
+        liff.init({ liffId: LIFF_ID }).then(() => {
             if (liff.isLoggedIn()) {
                 liff.getProfile().then(profile => {
                     $('#lineUserId').val(profile.userId);
