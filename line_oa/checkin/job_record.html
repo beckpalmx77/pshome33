@@ -10,41 +10,19 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="jsconfig/config_job.js"></script>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f9;
-      color: #333;
-    }
+    body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333; }
     .container {
       max-width: 480px;
       margin: auto;
-      background-color: #ffffff;
-      padding: 30px;
+      background-color: #f9f9f9;
+      padding: 20px;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
     }
-    .text-center {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .text-center img {
-      width: 140px;
-      height: 234px;
-    }
-    h4 {
-      font-size: 24px;
-      color: #333;
-      margin-top: 10px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    textarea, input[type="file"], input[type="text"] {
+    .text-center { text-align: center; margin-bottom: 20px; }
+    label { display: block; margin-bottom: 6px; font-weight: bold; }
+    input[type="file"], input[type="text"] {
       width: 100%;
       padding: 12px;
       font-size: 16px;
@@ -52,9 +30,6 @@
       border-radius: 8px;
       margin-bottom: 16px;
       box-sizing: border-box;
-    }
-    textarea {
-      resize: vertical;
     }
     button {
       width: 100%;
@@ -67,14 +42,8 @@
       cursor: pointer;
       box-sizing: border-box;
     }
-    button:hover {
-      background-color: #009600;
-    }
-    #spinner {
-      display: none;
-      text-align: center;
-      margin-top: 20px;
-    }
+    button:hover { background-color: #009600; }
+    #spinner { display: none; text-align: center; margin-top: 20px; }
     .loader {
       border: 6px solid #f3f3f3;
       border-top: 6px solid #00B900;
@@ -84,17 +53,14 @@
       animation: spin 1s linear infinite;
       margin: auto;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="text-center">
-    <!--img src="ps33_logo.png" width="70" height="117" alt="Logo" /-->
-    <h6>📍 บันทึกงาน/เหตุการณ์</h6>
+    <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
+    <h5>📍 บันทึกงาน/เหตุการณ์</h5>
   </div>
 
   <form id="checkinForm" enctype="multipart/form-data">
