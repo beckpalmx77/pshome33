@@ -1,6 +1,7 @@
 $(document).ready(function () {
-    let formData = {action: "GET_WORKTIME", sub_action: "GET_SELECT"};
-    let dataRecords = $('#TableWorkTimeList').DataTable({
+    let formData = {action: "GET_POSITION", sub_action: "GET_SELECT"};
+
+    let dataRecords = $('#TablePositionList').DataTable({
         'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
         'language': {
             search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
@@ -18,20 +19,20 @@ $(document).ready(function () {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'model/manage_work_time_process.php',
+            'url': 'model/manage_position_process.php',
             'data': formData
         },
         'columns': [
-            {data: 'work_time_id'},
-            {data: 'work_time_detail'},
+            {data: 'position_id'},
+            {data: 'position_desc'},
             {data: 'select'}
         ]
     });
 });
 
-$("#TableWorkTimeList").on('click', '.select', function () {
+$("#TablePositionList").on('click', '.select', function () {
     let data = this.id.split('@');
-    $('#work_time_id').val(data[0]);
-    $('#work_time_detail').val(data[1]);
-    $('#SearchWorkTimeModal').modal('hide');
+    $('#position_id').val(data[0]);
+    $('#position_desc').val(data[1]);
+    $('#SearchPositionModal').modal('hide');
 });
