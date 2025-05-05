@@ -23,6 +23,9 @@ if ($_POST["action"] === 'GET_DATA') {
         $return_arr[] = array("id" => $result['id'],
             "display_name" => $result['display_name'],
             "checkin_time" => $result['checkin_time'],
+            "place_name" => $result['place_name'],
+            "latitude" => $result['latitude'],
+            "longitude" => $result['longitude'],
             "remark" => $result['remark']);
     }
 
@@ -169,6 +172,9 @@ if ($_POST["action"] === 'GET_JOB_REPORT') {
                 "id" => $row['id'],
                 "display_name" => $row['display_name'],
                 "checkin_time" => $row['checkin_time'],
+                "place_name" => $row['place_name'],
+                "latitude" => $row['latitude'],
+                "longitude" => $row['longitude'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "detail" => "<button type='button' name='detail' id='" . $row['id'] . "' class='btn btn-secondary btn-xs detail' data-toggle='tooltip' title='Detail'>Detail</button>",
