@@ -94,7 +94,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                 aria-hidden="true">×
                                                         </button>
                                                     </div>
-                                                    <form method="post" id="recordForm">
+                                                    <form method="post" id="recordForm" enctype="multipart/form-data">
                                                         <div class="modal-body">
                                                             <div class="modal-body">
 
@@ -106,11 +106,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                            placeholder="รหัสพนักงาน">
                                                                 </div>
 
+                                                                <div class="form-group">
+                                                                    <label>รูปภาพ</label>
+                                                                    <input type="file" name="image" id="image"
+                                                                           class="form-control" accept="image/*">
+                                                                    <input type="hidden" name="old_image" id="old_image">
+                                                                    <br>
+                                                                    <img id="preview-image" src="#"
+                                                                         style="max-width:150px; display:none;"
+                                                                         class="img-thumbnail"/>
+                                                                </div>
+
                                                                 <div class="form-row">
                                                                     <div class="form-group col-md-6">
                                                                         <label for="prefix" class="control-label">คำนำหน้าชื่อ</label>
                                                                         <select id="prefix" name="prefix"
-                                                                                class="form-control" data-live-search="true"
+                                                                                class="form-control"
+                                                                                data-live-search="true"
                                                                                 title="Please select">
                                                                             <option value="นาย">นาย</option>
                                                                             <option value="นาง">นาง</option>
@@ -119,9 +131,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                     </div>
 
                                                                     <div class="form-group col-md-6">
-                                                                        <label for="sex" class="control-label">เพศ</label>
+                                                                        <label for="sex"
+                                                                               class="control-label">เพศ</label>
                                                                         <select id="sex" name="sex"
-                                                                                class="form-control" data-live-search="true"
+                                                                                class="form-control"
+                                                                                data-live-search="true"
                                                                                 title="Please select">
                                                                             <option value="-">ไม่ระบุ</option>
                                                                             <option value="M">ชาย</option>
@@ -186,30 +200,35 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                                placeholder="อายุงาน">
                                                                     </div>
                                                                     <div class="col-sm-4">
-                                                                        <label for="sex" class="control-label">สถานะการทำงาน</label>
-                                                                        <select id="sex" name="sex"
-                                                                                class="form-control" data-live-search="true"
+                                                                        <label for="status" class="control-label">สถานะการทำงาน</label>
+                                                                        <select id="status" name="status"
+                                                                                class="form-control"
+                                                                                data-live-search="true"
                                                                                 title="Please select">
-                                                                            <option value="Y" selected>ทำงานปกติ</option>
+                                                                            <option value="Y" selected>ทำงานปกติ
+                                                                            </option>
                                                                             <option value="N">ลาออก</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-8">
-                                                                        <input type="hidden" id="position_id" name="position_id">
+                                                                        <input type="hidden" id="position_id"
+                                                                               name="position_id">
                                                                         <label for="position_desc"
                                                                                class="control-label">ตำแหน่ง</label>
                                                                         <input type="text" class="form-control"
                                                                                id="position_desc"
                                                                                name="position_desc"
-                                                                               placeholder="ตำแหน่ง">
+                                                                               readonly="true"
+                                                                               placeholder="">
                                                                     </div>
 
                                                                     <div class="col-sm-2">
                                                                         <label for="position"
                                                                                class="control-label">เลือก</label>
-                                                                        <a data-toggle="modal" href="#SearchPositionModal"
+                                                                        <a data-toggle="modal"
+                                                                           href="#SearchPositionModal"
                                                                            class="btn btn-primary">
                                                                             Click <i class="fa fa-search"
                                                                                      aria-hidden="true"></i>
@@ -219,9 +238,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                 </div>
 
                                                                 <div class="form-group row">
-                                                                    <div class="col-sm-4">
-                                                                        <label for="week_holiday"
-                                                                               class="control-label">วันหยุดประจำสัปดาห์</label>
+                                                                    <!-- บรรทัดที่ 1: วันหยุด + โทรศัพท์ -->
+                                                                    <div class="col-sm-6">
+                                                                        <label for="week_holiday" class="control-label">วันหยุดประจำสัปดาห์</label>
                                                                         <select id="week_holiday" name="week_holiday"
                                                                                 class="form-control"
                                                                                 data-live-search="true"
@@ -236,44 +255,55 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                             <option value="7">วันอาทิตย์</option>
                                                                         </select>
                                                                     </div>
+
+                                                                    <div class="col-sm-6">
+                                                                        <label for="phone" class="control-label">โทรศัพท์</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="phone" name="phone" placeholder="">
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- บรรทัดที่ 2: ตารางเวลาทำงาน -->
+                                                                <div class="form-group row">
+                                                                    <!-- hidden id -->
                                                                     <input type="hidden" class="form-control"
-                                                                           id="work_time_id"
-                                                                           name="work_time_id">
+                                                                           id="work_time_id" name="work_time_id">
+
                                                                     <div class="col-sm-10">
                                                                         <label for="work_time_detail"
                                                                                class="control-label">ตารางเวลาทำงาน</label>
                                                                         <input type="text" class="form-control"
                                                                                id="work_time_detail"
-                                                                               name="work_time_detail"
-                                                                               readonly="true"
+                                                                               name="work_time_detail" readonly
                                                                                placeholder="ตารางเวลาทำงาน">
                                                                     </div>
+
                                                                     <div class="col-sm-2">
-                                                                        <label for="work_time"
-                                                                               class="control-label">เลือก</label>
-                                                                        <a data-toggle="modal" href="#SearchWorkTimeModal"
-                                                                           class="btn btn-primary">
+                                                                        <label for="work_time" class="control-label">เลือก</label>
+                                                                        <a data-toggle="modal"
+                                                                           href="#SearchWorkTimeModal"
+                                                                           class="btn btn-primary form-control mt-1">
                                                                             Click <i class="fa fa-search"
                                                                                      aria-hidden="true"></i>
                                                                         </a>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </div>
 
-                                                        <div class="modal-footer">
-                                                            <input type="hidden" name="id" id="id"/>
-                                                            <input type="hidden" name="action" id="action" value=""/>
-                                                            <span class="icon-input-btn">
+
+                                                                <div class="modal-footer">
+                                                                    <input type="hidden" name="id" id="id"/>
+                                                                    <input type="hidden" name="action" id="action"
+                                                                           value=""/>
+                                                                    <span class="icon-input-btn">
                                                                 <i class="fa fa-check"></i>
                                                             <input type="submit" name="save" id="save"
                                                                    class="btn btn-primary" value="Save"/>
                                                             </span>
-                                                            <button type="button" class="btn btn-danger"
-                                                                    data-dismiss="modal">Close <i
-                                                                        class="fa fa-window-close"></i>
-                                                            </button>
-                                                        </div>
+                                                                    <button type="button" class="btn btn-danger"
+                                                                            data-dismiss="modal">Close <i
+                                                                                class="fa fa-window-close"></i>
+                                                                    </button>
+                                                                </div>
                                                     </form>
 
                                                 </div>
@@ -476,26 +506,34 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 ]
             });
 
-            <!-- *** FOR SUBMIT FORM *** -->
+            // ✅ ใช้ FormData สำหรับส่งทั้งข้อมูลฟอร์ม + ไฟล์
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
-                let formData = $(this).serialize();
-                //alert(formData);
+
+                let formData = new FormData(this); // ใช้ this เพื่อแนบไฟล์ด้วย
+
                 $.ajax({
                     url: 'model/manage_employee_process.php',
                     method: "POST",
                     data: formData,
+                    contentType: false, // สำคัญ: ปิด contentType เพื่อให้ browser set multipart/form-data
+                    processData: false, // สำคัญ: ห้ามแปลง formData เป็น string
                     success: function (data) {
                         alertify.success(data);
                         $('#recordForm')[0].reset();
                         $('#recordModal').modal('hide');
                         $('#save').attr('disabled', false);
                         dataRecords.ajax.reload();
+                    },
+                    error: function () {
+                        alertify.error("ไม่สามารถส่งข้อมูลได้");
+                        $('#save').attr('disabled', false);
                     }
-                })
+                });
             });
-            <!-- *** FOR SUBMIT FORM *** -->
+
+
         });
     </script>
 
@@ -504,24 +542,40 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
 
             $("#btnAdd").click(function () {
                 $('#recordModal').modal('show');
+
+                // เคลียร์ค่าทั้งหมด
                 $('#id').val("");
                 $('#emp_id').val("");
                 $('#f_name').val("");
                 $('#l_name').val("");
+                $('#image').val("");  // เคลียร์ฟิลด์ภาพ
+                $('#old_image').val(""); // เคลียร์ old_image
                 $('#position_id').val("");
                 $('#position_desc').val("");
                 $('#work_time_id').val("");
-                $('#work_time_desc').val("");
+                $('#work_time_detail').val("");
                 $('#start_work_date').val("");
                 $('#work_age').val("");
-                $('#ืnick_name').val("");
+                $('#nick_name').val("");  // แก้ไขเป็นชื่อฟิลด์ที่ถูกต้อง
                 $('#prefix').val("");
                 $('#remark').val("");
+                $('#phone').val("");
+                $('#week_holiday').val("");
+
+                // รีเซ็ต select หรือ textarea ถ้ามี
+                $('#position_id').val('').change();
+                $('#work_time_id').val('').change();
+
+                // รีเซ็ตการแสดงรูปภาพ
+                $('#preview-image').hide();
+
+                // ตั้งค่าชื่อ modal และ action
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
             });
         });
+
     </script>
 
     <script>
@@ -545,6 +599,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         let prefix = response[i].prefix;
                         let sex = response[i].sex;
                         let nick_name = response[i].nick_name;
+                        let phone = response[i].phone;
                         let start_work_date = response[i].start_work_date;
                         let position_id = response[i].position_id;
                         let position_desc = response[i].position_desc;
@@ -554,6 +609,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         let week_holiday = response[i].week_holiday;
                         let work_age = 0;
                         let start_w_date = start_work_date.substr(3, 2) + "/" + start_work_date.substr(0, 2) + "/" + start_work_date.substr(6, 10);
+                        let image = response[i].image;
                         work_age = getAge(start_w_date);
 
                         $('#recordModal').modal('show');
@@ -564,6 +620,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         $('#prefix').val(prefix);
                         $('#sex').val(sex);
                         $('#nick_name').val(nick_name);
+                        $('#phone').val(phone);
                         $('#start_work_date').val(start_work_date);
                         $('#position_id').val(position_id);
                         $('#position_desc').val(position_desc);
@@ -572,6 +629,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         $('#remark').val(remark);
                         $('#week_holiday').val(week_holiday);
                         $('#work_age').val(work_age);
+
+                        if (image) {
+                            $('#preview-image').attr('src', 'uploads/employees/' + image).show();
+                        } else if ($('#old_image').val()) {
+                            // หากมี old_image ให้แสดงภาพเดิม
+                            $('#preview-image').attr('src', 'uploads/employees/' + $('#old_image').val()).show();
+                        } else {
+                            $('#preview-image').hide();
+                        }
+
+
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
@@ -628,6 +696,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
             return {years, months, days};
 
     </script>
+
+    <script>
+        $('#image').on('change', function () {
+            const input = this;
+            const preview = document.getElementById("preview-image");
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    </script>
+
 
     </body>
     </html>
