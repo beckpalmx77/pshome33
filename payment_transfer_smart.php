@@ -1,31 +1,19 @@
 <?php
-
-session_start();
-error_reporting(0);
 $curr_date = date("d-m-Y");
 include('includes/Header.php');
 
-if (($_SESSION['account_type']) === "house_user") {
-    $house_number = $_SESSION['house_number'];
-} else {
-    $house_number = "";
-}
-
-if (strlen($_SESSION['alogin']) === "") {
-    header("Location: index.php");
-} else {
-    ?>
+?>
 
     <!DOCTYPE html>
     <html lang="th">
 
     <body id="page-top">
     <div id="wrapper">
-        <?php include('includes/Side-Bar.php'); ?>
+        <!--?php include('includes/Side-Bar.php'); ?-->
 
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <?php include('includes/Top-Bar.php'); ?>
+                <!--?php include('includes/Top-Bar.php'); ?-->
 
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
@@ -241,6 +229,8 @@ if (strlen($_SESSION['alogin']) === "") {
     <script src="js/modal/show_department_modal.js"></script>
     <script src="js/MyFrameWork/framework_util.js"></script>
 
+    <script src="line_oa/house/jsconfig/config_house_payment.js"></script>
+
     <script>
         $(document).ready(function () {
             // Preview Image
@@ -372,8 +362,43 @@ if (strlen($_SESSION['alogin']) === "") {
 
     </script>
 
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        liff.init({ liffId: LIFF_ID })
+            .then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    liff.getProfile().then(profile => {
+                        const userId = profile.userId;
+
+                        fetch('model/get_house_number.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: 'userId=' + encodeURIComponent(userId)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.house_number) {
+                                    document.getElementById('house_number').value = data.house_number || '';
+                                    document.getElementById('detail').value =
+                                        (data.f_name || '') + ' ' + (data.l_name || '');
+                                } else {
+                                    alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
+                                    liff.closeWindow(); // กลับไปที่ LINE OA
+                                }
+                            })
+                            .catch(error => {
+                                console.error('เกิดข้อผิดพลาด:', error);
+                                alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+                                liff.closeWindow(); // ปิดหน้าจอเมื่อ error ก็ได้
+                            });
+                    });
+                }
+            });
+    </script>
 
     </body>
     </html>
-
-<?php } ?>

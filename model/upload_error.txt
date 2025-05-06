@@ -1,9 +1,0 @@
-ไม่สามารถอัปโหลดรูปได้: Array
-(
-    [name] => Screenshot 2025-05-02 173813.png
-    [full_path] => Screenshot 2025-05-02 173813.png
-    [type] => image/png
-    [tmp_name] => D:\wamp64\tmp\php2559.tmp
-    [error] => 0
-    [size] => 149047
-)

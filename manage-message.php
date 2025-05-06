@@ -46,9 +46,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <th>วันที่รับข้อความ</th>
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
-                                                    <th>อีเมล์</th>
-                                                    <th>โทรศัพท์</th>
-                                                    <th>เวลาที่สะดวกติดต่อ</th>
+                                                    <th>บ้านเลขที่</th>
+                                                    <th>ข้อความ</th>
                                                     <th>สถานะ</th>
                                                     <th>action</th>
                                                 </tr>
@@ -58,9 +57,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <th>วันที่รับข้อความ</th>
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
-                                                    <th>อีเมล์</th>
-                                                    <th>โทรศัพท์</th>
-                                                    <th>เวลาที่สะดวกติดต่อ</th>
+                                                    <th>บ้านเลขที่</th>
+                                                    <th>ข้อความ</th>
                                                     <th>สถานะ</th>
                                                     <th>action</th>
                                                 </tr>
@@ -119,12 +117,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             </div>
 
                                             <div class="col-sm-6">
-                                                <label for="email"
-                                                       class="control-label">อีเมล์</label>
+                                                <label for="house_number"
+                                                       class="control-label">บ้านเลขที่</label>
                                                 <input type="text" class="form-control"
-                                                       id="email" name="email"
+                                                       id="house_number" name="house_number"
                                                        readonly="true"
-                                                       placeholder="อีเมล์">
+                                                       placeholder="บ้านเลขที่">
                                             </div>
                                         </div>
 
@@ -299,9 +297,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     {data: 'create_date'},
                     {data: 'f_name'},
                     {data: 'l_name'},
-                    {data: 'email'},
-                    {data: 'phone'},
-                    {data: 'time_contact'},
+                    {data: 'house_number'},
+                    {data: 'remark'},
                     {data: 'status'},
                     {data: 'update'}
                 ]
@@ -328,7 +325,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         let f_name = response[i].f_name;
                         let l_name = response[i].l_name;
                         let phone = response[i].phone;
-                        let email = response[i].email;
+                        let house_number = response[i].house_number;
                         let contact_name = response[i].contact_name;
                         let contact_date = response[i].contact_date;
                         let contact_time = response[i].contact_time;
@@ -340,7 +337,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#f_name').val(f_name);
                         $('#l_name').val(l_name);
                         $('#phone').val(phone);
-                        $('#email').val(email);
+                        $('#house_number').val(house_number);
                         $('#contact_name').val(contact_name);
                         $('#contact_date').val(contact_date);
                         $('#contact_time').val(contact_time);
