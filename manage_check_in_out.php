@@ -205,7 +205,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 let checkin_time = $('#checkin_time').val();
                 let formData = {action: "SEARCH", display_name: display_name, checkin_time: checkin_time};
                 $.ajax({
-                    url: 'model/manage_check_in_out_process.php',
+                    url: 'model/manage_job_record_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -239,8 +239,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
+                <?php  if ($_SESSION['deviceType'] !== 'computer') {
+                    echo "'scrollX': true,";
+                }?>
                 'ajax': {
-                    'url': 'model/manage_check_in_out_process.php',
+                    'url': 'model/manage_job_record_process.php',
                     'data': formData
                 },
                 'columns': [
@@ -258,7 +261,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 let formData = $(this).serialize();
                 //alert(formData);
                 $.ajax({
-                    url: 'model/manage_check_in_out_process.php',
+                    url: 'model/manage_job_record_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -300,7 +303,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_check_in_out_process.php',
+                url: 'model/manage_job_record_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -336,7 +339,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_check_in_out_process.php',
+                url: 'model/manage_job_record_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -373,7 +376,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_check_in_out_process.php',
+                url: 'model/manage_job_record_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {

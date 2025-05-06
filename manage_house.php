@@ -262,6 +262,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
+                <?php  if ($_SESSION['deviceType'] !== 'computer') {
+                    echo "'scrollX': true,";
+                }?>
                 'ajax': {
                     'url': 'model/manage_house_process.php',
                     'data': formData

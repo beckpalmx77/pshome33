@@ -239,6 +239,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
+                <?php  if ($_SESSION['deviceType'] !== 'computer') {
+                    echo "'scrollX': true,";
+                }?>
                 'ajax': {
                     'url': 'model/manage_job_record_process.php',
                     'data': formData
