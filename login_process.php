@@ -15,11 +15,12 @@ $username = $_POST['username'];
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 $remember = $_POST['remember'];
 
-$sql = "SELECT iu.*,ih.house_number,ih.contact_name,pm.dashboard_page as dashboard_page        
+$sql = "SELECT iu.*, ih.house_number, ih.contact_name, pm.dashboard_page, ihu.line_picture_profile
         FROM ims_user iu
-        left join ims_permission pm on pm.permission_id = iu.account_type       
-        left join ims_house ih on ih.house_number = iu.user_id 
-        WHERE iu.user_id=:username ";
+        LEFT JOIN ims_permission pm ON pm.permission_id = iu.account_type
+        LEFT JOIN ims_house ih ON ih.phone_number = iu.user_id
+        LEFT JOIN ims_house_line_user ihu ON ihu.line_phone = iu.user_id
+        WHERE iu.user_id = :username";
 
 $query = $conn->prepare($sql);
 $query->bindParam(':username', $username, PDO::PARAM_STR);
@@ -46,6 +47,7 @@ if ($query->rowCount() == 1) {
             $_SESSION['approve_permission'] = $result->approve_permission;
             $_SESSION['role'] = $result->role;
             $_SESSION['house_number'] = $result->house_number;
+            $_SESSION['line_picture_profile'] = $result->line_picture_profile;
 
 /*
             $myfile = fopen("login.txt", "w") or die("Unable to open file!");

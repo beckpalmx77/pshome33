@@ -55,8 +55,13 @@
             </div>
 
             <div class="mb-3 text-start">
-                <label class="form-label">เบอร์โทร:</label>
+                <label class="form-label">เบอร์โทร: (ใช้เป็น user name เข้าระบบ)</label>
                 <input type="tel" id="phone" name="phone" class="form-control" placeholder="" required>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label">รหัสผ่าน:</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="" required>
             </div>
 
             <button type="submit" class="btn btn-success w-100">ลงทะเบียน</button>

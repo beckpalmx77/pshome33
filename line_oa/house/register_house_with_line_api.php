@@ -1,7 +1,10 @@
 <?php
 
 include('../../config/connect_db.php');
+include('../../util/reorder_record.php');
+header('Content-Type: application/json');
 
+// รับค่าจาก POST
 $lineUserId         = $_POST['lineUserId'] ?? '';
 $lineUserName       = $_POST['name'] ?? '';
 $linePhone          = $_POST['phone'] ?? '';
@@ -10,9 +13,9 @@ $lineStatusProfile  = $_POST['statusMessage'] ?? '';
 $f_name             = $_POST['f_name'] ?? '';
 $l_name             = $_POST['l_name'] ?? '';
 $house_number       = $_POST['house_number'] ?? '';
+$password_raw       = $_POST['password'] ?? 'default_password';
 
-$logFile = 'line_house_user_register_log.txt'; // หรือกำหนด path แบบเต็ม เช่น '../../logs/line_error_log.txt'
-
+// Validate ข้อมูลที่จำเป็น
 if (empty($lineUserId) || empty($linePhone)) {
     echo json_encode([
         "success" => false,
@@ -21,16 +24,19 @@ if (empty($lineUserId) || empty($linePhone)) {
     exit;
 }
 
+$password = password_hash($password_raw, PASSWORD_DEFAULT);
+$role = "user";
+$status = "Active";
+$account_type = $role;
+$picture = $account_type === 'admin' ? "img/icon/admin-001.png" : "img/icon/user-001.png";
+
+$logFile = 'line_house_user_register_log.txt';
+
+// ค้นหาผู้ใช้งานซ้ำ
 try {
-    if (!empty($lineUserId)) {
-        $sql_find = "SELECT COUNT(*) FROM ims_house_line_user WHERE line_user_id = :lineUserId or line_phone = :phone";
-        $stmt_find = $conn->prepare($sql_find);
-        $stmt_find->execute([':lineUserId' => $lineUserId, ':phone' => $linePhone]);
-    } else {
-        $sql_find = "SELECT COUNT(*) FROM ims_house_line_user WHERE line_user_id = :lineUserId";
-        $stmt_find = $conn->prepare($sql_find);
-        $stmt_find->execute([':lineUserId' => $lineUserId]);
-    }
+    $sql_find = "SELECT COUNT(*) FROM ims_house_line_user WHERE line_user_id = :lineUserId OR line_phone = :phone";
+    $stmt_find = $conn->prepare($sql_find);
+    $stmt_find->execute([':lineUserId' => $lineUserId, ':phone' => $linePhone]);
 
     $nRows = $stmt_find->fetchColumn();
 
@@ -53,31 +59,67 @@ try {
     exit;
 }
 
+// ลงทะเบียนผู้ใช้ใหม่
 try {
+    // ตาราง ims_house_line_user
     $sql_insert = "INSERT INTO ims_house_line_user 
-                    (line_user_id, line_user_name, line_phone, line_picture_profile, line_status_profile, f_name, l_name,house_number)
+                    (line_user_id, line_user_name, line_phone, line_picture_profile, line_status_profile, f_name, l_name, house_number)
                     VALUES (:lineUserId, :lineUserName, :linePhone, :linePictureProfile, :lineStatusProfile, :f_name, :l_name, :house_number)";
     $stmt_insert = $conn->prepare($sql_insert);
-    $stmt_insert->bindParam(':lineUserId', $lineUserId, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':lineUserName', $lineUserName, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':linePhone', $linePhone, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':linePictureProfile', $linePictureProfile, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':lineStatusProfile', $lineStatusProfile, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':f_name', $f_name, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':l_name', $l_name, PDO::PARAM_STR);
-    $stmt_insert->bindParam(':house_number', $house_number, PDO::PARAM_STR);
-    $stmt_insert->execute();
+    $stmt_insert->execute([
+        ':lineUserId' => $lineUserId,
+        ':lineUserName' => $lineUserName,
+        ':linePhone' => $linePhone,
+        ':linePictureProfile' => $linePictureProfile,
+        ':lineStatusProfile' => $lineStatusProfile,
+        ':f_name' => $f_name,
+        ':l_name' => $l_name,
+        ':house_number' => $house_number
+    ]);
 
-    $lastInsertId = $conn->lastInsertId();
-    if ($lastInsertId) {
-        $currentDateTime = date("Y-m-d H:i:s");
-        $logData = "[SUCCESS] {$currentDateTime} | UserID: {$lineUserId} | Name: {$lineUserName}\n";
-        file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
+    // ตาราง ims_user
+    $sql_user = "INSERT INTO ims_user(user_id, email, password, first_name, last_name, account_type, role, picture, status)
+                 VALUES (:user_id, :email, :password, :first_name, :last_name, :account_type, :role, :picture, :status)";
+    $query_user = $conn->prepare($sql_user);
+    $query_user->execute([
+        ':user_id' => $linePhone,
+        ':email' => $linePhone,
+        ':password' => $password,
+        ':first_name' => $f_name,
+        ':last_name' => $l_name,
+        ':account_type' => $account_type,
+        ':role' => $role,
+        ':picture' => $picture,
+        ':status' => $status
+    ]);
 
-        echo json_encode(["success" => true, "message" => "สมัครสมาชิกสำเร็จ"]);
-    } else {
-        echo json_encode(["success" => false, "message" => "ไม่สามารถบันทึกข้อมูลได้"]);
+    Reorder_Record($conn, "ims_user");
+
+    // ตรวจสอบว่ามีบ้านหรือยัง
+    $sql_check_house = "SELECT COUNT(*) FROM ims_house WHERE house_number = :house_number";
+    $stmt_check_house = $conn->prepare($sql_check_house);
+    $stmt_check_house->execute([':house_number' => $house_number]);
+    $houseExists = $stmt_check_house->fetchColumn();
+
+    if ($houseExists <= 0) {
+        // ถ้ายังไม่มีบ้าน เพิ่มเข้าไป
+        $sql_house = "INSERT INTO ims_house(house_number, contact_name, phone_number, alley, remark)
+                      VALUES (:house_number, :contact_name, :phone_number, :alley, :remark)";
+        $query_house = $conn->prepare($sql_house);
+        $query_house->execute([
+            ':house_number' => $house_number,
+            ':contact_name' => $f_name . ' ' . $l_name,
+            ':phone_number' => $linePhone,
+            ':alley' => '',
+            ':remark' => ''
+        ]);
     }
+
+    $currentDateTime = date("Y-m-d H:i:s");
+    $logData = "[SUCCESS] {$currentDateTime} | UserID: {$lineUserId} | Name: {$lineUserName}\n";
+    file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
+
+    echo json_encode(["success" => true, "message" => "สมัครสมาชิกสำเร็จ"]);
 } catch (PDOException $e) {
     $currentDateTime = date("Y-m-d H:i:s");
     $logData = "[ERROR-INSERT] {$currentDateTime} | Message: {$e->getMessage()} | UserID: {$lineUserId}\n";
@@ -88,4 +130,3 @@ try {
         "message" => "เกิดข้อผิดพลาด: " . $e->getMessage()
     ]);
 }
-

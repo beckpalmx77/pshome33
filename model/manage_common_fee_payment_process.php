@@ -118,7 +118,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     $where_house_number = "";
 
-    if (($_SESSION['account_type']) === "house_user") {
+    if (($_SESSION['account_type']) === "user") {
         $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "' ";
     }
 
@@ -138,12 +138,12 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     $stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset");
 
-    /*
-        $txt = $searchQuery . " | " . $columnName . " | " . $columnSortOrder;
+
+        $txt = $where_house_number;
         $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
         fwrite($my_file, $txt);
         fclose($my_file);
-    */
+
 
 
 // Bind values

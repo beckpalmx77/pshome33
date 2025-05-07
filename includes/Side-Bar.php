@@ -9,13 +9,23 @@ include('config/lang.php');
 
 <link href="../vendor/fontawesome-free-5.15.4-web/css/fontawesome.css" rel="stylesheet">
 
+<style>
+    .sidebar-brand-icon img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+</style>
 
 <!-- Sidebar -->
 <ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center"
        href="<?php echo $_SESSION['dashboard_page'] ?>">
-        <div class="sidebar-brand-icon">
+        <!--div class="sidebar-brand-icon">
             <img src="img/logo/Logo-01.png" width="110" height="170">
+        </div-->
+        <div class="sidebar-brand-icon">
+            <img src="img/logo/Logo-01.png" class="img-responsive" alt="Logo">
         </div>
         <div class="sidebar-brand-text mx-3">
         </div>
