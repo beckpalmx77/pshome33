@@ -128,6 +128,51 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </div>
 
                                                                 <div class="form-group">
+                                                                    <label for="car_no1"
+                                                                           class="control-label">ทะเบียนรถ 1</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="car_no1"
+                                                                           name="car_no1"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="car_no2"
+                                                                           class="control-label">ทะเบียนรถ 2</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="car_no2"
+                                                                           name="car_no2"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="car_no3"
+                                                                           class="control-label">ทะเบียนรถ 3</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="car_no3"
+                                                                           name="car_no3"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="car_no4"
+                                                                           class="control-label">ทะเบียนรถ 4</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="car_no4"
+                                                                           name="car_no4"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="car_no5"
+                                                                           class="control-label">ทะเบียนรถ 4</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="car_no5"
+                                                                           name="car_no5"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
                                                                     <label for="remark"
                                                                            class="control-label">หมายเหตุ</label>
                                                                     <input type="text" class="form-control"
@@ -342,6 +387,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let phone_number = response[i].phone_number;
                         let alley = response[i].alley;
                         let remark = response[i].remark;
+                        let car_no1 = response[i].car_no1;
+                        let car_no2 = response[i].car_no2;
+                        let car_no3 = response[i].car_no3;
+                        let car_no4 = response[i].car_no4;
+                        let car_no5 = response[i].car_no5;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -350,6 +400,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#phone_number').val(phone_number);
                         $('#alley').val(alley);
                         $('#remark').val(remark);
+                        $('#car_no1').val(car_no1);
+                        $('#car_no2').val(car_no2);
+                        $('#car_no3').val(car_no3);
+                        $('#car_no4').val(car_no4);
+                        $('#car_no5').val(car_no5);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
@@ -382,6 +437,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let phone_number = response[i].phone_number;
                         let alley = response[i].alley;
                         let remark = response[i].remark;
+                        let car_no1 = response[i].car_no1;
+                        let car_no2 = response[i].car_no2;
+                        let car_no3 = response[i].car_no3;
+                        let car_no4 = response[i].car_no4;
+                        let car_no5 = response[i].car_no5;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -390,6 +450,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#phone_number').val(phone_number);
                         $('#alley').val(alley);
                         $('#remark').val(remark);
+                        $('#car_no1').val(car_no1);
+                        $('#car_no2').val(car_no2);
+                        $('#car_no3').val(car_no3);
+                        $('#car_no4').val(car_no4);
+                        $('#car_no5').val(car_no5);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');

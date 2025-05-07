@@ -30,6 +30,11 @@ if ($_POST["action"] === 'GET_DATA') {
             "house_name" => $result['house_name'],
             "phone_number" => $result['phone_number'],
             "remark" => $result['remark'],
+            "car_no1" => $result['car_no1'],
+            "car_no2" => $result['car_no2'],
+            "car_no3" => $result['car_no3'],
+            "car_no4" => $result['car_no4'],
+            "car_no5" => $result['car_no5'],
             "alley" => $result['alley']);
     }
 
@@ -59,59 +64,101 @@ if ($_POST["action"] === 'ADD') {
         $phone_number = $_POST["phone_number"];
         $alley = $_POST["alley"];
         $remark = $_POST["remark"];
-        $sql_find = "SELECT * FROM ims_house WHERE house_number = '" . $house_number . "'";
-        $nRows = $conn->query($sql_find)->fetchColumn();
+
+        $car_no1 = $_POST["car_no1"];
+        $car_no2 = $_POST["car_no2"];
+        $car_no3 = $_POST["car_no3"];
+        $car_no4 = $_POST["car_no4"];
+        $car_no5 = $_POST["car_no5"];
+
+        // ป้องกัน SQL Injection โดยใช้ prepare
+        $sql_find = "SELECT COUNT(*) FROM ims_house WHERE house_number = :house_number";
+        $stmt = $conn->prepare($sql_find);
+        $stmt->bindParam(':house_number', $house_number);
+        $stmt->execute();
+        $nRows = $stmt->fetchColumn();
+
         if ($nRows > 0) {
             echo $dup;
         } else {
-            $sql = "INSERT INTO ims_house(house_number,contact_name,phone_number,alley,remark) 
-                    VALUES (:house_number,:contact_name,:phone_number,:alley,:remark)";
+            $sql = "INSERT INTO ims_house (
+                        house_number, contact_name, phone_number, alley, remark,
+                        car_no1, car_no2, car_no3, car_no4, car_no5
+                    ) VALUES (
+                        :house_number, :contact_name, :phone_number, :alley, :remark,
+                        :car_no1, :car_no2, :car_no3, :car_no4, :car_no5
+                    )";
             $query = $conn->prepare($sql);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
             $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
             $query->bindParam(':phone_number', $phone_number, PDO::PARAM_STR);
             $query->bindParam(':alley', $alley, PDO::PARAM_STR);
             $query->bindParam(':remark', $remark, PDO::PARAM_STR);
+            $query->bindParam(':car_no1', $car_no1, PDO::PARAM_STR);
+            $query->bindParam(':car_no2', $car_no2, PDO::PARAM_STR);
+            $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
+            $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
+            $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
             $query->execute();
-            $lastInsertId = $conn->lastInsertId();
 
-            if ($lastInsertId) {
-                echo $save_success;
-            } else {
-                echo $error;
-            }
+            $lastInsertId = $conn->lastInsertId();
+            echo $lastInsertId ? $save_success : $error;
         }
     }
 }
 
 if ($_POST["action"] === 'UPDATE') {
-
-    if ($_POST["contact_name"] != '') {
-
+    if ($_POST["contact_name"] !== '') {
         $id = $_POST["id"];
         $house_number = $_POST["house_number"];
         $contact_name = $_POST["contact_name"];
         $phone_number = $_POST["phone_number"];
         $alley = $_POST["alley"];
         $remark = $_POST["remark"];
-        $sql_find = "SELECT * FROM ims_house WHERE id = '" . $id . "'";
-        $nRows = $conn->query($sql_find)->fetchColumn();
+
+        $car_no1 = $_POST["car_no1"];
+        $car_no2 = $_POST["car_no2"];
+        $car_no3 = $_POST["car_no3"];
+        $car_no4 = $_POST["car_no4"];
+        $car_no5 = $_POST["car_no5"];
+
+        $sql_find = "SELECT COUNT(*) FROM ims_house WHERE id = :id";
+        $stmt = $conn->prepare($sql_find);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $nRows = $stmt->fetchColumn();
+
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_house SET house_number=:house_number,contact_name=:contact_name,alley=:alley,phone_number=:phone_number,remark=:remark            
-            WHERE id = :id";
+            $sql_update = "UPDATE ims_house SET 
+                house_number = :house_number,
+                contact_name = :contact_name,
+                alley = :alley,
+                phone_number = :phone_number,
+                remark = :remark,
+                car_no1 = :car_no1,
+                car_no2 = :car_no2,
+                car_no3 = :car_no3,
+                car_no4 = :car_no4,
+                car_no5 = :car_no5
+                WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
             $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
             $query->bindParam(':alley', $alley, PDO::PARAM_STR);
             $query->bindParam(':phone_number', $phone_number, PDO::PARAM_STR);
             $query->bindParam(':remark', $remark, PDO::PARAM_STR);
+            $query->bindParam(':car_no1', $car_no1, PDO::PARAM_STR);
+            $query->bindParam(':car_no2', $car_no2, PDO::PARAM_STR);
+            $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
+            $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
+            $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;
         }
-
     }
 }
+
 
 if ($_POST["action"] === 'DELETE') {
 
