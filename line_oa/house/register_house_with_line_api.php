@@ -13,6 +13,7 @@ $lineStatusProfile  = $_POST['statusMessage'] ?? '';
 $f_name             = $_POST['f_name'] ?? '';
 $l_name             = $_POST['l_name'] ?? '';
 $house_number       = $_POST['house_number'] ?? '';
+$alley              = $_POST['alley'] ?? '';
 $password_raw       = $_POST['password'] ?? 'default_password';
 
 // Validate ข้อมูลที่จำเป็น
@@ -110,7 +111,7 @@ try {
             ':house_number' => $house_number,
             ':contact_name' => $f_name . ' ' . $l_name,
             ':phone_number' => $linePhone,
-            ':alley' => '',
+            ':alley' => $alley,
             ':remark' => ''
         ]);
     }

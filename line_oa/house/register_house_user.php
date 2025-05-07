@@ -45,6 +45,11 @@
             </div>
 
             <div class="mb-3 text-start">
+                <label class="form-label">หมายเลขซอย: </label>
+                <input type="text" id="alley" name="alley" class="form-control" required>
+            </div>
+
+            <div class="mb-3 text-start">
                 <label class="form-label">ชื่อ:</label>
                 <input type="text" id="f_name" name="f_name" class="form-control" required>
             </div>
