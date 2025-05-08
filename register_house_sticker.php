@@ -42,13 +42,20 @@ include('includes/Header.php');
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
+                                                    <label for="full_name" class="control-label">ชื่อ</label>
+                                                    <input type="text" name="full_name" id="full_name" class="form-control" >
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <div class="form-group has-success">
                                                     <label for="house_number" class="control-label">บ้านเลขที่</label>
                                                     <input type="text" name="house_number" id="house_number" class="form-control" >
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <input typ="text" id="full_name" >
 
                                         <div class="row mt-2">
                                             <div class="col-md-4">
@@ -68,14 +75,14 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
+                                        <!--div class="row mt-2">
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="car_no3">ทะเบียนรถ 3</label>
                                                     <input type="text" name="car_no3" id="car_no3" class="form-control">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div-->
 
                                         <!--div class="row mt-2">
                                             <div class="col-md-4">
@@ -211,6 +218,8 @@ include('includes/Header.php');
                         if (data.house_number) {
                             document.getElementById('house_number').value = data.house_number || '';
                             document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
+                            document.getElementById('car_no1').value = data.car_no1 || '';
+                            document.getElementById('car_no2').value = data.car_no2 || '';
 
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
