@@ -52,7 +52,7 @@ include('includes/Header.php');
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
                                                     <label for="house_number" class="control-label">บ้านเลขที่</label>
-                                                    <input type="text" name="house_number" id="house_number" class="form-control" >
+                                                    <input type="text" name="house_number" id="house_number" class="form-control" readonly="true">
                                                 </div>
                                             </div>
                                         </div>
@@ -204,7 +204,7 @@ include('includes/Header.php');
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
 
-                alert(userId);
+                //alert(userId);
 
                 fetch('model/get_house_car_number.php', {
                     method: 'POST',
