@@ -164,40 +164,44 @@ include('includes/Header.php');
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-    liff.init({liffId: LIFF_ID})
-        .then(() => {
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            } else {
-                liff.getProfile().then(profile => {
-                    const userId = profile.userId;
+    liff.init({liffId: LIFF_ID}).then(() => {
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        } else {
+            liff.getProfile().then(profile => {
+                const userId = profile.userId;
 
-                    fetch('model/get_house_car_number.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: 'userId=' + encodeURIComponent(userId)
+                fetch('model/get_house_car_number.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'userId=' + encodeURIComponent(userId)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.house_number) {
+                            document.getElementById('house_number').value = data.house_number || '';
+                            document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
+                            document.getElementById('car_no1').value = data.car_no1 || '';
+                            document.getElementById('car_no2').value = data.car_no2 || '';
+                            document.getElementById('car_no3').value = data.car_no3 || '';
+                            document.getElementById('car_no4').value = data.car_no4 || '';
+                            document.getElementById('car_no5').value = data.car_no5 || '';
+                        } else {
+                            alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
+                            liff.closeWindow();
+                        }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.house_number) {
-                                document.getElementById('house_number').value = data.house_number || '';
-                                document.getElementById('detail').value =
-                                    (data.f_name || '') + ' ' + (data.l_name || '');
-                            } else {
-                                alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
-                                liff.closeWindow(); // กลับไปที่ LINE OA
-                            }
-                        })
-                        .catch(error => {
-                            console.error('เกิดข้อผิดพลาด:', error);
-                            alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
-                            liff.closeWindow(); // ปิดหน้าจอเมื่อ error ก็ได้
-                        });
-                });
-            }
-        });
+                    .catch(error => {
+                        console.error('เกิดข้อผิดพลาด:', error);
+                        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+                        liff.closeWindow();
+                    });
+            });
+        }
+    });
+
 </script>
 
 </body>
