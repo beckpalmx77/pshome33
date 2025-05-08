@@ -250,8 +250,8 @@ if (strlen($_SESSION['alogin']) === "") {
                 if (file && !allowedTypes.includes(file.type)) {
                     alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น (JPEG, PNG, GIF)");
                     this.value = "";
-                } else if (file && file.size > 2 * 1024 * 1024) {
-                    alert("ขนาดไฟล์ต้องไม่เกิน 2 MB");
+                } else if (file && file.size > 30 * 1024 * 1024) {
+                    alert("ขนาดไฟล์ต้องไม่เกิน 30 MB");
                     this.value = "";
                 } else {
                     const reader = new FileReader();

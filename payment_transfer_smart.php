@@ -241,7 +241,7 @@ include('includes/Header.php');
                     alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น (JPEG, PNG, GIF)");
                     this.value = "";
                 } else if (file && file.size > 30 * 1024 * 1024) {
-                    alert("ขนาดไฟล์ต้องไม่เกิน 2 MB");
+                    alert("ขนาดไฟล์ต้องไม่เกิน 30 MB");
                     this.value = "";
                 } else {
                     const reader = new FileReader();
