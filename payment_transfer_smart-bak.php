@@ -240,7 +240,7 @@ include('includes/Header.php');
                 if (file && !allowedTypes.includes(file.type)) {
                     alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น (JPEG, PNG, GIF)");
                     this.value = "";
-                } else if (file && file.size > 30 * 1024 * 1024) {
+                } else if (file && file.size > 2 * 1024 * 1024) {
                     alert("ขนาดไฟล์ต้องไม่เกิน 2 MB");
                     this.value = "";
                 } else {
@@ -298,8 +298,6 @@ include('includes/Header.php');
                         //$("#loading").hide();
                         if (response == 1) {
                             alertify.success("โอนเงินและส่ง Slip สำเร็จ");
-                            $("#transfer_form")[0].reset();
-                            $("#preview_image").hide().attr("src", "");
                         } else {
                             alertify.error("ไม่สามารถบันทึกข้อมูลได้");
                         }
