@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 $curr_date = date("d-m-Y");
 include('includes/Header.php');
 
