@@ -308,6 +308,8 @@ if (strlen($_SESSION['alogin']) === "") {
                         //$("#loading").hide();
                         if (response == 1) {
                             alertify.success("โอนเงินและส่ง Slip สำเร็จ");
+                            $("#transfer_form")[0].reset();
+                            $("#preview_image").hide().attr("src", "");
                         } else {
                             alertify.error("ไม่สามารถบันทึกข้อมูลได้");
                         }
