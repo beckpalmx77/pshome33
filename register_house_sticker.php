@@ -195,6 +195,8 @@ include('includes/Header.php');
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
 
+                alert(userId);
+
                 fetch('model/get_house_car_number.php', {
                     method: 'POST',
                     headers: {
