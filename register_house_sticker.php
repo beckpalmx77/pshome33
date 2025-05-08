@@ -35,49 +35,60 @@ include('includes/Header.php');
 
                                     <div class="form-group has-success">
 
-                                        <div class="row">
-                                            <div class="col-md-2">
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
                                                 <div class="form-group has-success">
-                                                    <label for="house_number"
-                                                           class="control-label">บ้านเลขที่</label>
-                                                    <input type="text" name="house_number" class="form-control"
-                                                           required
-                                                           id="house_number"
-                                                           value="<?php echo $house_number ?>">
+                                                    <label for="house_number" class="control-label">บ้านเลขที่</label>
+                                                    <input type="text" name="house_number" class="form-control" required id="house_number">
                                                 </div>
                                             </div>
-                                            <div class="row mt-2">
-                                                <div class="col-md-4">
-                                                    <label>ทะเบียนรถ 1</label>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no1">ทะเบียนรถ 1</label>
                                                     <input type="text" name="car_no1" id="car_no1" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="row mt-2">
-                                                <div class="col-md-4">
-                                                    <label>ทะเบียนรถ 2</label>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no2">ทะเบียนรถ 2</label>
                                                     <input type="text" name="car_no2" id="car_no2" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="row mt-2">
-                                                <div class="col-md-4">
-                                                    <label>ทะเบียนรถ 3</label>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no3">ทะเบียนรถ 3</label>
                                                     <input type="text" name="car_no3" id="car_no3" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="row mt-2">
-                                                <div class="col-md-4">
-                                                    <label>ทะเบียนรถ 4</label>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no4">ทะเบียนรถ 4</label>
                                                     <input type="text" name="car_no4" id="car_no4" class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="row mt-2">
-                                                <div class="col-md-4">
-                                                    <label>ทะเบียนรถ 5</label>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no5">ทะเบียนรถ 5</label>
                                                     <input type="text" name="car_no5" id="car_no5" class="form-control">
                                                 </div>
                                             </div>
-
                                         </div>
+
 
                                     </div>
 
