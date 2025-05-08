@@ -75,7 +75,7 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
+                                        <!--div class="row mt-2">
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="car_no4">ทะเบียนรถ 4</label>
@@ -91,7 +91,7 @@ include('includes/Header.php');
                                                     <input type="text" name="car_no5" id="car_no5" class="form-control">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div-->
 
 
                                     </div>
@@ -210,8 +210,8 @@ include('includes/Header.php');
                             document.getElementById('car_no1').value = data.car_no1 || '';
                             document.getElementById('car_no2').value = data.car_no2 || '';
                             document.getElementById('car_no3').value = data.car_no3 || '';
-                            document.getElementById('car_no4').value = data.car_no4 || '';
-                            document.getElementById('car_no5').value = data.car_no5 || '';
+                            //document.getElementById('car_no4').value = data.car_no4 || '';
+                            //document.getElementById('car_no5').value = data.car_no5 || '';
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                             liff.closeWindow();
