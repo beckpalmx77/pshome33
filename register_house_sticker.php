@@ -48,6 +48,8 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
+                                        <input typ="text" id="full_name" >
+
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -209,11 +211,7 @@ include('includes/Header.php');
                         if (data.house_number) {
                             document.getElementById('house_number').value = data.house_number || '';
                             document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
-                            document.getElementById('car_no1').value = data.car_no1 || '';
-                            document.getElementById('car_no2').value = data.car_no2 || '';
-                            document.getElementById('car_no3').value = data.car_no3 || '';
-                            //document.getElementById('car_no4').value = data.car_no4 || '';
-                            //document.getElementById('car_no5').value = data.car_no5 || '';
+
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                             liff.closeWindow();
