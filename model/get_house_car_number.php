@@ -1,7 +1,7 @@
 <?php
 
 include '../config/connect_db.php';
-
+header('Content-Type: application/json');
 // รับ userId จาก POST
 $userId = $_POST['userId'] ?? '';
 

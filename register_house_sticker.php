@@ -43,7 +43,7 @@ include('includes/Header.php');
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
                                                     <label for="house_number" class="control-label">บ้านเลขที่</label>
-                                                    <input type="text" name="house_number" class="form-control" required id="house_number">
+                                                    <input type="text" name="house_number" id="house_number" class="form-control" >
                                                 </div>
                                             </div>
                                         </div>
