@@ -1,16 +1,4 @@
-<?php
-include('../../config/connect_db.php');
-
-$houseData = [];
-
-if (isset($_GET['lineUserId'])) {
-    $lineUserId = $_GET['lineUserId'];
-    $stmt = $conn->prepare("SELECT house_number, car_no1, car_no2, car_no3, car_no4, car_no5 FROM ims_house WHERE line_user_id = ?");
-    $stmt->execute([$lineUserId]);
-    $houseData = $stmt->fetch(PDO::FETCH_ASSOC);
-}
-?>
-
+<?php include('../../config/connect_db.php'); ?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -27,7 +15,6 @@ if (isset($_GET['lineUserId'])) {
 
     <!-- LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="jsconfig/config_house_sticker.js"></script>
 </head>
 <body class="bg-light">
 
@@ -39,11 +26,11 @@ if (isset($_GET['lineUserId'])) {
         <h4 class="mb-4">ลงทะเบียนระบบ PS33</h4>
 
         <form id="registerForm">
-            <!--div class="mb-3 text-center">
+            <div class="mb-3 text-center">
                 <img id="profilePic" src="" class="rounded-circle" width="100" alt="Profile Pic">
-            </div-->
+            </div>
 
-            <input type="hidden" id="lineUserId" name="lineUserId" value="<?= htmlspecialchars($_GET['lineUserId'] ?? '') ?>">
+            <input type="hidden" id="lineUserId" name="lineUserId">
             <input type="hidden" id="picture" name="picture">
             <input type="hidden" id="statusMessage" name="statusMessage">
 
@@ -53,19 +40,33 @@ if (isset($_GET['lineUserId'])) {
             </div>
 
             <div class="mb-3 text-start">
-                <label class="form-label">เลขที่บ้าน:</label>
-                <input type="text" id="house_number" name="house_number" class="form-control" required value="<?= $houseData['house_number'] ?? '' ?>">
+                <label class="form-label">เลขที่บ้าน: (ใส่เฉพาะเลขที่บ้าน รูปแบบเช่น 99/99)</label>
+                <input type="text" id="house_number" name="house_number" class="form-control" required>
             </div>
 
             <div class="mb-3 text-start">
-                <label class="form-label">ทะเบียนรถ:</label>
-                <ul class="list-group">
-                    <li class="list-group-item">คันที่ 1: <?= $houseData['car_no1'] ?? '-' ?></li>
-                    <li class="list-group-item">คันที่ 2: <?= $houseData['car_no2'] ?? '-' ?></li>
-                    <li class="list-group-item">คันที่ 3: <?= $houseData['car_no3'] ?? '-' ?></li>
-                    <li class="list-group-item">คันที่ 4: <?= $houseData['car_no4'] ?? '-' ?></li>
-                    <li class="list-group-item">คันที่ 5: <?= $houseData['car_no5'] ?? '-' ?></li>
-                </ul>
+                <label class="form-label">หมายเลขซอย: </label>
+                <input type="text" id="alley" name="alley" class="form-control" required>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label">ชื่อ:</label>
+                <input type="text" id="f_name" name="f_name" class="form-control" required>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label">นามสกุล:</label>
+                <input type="text" id="l_name" name="l_name" class="form-control" required>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label">เบอร์โทร: (ใช้เป็น user name เข้าระบบ)</label>
+                <input type="tel" id="phone" name="phone" class="form-control" placeholder="" required>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label">รหัสผ่าน:</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="" required>
             </div>
 
             <button type="submit" class="btn btn-success w-100">ลงทะเบียน</button>
@@ -77,22 +78,16 @@ if (isset($_GET['lineUserId'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="jsconfig/config_house_register.js"></script>
 
 <script>
-
     $(document).ready(function () {
         liff.init({ liffId: LIFF_ID }).then(() => {
             if (liff.isLoggedIn()) {
                 liff.getProfile().then(profile => {
-                    const userId = profile.userId;
-
-                    if (!window.location.href.includes("lineUserId=")) {
-                        window.location.href = window.location.pathname + "?lineUserId=" + userId;
-                    }
-
-                    $('#lineUserId').val(userId);
+                    $('#lineUserId').val(profile.userId);
                     $('#name').val(profile.displayName);
-                    //$('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
+                    $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
                     $('#picture').val(profile.pictureUrl || "");
                     $('#statusMessage').val(profile.statusMessage || "ไม่มีข้อความสถานะ");
                 });
@@ -115,11 +110,11 @@ if (isset($_GET['lineUserId'])) {
                         if (liff.isInClient()) {
                             liff.sendMessages([{
                                 type: "text",
-                                text: `✅ ลงทะเบียนสำเร็จ!\n👤 ${$('#name').val()}\n🏠 ${$('#house_number').val()}`
+                                text: `✅ ลงทะเบียนสำเร็จ!\n👤 ${formData.get("f_name")}\n🏢 ${formData.get("l_name")}\n📞 ${formData.get("phone")}`
                             }]).then(() => {
                                 alert("✅ ลงทะเบียนสำเร็จ!");
                                 liff.closeWindow();
-                            }).catch(() => {
+                            }).catch(err => {
                                 alert("ลงทะเบียนสำเร็จ แต่ส่งข้อความไม่สำเร็จ");
                                 liff.closeWindow();
                             });
@@ -138,5 +133,19 @@ if (isset($_GET['lineUserId'])) {
         });
     });
 </script>
+
+<script>
+    document.getElementById('phone').addEventListener('input', function () {
+        const phonePattern = /^0[689]\d{8}$/;
+        const phoneInput = this;
+        if (!phonePattern.test(phoneInput.value)) {
+            phoneInput.setCustomValidity('กรุณากรอกเบอร์โทรให้ถูกต้อง (เช่น 0812345678)');
+        } else {
+            phoneInput.setCustomValidity('');
+        }
+    });
+</script>
+
 </body>
 </html>
+
