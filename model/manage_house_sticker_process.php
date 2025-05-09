@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $house_number = trim($_POST['house_number'] ?? '');
 
     $sql = "UPDATE ims_house 
-            SET car_no1 = :car_no1, car_no2 = :car_no2 ,house_status = :house_status
+            SET car_no1 = :car_no1, car_no2 = :car_no2 , house_status = :house_status
             WHERE house_number = :house_number";
 
     $stmt = $conn->prepare($sql);

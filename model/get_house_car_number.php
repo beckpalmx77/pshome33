@@ -20,8 +20,7 @@ if (!empty($userId)) {
             'house_number' => $row['house_number'],
             'f_name'       => $row['f_name'],
             'l_name'       => $row['l_name'],
-            'status'       => $row['status'],
-            'house_status'       => $row['house_status'],
+            'house_status' => $row['house_status'],
             'car_no1'      => $row['car_no1'],
             'car_no2'      => $row['car_no2']
         ]);
@@ -30,7 +29,6 @@ if (!empty($userId)) {
             'house_number' => '',
             'f_name'       => '',
             'l_name'       => '',
-            'status'       => '',
             'house_status' => '',
             'car_no1'       => '',
             'car_no2'       => ''
@@ -41,7 +39,6 @@ if (!empty($userId)) {
         'house_number' => '',
         'f_name'       => '',
         'l_name'       => '',
-        'status'       => '',
         'house_status' => '',
         'car_no1'       => '',
         'car_no2'       => ''
