@@ -191,6 +191,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "period_year" => $row['period_year'],
                 "amount" => $row['amount'],
                 "payment_status" => '<span style="color: ' . $color . ';">' . $message . '</span>',
+                "slip" => "<button type='button' name='slip' id='" . $row['id'] . "' class='btn btn-info btn-xs slip' data-toggle='tooltip' title='Sip'>Slip</button>",
                 "print" => "<button type='button' name='print' id='" . $row['id'] . "' class='btn btn-outline-success btn-xs print' data-toggle='tooltip' title='Print' $print_disabled>Print</button>",
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",

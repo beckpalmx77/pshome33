@@ -550,7 +550,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script>
         $("#TableRecordList").on('click', '.print', function () {
             let id = $(this).attr("id");
-            let url = "print_pdf.php?id=" + encodeURIComponent(id);
+            let url = "display_slip.php?id=" + encodeURIComponent(id);
             window.open(url, "_blank"); // เปิดหน้าใหม่
         });
     </script>
