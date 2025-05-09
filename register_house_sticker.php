@@ -59,6 +59,19 @@ include('includes/Header.php');
 
                                         <div class="row mt-2">
                                             <div class="col-md-4">
+                                                <div class="form-group has-success">
+                                                    <label for="house_status" class="control-label">สถานะบ้านพัก</label>
+                                                    <select name="house_status" id="house_status" class="form-control">
+                                                        <option value="-">-</option>
+                                                        <option value="O">บ้านตนเอง - ครอบครัว</option>
+                                                        <option value="R">บ้านเช่า</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="car_no1">ทะเบียนรถ 1</label>
                                                     <input type="text" name="car_no1" id="car_no1" class="form-control">
@@ -218,6 +231,7 @@ include('includes/Header.php');
                         if (data.house_number) {
                             document.getElementById('house_number').value = data.house_number || '';
                             document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
+                            document.getElementById('house_status').value = data.house_status || '';
                             document.getElementById('car_no1').value = data.car_no1 || '';
                             document.getElementById('car_no2').value = data.car_no2 || '';
 
