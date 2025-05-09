@@ -6,11 +6,11 @@ header('Content-Type: application/json');
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-
+/*
     $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
     fwrite($myfile, $id);
     fclose($myfile);
-
+*/
     $stmt = $conn->prepare("SELECT picture_payment FROM ims_house_payment WHERE id = :id");
     $stmt->bindParam(':id', $id);
     $stmt->execute();
