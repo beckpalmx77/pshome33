@@ -65,6 +65,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
                                                     <th>ยอดชำระ</th>
+                                                    <th>Slip</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
@@ -80,6 +81,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
                                                     <th>ยอดชำระ</th>
+                                                    <th>Slip</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
@@ -254,6 +256,29 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             </div>
                                         </div>
 
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="slipModal" tabindex="-1" role="dialog" aria-labelledby="slipModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content text-center">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="slipModalLabel">หลักฐานการโอนเงิน</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span> <!-- ปุ่มปิดมุมขวาบน -->
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img id="slipImage" src="" alt="Slip Image" class="img-fluid rounded shadow-sm">
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a>
+                                                        <button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button> <!-- ปุ่มปิดล่าง -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                 </div>
                             </div>
                         </div>
@@ -387,6 +412,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'month_name_to'},
                     {data: 'period_year'},
                     {data: 'amount'},
+                    {data: 'slip'},
                     {data: 'payment_status'},
                     {data: 'update'},
                     {data: 'print'},
@@ -563,6 +589,41 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 language: "th",
                 autoclose: true
             });
+        });
+    </script>
+
+    <script>
+        $("#TableRecordList").on('click', '.slip', function () {
+            let id = $(this).attr("id");
+
+            $.ajax({
+                url: "display_slip.php",
+                type: "GET",
+                data: { id: id },
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === 1) {
+                        $("#slipImage").attr("src", response.image_url);
+                        $("#downloadSlip").attr("href", response.image_url);
+                        $("#slipModal").modal('show');
+                    } else {
+                        alert("ไม่พบรูปภาพ");
+                    }
+                },
+                error: function () {
+                    alert("เกิดข้อผิดพลาดในการโหลดรูปภาพ");
+                }
+            });
+        });
+
+        $("#printSlip").on('click', function () {
+            let imageSrc = $("#slipImage").attr("src");
+            let win = window.open('', '_blank');
+            win.document.write('<html><head><title>พิมพ์หลักฐาน</title></head><body>');
+            win.document.write('<img src="' + imageSrc + '" style="width:100%; max-width:600px;">');
+            win.document.write('</body></html>');
+            win.document.close();
+            win.print();
         });
     </script>
 
