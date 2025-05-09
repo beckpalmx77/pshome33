@@ -28,6 +28,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "house_number" => $result['house_number'],
             "contact_name" => $result['contact_name'],
             "house_name" => $result['house_name'],
+            "house_status" => $result['house_status'],
             "phone_number" => $result['phone_number'],
             "remark" => $result['remark'],
             "car_no1" => $result['car_no1'],
@@ -64,7 +65,7 @@ if ($_POST["action"] === 'ADD') {
         $phone_number = $_POST["phone_number"];
         $alley = $_POST["alley"];
         $remark = $_POST["remark"];
-
+        $house_status = $_POST["house_status"];
         $car_no1 = $_POST["car_no1"];
         $car_no2 = $_POST["car_no2"];
         $car_no3 = $_POST["car_no3"];
@@ -83,10 +84,10 @@ if ($_POST["action"] === 'ADD') {
         } else {
             $sql = "INSERT INTO ims_house (
                         house_number, contact_name, phone_number, alley, remark,
-                        car_no1, car_no2, car_no3, car_no4, car_no5
+                        car_no1, car_no2, car_no3, car_no4, car_no5, house_status
                     ) VALUES (
                         :house_number, :contact_name, :phone_number, :alley, :remark,
-                        :car_no1, :car_no2, :car_no3, :car_no4, :car_no5
+                        :car_no1, :car_no2, :car_no3, :car_no4, :car_no5, :house_status
                     )";
             $query = $conn->prepare($sql);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
@@ -99,6 +100,7 @@ if ($_POST["action"] === 'ADD') {
             $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
             $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
             $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
+            $query->bindParam(':house_status', $house_status, PDO::PARAM_STR);
             $query->execute();
 
             $lastInsertId = $conn->lastInsertId();
@@ -115,7 +117,7 @@ if ($_POST["action"] === 'UPDATE') {
         $phone_number = $_POST["phone_number"];
         $alley = $_POST["alley"];
         $remark = $_POST["remark"];
-
+        $house_status = $_POST["house_status"];
         $car_no1 = $_POST["car_no1"];
         $car_no2 = $_POST["car_no2"];
         $car_no3 = $_POST["car_no3"];
@@ -139,7 +141,8 @@ if ($_POST["action"] === 'UPDATE') {
                 car_no2 = :car_no2,
                 car_no3 = :car_no3,
                 car_no4 = :car_no4,
-                car_no5 = :car_no5
+                car_no5 = :car_no5,
+                house_status = :house_status
                 WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
@@ -152,6 +155,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
             $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
             $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
+            $query->bindParam(':house_status', $house_status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;
@@ -267,6 +271,7 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "alley" => $row['alley'],
                 "contact_name" => $row['contact_name'],
                 "phone_number" => $row['phone_number'],
+                "house_status" => $row['house_status'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "remark" => $row['remark']

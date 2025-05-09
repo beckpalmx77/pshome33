@@ -127,6 +127,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                            placeholder="">
                                                                 </div>
 
+                                                                <div class="row mt-2">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group has-success">
+                                                                            <label for="house_status" class="control-label">สถานะที่อยู่อาศัย</label>
+                                                                            <select name="house_status" id="house_status" class="form-control">
+                                                                                <option value="-">-</option>
+                                                                                <option value="O">บ้านตนเอง - ครอบครัว</option>
+                                                                                <option value="R">บ้านเช่า</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                                 <div class="form-group">
                                                                     <label for="car_no1"
                                                                            class="control-label">ทะเบียนรถ 1</label>
@@ -358,6 +371,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#house_number').val("");
                 $('#contact_name').val("");
                 $('#phone_number').val("");
+                $('#house_status').val("");
                 $('#alley').val("");
                 $('#remark').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
