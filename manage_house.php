@@ -399,6 +399,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let house_number = response[i].house_number;
                         let contact_name = response[i].contact_name;
                         let phone_number = response[i].phone_number;
+                        let house_status = response[i].house_status;
                         let alley = response[i].alley;
                         let remark = response[i].remark;
                         let car_no1 = response[i].car_no1;
@@ -412,6 +413,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#house_number').val(house_number);
                         $('#contact_name').val(contact_name);
                         $('#phone_number').val(phone_number);
+                        $('#house_status').val(house_status);
                         $('#alley').val(alley);
                         $('#remark').val(remark);
                         $('#car_no1').val(car_no1);
@@ -449,6 +451,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let house_number = response[i].house_number;
                         let contact_name = response[i].contact_name;
                         let phone_number = response[i].phone_number;
+                        let house_status = response[i].house_status;
                         let alley = response[i].alley;
                         let remark = response[i].remark;
                         let car_no1 = response[i].car_no1;
@@ -462,6 +465,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#house_number').val(house_number);
                         $('#contact_name').val(contact_name);
                         $('#phone_number').val(phone_number);
+                        $('#house_status').val(house_status);
                         $('#alley').val(alley);
                         $('#remark').val(remark);
                         $('#car_no1').val(car_no1);
