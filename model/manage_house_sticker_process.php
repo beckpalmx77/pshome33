@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':car_no1', $car_no1);
     $stmt->bindParam(':car_no2', $car_no2);
-    $stmt->bindParam(':house_status', $house_number);
+    $stmt->bindParam(':house_status', $house_status);
     $stmt->bindParam(':house_number', $house_number);
 
     if ($stmt->execute()) {
