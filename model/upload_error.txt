@@ -1,0 +1,9 @@
+ไม่สามารถอัปโหลดรูปได้: Array
+(
+    [name] => 
+    [full_path] => 
+    [type] => 
+    [tmp_name] => 
+    [error] => 4
+    [size] => 0
+)

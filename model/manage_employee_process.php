@@ -105,10 +105,12 @@ if ($_POST["action"] === 'ADD') {
             $nRows = $stmt_check->fetchColumn();
 
             if ($nRows > 0) {
+                //$log_message = "[" . date("Y-m-d H:i:s") . "] Duplicate emp_id detected: $emp_id ($f_name $l_name)\n";
+                //file_put_contents("emp_duplicate.log", $log_message, FILE_APPEND);
                 echo $dup;
             } else {
-                $sql = "INSERT INTO memployee (emp_id, f_name, l_name, week_holiday, work_time_id, position_id, remark, sex, prefix, nick_name, start_work_date, status, phone, image)
-                VALUES (:emp_id, :f_name, :l_name, :week_holiday, :work_time_id, :position_id, :remark, :sex, :prefix, :nick_name, :start_work_date, :status, :phone, :image)";
+                $sql = "INSERT INTO memployee (emp_id, f_name, l_name, week_holiday, work_time_id, position_id, remark, sex, prefix, nick_name, start_work_date, status, phone, year, image)
+                VALUES (:emp_id, :f_name, :l_name, :week_holiday, :work_time_id, :position_id, :remark, :sex, :prefix, :nick_name, :start_work_date, :status, :phone, :year, :image)";
                 $query = $conn->prepare($sql);
                 $query->bindParam(':emp_id', $emp_id);
                 $query->bindParam(':f_name', $f_name);
@@ -123,6 +125,7 @@ if ($_POST["action"] === 'ADD') {
                 $query->bindParam(':start_work_date', $start_work_date);
                 $query->bindParam(':status', $status);
                 $query->bindParam(':phone', $phone);
+                $query->bindParam(':year', $year);
                 $query->bindParam(':image', $image_filename);
 
                 if (!$query->execute()) {
