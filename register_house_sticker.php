@@ -60,7 +60,7 @@ include('includes/Header.php');
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
-                                                    <label for="house_status" class="control-label">สถานะบ้านพัก</label>
+                                                    <label for="house_status" class="control-label">สถานะที่อยู่อาศัย</label>
                                                     <select name="house_status" id="house_status" class="form-control">
                                                         <option value="-">-</option>
                                                         <option value="O">บ้านตนเอง - ครอบครัว</option>
