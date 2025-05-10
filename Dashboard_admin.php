@@ -57,105 +57,108 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 include('includes/Top-Bar.php');
                 ?>
 
-                <!-- Card หลัก -->
+                <!-- Card หลักแบบ Collapse -->
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3 bg-primary text-white">
+                    <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
                         <h6 class="m-0 font-weight-bold">สรุปข้อมูลภาพรวม</h6>
+                        <a href="#collapseCard" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCard" id="toggleCollapse">
+                            <i class="fas fa-chevron-down text-white" id="collapseIcon"></i>
+                        </a>
                     </div>
-                    <div class="card-body">
 
-                        <!-- แถวที่ 1: รวมบ้านทั้งหมด + สมาชิก -->
-                        <div class="row">
-                            <!-- บ้านรวม -->
-                            <div class="col-xl-6 col-md-6 mb-4">
-                                <div class="card border-left-dark shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                                    จำนวนบ้านที่ลงทะเบียนทั้งหมด (67 และ 68)
+                    <div class="collapse show" id="collapseCard">
+                        <div class="card-body">
+
+                            <!-- Row 1: บ้านรวม + สมาชิก -->
+                            <div class="row">
+                                <div class="col-xl-6 col-md-6 mb-4">
+                                    <div class="card border-left-dark shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                        จำนวนบ้านที่ลงทะเบียนทั้งหมด (67 และ 68)
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <?php echo number_format($total_house); ?> หลัง
+                                                    </div>
                                                 </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php echo number_format($total_house); ?> หลัง
+                                                <div class="col-auto">
+                                                    <i class="fas fa-city fa-2x text-gray-300"></i>
                                                 </div>
                                             </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-city fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-md-6 mb-4">
+                                    <div class="card border-left-primary shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        จำนวนสมาชิกทั้งหมด
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <?php echo number_format($total_user); ?> User
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- สมาชิก -->
-                            <div class="col-xl-6 col-md-6 mb-4">
-                                <div class="card border-left-primary shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    จำนวนสมาชิกทั้งหมด
+                            <!-- Row 2: 67xx + 68xx -->
+                            <div class="row">
+                                <div class="col-xl-6 col-md-6 mb-4">
+                                    <div class="card border-left-info shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                        จำนวนบ้านขึ้นต้นด้วย 67
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <?php echo number_format($count_67); ?> หลัง
+                                                    </div>
                                                 </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php echo number_format($total_user); ?> User
+                                                <div class="col-auto">
+                                                    <i class="fas fa-home fa-2x text-gray-300"></i>
                                                 </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-users fa-2x text-gray-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- แถวที่ 2: 67xx และ 68xx -->
-                        <div class="row">
-                            <!-- 67xx -->
-                            <div class="col-xl-6 col-md-6 mb-4">
-                                <div class="card border-left-info shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                    จำนวนบ้านขึ้นต้นด้วย 67
+                                <div class="col-xl-6 col-md-6 mb-4">
+                                    <div class="card border-left-success shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                        จำนวนบ้านขึ้นต้นด้วย 68
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <?php echo number_format($count_68); ?> หลัง
+                                                    </div>
                                                 </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php echo number_format($count_67); ?> หลัง
+                                                <div class="col-auto">
+                                                    <i class="fas fa-home fa-2x text-gray-300"></i>
                                                 </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-home fa-2x text-gray-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 68xx -->
-                            <div class="col-xl-6 col-md-6 mb-4">
-                                <div class="card border-left-success shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                    จำนวนบ้านขึ้นต้นด้วย 68
-                                                </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php echo number_format($count_68); ?> หลัง
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-home fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div> <!-- end card-body -->
+                        </div> <!-- end card-body -->
+                    </div> <!-- end collapse -->
                 </div> <!-- end card -->
+
 
 
 
@@ -189,6 +192,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const collapseCard = document.getElementById("collapseCard");
+            const collapseIcon = document.getElementById("collapseIcon");
+
+            // ใช้ Bootstrap collapse events
+            collapseCard.addEventListener("show.bs.collapse", function () {
+                collapseIcon.classList.remove("fa-chevron-down");
+                collapseIcon.classList.add("fa-chevron-up");
+            });
+
+            collapseCard.addEventListener("hide.bs.collapse", function () {
+                collapseIcon.classList.remove("fa-chevron-up");
+                collapseIcon.classList.add("fa-chevron-down");
+            });
+        });
+    </script>
 
 
     </body>

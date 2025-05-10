@@ -42,7 +42,7 @@ $curr_date = date("d-m-Y");
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>วันที่ชำระ</th>
+                                                    <th>วันที่เอกสาร</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
@@ -55,7 +55,7 @@ $curr_date = date("d-m-Y");
                                                 </thead>
                                                 <tfoot>
                                                 <tr>
-                                                    <th>วันที่ชำระ</th>
+                                                    <th>วันที่เอกสาร</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
@@ -98,7 +98,7 @@ $curr_date = date("d-m-Y");
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <label for="payment_date"
-                                                                               class="control-label">วันที่ชำระ</label>
+                                                                               class="control-label">วันที่เอกสาร</label>
                                                                         <input type="text" class="form-control"
                                                                                id="payment_date"
                                                                                name="payment_date"

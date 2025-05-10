@@ -149,11 +149,10 @@ if ($print_status == 'N') {
                                   WHERE id = :id AND print_status = 'Y'");
 }
 
+// bind และ execute ครั้งเดียวเท่านั้น
 $stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt_items->execute();
 
-$stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
-$stmt_items->execute();
 
 
 // สร้างชื่อไฟล์ตาม doc_id และ timestamp

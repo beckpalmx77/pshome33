@@ -58,7 +58,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <thead>
                                                 <tr>
                                                     <th>เลขที่เอกสาร</th>
-                                                    <th>วันที่ชำระ</th>
+                                                    <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ผู้ชำระ</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
@@ -74,7 +74,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tfoot>
                                                 <tr>
                                                     <th>เลขที่เอกสาร</th>
-                                                    <th>วันที่ชำระ</th>
+                                                    <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ผู้ชำระ</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
@@ -119,7 +119,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <label for="payment_date"
-                                                                               class="control-label">วันที่ชำระ</label>
+                                                                               class="control-label">วันที่เอกสาร</label>
                                                                         <input type="text" class="form-control"
                                                                                id="payment_date"
                                                                                name="payment_date"

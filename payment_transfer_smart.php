@@ -38,7 +38,7 @@ include('includes/Header.php');
                                             <div class="col-md-2">
                                                 <div class="form-group has-success">
                                                     <label for="payment_date"
-                                                           class="control-label">วันที่ชำระ</label>
+                                                           class="control-label">วันที่เอกสาร</label>
                                                     <i class="fa fa-calendar"
                                                        aria-hidden="true"></i>
                                                     <input type="text" class="form-control"
