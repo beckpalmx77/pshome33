@@ -1,9 +1,10 @@
 <?php
-
+session_start();
 require_once('vendor/tecnickcom/tcpdf/tcpdf.php');
 include 'config/connect_db.php';
 include('util/number_to_thai_text.php');
 
+// ตรวจสอบค่า ID
 $id = isset($_GET['id']) ? $_GET['id'] : '';
 if (!$id) {
     die("ไม่พบข้อมูล");
@@ -34,15 +35,27 @@ foreach ($items as $item) {
 }
 $thai_text_total = converNumberToThaiText($total);
 
-// TCPDF setup
-$pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+// ✅ กำหนดคลาส TCPDF ใหม่เพื่อสร้าง footer
+class CustomPDF extends TCPDF
+{
+    public $printed_by = '';
+
+    public function Footer()
+    {
+        // ไม่ต้องทำการใส่ footer ในที่นี้เนื่องจากกำหนดไว้ใน HTML แล้ว
+    }
+}
+
+// สร้าง PDF
+$pdf = new CustomPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+$pdf->printed_by = isset($_SESSION['user_name']) ? 'ผู้พิมพ์: ' . $_SESSION['user_name'] : 'ผู้พิมพ์: ฝ่ายการเงิน';
 $pdf->setPrintHeader(false);
-$pdf->setPrintFooter(false);
-$pdf->SetMargins(10, 10, 15); // เพิ่มขอบขวาให้มากขึ้น
+$pdf->setPrintFooter(true);
+$pdf->SetMargins(10, 5, 15);
 $pdf->SetFont('THSarabunNew', '', 14);
 $pdf->AddPage();
 
-// ฟังก์ชันสร้างเนื้อหา HTML
+// ฟังก์ชันสร้าง HTML สำหรับใบเสร็จ
 function generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, $title_note = '')
 {
     $html = '
@@ -100,15 +113,21 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     </tr>
     <tr>
         <td></td>
-        <!--td align="right">(<b>                     </b>)<br>ตำแหน่ง: ผู้จัดการ / ฝ่ายการเงิน</td-->
         <td align="right">ตำแหน่ง: ผู้จัดการ / ฝ่ายการเงิน</td>
     </tr>
-</table><br>';
-
+    <tr>
+        <td align="left" style="font-size:12px;">
+            วันที่พิมพ์: ' . date('d/m/Y H:i') . '
+        </td>
+        <td align="right" style="font-size:12px;">
+            ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'ฝ่ายการเงิน') . '
+        </td>
+    </tr>
+</table>';
     return $html;
 }
 
-// HTML ทั้งสองส่วนในหน้าเดียว
+// รวม HTML สองชุด (ต้นฉบับ + สำเนา)
 $html = generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, "(ต้นฉบับ)");
 $html .= '<hr style="border-top: dashed 1px; margin: 15px 0;">';
 $html .= generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, "(สำเนา)");
@@ -116,5 +135,27 @@ $html .= generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 // เขียนลง PDF
 $pdf->writeHTML($html, true, false, false, false, '');
 
-// แสดงผล
-$pdf->Output('receipt-double.pdf', 'I');
+$print_status = $receipt['print_status'];
+
+if ($print_status == 'N') {
+    // ถ้า status เป็น N ให้ทำการอัปเดต print_first_date และ print_status
+    $stmt_items = $conn->prepare("UPDATE ims_house_payment 
+                                  SET print_status = 'Y', print_first_date = NOW() 
+                                  WHERE id = :id AND print_status = 'N'");
+} else if ($print_status == 'Y') {
+    // ถ้า status เป็น Y ให้ทำการอัปเดต print_last_date
+    $stmt_items = $conn->prepare("UPDATE ims_house_payment 
+                                  SET print_last_date = NOW() 
+                                  WHERE id = :id AND print_status = 'Y'");
+}
+
+$stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt_items->execute();
+
+$stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt_items->execute();
+
+
+// สร้างชื่อไฟล์ตาม doc_id และ timestamp
+$filename = 'receipt_' . $receipt['doc_id'] . '_' . date('Ymd_His') . '.pdf';
+$pdf->Output($filename, 'I'); // แสดง PDF บนเบราว์เซอร์

@@ -27,15 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $doc_id = "P-" . $house_number . "-" . $period_year . "-" . sprintf('%03s', $runno);
 
 
-        $txt = $doc_id . " | " . $detail . " | "  . $house_number . " | Period Number = " . $payment_type . " | " .  $period_month_start . " | " . $period_month_to . " | "
-            . $period_year . " | " . $amount . " | " . $remark . " | "
-            . $runno ;
+    $txt = $doc_id . " | " . $detail . " | " . $house_number . " | Period Number = " . $payment_type . " | " . $period_month_start . " | " . $period_month_to . " | "
+        . $period_year . " | " . $amount . " | " . $remark . " | "
+        . $runno;
 
-/*
-        $my_file = fopen("doc_p.txt", "w") or die("Unable to open file!");
-        fwrite($my_file, $txt);
-        fclose($my_file);
-*/
+    /*
+            $my_file = fopen("doc_p.txt", "w") or die("Unable to open file!");
+            fwrite($my_file, $txt);
+            fclose($my_file);
+    */
 
     // หากมีการอัปโหลดไฟล์
     if ($picture_payment['error'] == 0) {

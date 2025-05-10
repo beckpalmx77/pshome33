@@ -136,7 +136,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
 ## Fetch records
 
-    $stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset");
+    $stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery . " ORDER BY id DESC LIMIT :limit,:offset");
 
 /*
         $txt = $where_house_number;
