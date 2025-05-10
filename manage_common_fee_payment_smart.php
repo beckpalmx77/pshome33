@@ -365,7 +365,7 @@ $curr_date = date("d-m-Y");
                 // สร้างฟอร์มชั่วคราวสำหรับ POST
                 const tempForm = $('<form>', {
                     method: 'POST',
-                    action: 'print_pdf.php',
+                    action: 'print_pdf_smart.php',
                     target: '_blank' // เปิดในแท็บใหม่
                 });
 
@@ -391,7 +391,7 @@ $curr_date = date("d-m-Y");
     <script>
         $("#TableRecordList").on('click', '.print', function () {
             let id = $(this).attr("id");
-            let url = "print_pdf.php?id=" + encodeURIComponent(id);
+            let url = "print_pdf_smart.php?id=" + encodeURIComponent(id);
             window.open(url, "_blank"); // เปิดหน้าใหม่
         });
     </script>
