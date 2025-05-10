@@ -97,7 +97,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     จำนวนสมาชิกทั้งหมด
                                                 </div>
                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?php echo number_format($total_user); ?> คน
+                                                    <?php echo number_format($total_user); ?> User
                                                 </div>
                                             </div>
                                             <div class="col-auto">
