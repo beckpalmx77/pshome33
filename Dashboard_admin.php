@@ -59,7 +59,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                 <!-- Card หลัก -->
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3 bg-dark text-white">
+                    <div class="card-header py-3 bg-info text-white">
                         <h6 class="m-0 font-weight-bold">สรุปข้อมูลภาพรวม</h6>
                     </div>
                     <div class="card-body">
