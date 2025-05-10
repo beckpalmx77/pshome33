@@ -3,6 +3,42 @@ include('includes/Header.php');
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
     header("Location: index.php");
 } else {
+
+    include('config/connect_db.php');
+
+    // SQL ดึงจำนวนบ้านไม่ซ้ำ แยกตาม prefix
+    $sql = "SELECT 
+            CASE 
+                WHEN house_number LIKE '67%' THEN '67xx'
+                WHEN house_number LIKE '68%' THEN '68xx'
+            END AS prefix,
+            COUNT(DISTINCT house_number) AS total
+        FROM ims_house
+        WHERE house_number LIKE '67%' OR house_number LIKE '68%'
+        GROUP BY prefix";
+
+    $query = $conn->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_OBJ);
+
+    // เตรียมตัวแปร
+    $count_67 = 0;
+    $count_68 = 0;
+
+    foreach ($results as $row) {
+        if ($row->prefix === '67xx') {
+            $count_67 = $row->total;
+        } elseif ($row->prefix === '68xx') {
+            $count_68 = $row->total;
+        }
+    }
+
+    $sql_member = "SELECT COUNT(*) AS total_user FROM ims_user WHERE account_type = 'user'";
+    $query_member = $conn->prepare($sql_member);
+    $query_member->execute();
+    $result_member = $query_member->fetch(PDO::FETCH_OBJ);
+    $total_user = $result_member->total_user ?? 0;
+
     ?>
 
     <!DOCTYPE html>
@@ -18,48 +54,76 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 <?php
                 include('includes/Top-Bar.php');
                 ?>
-                <!--div class="col-xl-12 col-md-12 mb-12"><h2>เอกสารการลาประจำวัน</h2></div>
-                <div class="col-xl-12 col-md-12 mb-12">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <table id='TableRecordList' class='display dataTable'>
-                                    <thead>
-                                    <tr>
-                                        <th>ปี</th>
-                                        <th>วันที่เอกสาร</th>
-                                        <th>ชื่อ-นามสกุล</th>
-                                        <th>หน่วยงาน</th>
-                                        <th>ประเภทการลา</th>
-                                        <th>วันที่ลาเริ่มต้น</th>
-                                        <th>วันที่ลาสิ้นสุด</th>
-                                        <th>จำนวนวัน</th>
-                                        <th>สถานะ</th>
-                                        <th>รูปภาพ</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>ปี</th>
-                                        <th>วันที่เอกสาร</th>
-                                        <th>ชื่อ-นามสกุล</th>
-                                        <th>หน่วยงาน</th>
-                                        <th>ประเภทการลา</th>
-                                        <th>วันที่ลาเริ่มต้น</th>
-                                        <th>วันที่ลาสิ้นสุด</th>
-                                        <th>จำนวนวัน</th>
-                                        <th>สถานะ</th>
-                                        <th>รูปภาพ</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
 
+                <div class="row">
+
+                    <!-- Card จำนวนสมาชิก -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            จำนวนสมาชิก (User Account) ทั้งหมด
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php echo number_format($total_user); ?> คน
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div-->
+
+                    <!-- Card 67xx -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            จำนวนบ้านที่ลงทะเบียนขึ้นต้นด้วย 67
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php echo number_format($count_67); ?> หลัง
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-home fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 68xx -->
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            จำนวนบ้านที่ลงทะเบียนขึ้นต้นด้วย 68
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <?php echo number_format($count_68); ?> หลัง
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-home fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
             </div>
         </div>
     </div>
@@ -91,53 +155,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-    <script>
-        $(document).ready(function () {
-            let formData = {action: "GET_LEAVE_DOCUMENT", sub_action: "GET_MASTER", page_manage: "USER",};
-            let dataRecords = $('#TableRecordList').DataTable({
-                'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
-                'language': {
-                    search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
-                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
-                    infoEmpty: 'ไม่มีข้อมูล',
-                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
-                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
-                    paginate: {
-                        previous: 'ก่อนหน้า',
-                        last: 'สุดท้าย',
-                        next: 'ต่อไป'
-                    }
-                },
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'autoWidth': true,
-                'searching': true,
-                <?php  if ($_SESSION['deviceType'] !== 'computer') {
-                    echo "'scrollX': true,";
-                }?>
-                'ajax': {
-                    'url': 'model/manage_leave_document_process.php',
-                    'data': formData
-                },
-                'columns': [
-                    {data: 'doc_year'},
-                    {data: 'doc_date'},
-                    {data: 'full_name'},
-                    {data: 'department_id'},
-                    {data: 'leave_type_detail'},
-                    {data: 'dt_leave_start'},
-                    {data: 'dt_leave_to'},
-                    {data: 'leave_day'},
-                    {data: 'status'},
-                    {data: 'image'},
-                    {data: 'update'},
-                ]
-            });
-
-        });
-
-    </script>
 
     </body>
 
