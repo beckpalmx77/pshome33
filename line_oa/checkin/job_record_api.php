@@ -4,14 +4,16 @@ header("Access-Control-Allow-Origin: *");
 
 $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
 
-if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($_FILES['photo'])) {
+if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['remark']) && isset($_FILES['photo'])) {
     $userId = $_POST['user_id'];
-    $displayName = $_POST['display_name'];
-    $place_name = $_POST['place_name'];
-    $check_type = $_POST['check_type'];
+    $displayName = $_POST['display_name'] ?? '';
+    $place_name = $_POST['place_name'] ?? '';
+    $check_type = $_POST['check_type'] ?? 'IN';
+    $remark = $_POST['remark'];
     $lat = $_POST['latitude'];
     $lon = $_POST['longitude'];
     $timestamp = date('Y-m-d H:i:s');
+    $token_checkin = uniqid("sac_", true);
 
     $uploadDir = __DIR__ . "/uploads/";
     if (!file_exists($uploadDir)) {
@@ -24,10 +26,8 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         $newFileName = uniqid("checkin_") . "_" . $originalName . ".jpg";
         $newFilePath = $uploadDir . $newFileName;
 
-        $token_checkin = uniqid("sac_", true);
-
         $imageInfo = getimagesize($tmpName);
-        $mime = $imageInfo['mime'];
+        $mime = $imageInfo['mime'] ?? '';
 
         switch ($mime) {
             case 'image/jpeg':
@@ -55,16 +55,24 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
     if (!empty($photoNames)) {
         $photoPaths = implode(",", $photoNames);
 
-
-        $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type , $token_checkin]);
+        $stmt = $conn->prepare("
+            INSERT INTO jobrecord (
+                user_id, emp_id, display_name, place_name, latitude, longitude,
+                checkin_time, photo_path, check_type, token_checkin, remark
+            ) VALUES (?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $userId, $displayName, $place_name,
+            $lat, $lon, $timestamp, $photoPaths,
+            $check_type, $token_checkin, $remark
+        ]);
 
         $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
 
-        // สร้าง Flex Message Carousel
+        // สร้าง Flex Message
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
-            $imageUrl = "https://ps33.themediathai.com/line_os/checkin/uploads/" . $photo;
+            $imageUrl = "https://ps33.themediathai.com/line_oa/checkin/uploads/" . $photo;
             $flexContents[] = [
                 "type" => "bubble",
                 "hero" => [
@@ -80,15 +88,21 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
                     "contents" => [
                         [
                             "type" => "text",
-                            "text" => "สถานที่ : " . $place_name,
+                            "text" => "📍 สถานที่ : " . $place_name,
                             "weight" => "bold",
                             "size" => "md"
                         ],
                         [
                             "type" => "text",
-                            "text" => "Check In เวลา: $timestamp",
+                            "text" => "🕒 เวลา: $timestamp",
                             "size" => "sm",
                             "color" => "#888888"
+                        ],
+                        [
+                            "type" => "text",
+                            "text" => "📝 หมายเหตุ: " . $remark,
+                            "wrap" => true,
+                            "size" => "sm"
                         ]
                     ]
                 ]

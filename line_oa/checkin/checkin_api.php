@@ -64,7 +64,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         // สร้าง Flex Message Carousel
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
-            $imageUrl = "https://ps33.themediathai.com/line_os/checkin/uploads/" . $photo;
+            $imageUrl = "C" . $photo;
             $flexContents[] = [
                 "type" => "bubble",
                 "hero" => [
