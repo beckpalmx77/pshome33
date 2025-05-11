@@ -1,5 +1,5 @@
 <?php
-require "../config/connect_db_sac_data2.php";
+require "../../config/connect_db.php";
 header("Access-Control-Allow-Origin: *");
 
 $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
@@ -64,7 +64,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         // สร้าง Flex Message Carousel
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
-            $imageUrl = "https://syycp.com/api/checkin/uploads/" . $photo;
+            $imageUrl = "https://ps33.themediathai.com/line_os/checkin/uploads/" . $photo;
             $flexContents[] = [
                 "type" => "bubble",
                 "hero" => [
