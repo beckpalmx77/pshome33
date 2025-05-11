@@ -24,7 +24,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         $newFileName = uniqid("checkin_") . "_" . $originalName . ".jpg";
         $newFilePath = $uploadDir . $newFileName;
 
-        $token_checkin = uniqid("sac_", true);
+        $token_checkin = uniqid("ps33_", true);
 
         $imageInfo = getimagesize($tmpName);
         $mime = $imageInfo['mime'];
@@ -55,7 +55,6 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
     if (!empty($photoNames)) {
         $photoPaths = implode(",", $photoNames);
 
-
         $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type , $token_checkin]);
 
@@ -64,7 +63,9 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         // สร้าง Flex Message Carousel
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
-            $imageUrl = "C" . $photo;
+            // สร้าง URL ของรูปภาพที่สามารถเข้าถึงได้จากภายนอก
+            $imageUrl = "https://ps33.themediathai.com/line_oa/checkin/uploads/" . $photo;
+
             $flexContents[] = [
                 "type" => "bubble",
                 "hero" => [
@@ -109,6 +110,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
             ]
         ];
 
+        // ส่งข้อความไปยัง LINE OA
         $ch = curl_init('https://api.line.me/v2/bot/message/push');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -123,8 +125,10 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         $error = curl_error($ch);
         curl_close($ch);
 
+        // บันทึกผลลัพธ์การส่งข้อความ
         file_put_contents("line_push_log.txt", "[$timestamp] HTTP CODE: $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
 
+        // ตรวจสอบการตอบกลับจาก API
         if ($httpCode === 200) {
             echo "✅ Check-in สำเร็จและส่ง LINE สำเร็จแล้ว";
         } else {
