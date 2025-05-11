@@ -159,7 +159,7 @@
                 formData.append("user_id", profile.userId);
                 formData.append("check_type", check_type.value);
                 formData.append("display_name", profile.displayName);
-                formData.append("remark", remark);
+                formData.append("remark", document.getElementById("remark").value);
                 formData.append("place_name", placeName);
                 formData.append("latitude", position.coords.latitude);
                 formData.append("longitude", position.coords.longitude);
