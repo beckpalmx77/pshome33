@@ -100,7 +100,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
                         ],
                         [
                             "type" => "text",
-                            "text" => "📝 หมายเหตุ: " . $remark,
+                            "text" => "📝 รายละเอียด: " . $remark,
                             "wrap" => true,
                             "size" => "sm"
                         ]
@@ -140,9 +140,9 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
         file_put_contents("line_push_log.txt", "[$timestamp] HTTP CODE: $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
 
         if ($httpCode === 200) {
-            echo "✅ Check-in สำเร็จและส่ง LINE สำเร็จแล้ว";
+            echo "✅ บันทึก สำเร็จและส่ง LINE สำเร็จแล้ว";
         } else {
-            echo "❌ Check-in สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
+            echo "❌ บันทึก สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
         }
     } else {
         http_response_code(500);
