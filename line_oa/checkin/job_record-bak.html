@@ -89,7 +89,9 @@
                 transform: rotate(360deg);
             }
         }
+    </style>
 
+    <style>
         textarea {
             width: 100%;
             padding: 12px;
@@ -115,6 +117,9 @@
     <form id="checkinForm" enctype="multipart/form-data">
         <label for="remark">📌 รายละเอียด :</label>
         <textarea id="remark" placeholder="รายละเอียด" rows="4" required></textarea>
+
+        <button id="voiceBtn" type="button" onclick="startListening()" style="display: none;">🎤 พูดเพื่อกรอกข้อความ
+        </button>
 
         <input type="hidden" id="place_name" value="พฤกษา 33" required>
         <input type="hidden" id="check_type" value="IN" readonly="true">
@@ -187,5 +192,49 @@
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault());
 </script>
+
+<script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let isListening = false;
+
+    if (SpeechRecognition) {
+        document.getElementById("voiceBtn").style.display = "block";
+    }
+
+    function startListening() {
+        if (isListening) return;
+
+        const recognition = new SpeechRecognition();
+        const voiceBtn = document.getElementById("voiceBtn");
+        const startSound = document.getElementById("startSound");
+        const stopSound = document.getElementById("stopSound");
+
+        recognition.lang = 'th-TH';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.start();
+        isListening = true;
+        startSound.play();
+        voiceBtn.innerText = "🎙️ กำลังฟัง...";
+
+        recognition.onresult = function (event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById("remark").value += transcript;
+        };
+
+        recognition.onerror = function (event) {
+            alert("เกิดข้อผิดพลาด: " + event.error);
+        };
+
+        recognition.onend = function () {
+            isListening = false;
+            stopSound.play();
+            voiceBtn.innerText = "🎤 พูดเพื่อกรอกข้อความ";
+        };
+    }
+</script>
+
+
 </body>
 </html>
