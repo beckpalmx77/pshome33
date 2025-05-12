@@ -1,6 +1,17 @@
 <?php
 $curr_date = date("d-m-Y");
 include('includes/Header.php');
+include('config/connect_db.php');
+
+$sql_bank = " SELECT * FROM ims_company ";
+$stmt_bank = $conn->prepare($sql_bank);
+$stmt_bank->execute();
+$BankCurr = $stmt_bank->fetchAll();
+foreach ($BankCurr as $row_curr) {
+    $bank_name = $row_curr["bank_name"] ;
+    $bank_account_name = $row_curr["bank_account_name"] ;
+    $bank_account_no = $row_curr["bank_account_no"];
+}
 
 ?>
 
@@ -18,11 +29,11 @@ include('includes/Header.php');
             <!-- Container Fluid-->
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip</h1>
+                    <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip</li>
+                        <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน</li>
                     </ol>
                 </div>
 
@@ -151,7 +162,7 @@ include('includes/Header.php');
                                             <div class="col-md-6">
                                                 <!-- ชื่อผู้โอน -->
                                                 <div class="form-group has-success">
-                                                    <label for="detail" class="control-label">ชื่อผู้โอน</label>
+                                                    <label for="detail" class="control-label">ชื่อผู้โอน/ผู้ชำระเงิน</label>
                                                     <input type="text" name="detail" class="form-control" required
                                                            id="detail">
                                                 </div>
@@ -161,7 +172,7 @@ include('includes/Header.php');
                                                 <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="amount"
-                                                           class="control-label">จำนวนเงินที่โอน</label>
+                                                           class="control-label">จำนวนเงินที่โอน/ชำระ</label>
                                                     <input type="number" name="amount" class="form-control"
                                                            required id="amount">
                                                 </div>
@@ -176,9 +187,16 @@ include('includes/Header.php');
                                         <input name="remark" class="form-control" id="remark" value="-">
                                     </div>
 
+                                    <div class="form-group has-success">
+                                        <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
+                                        <input name="bank_name" class="form-control" id="bank_name" value="<?php echo $bank_name ?>" readonly="true">
+                                        <input name="bank_account_name" class="form-control" id="bank_account_name" value="<?php echo $bank_account_name ?>" readonly="true">
+                                        <input name="bank_account_no" class="form-control" id="bank_account_no" value="<?php echo $bank_account_no ?>" readonly="true">
+                                    </div>
+
                                     <!-- แนบ Slip -->
                                     <div class="form-group has-success">
-                                        <label for="picture_payment" class="control-label">แนบ Slip</label>
+                                        <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน</label>
                                         <input type="file" name="picture_payment" class="form-control"
                                                required id="picture_payment">
                                         <img id="preview_image" src="#" alt="Preview Image"

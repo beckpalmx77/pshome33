@@ -1,14 +1,24 @@
 <?php
-
 session_start();
 error_reporting(0);
-$curr_date = date("d-m-Y");
+
 include('includes/Header.php');
+include('config/connect_db.php');
+
+$curr_date = date("d-m-Y");
 
 if (($_SESSION['account_type']) === "house_user") {
     $house_number = $_SESSION['house_number'];
 } else {
     $house_number = "";
+}
+
+$sql_bank = " SELECT * FROM ims_company ";
+$stmt_bank = $conn->prepare($sql_bank);
+$stmt_bank->execute();
+$BankCurr = $stmt_bank->fetchAll();
+foreach ($BankCurr as $row_curr) {
+    $bank_transfer = $row_curr["bank_name"] . " " . $row_curr["bank_account_name"] . " หมายเลขบัญชี : " . $row_curr["bank_account_no"];
 }
 
 if (strlen($_SESSION['alogin']) === "") {
@@ -30,11 +40,11 @@ if (strlen($_SESSION['alogin']) === "") {
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip</h1>
+                        <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน</h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip</li>
+                            <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน</li>
                         </ol>
                     </div>
 
@@ -85,7 +95,8 @@ if (strlen($_SESSION['alogin']) === "") {
                                                             <input class="form-check-input" type="radio"
                                                                    name="payment_option" id="option_yearly"
                                                                    value="yearly">
-                                                            <label class="form-check-label" for="option_yearly">ชำระรายปี</label>
+                                                            <label class="form-check-label"
+                                                                   for="option_yearly">ชำระรายปี</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -162,7 +173,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-6">
                                                     <!-- ชื่อผู้โอน -->
                                                     <div class="form-group has-success">
-                                                        <label for="detail" class="control-label">ชื่อผู้โอน</label>
+                                                        <label for="detail" class="control-label">ชื่อผู้โอน/ผู้ชำระเงิน</label>
                                                         <input type="text" name="detail" class="form-control" required
                                                                id="detail">
                                                     </div>
@@ -172,7 +183,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <!-- จำนวนเงินที่โอน -->
                                                     <div class="form-group has-success">
                                                         <label for="amount"
-                                                               class="control-label">จำนวนเงินที่โอน</label>
+                                                               class="control-label">จำนวนเงินที่โอน/ชำระ</label>
                                                         <input type="number" name="amount" class="form-control"
                                                                required id="amount">
                                                     </div>
@@ -184,12 +195,17 @@ if (strlen($_SESSION['alogin']) === "") {
                                         <!-- หมายเหตุ -->
                                         <div class="form-group has-success">
                                             <label for="remark" class="control-label">หมายเหตุ</label>
-                                            <input name="remark" class="form-control" id="remark" value="">
+                                            <input name="remark" class="form-control" id="remark" value="-">
+                                        </div>
+
+                                        <div class="form-group has-success">
+                                            <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
+                                            <input name="bank_transfer" class="form-control" id="bank_transfer" value="<?php echo $bank_transfer ?>" readonly="true">
                                         </div>
 
                                         <!-- แนบ Slip -->
                                         <div class="form-group has-success">
-                                            <label for="picture_payment" class="control-label">แนบ Slip</label>
+                                            <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน</label>
                                             <input type="file" name="picture_payment" class="form-control"
                                                    required id="picture_payment">
                                             <img id="preview_image" src="#" alt="Preview Image"
