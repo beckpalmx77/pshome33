@@ -113,6 +113,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                                            placeholder="">
                                                                 </div>
 
+                                                                <div class="form-group">
+                                                                    <label for="photo_path" class="control-label">รูปภาพ</label><br>
+                                                                    <img id="preview_photo" src="" alt="ไม่มีรูปภาพ" class="img-fluid img-thumbnail" style="max-height: 300px;">
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -368,7 +373,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
 
     </script>
 
-    <script>
+    <!--script>
 
         $("#TableRecordList").on('click', '.detail', function () {
             let id = $(this).attr("id");
@@ -403,6 +408,49 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             });
         });
 
+    </script-->
+
+    <script>
+        $("#TableRecordList").on('click', '.detail', function () {
+            let id = $(this).attr("id");
+            let formData = {action: "GET_DATA", id: id};
+            $.ajax({
+                type: "POST",
+                url: 'model/manage_job_record_process.php',
+                dataType: "json",
+                data: formData,
+                success: function (response) {
+                    let len = response.length;
+                    for (let i = 0; i < len; i++) {
+                        let id = response[i].id;
+                        let display_name = response[i].display_name;
+                        let checkin_time = response[i].checkin_time;
+                        let remark = response[i].remark;
+                        let photo_path = response[i].photo_path;
+
+                        $('#recordModal').modal('show');
+                        $('#id').val(id);
+                        $('#display_name').val(display_name);
+                        $('#checkin_time').val(checkin_time);
+                        $('#remark').val(remark);
+
+                        // แสดงรูปจากโฟลเดอร์ uploads
+                        if (photo_path) {
+                            $('#preview_photo').attr('src', 'https://ps33.themediathai.com/line_oa/checkin/uploads/' + photo_path);
+                        } else {
+                            $('#preview_photo').attr('src', '');
+                        }
+
+                        $('.modal-title').html("<i class='fa fa-search'></i> รายละเอียด");
+                        $('#action').val('UPDATE');
+                        $('#save').val('Save');
+                    }
+                },
+                error: function (response) {
+                    alertify.error("error : " + response);
+                }
+            });
+        });
     </script>
 
     </body>

@@ -104,13 +104,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                                 </div>
 
                                                                 <div class="form-group">
-                                                                    <label for="remark"
+                                                                    <label for="check_type"
                                                                            class="control-label">รายละเอียด</label>
                                                                     <input type="text" class="form-control"
-                                                                           id="remark"
-                                                                           name="remark"
+                                                                           id="check_type"
+                                                                           name="check_type"
                                                                            required="required"
                                                                            placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group text-center" id="imagePreviewContainer" style="display:none;">
+                                                                    <label>รูปภาพ:</label><br>
+                                                                    <img id="photoPreview" src="" class="img-fluid img-thumbnail" style="max-height:300px;" />
                                                                 </div>
 
                                                             </div>
@@ -205,7 +210,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 let checkin_time = $('#checkin_time').val();
                 let formData = {action: "SEARCH", display_name: display_name, checkin_time: checkin_time};
                 $.ajax({
-                    url: 'model/manage_job_record_process.php',
+                    url: 'model/manage_check_in_out_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -221,7 +226,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
 
     <script>
         $(document).ready(function () {
-            let formData = {action: "GET_JOB_REPORT", sub_action: "GET_MASTER"};
+            let formData = {action: "GET_CHECK_IN_OUT", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
@@ -243,13 +248,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                     echo "'scrollX': true,";
                 }?>
                 'ajax': {
-                    'url': 'model/manage_job_record_process.php',
+                    'url': 'model/manage_check_in_out_process.php',
                     'data': formData
                 },
                 'columns': [
                     {data: 'display_name'},
                     {data: 'checkin_time'},
-                    {data: 'remark'},
+                    {data: 'check_type'},
                     {data: 'detail'}
                 ]
             });
@@ -261,7 +266,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 let formData = $(this).serialize();
                 //alert(formData);
                 $.ajax({
-                    url: 'model/manage_job_record_process.php',
+                    url: 'model/manage_check_in_out_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -287,7 +292,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 $('#id').val("");
                 $('#display_name').val("");
                 $('#checkin_time').val("");
-                $('#remark').val("");
+                $('#check_type').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -303,7 +308,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_job_record_process.php',
+                url: 'model/manage_check_in_out_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -312,13 +317,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         let id = response[i].id;
                         let display_name = response[i].display_name;
                         let checkin_time = response[i].checkin_time;
-                        let remark = response[i].remark;
+                        let check_type = response[i].check_type;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#display_name').val(display_name);
                         $('#checkin_time').val(checkin_time);
-                        $('#remark').val(remark);
+                        $('#check_type').val(check_type);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
@@ -339,7 +344,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_job_record_process.php',
+                url: 'model/manage_check_in_out_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -348,13 +353,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         let id = response[i].id;
                         let display_name = response[i].display_name;
                         let checkin_time = response[i].checkin_time;
-                        let remark = response[i].remark;
+                        let check_type = response[i].check_type;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#display_name').val(display_name);
                         $('#checkin_time').val(checkin_time);
-                        $('#remark').val(remark);
+                        $('#check_type').val(check_type);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');
@@ -369,14 +374,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
     </script>
 
     <script>
-
         $("#TableRecordList").on('click', '.detail', function () {
             let id = $(this).attr("id");
-            //alert(id);
-            let formData = {action: "GET_DATA", id: id};
+            let formData = { action: "GET_DATA", id: id };
             $.ajax({
                 type: "POST",
-                url: 'model/manage_job_record_process.php',
+                url: 'model/manage_check_in_out_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -385,16 +388,25 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         let id = response[i].id;
                         let display_name = response[i].display_name;
                         let checkin_time = response[i].checkin_time;
-                        let remark = response[i].remark;
+                        let check_type = response[i].check_type;
+                        let photo_path = response[i].photo_path; // เพิ่มตรงนี้
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#display_name').val(display_name);
                         $('#checkin_time').val(checkin_time);
-                        $('#remark').val(remark);
+                        $('#check_type').val(check_type);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
+
+                        if (photo_path) {
+                            $('#photoPreview').attr('src', 'https://ps33.themediathai.com/line_oa/checkin/uploads/' + photo_path);
+                            $('#imagePreviewContainer').show();
+                        } else {
+                            $('#photoPreview').attr('src', '');
+                            $('#imagePreviewContainer').hide();
+                        }
                     }
                 },
                 error: function (response) {
@@ -402,8 +414,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 }
             });
         });
-
     </script>
+
 
     </body>
     </html>

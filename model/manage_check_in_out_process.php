@@ -26,6 +26,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "place_name" => $result['place_name'],
             "latitude" => $result['latitude'],
             "longitude" => $result['longitude'],
+            "check_type" => $result['check_type'],
+            "photo_path" => $result['photo_path'],
             "remark" => $result['remark']);
     }
 
@@ -56,7 +58,7 @@ if ($_POST["action"] === 'UPDATE') {
         $display_name = $_POST["display_name"];
         $checkin_time = $_POST["checkin_time"];
         $remark = $_POST["remark"];
-        $sql_find = "SELECT * FROM jobreport WHERE id = '" . $id . "'";
+        $sql_find = "SELECT * FROM v_checkins WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             $sql_update = "UPDATE v_checkins SET display_name=:display_name,checkin_time=:checkin_time,alley=:alley,phone_number=:phone_number,remark=:remark            
@@ -77,11 +79,11 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    $sql_find = "SELECT * FROM jobreport WHERE id = " . $id;
+    $sql_find = "SELECT * FROM v_checkins WHERE id = " . $id;
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
-            $sql = "DELETE FROM jobreport WHERE id = " . $id;
+            $sql = "DELETE FROM v_checkins WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
             echo $del_success;
@@ -91,7 +93,7 @@ if ($_POST["action"] === 'DELETE') {
     }
 }
 
-if ($_POST["action"] === 'GET_JOB_REPORT') {
+if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
 
     ## Read value
     $draw = $_POST['draw'];
@@ -175,6 +177,8 @@ if ($_POST["action"] === 'GET_JOB_REPORT') {
                 "place_name" => $row['place_name'],
                 "latitude" => $row['latitude'],
                 "longitude" => $row['longitude'],
+                "check_type" => $row['check_type'],
+                "photo_path" => $row['photo_path'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "detail" => "<button type='button' name='detail' id='" . $row['id'] . "' class='btn btn-secondary btn-xs detail' data-toggle='tooltip' title='Detail'>Detail</button>",
