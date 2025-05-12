@@ -113,9 +113,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                                            placeholder="">
                                                                 </div>
 
-                                                                <div class="form-group text-center" id="imagePreviewContainer" style="display:none;">
+                                                                <!--div class="form-group text-center" id="imagePreviewContainer" style="display:none;">
                                                                     <label>รูปภาพ:</label><br>
-                                                                    <img id="photoPreview" src="" class="img-fluid img-thumbnail" style="max-height:300px;" />
+                                                                    <div id="photoPreviewList" class="d-flex flex-wrap justify-content-center gap-2"></div>
+                                                                </div-->
+
+                                                                <!-- ที่แสดง preview ของรูป -->
+                                                                <div id="imagePreviewContainer" style="display: none;">
+                                                                    <div id="photoPreviewList" class="d-flex flex-wrap"></div>
                                                                 </div>
 
                                                             </div>
@@ -123,10 +128,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                         <div class="modal-footer">
                                                             <input type="hidden" name="id" id="id"/>
                                                             <input type="hidden" name="action" id="action" value=""/>
-                                                            <span class="icon-input-btn">
+                                                            <!--span class="icon-input-btn">
                                                                 <i class="fa fa-check"></i>
                                                             <input type="submit" name="save" id="save"
-                                                                   class="btn btn-primary" value="Save"/>
+                                                                   class="btn btn-primary" value="Save"/-->
                                                             </span>
                                                             <button type="button" class="btn btn-danger"
                                                                     data-dismiss="modal">Close <i
@@ -373,10 +378,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
 
     </script>
 
-    <script>
+    <!--script>
         $("#TableRecordList").on('click', '.detail', function () {
             let id = $(this).attr("id");
             let formData = { action: "GET_DATA", id: id };
+
             $.ajax({
                 type: "POST",
                 url: 'model/manage_check_in_out_process.php',
@@ -389,7 +395,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         let display_name = response[i].display_name;
                         let checkin_time = response[i].checkin_time;
                         let check_type = response[i].check_type;
-                        let photo_path = response[i].photo_path; // เพิ่มตรงนี้
+                        let photo_path = response[i].photo_path;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -400,11 +406,79 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
 
+                        // แสดงหลายรูป
                         if (photo_path) {
-                            $('#photoPreview').attr('src', 'https://ps33.themediathai.com/line_oa/checkin/uploads/' + photo_path);
+                            let photos = photo_path.split(',');
+                            $('#photoPreviewList').html('');
+                            photos.forEach(function(photo) {
+                                let trimmedPhoto = photo.trim();
+                                if (trimmedPhoto) {
+                                    let imgTag = `<img src="https://ps33.themediathai.com/line_oa/checkin/uploads/${trimmedPhoto}" class="img-thumbnail" style="max-height:150px;">`;
+                                    $('#photoPreviewList').append(imgTag);
+                                }
+                            });
                             $('#imagePreviewContainer').show();
                         } else {
-                            $('#photoPreview').attr('src', '');
+                            $('#photoPreviewList').html('');
+                            $('#imagePreviewContainer').hide();
+                        }
+                    }
+                },
+                error: function (response) {
+                    alertify.error("error : " + response);
+                }
+            });
+        });
+    </script-->
+
+    <script>
+        $("#TableRecordList").on('click', '.detail', function () {
+            let id = $(this).attr("id");
+            let formData = { action: "GET_DATA", id: id };
+
+            $.ajax({
+                type: "POST",
+                url: 'model/manage_check_in_out_process.php',
+                dataType: "json",
+                data: formData,
+                success: function (response) {
+                    let len = response.length;
+                    for (let i = 0; i < len; i++) {
+                        let id = response[i].id;
+                        let display_name = response[i].display_name;
+                        let checkin_time = response[i].checkin_time;
+                        let check_type = response[i].check_type;
+                        let photo_path = response[i].photo_path;
+
+                        $('#recordModal').modal('show');
+                        $('#id').val(id);
+                        $('#display_name').val(display_name);
+                        $('#checkin_time').val(checkin_time);
+                        $('#check_type').val(check_type);
+                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
+                        $('#action').val('UPDATE');
+                        $('#save').val('Save');
+
+                        // แสดงหลายรูป พร้อมเปิด popup เมื่อคลิก
+                        if (photo_path) {
+                            let photos = photo_path.split(',');
+                            $('#photoPreviewList').html('');
+                            photos.forEach(function(photo) {
+                                let trimmedPhoto = photo.trim();
+                                if (trimmedPhoto) {
+                                    let fullUrl = `https://ps33.themediathai.com/line_oa/checkin/uploads/${trimmedPhoto}`;
+                                    let imgTag = `
+                                    <img src="${fullUrl}"
+                                         class="img-thumbnail m-1"
+                                         style="max-height:150px; cursor:pointer;"
+                                         onclick="window.open('${fullUrl}', '_blank')">
+                                `;
+                                    $('#photoPreviewList').append(imgTag);
+                                }
+                            });
+                            $('#imagePreviewContainer').show();
+                        } else {
+                            $('#photoPreviewList').html('');
                             $('#imagePreviewContainer').hide();
                         }
                     }
@@ -415,6 +489,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             });
         });
     </script>
+
+
 
 
     </body>

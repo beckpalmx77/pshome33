@@ -41,6 +41,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     $result_member = $query_member->fetch(PDO::FETCH_OBJ);
     $total_user = $result_member->total_user ?? 0;
 
+    $all_total_house = 621;
+
+    $unregistered_house = $all_total_house - $total_house;
+
     ?>
 
     <!DOCTYPE html>
@@ -51,13 +55,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         include('includes/Side-Bar.php');
         ?>
 
+
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <?php
-                include('includes/Top-Bar.php');
-                ?>
+                <?php include('includes/Top-Bar.php'); ?>
 
-                <!-- Card หลักแบบ Collapse -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
                         <h6 class="m-0 font-weight-bold">สรุปข้อมูลภาพรวม</h6>
@@ -69,53 +71,38 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     <div class="collapse show" id="collapseCard">
                         <div class="card-body">
 
-                            <!-- Row 1: บ้านรวม + สมาชิก -->
+                            <!-- Row: Chart (ซ้าย) + Card ทั้งหมด (ขวา) -->
                             <div class="row">
-                                <div class="col-xl-6 col-md-6 mb-4">
-                                    <div class="card border-left-dark shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                                        จำนวนบ้านที่ลงทะเบียนทั้งหมด (67 และ 68)
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <?php echo number_format($total_house); ?> หลัง
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-city fa-2x text-gray-300"></i>
-                                                </div>
+                                <!-- Chart -->
+                                <div class="col-xl-6 col-md-12 mb-4">
+                                    <div class="card border-left-danger shadow h-100 py-2">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-3">
+                                                เปรียบเทียบบ้านที่ลงทะเบียนแล้ว กับบ้านทั้งหมด
                                             </div>
+                                            <canvas id="totalHousePieChart" style="max-width: 100%; max-height: 400px;"></canvas>
+                                            <p class="text-center mt-3">
+                                                <?php
+                                                if ($all_total_house > 0) {
+                                                    $percent = ($total_house / $all_total_house) * 100;
+                                                    echo "จำนวนบ้านทั้งหมด (67 และ 68) : <strong>" . "621" . " หลัง</strong><br>";
+                                                    echo "จำนวนบ้านที่ลงทะเบียนในระบบทั้งหมด (67 และ 68) : <strong>" . number_format($total_house) . " หลัง</strong><br>";
+                                                    echo "คิดเป็น <strong>" . number_format($percent, 2) . "%</strong> ของบ้านทั้งหมด";
+                                                } else {
+                                                    echo "ไม่มีข้อมูลบ้านทั้งหมด";
+                                                }
+                                                ?>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-xl-6 col-md-6 mb-4">
-                                    <div class="card border-left-primary shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                        จำนวนสมาชิกทั้งหมด
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <?php echo number_format($total_user); ?> User
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-users fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                <!-- Cards 67, 68, User (ด้านขวา) -->
+                                <div class="col-xl-6 col-md-12 mb-4">
+                                    <!-- ไม่ใช้ flex-column แล้ว แต่ให้ card แต่ละใบเว้นห่างด้วย mb-3 -->
 
-                            <!-- Row 2: 67xx + 68xx -->
-                            <div class="row">
-                                <div class="col-xl-6 col-md-6 mb-4">
-                                    <div class="card border-left-info shadow h-100 py-2">
+                                    <!-- Card 67 -->
+                                    <div class="card border-left-info shadow mb-3">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
@@ -132,10 +119,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xl-6 col-md-6 mb-4">
-                                    <div class="card border-left-success shadow h-100 py-2">
+                                    <!-- Card 68 -->
+                                    <div class="card border-left-success shadow mb-3">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
@@ -152,18 +138,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             </div>
                                         </div>
                                     </div>
+
+                                    <!-- Card User -->
+                                    <div class="card border-left-primary shadow">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        จำนวนสมาชิกที่ลงทะเบียนทั้งหมด
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <?php echo number_format($total_user); ?> User
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+
+                            </div> <!-- end row -->
 
                         </div> <!-- end card-body -->
                     </div> <!-- end collapse -->
                 </div> <!-- end card -->
-
-
-
-
             </div>
         </div>
+
+
+
     </div>
 
     <?php
@@ -210,6 +215,31 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         });
     </script>
+
+    <script>
+        const ctxTotal = document.getElementById("totalHousePieChart").getContext('2d');
+        const totalHousePieChart = new Chart(ctxTotal, {
+            type: 'pie',
+            data: {
+                labels: ['ลงทะเบียนแล้ว', 'ยังไม่ลงทะเบียน'],
+                datasets: [{
+                    data: [<?php echo $total_house; ?>, <?php echo $unregistered_house; ?>],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    hoverBackgroundColor: ['#218838', '#c82333'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+
 
 
     </body>

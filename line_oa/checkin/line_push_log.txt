@@ -1,0 +1,40 @@
+[2025-05-11 15:20:29] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560560888617631932","quoteToken":"T2p28lTgvCBOhpDckxUh8iSzJTkw8-BYKeQy77p7WetRAgsLUM6xaoYOpH2W6QNXMkJYDV8ldH0Mtq8Q6NMmq4zUBZQEI836T7jSXPO3kc7MYcIJVYC07O9Ki1RBkEwDbXRpPwMsBioOpPSAph5BiA"}]}
+Error: 
+
+[2025-05-11 15:26:27] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560561488050782281","quoteToken":"g3QAaNlKgM3bNPgiQPJz4330QPjA_YoU-WtWgDUOA4bVDlTwbN1oaBJNqHUON93STwgyB0O4OuTgJgX6BlWz2sgOorMZ8zQ73260po5rGrdzGypTF9FDeqY09u1DeFVOwy1nsDg6FN4OXCq41Nlkvg"}]}
+Error: 
+
+[2025-05-11 19:48:32] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560587870457823471","quoteToken":"3eDyRaKmwzUAF2-hzJLT-Z_9QisbUGC7ofo9iAC_tI_RP2rzOr1rKIl1Tk65jz1iMCmqgbbT67r6VaewRVwUjpJdlZpNCaYfK-aTMnOcdER4pb3uTby7-qMdkuuBxWWf6OALrYiFhnZenH1MkQ8qlg"}]}
+Error: 
+
+[2025-05-11 20:03:39] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560589391479963957","quoteToken":"H1kAlJki9k5DWA4334ohBOQJojH5al-ZqwiAnCrgMhOBSffdYLUY6AgoPQlf0yMdoIPryiGHUxDLdSpg3HNXrpU1RS0LxYxm6E9QY-vi43oI02FUyQ5TK29PwvlYU_TxShQ6u0IjF1TOH9JpvIySfQ"}]}
+Error: 
+
+[2025-05-11 20:04:26] HTTP CODE: 400
+Result: {"message":"A message (messages[0]) in the request body is invalid","details":[{"message":"invalid uri scheme","property":"/contents/0/hero/url"}]}
+Error: 
+
+[2025-05-11 20:10:25] HTTP CODE: 400
+Result: {"message":"A message (messages[0]) in the request body is invalid","details":[{"message":"invalid uri scheme","property":"/contents/0/hero/url"}]}
+Error: 
+
+[2025-05-11 20:19:29] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560590986875503010","quoteToken":"a0Iq3EpSLjA92NgqQi_H3jKjqv2oWTZ6xmfNpMVbYrkEVUNQJRnmUGWrh2mzJDdCpL2bShw7SW9C-meiSO-a3MtS9g4eAJ-AsQV1JFiq-pSFpbLzYpDcXJwhwRrO4JsYVfyhphrz730mkiyKP8psVg"}]}
+Error: 
+
+[2025-05-11 20:19:44] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560591011421356454","quoteToken":"YLZ8vXZuemIMviiculSB8m6synAP_IUeLhArFavR-XaIjBqvUxXH4ieVWZBFzxyRZTMoYvpzdsAfApVJqDbWxfZ7VlgnGWSB3heQOgrKLwwI5yOmu8pwU99Dsnhcbzknd1IIflhClarOfqNoQR-wUQ"}]}
+Error: 
+
+[2025-05-12 08:27:07] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560664232510357608","quoteToken":"Br1iZHFAiFj0Xt7CJ6nmiC8uxHOg-_YK3VynRFqgQBRtI_5kuxGx7pjBiQHV6_tMd9HnFbrOb6FBxHkYDCAc__dHM01uBnGhUawCeNla4q2WCNVPBwjfiBJbO0gK5xotnzzXDsk-ijD4zLPOuxDtuQ"}]}
+Error: 
+
+[2025-05-12 08:27:35] HTTP CODE: 200
+Result: {"sentMessages":[{"id":"560664278999236805","quoteToken":"TcV5Mzrzzfw7sSQ4WNDjH6Eb-2N64cI7F1MHbRUITbpykN1YAc0i8akunCVYwpkn6VpRXRqGIU4ttK8Qh5noNHLUPPqZeRUS1Ss5ghrUnuQkAJXsT0G94P1RZvdAK6VWwcdVC6M1B4wGA5b-UwgHEw"}]}
+Error: 
+
