@@ -64,9 +64,9 @@ if ($_POST["action"] === 'ADD') {
         try {
 
             $year = date("Y");
-            $cond = " where year = '" . $year . "'" ;
+            $cond = " where year = '" . $year . "'";
 
-            $emp_id = "PS33-" . $year ."-" . sprintf('%05s', LAST_DOCUMENT_NUMBER($conn, 'id',"memployee", $cond));
+            $emp_id = "PS33-" . $year . "-" . sprintf('%05s', LAST_DOCUMENT_NUMBER($conn, 'id', "memployee", $cond));
 
             $f_name = $_POST["f_name"];
             $l_name = $_POST["l_name"];
@@ -278,10 +278,9 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
     //}
 
     if ($searchValue != '') {
-        $searchQuery = " AND (emp_id LIKE :emp_id or l_name LIKE :l_name or
+        $searchQuery = " AND (l_name LIKE :l_name or
         f_name LIKE :f_name or nick_name LIKE :nick_name) ";
         $searchArray = array(
-            'emp_id' => "%$searchValue%",
             'l_name' => "%$searchValue%",
             'f_name' => "%$searchValue%",
             'nick_name' => "%$searchValue%"

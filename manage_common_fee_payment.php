@@ -60,6 +60,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>เลขที่เอกสาร</th>
                                                     <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
+                                                    <th>ซอย</th>
                                                     <th>ผู้ชำระ</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
@@ -76,6 +77,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>เลขที่เอกสาร</th>
                                                     <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
+                                                    <th>ซอย</th>
                                                     <th>ผู้ชำระ</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
@@ -307,8 +309,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script src="js/myadmin.min.js"></script>
 
     <script src="js/util/calculate_datetime.js"></script>
-    <script src="js/modal/show_department_modal.js"></script>
-    <script src="js/modal/show_worktime_modal.js"></script>
 
     <!-- Page level plugins -->
 
@@ -378,7 +378,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <script>
         $(document).ready(function () {
-            let formData = {action: "GET_COMMON_FEE", sub_action: "GET_MASTER", page_manage: "ADMIN",};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
@@ -396,17 +395,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                <?php  if ($_SESSION['deviceType'] !== 'computer') {
+                <?php if ($_SESSION['deviceType'] !== 'computer') {
                     echo "'scrollX': true,";
-                }?>
+                } ?>
                 'ajax': {
                     'url': 'model/manage_common_fee_payment_process.php',
-                    'data': formData
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.action = 'GET_COMMON_FEE';
+                        d.sub_action = 'GET_MASTER';
+                        d.page_manage = 'ADMIN';
+                        return d;
+                    }
                 },
                 'columns': [
                     {data: 'doc_id'},
                     {data: 'payment_date'},
                     {data: 'house_number'},
+                    {data: 'alley'},
                     {data: 'detail'},
                     {data: 'month_name_start'},
                     {data: 'month_name_to'},
@@ -416,7 +422,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'payment_status'},
                     {data: 'update'},
                     {data: 'print'},
-
                 ]
             });
         });

@@ -174,13 +174,9 @@ if ($_POST["action"] === 'GET_EXPENSE') {
 ## Search
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (category LIKE :category OR
-        description LIKE :description OR         
-        approve_status LIKE :approve_status ) ";
+        $searchQuery = " AND (description LIKE :description) ";
         $searchArray = array(
-            'category' => "%$searchValue%",
-            'description' => "%$searchValue%",
-            'approve_status' => "%$searchValue%"
+            'description' => "%$searchValue%"
         );
     }
 

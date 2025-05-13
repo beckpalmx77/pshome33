@@ -5,7 +5,6 @@ error_reporting(0);
 include('../config/connect_db.php');
 include('../config/lang.php');
 include('../util/record_util.php');
-include('../util/reorder_record.php');
 
 if ($_POST["action"] === 'GET_DATA') {
 
@@ -74,7 +73,6 @@ if ($_POST["action"] === 'UPDATE') {
     exit;
 }
 
-
 // ลบข้อมูล
 if ($_POST["action"] === 'DELETE') {
     $id = $_POST["id"];
@@ -99,110 +97,76 @@ if ($_POST["action"] === 'DELETE') {
     exit;
 }
 
-
+// ดึงข้อมูลรายการเก็บค่าส่วนกลาง
 if ($_POST["action"] === 'GET_COMMON_FEE') {
 
-    ## Read value
     $draw = $_POST['draw'];
     $row = $_POST['start'];
-    $rowperpage = $_POST['length']; // Rows display per page
-    $columnIndex = $_POST['order'][0]['column']; // Column index
-    $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
-    //$columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
-    $columnSortOrder = 'desc'; // asc or desc
-    $searchValue = $_POST['search']['value']; // Search value
+    $rowperpage = $_POST['length'];
+    $columnIndex = $_POST['order'][0]['column'];
+    $columnName = $_POST['columns'][$columnIndex]['data'];
+    $columnSortOrder = $_POST['order'][0]['dir'];
+    $searchValue = $_POST['search']['value'];
 
-    $searchArray = array();
+    $searchArray = [];
+    $searchQuery = "";
 
-## Search
-    $searchQuery = " ";
-
-    if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number) ";
-        $searchArray = array(
-            'house_number' => "%$searchValue%"
-        );
-
-        // รวมข้อมูลทั้ง searchQuery และ searchArray
-/*
-        $txt = "Search Query:\n" . $searchQuery . "\n\nSearch Array:\n" . print_r($searchArray, true);
-        // เขียนลงไฟล์
-        $my_file = fopen("device_0.txt", "w") or die("Unable to open file!");
-        fwrite($my_file, $txt);
-        fclose($my_file);
-*/
-
+    if (!empty($searchValue)) {
+        $searchQuery = " AND (house_number LIKE :house_number OR contact_name LIKE :contact_name OR alley LIKE :alley) ";
+        $searchArray = [
+            'house_number' => "%$searchValue%",
+            'contact_name' => "%$searchValue%",
+            'alley' => "%$searchValue%"
+        ];
     }
 
-
-    $where_house_number = " ";
+    $where_house_number = "";
     if ($_SESSION['account_type'] === "user") {
         $where_house_number = " AND house_number = :session_house_number";
     }
 
-/*
-    $txt = $where_house_number;
-    $my_file = fopen("device_1.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
-
-## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 " . $where_house_number;
-    $stmt = $conn->prepare($sql_getdata);
+    // Count All Records
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 " . $where_house_number);
+    if ($_SESSION['account_type'] === "user") {
+        $stmt->bindParam(':session_house_number', $_SESSION['house_number'], PDO::PARAM_STR);
+    }
     $stmt->execute();
-    $records = $stmt->fetch();
-    $totalRecords = $records['allcount'];
+    $totalRecords = $stmt->fetch()['allcount'];
 
-/*
-    $txt = $sql_getdata;
-    $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
-
-## Total number of records with filtering
-
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 " . $searchQuery . $where_house_number;
-
-    $stmt = $conn->prepare($sql_getdata);
-    $stmt->execute($searchArray);
-    $records = $stmt->fetch();
-    $totalRecordwithFilter = $records['allcount'];
-
-/*
-    $txt = $sql_getdata;
-    $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
-
-## Fetch records
-    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1 " . $searchQuery
-        . " ORDER BY id DESC " . " LIMIT :limit,:offset";
-
-    $stmt = $conn->prepare($sql_getdata);
-
-// Bind values
+    // Count Filtered Records
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1 $where_house_number $searchQuery");
+    if ($_SESSION['account_type'] === "user") {
+        $stmt->bindValue(':session_house_number', $_SESSION['house_number'], PDO::PARAM_STR);
+    }
     foreach ($searchArray as $key => $search) {
         $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
     }
-
-    $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
     $stmt->execute();
-    $empRecords = $stmt->fetchAll();
-    $data = array();
+    $totalRecordwithFilter = $stmt->fetch()['allcount'];
 
-/*
-    $txt = $sql_getdata . "  " . $row . "," . $rowperpage;
-    $my_file = fopen("device_c.txt", "w") or die("Unable to open file!");
+    // Fetch Data
+    $sql = "SELECT * FROM v_ims_house_payment WHERE 1 $where_house_number $searchQuery ORDER BY id DESC LIMIT :offset, :limit";
+    $stmt = $conn->prepare($sql);
+
+    $txt = $sql;
+    $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
     fwrite($my_file, $txt);
     fclose($my_file);
-*/
+
+    if ($_SESSION['account_type'] === "user") {
+        $stmt->bindValue(':session_house_number', $_SESSION['house_number'], PDO::PARAM_STR);
+    }
+    foreach ($searchArray as $key => $search) {
+        $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
+    }
+    $stmt->bindValue(':offset', (int)$row, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', (int)$rowperpage, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $empRecords = $stmt->fetchAll();
+    $data = [];
 
     foreach ($empRecords as $row) {
-
         if ($_POST['sub_action'] === "GET_MASTER") {
             $status = $row['payment_status'];
             $message = ($status === 'Y') ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
@@ -241,18 +205,16 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "select" => "<button type='button' name='select' id='{$row['house_number']}@{$row['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
             ];
         }
-
     }
 
-## Response Return Value
-    $response = array(
+    // ส่งค่ากลับแบบ JSON
+    $response = [
         "draw" => intval($draw),
         "iTotalRecords" => $totalRecords,
         "iTotalDisplayRecords" => $totalRecordwithFilter,
         "aaData" => $data
-    );
+    ];
 
     echo json_encode($response);
-
+    exit;
 }
-

@@ -29,11 +29,11 @@ foreach ($BankCurr as $row_curr) {
             <!-- Container Fluid-->
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน</h1>
+                    <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน</li>
+                        <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</li>
                     </ol>
                 </div>
 
@@ -162,17 +162,19 @@ foreach ($BankCurr as $row_curr) {
                                             <div class="col-md-6">
                                                 <!-- ชื่อผู้โอน -->
                                                 <div class="form-group has-success">
-                                                    <label for="detail" class="control-label">ชื่อผู้โอน/ผู้ชำระเงิน</label>
+                                                    <label for="detail" class="control-label">ชื่อผู้โอน</label>
                                                     <input type="text" name="detail" class="form-control" required
                                                            id="detail">
+                                                    <input type="hidden" id="line_user_id" name="line_user_id" readonly="true">
                                                 </div>
                                             </div>
+
 
                                             <div class="col-md-6">
                                                 <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="amount"
-                                                           class="control-label">จำนวนเงินที่โอน/ชำระ</label>
+                                                           class="control-label">จำนวนเงินที่โอน</label>
                                                     <input type="number" name="amount" class="form-control"
                                                            required id="amount">
                                                 </div>
@@ -194,9 +196,9 @@ foreach ($BankCurr as $row_curr) {
                                         <input name="bank_account_no" class="form-control" id="bank_account_no" value="<?php echo $bank_account_no ?>" readonly="true">
                                     </div>
 
-                                    <!-- แนบ Slip -->
+                                    <!-- แนบ Slip/ใบโอนเงิน/ใบเสร็จ -->
                                     <div class="form-group has-success">
-                                        <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน</label>
+                                        <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
                                         <input type="file" name="picture_payment" class="form-control"
                                                required id="picture_payment">
                                         <img id="preview_image" src="#" alt="Preview Image"
@@ -253,6 +255,8 @@ foreach ($BankCurr as $row_curr) {
 
 <script>
     $(document).ready(function () {
+
+/*
         // Preview Image
         $("#picture_payment").on("change", function () {
             const file = this.files[0];
@@ -271,6 +275,8 @@ foreach ($BankCurr as $row_curr) {
                 reader.readAsDataURL(file);
             }
         });
+
+ */
 
         // Submit Form with Loading Indicator
         $("#transfer_form").on("submit", function (event) {
@@ -326,7 +332,7 @@ foreach ($BankCurr as $row_curr) {
             //alert($("#period_month_start").val() + " | " + $("#period_month_to").val());
 
             $.ajax({
-                url: "model/manage_payment_transfer.php",
+                url: "model/manage_payment_transfer_smart.php",
                 type: "POST",
                 data: formData,
                 contentType: false,
@@ -334,7 +340,7 @@ foreach ($BankCurr as $row_curr) {
                 success: function (response) {
                     //$("#loading").hide();
                     if (response == 1) {
-                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
+                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
                         $("#transfer_form")[0].reset();
                         $("#preview_image").hide().attr("src", "");
 
@@ -358,7 +364,7 @@ foreach ($BankCurr as $row_curr) {
                         }
 
                     } else {
-                        alertify.error("ไม่สามารถบันทึกข้อมูลได้");
+                        alertify.error("ไม่สามารถบันทึกข้อมูลได้" + response);
                     }
                 },
                 error: function () {
@@ -422,6 +428,7 @@ foreach ($BankCurr as $row_curr) {
 </script>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
 <script>
     liff.init({liffId: LIFF_ID})
         .then(() => {
@@ -441,6 +448,7 @@ foreach ($BankCurr as $row_curr) {
                         .then(response => response.json())
                         .then(data => {
                             if (data.house_number) {
+                                document.getElementById('line_user_id').value = userId;
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value =
                                     (data.f_name || '') + ' ' + (data.l_name || '');
@@ -457,6 +465,69 @@ foreach ($BankCurr as $row_curr) {
                 });
             }
         });
+</script>
+
+<script>
+    $("#picture_payment").on("change", async function () {
+        const fileInput = this;
+        const file = fileInput.files[0];
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/heic"];
+        const maxSizeMB = 30;
+
+        if (!file) return;
+
+        if (!allowedTypes.includes(file.type)) {
+            alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น (JPEG, PNG, GIF, HEIC)");
+            fileInput.value = "";
+            return;
+        }
+
+        if (file.size > maxSizeMB * 1024 * 1024) {
+            alert("ขนาดไฟล์ต้องไม่เกิน 30 MB");
+            fileInput.value = "";
+            return;
+        }
+
+        // ถ้าเป็น HEIC ให้แปลงเป็น JPG
+        if (file.type === "image/heic") {
+            try {
+                const convertedBlob = await heic2any({
+                    blob: file,
+                    toType: "image/jpeg",
+                    quality: 0.9,
+                });
+
+                const newFile = new File([convertedBlob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                    type: "image/jpeg",
+                });
+
+                // แสดง preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#preview_image").attr("src", e.target.result).show();
+                };
+                reader.readAsDataURL(newFile);
+
+                // ใส่ไฟล์ใหม่แทนใน input (จำลองด้วย DataTransfer)
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(newFile);
+                fileInput.files = dataTransfer.files;
+
+            } catch (err) {
+                alert("เกิดข้อผิดพลาดขณะพยายามแปลงไฟล์ HEIC: " + err.message);
+                fileInput.value = "";
+            }
+
+        } else {
+            // Preview ปกติ
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $("#preview_image").attr("src", e.target.result).show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
 </script>
 
 </body>

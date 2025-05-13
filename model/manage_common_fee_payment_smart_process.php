@@ -135,7 +135,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-    $str_qry = "SELECT * FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset";
+    $str_qry = "SELECT * FROM v_ims_house_payment WHERE 1 " . $where_house_number . $searchQuery . "ORDER BY id DESC LIMIT :limit,:offset";
     $stmt = $conn->prepare($str_qry);
 
 /*

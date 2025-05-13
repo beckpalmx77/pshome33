@@ -1,29 +1,33 @@
 <?php
+
 session_start();
 error_reporting(0);
-
+$curr_date = date("d-m-Y");
 include('includes/Header.php');
 include('config/connect_db.php');
-
-$curr_date = date("d-m-Y");
-
-if (($_SESSION['account_type']) === "house_user") {
-    $house_number = $_SESSION['house_number'];
-} else {
-    $house_number = "";
-}
-
-$sql_bank = " SELECT * FROM ims_company ";
-$stmt_bank = $conn->prepare($sql_bank);
-$stmt_bank->execute();
-$BankCurr = $stmt_bank->fetchAll();
-foreach ($BankCurr as $row_curr) {
-    $bank_transfer = $row_curr["bank_name"] . " " . $row_curr["bank_account_name"] . " หมายเลขบัญชี : " . $row_curr["bank_account_no"];
-}
 
 if (strlen($_SESSION['alogin']) === "") {
     header("Location: index.php");
 } else {
+
+    $sql_bank = " SELECT * FROM ims_company ";
+    $stmt_bank = $conn->prepare($sql_bank);
+    $stmt_bank->execute();
+    $BankCurr = $stmt_bank->fetchAll();
+    foreach ($BankCurr as $row_curr) {
+        $bank_name = $row_curr["bank_name"] ;
+        $bank_account_name = $row_curr["bank_account_name"] ;
+        $bank_account_no = $row_curr["bank_account_no"];
+    }
+
+    if (($_SESSION['account_type']) === "user") {
+        $house_number = $_SESSION['house_number'];
+        $f_name = $_SESSION['first_name'];
+        $l_name = $_SESSION['last_name'];
+    } else {
+        $house_number = "";
+    }
+
     ?>
 
     <!DOCTYPE html>
@@ -40,11 +44,11 @@ if (strlen($_SESSION['alogin']) === "") {
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน</h1>
+                        <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน</li>
+                            <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</li>
                         </ol>
                     </div>
 
@@ -95,8 +99,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                             <input class="form-check-input" type="radio"
                                                                    name="payment_option" id="option_yearly"
                                                                    value="yearly">
-                                                            <label class="form-check-label"
-                                                                   for="option_yearly">ชำระรายปี</label>
+                                                            <label class="form-check-label" for="option_yearly">ชำระรายปี</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -173,9 +176,9 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-6">
                                                     <!-- ชื่อผู้โอน -->
                                                     <div class="form-group has-success">
-                                                        <label for="detail" class="control-label">ชื่อผู้โอน/ผู้ชำระเงิน</label>
+                                                        <label for="detail" class="control-label">ชื่อผู้โอน</label>
                                                         <input type="text" name="detail" class="form-control" required
-                                                               id="detail">
+                                                               id="detail" value="<?php echo $f_name . "" . $l_name ?>">
                                                     </div>
                                                 </div>
 
@@ -183,7 +186,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <!-- จำนวนเงินที่โอน -->
                                                     <div class="form-group has-success">
                                                         <label for="amount"
-                                                               class="control-label">จำนวนเงินที่โอน/ชำระ</label>
+                                                               class="control-label">จำนวนเงินที่โอน</label>
                                                         <input type="number" name="amount" class="form-control"
                                                                required id="amount">
                                                     </div>
@@ -200,12 +203,12 @@ if (strlen($_SESSION['alogin']) === "") {
 
                                         <div class="form-group has-success">
                                             <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
-                                            <input name="bank_transfer" class="form-control" id="bank_transfer" value="<?php echo $bank_transfer ?>" readonly="true">
+                                            <input name="bank_name" class="form-control" id="bank_name" value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>" readonly="true">
                                         </div>
 
-                                        <!-- แนบ Slip -->
+                                        <!-- แนบ Slip/ใบโอนเงิน/ใบเสร็จ -->
                                         <div class="form-group has-success">
-                                            <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน</label>
+                                            <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
                                             <input type="file" name="picture_payment" class="form-control"
                                                    required id="picture_payment">
                                             <img id="preview_image" src="#" alt="Preview Image"
@@ -323,7 +326,7 @@ if (strlen($_SESSION['alogin']) === "") {
                     success: function (response) {
                         //$("#loading").hide();
                         if (response == 1) {
-                            alertify.success("โอนเงินและส่ง Slip สำเร็จ");
+                            alertify.success("โอนเงินและส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
                             $("#transfer_form")[0].reset();
                             $("#preview_image").hide().attr("src", "");
                         } else {

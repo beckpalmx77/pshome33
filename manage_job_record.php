@@ -113,8 +113,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                                            placeholder="">
                                                                 </div>
 
-                                                                <div id="imagePreviewContainer" style="display: none;">
-                                                                    <div id="photoPreviewList" class="d-flex flex-wrap"></div>
+                                                                <div class="form-group">
+                                                                    <label for="photo_path" class="control-label">รูปภาพ</label><br>
+                                                                    <img id="preview_photo" src="" alt="ไม่มีรูปภาพ" class="img-fluid img-thumbnail" style="max-height: 300px;">
                                                                 </div>
 
                                                             </div>
@@ -122,10 +123,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                         <div class="modal-footer">
                                                             <input type="hidden" name="id" id="id"/>
                                                             <input type="hidden" name="action" id="action" value=""/>
-                                                            <!--span class="icon-input-btn">
+                                                            <span class="icon-input-btn">
                                                                 <i class="fa fa-check"></i>
                                                             <input type="submit" name="save" id="save"
-                                                                   class="btn btn-primary" value="Save"/-->
+                                                                   class="btn btn-primary" value="Save"/>
                                                             </span>
                                                             <button type="button" class="btn btn-danger"
                                                                     data-dismiss="modal">Close <i
@@ -412,8 +413,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
     <script>
         $("#TableRecordList").on('click', '.detail', function () {
             let id = $(this).attr("id");
-            let formData = { action: "GET_DATA", id: id };
-
+            let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
                 url: 'model/manage_job_record_process.php',
@@ -434,27 +434,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         $('#checkin_time').val(checkin_time);
                         $('#remark').val(remark);
 
-                        // แสดงหลายรูป พร้อมเปิด popup เมื่อคลิก
+                        // แสดงรูปจากโฟลเดอร์ uploads
                         if (photo_path) {
-                            let photos = photo_path.split(',');
-                            $('#photoPreviewList').html('');
-                            photos.forEach(function(photo) {
-                                let trimmedPhoto = photo.trim();
-                                if (trimmedPhoto) {
-                                    let fullUrl = `https://ps33.themediathai.com/line_oa/checkin/uploads/${trimmedPhoto}`;
-                                    let imgTag = `
-                                    <img src="${fullUrl}"
-                                         class="img-thumbnail m-1"
-                                         style="max-height:150px; cursor:pointer;"
-                                         onclick="window.open('${fullUrl}', '_blank')">
-                                `;
-                                    $('#photoPreviewList').append(imgTag);
-                                }
-                            });
-                            $('#imagePreviewContainer').show();
+                            $('#preview_photo').attr('src', 'https://ps33.themediathai.com/line_oa/checkin/uploads/' + photo_path);
                         } else {
-                            $('#photoPreviewList').html('');
-                            $('#imagePreviewContainer').hide();
+                            $('#preview_photo').attr('src', '');
                         }
 
                         $('.modal-title').html("<i class='fa fa-search'></i> รายละเอียด");
@@ -468,8 +452,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
             });
         });
     </script>
-
-
 
     </body>
     </html>

@@ -101,13 +101,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-xl-6 col-md-12 mb-4">
                                     <!-- ไม่ใช้ flex-column แล้ว แต่ให้ card แต่ละใบเว้นห่างด้วย mb-3 -->
 
+                                    <!-- Card 67+68 -->
+                                    <div class="card border-left-primary shadow mb-3">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                        จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ทั้งหมด
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                        <?php echo number_format($count_67) + number_format($count_68); ?> หลัง
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-home fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- Card 67 -->
                                     <div class="card border-left-info shadow mb-3">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                        จำนวนบ้านขึ้นต้นด้วย 67
+                                                        จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ที่ขึ้นต้นด้วย 67
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo number_format($count_67); ?> หลัง
@@ -126,7 +145,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
                                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                        จำนวนบ้านขึ้นต้นด้วย 68
+                                                        จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ที่ขึ้นต้นด้วย 68
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo number_format($count_68); ?> หลัง
@@ -140,11 +159,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
 
                                     <!-- Card User -->
-                                    <div class="card border-left-primary shadow">
+                                    <div class="card border-left-secondary shadow">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
                                                         จำนวนสมาชิกที่ลงทะเบียนทั้งหมด
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">

@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $period_year = $_POST['period_year'];
     $amount = $_POST['amount'];
     $remark = $_POST['remark'];
+    $line_user_id = $_POST['line_user_id']; // รับ userId จาก LIFF
     $picture_payment = $_FILES['picture_payment'];
 
     $field = "runno";
@@ -26,25 +27,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $doc_id = "P-" . $house_number . "-" . $period_year . "-" . sprintf('%03s', $runno);
 
-
-    $txt = $doc_id . " | " . $detail . " | "  . $house_number . " | Period Number = " . $payment_type . " | " .  $period_month_start . " | " . $period_month_to . " | "
-        . $period_year . " | " . $amount . " | " . $remark . " | "
-        . $runno ;
-
-    /*
-            $my_file = fopen("doc_p.txt", "w") or die("Unable to open file!");
-            fwrite($my_file, $txt);
-            fclose($my_file);
-    */
-
     // หากมีการอัปโหลดไฟล์
     if ($picture_payment['error'] == 0) {
+        // ตรวจสอบประเภทไฟล์
+        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!in_array($picture_payment['type'], $allowed_types)) {
+            error_log("Invalid file type: " . $picture_payment['type']);
+            echo "INVALID_FILE_TYPE";
+            exit;
+        }
+
         $upload_dir = '../uploads/slips/';
         $file_name = time() . "_" . basename($picture_payment['name']);
         $file_path = $upload_dir . $file_name;
 
         // อัปโหลดไฟล์
         if (move_uploaded_file($picture_payment['tmp_name'], $file_path)) {
+            // ตรวจสอบว่าไฟล์ภาพสามารถเข้าถึงได้
+            $image_url = 'https://ps33.themediathai.com/uploads/slips/' . $file_name;
+            if (!@getimagesize($image_url)) {
+                error_log("Image file not found or unreadable: " . $image_url);
+                echo "IMAGE_ERROR";
+                exit;
+            }
 
             $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type) 
             VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type)";
@@ -64,21 +69,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':payment_type', $payment_type);
 
             if ($stmt->execute()) {
+                // ======= เริ่มส่งรูปไป LINE =======
+                $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU='; // เปลี่ยนตรงนี้
+
+                $messageData = [
+                    'to' => $line_user_id,
+                    'messages' => [
+                        [
+                            'type' => 'image',
+                            'originalContentUrl' => $image_url,
+                            'previewImageUrl' => $image_url
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
+                        ]
+                    ]
+                ];
+
+                $ch = curl_init('https://api.line.me/v2/bot/message/push');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $access_token
+                ]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                curl_close($ch);
+                // ======= จบส่งรูปไป LINE =======
+
                 echo 1; // สำเร็จ
             } else {
-                echo 0; // เกิดข้อผิดพลาดในฐานข้อมูล
+                echo 0;
             }
         } else {
-            echo 0; // เกิดข้อผิดพลาดในการอัปโหลดไฟล์
+            error_log("File upload failed.");
+            echo "FILE_UPLOAD_FAILED";
         }
     } else {
-        // กรณีไม่มีไฟล์อัปโหลด
+        // ไม่มีการอัปโหลดรูป
         $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno) 
-                                    VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno)";
-
-        // บันทึกข้อมูลลงในฐานข้อมูล
+        VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno)";
         $stmt = $conn->prepare($ins_str);
-        // Bind ข้อมูล
+
         $stmt->bindParam(':doc_id', $doc_id);
         $stmt->bindParam(':payment_date', $payment_date);
         $stmt->bindParam(':house_number', $house_number);
@@ -91,10 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':runno', $runno);
 
         if ($stmt->execute()) {
-            echo 1; // สำเร็จ
+            echo 1;
         } else {
-            echo 0; // เกิดข้อผิดพลาดในฐานข้อมูล
+            echo 0;
         }
     }
 }
-
+?>

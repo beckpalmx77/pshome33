@@ -13,8 +13,8 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM ims_house "
-        . " WHERE ims_house.id = " . $id;
+    $sql_get = "SELECT * FROM v_ims_house "
+        . " WHERE v_ims_house.id = " . $id;
 
     //$myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
     //fwrite($myfile, $sql_get);
@@ -30,6 +30,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "house_name" => $result['house_name'],
             "house_status" => $result['house_status'],
             "phone_number" => $result['phone_number'],
+            "line_picture_profile" => $result['line_picture_profile'],
             "remark" => $result['remark'],
             "car_no1" => $result['car_no1'],
             "car_no2" => $result['car_no2'],
@@ -226,13 +227,13 @@ if ($_POST["action"] === 'GET_HOUSE') {
 */
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house WHERE 1 " . $where_house_number );
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1 " . $where_house_number );
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house WHERE 1 " . $where_house_number . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1 " . $where_house_number . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
@@ -272,6 +273,7 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "contact_name" => $row['contact_name'],
                 "phone_number" => $row['phone_number'],
                 "house_status" => $row['house_status'],
+                "line_picture_profile" => $row['line_picture_profile'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "remark" => $row['remark']

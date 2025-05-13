@@ -57,6 +57,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ซอย</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
+                                                    <th>Picture</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -67,6 +68,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ซอย</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
+                                                    <th>Picture</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -332,6 +334,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'alley'},
                     {data: 'contact_name'},
                     {data: 'phone_number'},
+                    {
+                        data: 'line_picture_profile', // column for image URL
+                        render: function(data, type, row) {
+                            if (data) {
+                                return '<img src="' + data + '" alt="image" style="width: 50px; height: auto;">'; // adjust image size
+                            }
+                            return ''; // return empty if no image
+                        }
+                    },
                     {data: 'update'},
                     {data: 'delete'}
                 ]
