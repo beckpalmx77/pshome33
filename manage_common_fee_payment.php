@@ -57,7 +57,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>เลขที่เอกสาร</th>
+                                                    <!--th>เลขที่เอกสาร</th-->
                                                     <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
@@ -75,7 +75,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 </thead>
                                                 <tfoot>
                                                 <tr>
-                                                    <th>เลขที่เอกสาร</th>
+                                                    <!--th>เลขที่เอกสาร</th-->
                                                     <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
@@ -411,7 +411,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     }
                 },
                 'columns': [
-                    {data: 'doc_id'},
+                    //{data: 'doc_id'},
                     {data: 'payment_date'},
                     {data: 'house_number'},
                     {data: 'alley'},

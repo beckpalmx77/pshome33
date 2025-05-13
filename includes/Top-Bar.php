@@ -94,7 +94,21 @@
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <?php $src = $_SESSION['line_picture_profile'] ?? 'img/default.png'; ?>
+                    <!--?php $src = $_SESSION['line_picture_profile'] ?? 'img/default.png'; ?-->
+
+                    <?php
+                    if (!empty($_SESSION['line_picture_profile'])) {
+                        $src = $_SESSION['line_picture_profile'];
+                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['role'] === 'admin') {
+                        $src = 'img/icon/admin.png';
+                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['role'] === 'supervisor') {
+                        $src = 'img/icon/supervisor.png';
+                    } else {
+                        $src = 'img/default.png';
+                    }
+                    ?>
+
+
                     <img class="img-profile rounded-circle" src="<?php echo $src;?>" style="max-width: 60px">
 
                     <span class="ml-2 d-none d-lg-inline text-white small"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name'] . " - " . $_SESSION['role'] ?></span>
