@@ -50,6 +50,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
                                                     <th>Type</th>
+                                                    <th>Picture</th>
                                                     <th>Role</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -63,6 +64,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
                                                     <th>Type</th>
+                                                    <th>Picture</th>
                                                     <th>Role</th>
                                                     <th>Status</th>
                                                     <th>Action</th>
@@ -396,6 +398,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     {data: 'first_name'},
                     {data: 'last_name'},
                     {data: 'picture'},
+                    {
+                        data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
+                        render: function(data, type, row) {
+                            let imageUrl = data ? data : 'img/icon/none_img.png'; // ถ้าไม่มี data ใช้รูป default
+                            return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
+                        }
+                    },
                     {data: 'role'},
                     {data: 'status'},
                     {data: 'update'},

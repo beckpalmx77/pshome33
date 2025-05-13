@@ -166,6 +166,8 @@ foreach ($BankCurr as $row_curr) {
                                                     <input type="text" name="detail" class="form-control" required
                                                            id="detail">
                                                     <input type="hidden" id="line_user_id" name="line_user_id" readonly="true">
+                                                    <input type="hidden" id="displayName" name="displayName" readonly="true">
+                                                    <input type="hidden" id="pictureUrl" name="pictureUrl" readonly="true">
                                                 </div>
                                             </div>
 
@@ -437,6 +439,8 @@ foreach ($BankCurr as $row_curr) {
             } else {
                 liff.getProfile().then(profile => {
                     const userId = profile.userId;
+                    const pictureUrl = profile.pictureUrl;
+                    const displayName = profile.displayName;
 
                     fetch('model/get_house_number.php', {
                         method: 'POST',
@@ -449,6 +453,8 @@ foreach ($BankCurr as $row_curr) {
                         .then(data => {
                             if (data.house_number) {
                                 document.getElementById('line_user_id').value = userId;
+                                document.getElementById('pictureUrl').value = pictureUrl;
+                                document.getElementById('displayName').value = displayName;
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value =
                                     (data.f_name || '') + ' ' + (data.l_name || '');

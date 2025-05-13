@@ -17,6 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $amount = $_POST['amount'];
     $remark = $_POST['remark'];
     $line_user_id = $_POST['line_user_id']; // รับ userId จาก LIFF
+    $pictureUrl = $_POST['pictureUrl']; // รับ userId จาก LIFF
+    $displayName = $_POST['displayName']; // รับ userId จาก LIFF
     $picture_payment = $_FILES['picture_payment'];
 
     $field = "runno";
@@ -51,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit;
             }
 
-            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type) 
-            VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type)";
+            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show) 
+            VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type,:line_user_id,:line_picture_profile_show)";
             $stmt = $conn->prepare($ins_str);
 
             $stmt->bindParam(':doc_id', $doc_id);
@@ -67,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':picture_payment', $file_name);
             $stmt->bindParam(':remark', $remark);
             $stmt->bindParam(':payment_type', $payment_type);
+            $stmt->bindParam(':line_user_id', $line_user_id);
+            $stmt->bindParam(':line_picture_profile_show', $pictureUrl);
 
             if ($stmt->execute()) {
                 // ======= เริ่มส่งรูปไป LINE =======
@@ -109,8 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         // ไม่มีการอัปโหลดรูป
-        $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno) 
-        VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno)";
+        $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno,line_user_id,line_picture_profile_show) 
+        VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno, :line_user_id,:line_picture_profile_show)";
         $stmt = $conn->prepare($ins_str);
 
         $stmt->bindParam(':doc_id', $doc_id);
@@ -123,6 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':amount', $amount);
         $stmt->bindParam(':remark', $remark);
         $stmt->bindParam(':runno', $runno);
+        $stmt->bindParam(':line_user_id', $line_user_id);
+        $stmt->bindParam(':line_picture_profile_show', $pictureUrl);
 
         if ($stmt->execute()) {
             echo 1;

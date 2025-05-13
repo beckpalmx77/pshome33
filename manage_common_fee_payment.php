@@ -62,6 +62,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
                                                     <th>ผู้ชำระ</th>
+                                                    <th>picture</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
@@ -79,6 +80,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
                                                     <th>ผู้ชำระ</th>
+                                                    <th>picture</th>
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
@@ -414,6 +416,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'house_number'},
                     {data: 'alley'},
                     {data: 'detail'},
+                    {
+                        data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
+                        render: function(data, type, row) {
+                            let imageUrl = data ? data : 'img/icon/none_img.png'; // ถ้าไม่มี data ใช้รูป default
+                            return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
+                        }
+                    },
                     {data: 'month_name_start'},
                     {data: 'month_name_to'},
                     {data: 'period_year'},

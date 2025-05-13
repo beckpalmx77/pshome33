@@ -335,12 +335,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'contact_name'},
                     {data: 'phone_number'},
                     {
-                        data: 'line_picture_profile', // column for image URL
+                        data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
                         render: function(data, type, row) {
-                            if (data) {
-                                return '<img src="' + data + '" alt="image" style="width: 50px; height: auto;">'; // adjust image size
-                            }
-                            return ''; // return empty if no image
+                            let imageUrl = data ? data : 'img/icon/none_img.png'; // ถ้าไม่มี data ใช้รูป default
+                            return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
                     },
                     {data: 'update'},

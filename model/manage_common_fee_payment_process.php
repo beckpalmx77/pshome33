@@ -224,6 +224,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "month_name_to" => $row['month_name_to'],
                 "period_year" => $row['period_year'],
                 "amount" => $row['amount'],
+                "line_picture_profile" => $row['line_picture_profile_show'],
                 "payment_status" => "<span style='color: $color;'>$message</span>",
                 "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' $print_disabled>Print</button>",
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
