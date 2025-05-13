@@ -6,7 +6,7 @@
     <meta name="author" content="">
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
     <link href="../img/logo/logo.png" rel="icon">
-    <title>Home System</title>
+    <title>House System</title>
 
     <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../js/jquery-3.5.1.min.js"></script-->
@@ -40,6 +40,9 @@
     <script type="text/javascript" charset="utf8" src="../js/datatables1115.js"></script>
 
     <script type="text/javascript" charset="utf8" src="../js/clock_time.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.5.0/dist/heic2any.min.js"></script>
+
 
     <?php
     session_start();
