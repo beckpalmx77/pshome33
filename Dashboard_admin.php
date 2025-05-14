@@ -102,6 +102,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <!-- ไม่ใช้ flex-column แล้ว แต่ให้ card แต่ละใบเว้นห่างด้วย mb-3 -->
 
                                     <!-- Card 67+68 -->
+                                    <div class="card border-left-danger shadow mb-3">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                        LINE OA ระบบส่วนกลางพฤกษา 33
+                                                    </div>
+
+                                                    <!-- QR + Text -->
+                                                    <div class="row align-items-center">
+                                                        <!-- รูป QR -->
+                                                        <div class="col-auto">
+                                                            <img src="img/icon/PS33-COMMONFEE-LINEOA.png" alt="QR Code" class="img-fluid rounded shadow-sm" style="max-height: 60px;">
+                                                        </div>
+
+                                                        <!-- ข้อความ -->
+                                                        <div class="col">
+                                                            <span class="text-gray-800 ml-2">Scan QR Code เพื่อเข้าระบบค่าส่วนกลางพฤกษา 33</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-auto">
+                                                    <i class="fab fa-line fa-2x text-gray-300"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Card 67+68 -->
                                     <div class="card border-left-primary shadow mb-3">
                                         <div class="card-body">
                                             <div class="row no-gutters align-items-center">
