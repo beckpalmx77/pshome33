@@ -128,7 +128,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                         <div class="form-group row">
                                             <div class="col-sm-12">
-                                                <label for="images">ภาพ:</label>
+                                                <label for="images">ภาพ: (Cick ที่รูปเพื่อขยาย)</label>
                                                 <div id="imagePreview" class="d-flex flex-wrap gap-2"></div>
                                             </div>
                                         </div>
