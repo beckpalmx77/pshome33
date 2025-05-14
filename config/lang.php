@@ -24,5 +24,5 @@ $user_picture = 'img/icon/user-001.png';
 
 $email = '@sac.com';
 
-$contact_y = "ติดต่อแล้ว";
-$contact_n = "ยังไม่ได้ติดต่อ";
+$contact_y = "ตอบแล้ว";
+$contact_n = "ยังไม่ตอบ";

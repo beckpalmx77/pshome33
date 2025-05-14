@@ -131,8 +131,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             <select id="status" name="status"
                                                     class="form-control" data-live-search="true"
                                                     title="Please select">
-                                                <option value="N">ยังไม่ได้ติดต่อ</option>
-                                                <option value="Y">ติดต่อแล้ว</option>
+                                                <option value="N">ยังไม่ตอบ</option>
+                                                <option value="Y">ตอบแล้ว</option>
                                             </select>
                                         </div>
 

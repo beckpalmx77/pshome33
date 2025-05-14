@@ -1,3 +1,4 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
     /* Custom CSS */
     @media (max-width: 768px) {
@@ -34,6 +35,7 @@
             font-size: 0.9rem;
         }
     }
+
 </style>
 
 <!-- TopBar -->
@@ -43,130 +45,86 @@
     </button>
     <div class="d-flex flex-grow-1 justify-content-between align-items-center">
         <?php if ($_SESSION['deviceType'] !== 'computer') { ?>
-
-        <!-- Right: Navbar items -->
-        <ul class="navbar-nav ml-auto d-flex align-items-center">
-            <li class="nav-item dropdown no-arrow mx-1">
-                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <span><?php echo "System : " . $_SESSION['first_name'] . " " . $_SESSION['last_name']?>&nbsp;</span>
-                </a>
-            </li>
-        </ul>
-        <?php } else { ?>
-        <!-- Left: Clock -->
-        <div class="text-white" id="clock" style="font-size: 1rem;"></div>
-        <!-- Right: Navbar items -->
-        <ul class="navbar-nav ml-auto d-flex align-items-center">
-            <li class="nav-item dropdown no-arrow mx-1">
-                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-heart"></i>
-                    <span>&nbsp;<?php echo $_SESSION['system_name_1']?></span>
-                </a>
-            </li>
-
-            <li class="nav-item dropdown no-arrow mx-1">
-                <a class="nav-link dropdown-toggle" href="manage-message.php" target="_self">
-                    <span class="badge badge-danger">Message</span>&nbsp;<i class="fa fa-bell"></i>
-                </a>
-            </li>
-
-            <li class="nav-item dropdown no-arrow">
-                <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                     aria-labelledby="searchDropdown">
-                    <form class="navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-1 small"
-                                   placeholder="What do you want to look for?" aria-label="Search"
-                                   aria-describedby="basic-addon2" style="border-color: #710714;">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </li>
-
-            <div class="topbar-divider d-none d-sm-block"></div>
-            <li class="nav-item dropdown no-arrow">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <!--?php $src = $_SESSION['line_picture_profile'] ?? 'img/default.png'; ?-->
-
-                    <?php
-                    if (!empty($_SESSION['line_picture_profile'])) {
-                        $src = $_SESSION['line_picture_profile'];
-                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['account_type'] === 'admin') {
-                        $src = 'img/icon/admin.png';
-                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['account_type'] === 'supervisor') {
-                        $src = 'img/icon/supervisor.png';
-                    } else {
-                        $src = 'img/default.png';
-                    }
-                    ?>
-
-
-                    <img class="img-profile rounded-circle" src="<?php echo $src;?>" style="max-width: 60px">
-
-                    <span class="ml-2 d-none d-lg-inline text-white small"><?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name'] . " - " . $_SESSION['role'] ?></span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
-                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Logout
+            <ul class="navbar-nav ml-auto d-flex align-items-center">
+                <li class="nav-item dropdown no-arrow mx-1">
+                    <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span><?php echo "System : " . $_SESSION['first_name'] . " " . $_SESSION['last_name'] ?>&nbsp;</span>
                     </a>
-                </div>
-            </li>
-        </ul>
+                </li>
+            </ul>
+        <?php } else { ?>
+            <div class="text-white" id="clock" style="font-size: 1rem;"></div>
+            <ul class="navbar-nav ml-auto d-flex align-items-center">
+                <li class="nav-item dropdown no-arrow mx-1">
+                    <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-heart"></i>
+                        <span>&nbsp;<?php echo $_SESSION['system_name_1'] ?></span>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow mx-1">
+                    <a class="nav-link dropdown-toggle" href="manage-message.php" target="_self">
+                        <span class="badge badge-danger">Message</span>
+                        &nbsp;<i class="fa fa-bell"></i>&nbsp;
+                        <!--span class="badge badge-danger ms-2" id="message_badge">0</span-->
+                        <span class="badge badge-danger ms-2" id="message_badge" style="display:none;">0</span>
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown no-arrow">
+                    <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                         aria-labelledby="searchDropdown">
+                        <form class="navbar-search">
+                            <div class="input-group">
+                                <input type="text" class="form-control bg-light border-1 small"
+                                       placeholder="What do you want to look for?" aria-label="Search"
+                                       aria-describedby="basic-addon2" style="border-color: #710714;">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+
+                <div class="topbar-divider d-none d-sm-block"></div>
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?php
+                        if (!empty($_SESSION['line_picture_profile'])) {
+                            $src = $_SESSION['line_picture_profile'];
+                        } elseif ($_SESSION['account_type'] === 'admin') {
+                            $src = 'img/icon/admin.png';
+                        } elseif ($_SESSION['account_type'] === 'supervisor') {
+                            $src = 'img/icon/supervisor.png';
+                        } else {
+                            $src = 'img/default.png';
+                        }
+                        ?>
+                        <img class="img-profile rounded-circle" src="<?php echo $src; ?>" style="max-width: 60px">
+                        <span class="ml-2 d-none d-lg-inline text-white small">
+                            <?php echo $_SESSION['first_name'] . " " . $_SESSION['last_name'] . " - " . $_SESSION['role'] ?>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                         aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
+                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
         <?php } ?>
     </div>
 </nav>
 
-
-<script>
-    $(document).ready(function(){
-
-        function
-
-
-        (view = '')
-        {
-            $.ajax({
-                url:"fetch.php",
-                method:"POST",
-                data:{view:view},
-                dataType:"json",
-                success:function(data)
-                {
-                    //alert(data);
-                    $('.dropdown-menu').html(data.notification);
-                    if(data.unseen_notification > 0)
-                    {
-                        $('.count').html(data.unseen_notification);
-                    }
-                }
-            });
-        }
-
-        load_unseen_notification();
-
-        $(document).on('click', '.dropdown-toggle', function(){
-            $('.count').html('');
-            load_unseen_notification('yes');
-        });
-
-        //setInterval(function(){
-            //load_unseen_notification();;
-        //}, 5000);
-
-    });
-</script>
-<!-- Topbar -->
-
-<!-- JavaScript for updating the clock -->
+<!-- Clock Script -->
 <script>
     function updateClock() {
         const options = {
@@ -182,10 +140,33 @@
         const bangkokTime = new Intl.DateTimeFormat('th-TH', options).format(new Date());
         document.getElementById('clock').textContent = bangkokTime;
     }
-
-    // Update the clock every second
     setInterval(updateClock, 1000);
-
-    // Initial call to display the clock immediately
     updateClock();
+</script>
+
+<!-- Message Badge Script -->
+<script>
+
+    function loadMessageBadge() {
+        $.ajax({
+            url: "get_unread_count.php",
+            method: "GET",
+            success: function (data) {
+                console.log("Data received: ", data); // ตรวจสอบข้อมูลที่ได้จาก PHP
+                const count = parseInt(data);
+                if (count > 0) {
+                    $('#message_badge').text(count).show();
+                } else {
+                    $('#message_badge').hide();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX error: ", status, error);  // ถ้ามีข้อผิดพลาดใน AJAX
+            }
+        });
+    }
+
+    loadMessageBadge();
+    setInterval(loadMessageBadge, 10000);
+
 </script>
