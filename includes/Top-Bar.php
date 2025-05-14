@@ -174,6 +174,6 @@ ini_set('display_errors', 1);
     }
 
     loadMessageBadge();
-    setInterval(loadMessageBadge, 10000);
+    setInterval(loadMessageBadge, 5000);
 
 </script>
