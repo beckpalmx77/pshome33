@@ -178,7 +178,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <div class="form-group has-success">
                                                         <label for="detail" class="control-label">ชื่อผู้โอน</label>
                                                         <input type="text" name="detail" class="form-control" required
-                                                               id="detail" value="<?php echo $f_name . "" . $l_name ?>">
+                                                               id="detail" value="<?php echo $f_name . " " . $l_name ?>">
                                                     </div>
                                                 </div>
 
