@@ -1,3 +1,10 @@
+<?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+?>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
     /* Custom CSS */
@@ -149,7 +156,7 @@
 
     function loadMessageBadge() {
         $.ajax({
-            url: "get_unread_count.php",
+            url: "includes/get_unread_count.php",
             method: "GET",
             success: function (data) {
                 console.log("Data received: ", data); // ตรวจสอบข้อมูลที่ได้จาก PHP
