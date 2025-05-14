@@ -95,38 +95,50 @@
 
       const placeName = placeNameInput.value;
 
-      navigator.geolocation.getCurrentPosition(position => {
-        const formData = new FormData();
-        formData.append("user_id", profile.userId);
-        formData.append("check_type", check_type.value);
-        formData.append("display_name", profile.displayName);
-        formData.append("place_name", placeName);
-        formData.append("latitude", position.coords.latitude);
-        formData.append("longitude", position.coords.longitude);
+      // พยายามดึงตำแหน่ง ถ้าไม่ได้ให้ใช้ 0
+      navigator.geolocation.getCurrentPosition(
+              position => {
+                sendCheckin(profile, check_type.value, placeName, photoInput, position.coords.latitude, position.coords.longitude);
+              },
+              error => {
+                sendCheckin(profile, check_type.value, placeName, photoInput, 0, 0);
+              },
+              { timeout: 10000 }
+      );
 
-        for (let i = 0; i < photoInput.files.length; i++) {
-          formData.append("photo[]", photoInput.files[i]);
-        }
-
-        document.getElementById("spinner").style.display = "block";
-        fetch("https://ps33.themediathai.com/line_oa/checkin/checkin_api.php", {
-          method: "POST",
-          body: formData
-        })
-                .then(res => res.text())
-                .then(() => {
-                  alert("✅ Check-in สำเร็จแล้ว");
-                  liff.closeWindow();
-                })
-                .catch(err => alert("❌ ไม่สามารถ Check-in ได้: " + err.message))
-                .finally(() => {
-                  document.getElementById("spinner").style.display = "none";
-                });
-
-      }, error => alert("❌ ไม่สามารถรับตำแหน่งได้: " + error.message));
     } catch (err) {
       alert("เกิดข้อผิดพลาด: " + err.message);
     }
+  }
+
+  function sendCheckin(profile, checkType, placeName, photoInput, lat, lng) {
+    const formData = new FormData();
+    formData.append("user_id", profile.userId);
+    formData.append("check_type", checkType);
+    formData.append("display_name", profile.displayName);
+    formData.append("place_name", placeName);
+    formData.append("latitude", lat);
+    formData.append("longitude", lng);
+
+    for (let i = 0; i < photoInput.files.length; i++) {
+      formData.append("photo[]", photoInput.files[i]);
+    }
+
+    document.getElementById("spinner").style.display = "block";
+
+    fetch("https://ps33.themediathai.com/line_oa/checkin/checkin_api.php", {
+      method: "POST",
+      body: formData
+    })
+            .then(res => res.text())
+            .then(() => {
+              alert("✅ Check-in สำเร็จแล้ว");
+              liff.closeWindow();
+            })
+            .catch(err => alert("❌ ไม่สามารถ Check-in ได้: " + err.message))
+            .finally(() => {
+              document.getElementById("spinner").style.display = "none";
+            });
   }
 </script>
 

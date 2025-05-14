@@ -27,7 +27,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "latitude" => $result['latitude'],
             "longitude" => $result['longitude'],
             "check_type" => $result['check_type'],
-            "photo_path" => $result['photo_path'],
+            "images" => $result['photo_path'],
             "remark" => $result['remark']);
     }
 
@@ -173,6 +173,8 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
             $data[] = array(
                 "id" => $row['id'],
                 "display_name" => $row['display_name'],
+                "emp_name" => $row['emp_name'],
+                "line_picture_profile" => $row['line_picture_profile'],
                 "checkin_time" => $row['checkin_time'],
                 "place_name" => $row['place_name'],
                 "latitude" => $row['latitude'],

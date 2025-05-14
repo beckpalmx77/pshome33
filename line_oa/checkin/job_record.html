@@ -133,7 +133,7 @@
 <script>
     async function checkin() {
         try {
-            await liff.init({liffId: LIFF_ID});
+            await liff.init({ liffId: LIFF_ID });
             if (!liff.isLoggedIn()) {
                 liff.login();
                 return;
@@ -149,21 +149,22 @@
 
             const placeName = placeNameInput.value;
 
-            navigator.geolocation.getCurrentPosition(position => {
+            const sendForm = (lat, lng) => {
                 const formData = new FormData();
                 formData.append("user_id", profile.userId);
                 formData.append("check_type", check_type.value);
                 formData.append("display_name", profile.displayName);
                 formData.append("remark", document.getElementById("remark").value);
                 formData.append("place_name", placeName);
-                formData.append("latitude", position.coords.latitude);
-                formData.append("longitude", position.coords.longitude);
+                formData.append("latitude", lat);
+                formData.append("longitude", lng);
 
                 for (let i = 0; i < photoInput.files.length; i++) {
                     formData.append("photo[]", photoInput.files[i]);
                 }
 
                 document.getElementById("spinner").style.display = "block";
+
                 fetch("https://ps33.themediathai.com/line_oa/checkin/job_record_api.php", {
                     method: "POST",
                     body: formData
@@ -173,11 +174,20 @@
                         alert("✅ บันทึกสำเร็จแล้ว");
                         liff.closeWindow();
                     })
-                    .catch(err => alert("❌ ไม่สามารถ บันทึก ได้: " + err.message))
+                    .catch(err => alert("❌ ไม่สามารถบันทึกได้: " + err.message))
                     .finally(() => {
                         document.getElementById("spinner").style.display = "none";
                     });
-            }, error => alert("❌ ไม่สามารถรับตำแหน่งได้: " + error.message));
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                position => sendForm(position.coords.latitude, position.coords.longitude),
+                error => {
+                    console.warn("❌ ไม่สามารถรับตำแหน่งได้: " + error.message);
+                    sendForm(0, 0);
+                }
+            );
+
         } catch (err) {
             alert("เกิดข้อผิดพลาด: " + err.message);
         }

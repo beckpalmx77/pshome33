@@ -53,7 +53,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>ชื่อ</th>
+                                                    <th>ชื่อ Line</th>
+                                                    <th>ชื่อ-นามสกุล</th>
+                                                    <th>รูป</th>
                                                     <th>เวลา</th>
                                                     <th>รายละเอียด</th>
                                                     <th>Action</th>
@@ -61,7 +63,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                 </thead>
                                                 <tfoot>
                                                 <tr>
-                                                    <th>ชื่อ</th>
+                                                    <th>ชื่อ Line</th>
+                                                    <th>ชื่อ-นามสกุล</th>
+                                                    <th>รูป</th>
                                                     <th>เวลา</th>
                                                     <th>รายละเอียด</th>
                                                     <th>Action</th>
@@ -87,7 +91,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                             <div class="modal-body">
 
                                                                 <div class="form-group">
-                                                                    <label for="display_name" class="control-label">ชื่อ</label>
+                                                                    <label for="display_name"
+                                                                           class="control-label">ชื่อ</label>
                                                                     <input type="display_name" class="form-control"
                                                                            id="display_name" name="display_name"
                                                                            placeholder="">
@@ -113,9 +118,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                                            placeholder="">
                                                                 </div>
 
-                                                                <div class="form-group text-center" id="imagePreviewContainer" style="display:none;">
-                                                                    <label>รูปภาพ:</label><br>
-                                                                    <img id="photoPreview" src="" class="img-fluid img-thumbnail" style="max-height:300px;" />
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                        <label for="images">ภาพ: (Cick ที่รูปเพื่อขยาย)</label>
+                                                                        <div id="imagePreview" class="d-flex flex-wrap gap-2"></div>
+                                                                    </div>
                                                                 </div>
 
                                                             </div>
@@ -135,6 +142,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                         </div>
                                                     </form>
 
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal fade" id="imageModal" tabindex="-1" role="dialog"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content bg-dark">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">×
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <!-- ภาพที่จะแสดงใน modal -->
+                                                        <img id="modalImage" src="" class="img-fluid rounded"
+                                                             style="max-height: 80vh;">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -253,6 +278,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                 },
                 'columns': [
                     {data: 'display_name'},
+                    {data: 'emp_name'},
+                    {
+                        data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
+                        render: function(data, type, row) {
+                            let imageUrl = data ? data : 'img/icon/none_img.png'; // ถ้าไม่มี data ใช้รูป default
+                            return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
+                        }
+                    },
                     {data: 'checkin_time'},
                     {data: 'check_type'},
                     {data: 'detail'}
@@ -376,7 +409,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
     <script>
         $("#TableRecordList").on('click', '.detail', function () {
             let id = $(this).attr("id");
-            let formData = { action: "GET_DATA", id: id };
+            let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
                 url: 'model/manage_check_in_out_process.php',
@@ -389,7 +422,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         let display_name = response[i].display_name;
                         let checkin_time = response[i].checkin_time;
                         let check_type = response[i].check_type;
-                        let photo_path = response[i].photo_path; // เพิ่มตรงนี้
+                        let images = response[i].images; // เพิ่มตรงนี้
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -400,19 +433,33 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
 
-                        if (photo_path) {
-                            $('#photoPreview').attr('src', 'https://ps33.themediathai.com/line_oa/checkin/uploads/' + photo_path);
-                            $('#imagePreviewContainer').show();
-                        } else {
-                            $('#photoPreview').attr('src', '');
-                            $('#imagePreviewContainer').hide();
+                        $('#imagePreview').html('');
+
+                        if (images && images.trim() !== "") {
+                            let filenames = images.split(',');
+                            filenames.forEach(filename => {
+                                filename = filename.trim();
+                                if (filename !== "") {
+                                    let imgTag = `<img src="line_oa/checkin/uploads/${filename}" class="img-thumbnail m-1 img-preview" style="height: 100px; cursor: pointer;">`;
+                                    $('#imagePreview').append(imgTag);
+                                }
+                            });
                         }
+
                     }
                 },
                 error: function (response) {
                     alertify.error("error : " + response);
                 }
             });
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '.img-preview', function () {
+            let imgSrc = $(this).attr('src');  // ดึง src ของภาพที่ถูกคลิก
+            $('#modalImage').attr('src', imgSrc);  // เปลี่ยน src ของ modal image ให้เป็นภาพที่ถูกคลิก
+            $('#imageModal').modal('show');  // แสดง modal ที่มีภาพขนาดใหญ่
         });
     </script>
 

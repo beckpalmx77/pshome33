@@ -4,9 +4,9 @@ header("Access-Control-Allow-Origin: *");
 
 $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
 
-if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($_FILES['photo'])) {
+if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['place_name'], $_POST['check_type']) && isset($_FILES['photo'])) {
     $userId = $_POST['user_id'];
-    $displayName = $_POST['display_name'];
+    $displayName = $_POST['display_name'] ?? 'Unknown';
     $place_name = $_POST['place_name'];
     $check_type = $_POST['check_type'];
     $lat = $_POST['latitude'];
@@ -27,6 +27,9 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         $token_checkin = uniqid("ps33_", true);
 
         $imageInfo = getimagesize($tmpName);
+        if ($imageInfo === false) {
+            continue;
+        }
         $mime = $imageInfo['mime'];
 
         switch ($mime) {
@@ -56,14 +59,19 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         $photoPaths = implode(",", $photoNames);
 
         $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type , $token_checkin]);
+        $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
 
         $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
 
-        // สร้าง Flex Message Carousel
+        // 1. ข้อความธรรมดา
+        $textMessage = [
+            'type' => 'text',
+            'text' => "✅ {$actionText} สำเร็จ\nสถานที่: {$place_name}\nเวลา: {$timestamp}"
+        ];
+
+        // 2. Flex Message รูปภาพ
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
-            // สร้าง URL ของรูปภาพที่สามารถเข้าถึงได้จากภายนอก
             $imageUrl = "https://ps33.themediathai.com/line_oa/checkin/uploads/" . $photo;
 
             $flexContents[] = [
@@ -87,7 +95,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
                         ],
                         [
                             "type" => "text",
-                            "text" => "Check In เวลา: $timestamp",
+                            "text" => "เวลา: $timestamp",
                             "size" => "sm",
                             "color" => "#888888"
                         ]
@@ -96,21 +104,25 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
             ];
         }
 
-        $messageData = [
-            'to' => $userId,
-            'messages' => [
-                [
-                    'type' => 'flex',
-                    'altText' => "📸 รูปภาพจากการ{$actionText}",
-                    'contents' => [
-                        'type' => 'carousel',
-                        'contents' => $flexContents
-                    ]
-                ]
+        $flexMessage = [
+            'type' => 'flex',
+            'altText' => "📸 รูปภาพจากการ{$actionText}",
+            'contents' => [
+                'type' => 'carousel',
+                'contents' => $flexContents
             ]
         ];
 
-        // ส่งข้อความไปยัง LINE OA
+        // รวมทั้งข้อความและ Flex message
+        $messageData = [
+            'to' => $userId,
+            'messages' => [
+                $textMessage,
+                $flexMessage
+            ]
+        ];
+
+        // ส่งไปยัง LINE
         $ch = curl_init('https://api.line.me/v2/bot/message/push');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -125,14 +137,12 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude']) && isset($
         $error = curl_error($ch);
         curl_close($ch);
 
-        // บันทึกผลลัพธ์การส่งข้อความ
         file_put_contents("line_push_log.txt", "[$timestamp] HTTP CODE: $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
 
-        // ตรวจสอบการตอบกลับจาก API
         if ($httpCode === 200) {
-            echo "✅ Check-in สำเร็จและส่ง LINE สำเร็จแล้ว";
+            echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
         } else {
-            echo "❌ Check-in สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
+            echo "❌ $actionText สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
         }
     } else {
         http_response_code(500);
