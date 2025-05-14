@@ -23,6 +23,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "email" => $result['email'],
             "phone" => $result['phone'],
             "remark" => $result['remark'],
+            "answer" => $result['answer'],
             "house_number" => $result['house_number'],
             "time_contact" => $result['time_contact'],
             "create_date" => $result['create_date'],
@@ -30,6 +31,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "contact_name" => $result['contact_name'],
             "contact_date" => $result['contact_date'],
             "contact_time" => $result['contact_time'],
+            "line_user_id" => $result['user_id'],
             "status" => $result['status']);
     }
 
@@ -54,35 +56,76 @@ if ($_POST["action"] === 'SEARCH') {
 
 if ($_POST["action"] === 'UPDATE') {
 
-    //if ($_POST["contact_name"] !== '') {
     $id = $_POST["id"];
     $contact_name = $_POST["contact_name"];
     $contact_date = $_POST["contact_date"];
     $contact_time = $_POST["contact_time"];
+    $remark = $_POST["remark"];
+    $answer = $_POST["answer"];
     $status = $_POST["status"];
+    $line_user_id = $_POST["line_user_id"]; // รับมาจากฟอร์มหรือ database
 
     $date = new DateTime();
     $date->setTimestamp(time());
     $timestamp = $date->format(DateTime::RFC1123);
 
-    $sql_find = "SELECT * FROM afront_contact WHERE id = " . $id;
+    $sql_find = "SELECT COUNT(*) FROM afront_contact WHERE id = " . intval($id);
     $nRows = $conn->query($sql_find)->fetchColumn();
+
     if ($nRows > 0) {
-        $sql_update = "UPDATE afront_contact SET contact_name=:contact_name,contact_date=:contact_date
-            ,contact_time=:contact_time,status=:status,update_date=:update_date WHERE id = :id";
+        $sql_update = "UPDATE afront_contact 
+            SET contact_name=:contact_name,
+                contact_date=:contact_date,
+                contact_time=:contact_time,
+                answer=:answer,
+                status=:status,
+                update_date=:update_date 
+            WHERE id = :id";
+
         $query = $conn->prepare($sql_update);
         $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
         $query->bindParam(':contact_date', $contact_date, PDO::PARAM_STR);
         $query->bindParam(':contact_time', $contact_time, PDO::PARAM_STR);
+        $query->bindParam(':answer', $answer, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
         $query->bindParam(':update_date', $timestamp, PDO::PARAM_STR);
-        $query->bindParam(':id', $id, PDO::PARAM_STR);
+        $query->bindParam(':id', $id, PDO::PARAM_INT);
         $query->execute();
-        echo $save_success;
-    }
 
-    //}
+        echo "บันทึกสำเร็จ"; // หรือใช้ $save_success ถ้ามีประกาศไว้ก่อนหน้า
+
+        // ----------- ส่งข้อความกลับ LINE OA -----------
+        $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU='; // ใส่ Access Token จริงของคุณ
+
+        $messageData = [
+            'to' => $line_user_id,
+            'messages' => [
+                [
+                    'type' => 'text',
+                    'text' => "ข้อมูลของคุณได้รับการอัปเดตเรียบร้อยแล้ว ✅\n"
+                        . "ข้อความ: $remark\n"
+                        . "คำตอบ: $answer"
+                ]
+            ]
+        ];
+
+        $ch = curl_init('https://api.line.me/v2/bot/message/push');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $access_token,
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            error_log('LINE Push Error: ' . curl_error($ch));
+        }
+        curl_close($ch);
+        // -----------------------------------------------
+    }
 }
+
 
 
 if ($_POST["action"] === 'GET_MESSAGE') {
@@ -164,6 +207,7 @@ if ($_POST["action"] === 'GET_MESSAGE') {
                 "phone" => $row['phone'],
                 "house_number" => $row['house_number'],
                 "remark" => $row['remark'],
+                "answer" => $row['answer'],
                 "time_contact" => $row['time_contact'],
                 "create_date" => $row['create_date'],
                 "update_date" => $row['update_date'],

@@ -126,6 +126,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             </div>
                                         </div>
 
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="remark" class="control-label">ข้อความ</label>
+                                                <textarea class="form-control" id="remark" name="remark" rows="4" placeholder=""></textarea>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="answer" class="control-label">คำตอบ</label>
+                                                <textarea class="form-control" id="answer" name="answer" rows="4" placeholder=""></textarea>
+                                            </div>
+                                        </div>
+
                                         <div class="form-group">
                                             <label for="status" class="control-label">Status</label>
                                             <select id="status" name="status"
@@ -180,6 +192,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </div>
                                 <div class="modal-footer">
                                     <input type="hidden" name="id" id="id"/>
+                                    <input type="hidden" name="line_user_id" id="line_user_id" value=""/>
                                     <input type="hidden" name="action" id="action" value=""/>
                                     <span class="icon-input-btn">
                                                                 <i class="fa fa-check"></i>
@@ -329,7 +342,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         let contact_name = response[i].contact_name;
                         let contact_date = response[i].contact_date;
                         let contact_time = response[i].contact_time;
+                        let remark = response[i].remark;
+                        let answer = response[i].answer;
                         let status = response[i].status;
+                        let line_user_id = response[i].line_user_id;
                         let update_date = response[i].update_date;
 
                         $('#recordModal').modal('show');
@@ -341,7 +357,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#contact_name').val(contact_name);
                         $('#contact_date').val(contact_date);
                         $('#contact_time').val(contact_time);
+                        $('#remark').val(remark);
+                        $('#answer').val(answer);
                         $('#status').val(status);
+                        $('#line_user_id').val(line_user_id);
                         $('#update_date').val(update_date);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
