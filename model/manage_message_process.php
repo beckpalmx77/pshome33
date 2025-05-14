@@ -66,6 +66,10 @@ if ($_POST["action"] === 'UPDATE') {
     $status = $_POST["status"];
     $line_user_id = $_POST["line_user_id"]; // รับมาจากฟอร์มหรือ database
 
+    if (!empty($answer)) {
+        $status = "Y";
+    }
+
     $date = new DateTime();
     $date->setTimestamp(time());
     $timestamp = $date->format(DateTime::RFC1123);
