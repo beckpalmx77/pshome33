@@ -109,21 +109,25 @@ if ($_POST["action"] === 'GET_MESSAGE') {
         );
     }
 
+    if ($_SESSION['account_type']==='user') {
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "' ";
+    }
+
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM afront_contact ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM afront_contact WHERE 1 " . $where_house_number);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM afront_contact WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM afront_contact WHERE 1 " . $where_house_number . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $sql_record = "SELECT * FROM afront_contact WHERE 1 " . $searchQuery;
+    $sql_record = "SELECT * FROM afront_contact WHERE 1 " . $where_house_number .  $searchQuery;
     if ($columnName === 'create_date') {
         $sql_record .= " ORDER BY id DESC " . " LIMIT :limit,:offset";
     } else {

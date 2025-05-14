@@ -49,7 +49,7 @@
             <li class="nav-item dropdown no-arrow mx-1">
                 <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <span><?php echo "SAC System : " . $_SESSION['first_name'] . " " . $_SESSION['last_name']?>&nbsp;</span>
+                    <span><?php echo "System : " . $_SESSION['first_name'] . " " . $_SESSION['last_name']?>&nbsp;</span>
                 </a>
             </li>
         </ul>
@@ -99,9 +99,9 @@
                     <?php
                     if (!empty($_SESSION['line_picture_profile'])) {
                         $src = $_SESSION['line_picture_profile'];
-                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['role'] === 'admin') {
+                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['account_type'] === 'admin') {
                         $src = 'img/icon/admin.png';
-                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['role'] === 'supervisor') {
+                    } elseif (empty($_SESSION['line_picture_profile']) && $_SESSION['account_type'] === 'supervisor') {
                         $src = 'img/icon/supervisor.png';
                     } else {
                         $src = 'img/default.png';
@@ -129,7 +129,10 @@
 <script>
     $(document).ready(function(){
 
-        function load_unseen_notification(view = '')
+        function
+
+
+        (view = '')
         {
             $.ajax({
                 url:"fetch.php",
