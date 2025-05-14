@@ -24,6 +24,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "phone" => $result['phone'],
             "remark" => $result['remark'],
             "answer" => $result['answer'],
+            "images" => $result['photo_path'],
             "house_number" => $result['house_number'],
             "time_contact" => $result['time_contact'],
             "create_date" => $result['create_date'],
@@ -102,7 +103,7 @@ if ($_POST["action"] === 'UPDATE') {
             'messages' => [
                 [
                     'type' => 'text',
-                    'text' => "ข้อมูลของคุณได้รับการอัปเดตเรียบร้อยแล้ว ✅\n"
+                    'text' => "ขอขอบคุณที่ส่งข้อความหาเรา ✅\n"
                         . "ข้อความ: $remark\n"
                         . "คำตอบ: $answer"
                 ]

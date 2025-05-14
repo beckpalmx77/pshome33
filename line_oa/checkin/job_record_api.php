@@ -15,7 +15,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
     $timestamp = date('Y-m-d H:i:s');
     $token_checkin = uniqid("sac_", true);
 
-    $uploadDir = __DIR__ . "/uploads/";
+    $uploadDir = "uploads/";
     if (!file_exists($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }

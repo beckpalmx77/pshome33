@@ -136,14 +136,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label for="remark" class="control-label">ข้อความ</label>
-                                                <textarea class="form-control" id="remark" name="remark" rows="4"
-                                                          placeholder=""></textarea>
+                                                <textarea class="form-control" id="remark" name="remark" rows="4" placeholder=""></textarea>
                                             </div>
 
                                             <div class="col-sm-6">
                                                 <label for="answer" class="control-label">คำตอบ</label>
-                                                <textarea class="form-control" id="answer" name="answer" rows="4"
-                                                          placeholder=""></textarea>
+                                                <textarea class="form-control" id="answer" name="answer" rows="4" placeholder=""></textarea>
                                             </div>
                                         </div>
 
@@ -222,17 +220,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content bg-dark">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                            </div>
                             <div class="modal-body text-center">
-                                <!-- ภาพที่จะแสดงใน modal -->
                                 <img id="modalImage" src="" class="img-fluid rounded" style="max-height: 80vh;">
                             </div>
                         </div>
                     </div>
                 </div>
-
 
             </div>
         </div>
@@ -398,7 +391,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             filenames.forEach(filename => {
                                 filename = filename.trim();
                                 if (filename !== "") {
-                                    let imgTag = `<img src="line_oa/house/uploads/${filename}" class="img-thumbnail m-1 img-preview" style="height: 100px; cursor: pointer;">`;
+                                    let imgTag = `<img src="line_oa/house/uploads/${filename}" class="img-thumbnail m-1" style="height: 100px;">`;
                                     $('#imagePreview').append(imgTag);
                                 }
                             });
@@ -439,9 +432,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).on('click', '.img-preview', function () {
-            let imgSrc = $(this).attr('src');  // ดึง src ของภาพที่ถูกคลิก
-            $('#modalImage').attr('src', imgSrc);  // เปลี่ยน src ของ modal image ให้เป็นภาพที่ถูกคลิก
-            $('#imageModal').modal('show');  // แสดง modal ที่มีภาพขนาดใหญ่
+            let imgSrc = $(this).attr('src');
+            $('#modalImage').attr('src', imgSrc);
+            $('#imageModal').modal('show');
         });
     </script>
 

@@ -31,7 +31,7 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
 
     // อัปโหลดภาพ
     if (isset($_FILES['photo'])) {
-        $uploadDir = __DIR__ . "/uploads/";
+        $uploadDir = "uploads/";
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
@@ -93,7 +93,7 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
     $flexContents = [];
 
     foreach (array_slice($photoNames, 0, 10) as $photo) {
-        $imageUrl = "https://syycp.com/api/checkin/uploads/" . $photo;
+        $imageUrl = "https://ps33.themediathai.com/line_oa/house/uploads/" . $photo;
         $flexContents[] = [
             "type" => "bubble",
             "hero" => [
