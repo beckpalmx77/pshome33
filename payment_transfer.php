@@ -26,6 +26,8 @@ if (strlen($_SESSION['alogin']) === "") {
         $l_name = $_SESSION['last_name'];
     } else {
         $house_number = "";
+        $f_name = "";
+        $l_name = "";
     }
 
     ?>
