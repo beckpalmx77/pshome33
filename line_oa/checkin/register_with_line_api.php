@@ -68,6 +68,26 @@ try {
 
     $lastInsertId = $conn->lastInsertId();
     if ($lastInsertId) {
+
+        // ✅ อัปเดต memployee
+        try {
+            $sql_update_memp = "UPDATE memployee SET line_user_id = :lineUserId WHERE emp_id = :emp_id";
+            $stmt_update = $conn->prepare($sql_update_memp);
+            $stmt_update->bindParam(':lineUserId', $lineUserId, PDO::PARAM_STR);
+            $stmt_update->bindParam(':emp_id', $emp_id, PDO::PARAM_STR);
+            $stmt_update->execute();
+        } catch (PDOException $e) {
+            $currentDateTime = date("Y-m-d H:i:s");
+            $logData = "[ERROR-UPDATE-MEMPLOYEE] {$currentDateTime} | Message: {$e->getMessage()} | EmpID: {$emp_id}\n";
+            file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
+
+            echo json_encode([
+                "success" => false,
+                "message" => "เกิดข้อผิดพลาดในการอัปเดต memployee: " . $e->getMessage()
+            ]);
+            exit;
+        }
+
         $currentDateTime = date("Y-m-d H:i:s");
         $logData = "[SUCCESS] {$currentDateTime} | UserID: {$lineUserId} | Name: {$lineUserName}\n";
         file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
@@ -86,4 +106,3 @@ try {
         "message" => "เกิดข้อผิดพลาด: " . $e->getMessage()
     ]);
 }
-

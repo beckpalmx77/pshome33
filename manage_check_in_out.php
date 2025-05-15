@@ -431,7 +431,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         $('#check_type').val(check_type);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
-                        $('#save').val('Save');
+                        $('#save').val('Save').prop('disabled', true);
 
                         $('#imagePreview').html('');
 

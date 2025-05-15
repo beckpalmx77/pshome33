@@ -1,4 +1,6 @@
-<?php include('../../config/connect_db.php'); ?>
+<?php include('../../config/connect_db.php');
+header('Content-Type: text/html; charset=utf-8');
+?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -44,7 +46,7 @@
                 <select id="emp_select" class="form-control select2" name="emp_id">
                     <option value="">-- เลือก --</option>
                     <?php
-                    $stmt = $conn->prepare("SELECT emp_id, f_name, l_name FROM memployee WHERE status = 'Y'");
+                    $stmt = $conn->prepare("SELECT emp_id, f_name, l_name FROM memployee WHERE status = 'Y' AND line_user_id is null ");
                     $stmt->execute();
                     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $emp) {
                         $fullname = $emp['f_name'] . " " . $emp['l_name'];

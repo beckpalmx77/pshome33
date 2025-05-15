@@ -429,6 +429,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                         $('#checkin_time').val(checkin_time);
                         $('#remark').val(remark);
 
+                        $('#action').val('-');
+                        $('#save').val('Save').prop('disabled', true);
+
                         $('#imagePreview').html('');
 
                         if (images && images.trim() !== "") {
