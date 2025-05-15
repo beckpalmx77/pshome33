@@ -108,13 +108,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                                 </div>
 
                                                                 <div class="form-group">
-                                                                    <label for="remark"
-                                                                           class="control-label">รายละเอียด</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="remark"
-                                                                           name="remark"
-                                                                           required="required"
-                                                                           placeholder="">
+                                                                    <label for="remark" class="control-label">รายละเอียด</label>
+                                                                    <textarea class="form-control"
+                                                                              id="remark"
+                                                                              name="remark"
+                                                                              rows="4"
+                                                                              required
+                                                                              placeholder=""></textarea>
                                                                 </div>
 
                                                                 <div class="form-group row">
