@@ -137,7 +137,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     $where_house_number = " ";
     if ($_SESSION['account_type'] === "user") {
-        $where_house_number = " AND house_number = :session_house_number";
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
     }
 
 /*
@@ -178,7 +178,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 */
 
 ## Fetch records
-    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1 " . $searchQuery
+    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1 " . $searchQuery . $where_house_number
         . " ORDER BY id DESC " . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
