@@ -4,6 +4,7 @@ error_reporting(0);
 
 include('../config/connect_db.php');
 include('../config/lang.php');
+include('../util/record_util.php');
 include('../util/reorder_record.php');
 
 
@@ -19,6 +20,8 @@ if ($_POST["action"] === 'GET_DATA') {
 
     foreach ($results as $result) {
         $return_arr[] = array("id" => $result['id'],
+            "doc_id" => $result['doc_id'],
+            "runno" => $result['runno'],
             "expense_date" => $result['expense_date'],
             "inv" => $result['inv'],
             "category_id" => $result['category_id'],
@@ -28,6 +31,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "unit_id" => $result['unit_id'],
             "unit_name" => $result['unit_name'],
             "amount" => $result['amount'],
+            "file_attach" => $result['file_attach'],
             "remark" => $result['remark'],
             "approve_status" => $result['approve_status']);
     }
@@ -67,16 +71,49 @@ if ($_POST["action"] === 'ADD') {
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
 
-/*
-        $sql_data = $expense_date . " | " . $category_id . " | " . $description . " | " . $approve_status . " | " . $qty . " | " . $unit_id . " | " . $amount . " | " . $remark;
-        $myfile = fopen("ft2.txt", "w") or die("Unable to open file!");
-        fwrite($myfile, $sql_data);
-        fclose($myfile);
-*/
+        $field = "runno";
+        $table = "ims_expenses";
+        $cond = " WHERE exp_month = '" . $exp_month . "' AND exp_year = '" . $exp_year . "'";
 
-        $sql = "INSERT INTO ims_expenses(expense_date,exp_month,exp_year,category_id,description,qty,unit_id,amount,remark,inv)
-            VALUES (:expense_date,:exp_month,:exp_year,:category_id,:description,:qty,:unit_id,:amount,:remark,:inv)";
+        $runno = LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond);
+        $doc_id = "EXP-" . $exp_year . "-" . $exp_month . "-" . sprintf('%04s', $runno);
+
+        $file_names = [];
+
+        // ตรวจสอบและอัปโหลดไฟล์
+        if (!empty($_FILES['file_attach']['name'][0])) {
+            $uploadDir = '../uploads/files/';
+            $uploadedOriginals = []; // เก็บชื่อไฟล์ต้นฉบับ เพื่อป้องกันแนบซ้ำ
+
+            foreach ($_FILES['file_attach']['tmp_name'] as $key => $tmp_name) {
+                $originalName = basename($_FILES['file_attach']['name'][$key]);
+
+                // ป้องกันแนบไฟล์ต้นฉบับชื่อเดียวกันหลายครั้ง
+                if (in_array($originalName, $uploadedOriginals)) {
+                    continue;
+                }
+                $uploadedOriginals[] = $originalName;
+
+                // ตั้งชื่อไฟล์ใหม่ให้ไม่ซ้ำ
+                $fileName = time() . '_' . uniqid() . '_' . $originalName;
+                $targetPath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($tmp_name, $targetPath)) {
+                    $file_names[] = $fileName;
+                }
+            }
+        }
+
+        // ลบชื่อไฟล์ซ้ำอีกชั้น (เพื่อความชัวร์)
+        $file_names = array_unique($file_names);
+
+        $file_attach = implode(',', $file_names);
+
+        $sql = "INSERT INTO ims_expenses(runno, doc_id, expense_date, exp_month, exp_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach)
+                VALUES (:runno, :doc_id, :expense_date, :exp_month, :exp_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach)";
         $query = $conn->prepare($sql);
+        $query->bindParam(':runno', $runno, PDO::PARAM_STR);
+        $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
         $query->bindParam(':expense_date', $expense_date, PDO::PARAM_STR);
         $query->bindParam(':exp_month', $exp_month, PDO::PARAM_STR);
         $query->bindParam(':exp_year', $exp_year, PDO::PARAM_STR);
@@ -87,17 +124,14 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':amount', $amount, PDO::PARAM_STR);
         $query->bindParam(':remark', $remark, PDO::PARAM_STR);
         $query->bindParam(':inv', $inv, PDO::PARAM_STR);
-        $query->execute();
+        $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
 
+        $query->execute();
         $lastInsertId = $conn->lastInsertId();
-        if ($lastInsertId) {
-            echo $save_success;
-        } else {
-            echo $error;
-        }
+
+        echo $lastInsertId ? $save_success : $error;
     }
 }
-
 
 if ($_POST["action"] === 'UPDATE') {
 
@@ -105,8 +139,8 @@ if ($_POST["action"] === 'UPDATE') {
 
         $id = $_POST["id"];
         $expense_date = $_POST["expense_date"];
-        $exp_month = substr($_POST["expense_date"], 3, 2);
-        $exp_year = substr($_POST["expense_date"], 6, 4);
+        $exp_month = substr($expense_date, 3, 2);
+        $exp_year = substr($expense_date, 6, 4);
         $category_id = $_POST["category_id"];
         $description = $_POST["description"];
         $approve_status = $_POST["approve_status"];
@@ -115,29 +149,104 @@ if ($_POST["action"] === 'UPDATE') {
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
         $inv = $_POST["inv"];
+        $uploadDir = '../uploads/files/';
+        $file_names = [];
 
-        $sql_update = "UPDATE ims_expenses SET expense_date=:expense_date,exp_month=:exp_month,exp_year=:exp_year
-            ,category_id=:category_id,description=:description
-            ,qty=:qty,unit_id=:unit_id,amount=:amount,remark=:remark,approve_status=:approve_status,inv=:inv
+        // ดึงชื่อไฟล์เก่าจาก DB
+        $stmt = $conn->prepare("SELECT file_attach FROM ims_expenses WHERE id = :id");
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $oldFiles = $stmt->fetchColumn(); // เช่น "file1.jpg,file2.png"
+        $oldFileArray = !empty($oldFiles) ? explode(',', $oldFiles) : [];
+
+        // ไฟล์เดิมที่ยังคงอยู่จากฟอร์ม (ส่งมาเป็น string comma-separated)
+        $existingFilesStr = isset($_POST['existing_files']) ? $_POST['existing_files'] : '';
+        $existingFiles = $existingFilesStr !== '' ? explode(',', $existingFilesStr) : [];
+
+        // ลบไฟล์เก่าที่ถูกลบออก (ที่ไม่อยู่ใน existingFiles)
+        foreach ($oldFileArray as $oldFile) {
+            if (!in_array($oldFile, $existingFiles)) {
+                $oldFilePath = $uploadDir . $oldFile;
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath);
+                }
+            }
+        }
+
+        // ชื่อไฟล์เก่าที่ยังเหลือ (ในฟอร์ม)
+        $remainingOldFiles = array_intersect($oldFileArray, $existingFiles);
+
+        // อัปโหลดไฟล์ใหม่ (ถ้ามี)
+        if (!empty($_FILES['file_attach']['name'][0])) {
+            foreach ($_FILES['file_attach']['tmp_name'] as $key => $tmp_name) {
+                $originalName = basename($_FILES['file_attach']['name'][$key]);
+                // sanitize ชื่อไฟล์ (ไม่บังคับแต่แนะนำ)
+                $safeOriginalName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+                $targetPath = $uploadDir . $safeOriginalName;
+
+                // ถ้าไฟล์ชื่อเดียวกับไฟล์เก่าอยู่แล้ว ให้ลบไฟล์เก่าออกก่อน (แทนที่ด้วยไฟล์ใหม่)
+                if (in_array($safeOriginalName, $remainingOldFiles) && file_exists($targetPath)) {
+                    unlink($targetPath);
+                    // เอาออกจากรายชื่อไฟล์เก่าที่เหลือ เพื่อเพิ่มไฟล์ใหม่แทน
+                    $remainingOldFiles = array_filter($remainingOldFiles, function($f) use ($safeOriginalName) {
+                        return $f !== $safeOriginalName;
+                    });
+                }
+
+                // ถ้าไฟล์นี้ยังไม่ถูกเพิ่ม ให้เพิ่มและอัปโหลด
+                if (!in_array($safeOriginalName, $file_names)) {
+                    if (move_uploaded_file($tmp_name, $targetPath)) {
+                        $file_names[] = $safeOriginalName;
+                    }
+                }
+            }
+        }
+
+        // รวมไฟล์เก่าที่เหลือกับไฟล์ใหม่
+        $combinedFiles = array_merge($remainingOldFiles, $file_names);
+
+        // กรองชื่อซ้ำ
+        $combinedFiles = array_unique($combinedFiles);
+
+        $finalFileAttach = implode(',', $combinedFiles);
+
+        // อัพเดตข้อมูลใน DB
+        $sql_update = "UPDATE ims_expenses 
+            SET expense_date = :expense_date,
+                exp_month = :exp_month,
+                exp_year = :exp_year,
+                category_id = :category_id,
+                description = :description,
+                qty = :qty,
+                unit_id = :unit_id,
+                amount = :amount,
+                remark = :remark,
+                approve_status = :approve_status,
+                inv = :inv,
+                file_attach = :file_attach
             WHERE id = :id";
-        $query = $conn->prepare($sql_update);
-        $query->bindParam(':expense_date', $expense_date, PDO::PARAM_STR);
-        $query->bindParam(':exp_month', $exp_month, PDO::PARAM_STR);
-        $query->bindParam(':exp_year', $exp_year, PDO::PARAM_STR);
-        $query->bindParam(':category_id', $category_id, PDO::PARAM_STR);
-        $query->bindParam(':description', $description, PDO::PARAM_STR);
-        $query->bindParam(':qty', $qty, PDO::PARAM_STR);
-        $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
-        $query->bindParam(':amount', $amount, PDO::PARAM_STR);
-        $query->bindParam(':remark', $remark, PDO::PARAM_STR);
-        $query->bindParam(':approve_status', $approve_status, PDO::PARAM_STR);
-        $query->bindParam(':inv', $inv, PDO::PARAM_STR);
-        $query->bindParam(':id', $id, PDO::PARAM_STR);
-        $query->execute();
-        echo $save_success;
 
+        $query = $conn->prepare($sql_update);
+        $query->bindParam(':expense_date', $expense_date);
+        $query->bindParam(':exp_month', $exp_month);
+        $query->bindParam(':exp_year', $exp_year);
+        $query->bindParam(':category_id', $category_id);
+        $query->bindParam(':description', $description);
+        $query->bindParam(':qty', $qty);
+        $query->bindParam(':unit_id', $unit_id);
+        $query->bindParam(':amount', $amount);
+        $query->bindParam(':remark', $remark);
+        $query->bindParam(':approve_status', $approve_status);
+        $query->bindParam(':inv', $inv);
+        $query->bindParam(':file_attach', $finalFileAttach);
+        $query->bindParam(':id', $id);
+        $query->execute();
+
+        echo $save_success;
     }
 }
+
+
 
 if ($_POST["action"] === 'DELETE') {
 
@@ -194,7 +303,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
 
 ## Fetch records
     $stmt = $conn->prepare("SELECT * FROM v_ims_expenses WHERE 1 " . $searchQuery
-        . " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset");
+        . " ORDER BY id DESC LIMIT :limit,:offset");
 
 // Bind values
     foreach ($searchArray as $key => $search) {
@@ -214,6 +323,8 @@ if ($_POST["action"] === 'GET_EXPENSE') {
             $approve_y = "ยืนยันรายการ (อนุมัติ)";
 
             $data[] = array(
+                "doc_id" => $row['doc_id'],
+                "runno" => $row['runno'],
                 "expense_date" => $row['expense_date'],
                 "exp_month" => $row['exp_month'],
                 "month_name" => $row['month_name'],
@@ -224,6 +335,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
                 "qty" => $row['qty'],
                 "unit_id" => $row['unit_id'],
                 "unit_name" => $row['unit_name'],
+                "file_attach " => $row['file_attach '],
                 "inv" => $row['inv'],
                 "amount" => $row['amount'],
                 "remark" => $row['remark'],
