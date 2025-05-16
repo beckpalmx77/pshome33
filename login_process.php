@@ -70,7 +70,8 @@ if ($query->rowCount() == 1) {
             if ($_SESSION['deviceType']==='computer' || $_SESSION['deviceType']==='tablet') {
                 echo $result->dashboard_page;
             } else {
-                echo "payment_transfer_smart";
+                //echo "payment_transfer_smart";
+                echo $result->dashboard_page;
             }
 
         } else {

@@ -8,6 +8,14 @@ $curr_date = date("d-m-Y");
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == "") {
     header("Location: index.php");
 } else {
+
+    if ($_SESSION['deviceType'] === 'computer' || $_SESSION['deviceType'] === 'tablet') {
+        $data = "";
+    } else {
+        header("Location: manage_common_fee_payment_smart");
+        exit(); // สำคัญมาก เพื่อหยุด script หลัง redirect
+    }
+
     ?>
 
     <!DOCTYPE html>

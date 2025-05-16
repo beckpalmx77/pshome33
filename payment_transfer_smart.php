@@ -3,6 +3,13 @@ $curr_date = date("d-m-Y");
 include('includes/Header.php');
 include('config/connect_db.php');
 
+if ($_SESSION['deviceType'] === 'computer' || $_SESSION['deviceType'] === 'tablet') {
+    $data = "";
+} else {
+    header("Location: payment_transfer_smart");
+    exit(); // สำคัญมาก เพื่อหยุด script หลัง redirect
+}
+
 $sql_bank = " SELECT * FROM ims_company ";
 $stmt_bank = $conn->prepare($sql_bank);
 $stmt_bank->execute();

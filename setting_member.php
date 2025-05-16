@@ -53,6 +53,15 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
+                                        <div class="row mt-2">
+                                            <div class="col-md-4">
+                                                <label for="l_name">เข้าระบบผ่าน Web</label><br>
+                                                <a href="https://ps33.themediathai.com" target="_blank">
+                                                    <i class="fas fa-external-link-alt"></i> ps33.themediathai.com
+                                                </a>
+                                            </div>
+                                        </div>
+
                                         <div class="row mt-4">
                                             <div class="col-md-4">
                                                 <div class="form-check">
@@ -102,6 +111,8 @@ include('includes/Header.php');
 <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
 <!-- Scripts -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -113,6 +124,7 @@ include('includes/Header.php');
 <script src="js/modal/show_department_modal.js"></script>
 <script src="js/MyFrameWork/framework_util.js"></script>
 <script src="line_oa/house/jsconfig/config_setting_member.js"></script>
+
 
 <!-- LINE LIFF -->
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
