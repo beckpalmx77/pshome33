@@ -53,7 +53,7 @@ include('includes/Header.php');
                                             <div class="col-md-4">
                                                 <label for="l_name">เข้าระบบผ่าน Web Browser ได้ที่</label><br>
                                                 ps33.themediathai.com<br>
-                                                <label for="l_name">user name :</label><br>
+                                                <label for="l_name">ชื่อผู้ใช้ :</label><br>
                                                 <input type="text" name="line_phone" id="line_phone" class="form-control" readonly="true">
                                             </div>
                                         </div>
