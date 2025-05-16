@@ -52,7 +52,9 @@ include('includes/Header.php');
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <label for="l_name">เข้าระบบผ่าน Web Browser ได้ที่</label><br>
-                                                <i class="fas fa-external-link-alt"></i> ps33.themediathai.com
+                                                <i class="fa-brands fa-chrome"></i> ps33.themediathai.com
+                                                <i class="fa-solid fa-circle-user"></i> user name :
+                                                <input type="text" name="line_phone" id="line_phone" class="form-control" readonly="true">
                                                 </a>
                                             </div>
                                         </div>
@@ -78,7 +80,7 @@ include('includes/Header.php');
                                         </div>
 
                                         <input type="hidden" id="line_user_id" name="line_user_id">
-                                        <input type="hidden" id="line_phone" name="line_phone">
+                                        <!--input type="hidden" id="line_phone" name="line_phone"-->
 
                                         <div id="loading" style="display: none; text-align: center; margin-top: 20px;">
                                             <img src="img/spin/spin_cir.gif" alt="Loading..." style="width: 50px;">
