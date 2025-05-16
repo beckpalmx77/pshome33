@@ -39,10 +39,12 @@ include('includes/Header.php');
 
                                     <div class="form-group has-success">
 
-                                        <div class="row mt-2">
+                                        <div class="row">
                                             <div class="col-md-4">
-                                                <label for="f_name">ชื่อ</label>
-                                                <input type="text" name="full_name" id="full_name" class="form-control" readonly="true">
+                                                <div class="form-group has-success">
+                                                    <label for="full_name" class="control-label">ชื่อ</label>
+                                                    <input type="text" name="full_name" id="full_name" class="form-control" readonly="true">
+                                                </div>
                                             </div>
                                         </div>
 
