@@ -19,10 +19,11 @@ include('includes/Header.php');
 
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">ข้อมูลสมาชิก</h1>
+                    <h1 class="h5 mb-0 text-gray-800">ข้อมูลสมาชิก</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
                         <li class="breadcrumb-item active">แก้ไข ข้อมูลสมาชิก</li>
+                        <div class="text-sm text-muted" id="user-info-liff"></div>
                     </ol>
                 </div>
 
@@ -32,12 +33,14 @@ include('includes/Header.php');
                             <div class="card-body">
                                 <form id="setting_form" method="POST" enctype="multipart/form-data">
                                     <div class="form-group has-success">
-                                        <div class="row mt-2">
+                                        <!--div class="row mt-2">
                                             <div class="col-md-4">
                                                 <label for="house_number">บ้านเลขที่</label>
                                                 <input type="text" name="house_number" id="house_number" class="form-control" readonly>
                                             </div>
-                                        </div>
+                                        </div-->
+
+                                        <input type="hidden" name="house_number" id="house_number" class="form-control" readonly>
 
                                         <div class="row mt-2">
                                             <div class="col-md-4">
@@ -55,9 +58,8 @@ include('includes/Header.php');
 
                                         <div class="row mt-2">
                                             <div class="col-md-4">
-                                                <label for="l_name">เข้าระบบผ่าน Web</label><br>
-                                                <a href="https://ps33.themediathai.com" target="_blank">
-                                                    <i class="fas fa-external-link-alt"></i> ps33.themediathai.com
+                                                <label for="l_name">เข้าระบบผ่าน Web Browser ได้ที่</label><br>
+                                                <i class="fas fa-external-link-alt"></i> ps33.themediathai.com
                                                 </a>
                                             </div>
                                         </div>
@@ -70,7 +72,7 @@ include('includes/Header.php');
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <br>
                                         <div class="row mt-2" id="password_fields" style="display: none;">
                                             <div class="col-md-4">
                                                 <label for="password">รหัสผ่านใหม่</label>
@@ -149,6 +151,9 @@ include('includes/Header.php');
                             $('#house_number').val(data.house_number || '');
                             $('#f_name').val(data.f_name || '');
                             $('#l_name').val(data.l_name || '');
+                            houseNumber = data.house_number;
+                            document.getElementById('user-info-liff').innerText =
+                                `บ้านเลขที่: ${data.house_number} | ชื่อ: ${data.f_name} ${data.l_name}`;
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                             liff.closeWindow();

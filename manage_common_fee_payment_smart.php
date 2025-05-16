@@ -22,7 +22,7 @@ $curr_date = date("d-m-Y");
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">ค่าส่วนกลาง</h1>
+                        <h1 class="h5 mb-0 text-gray-800">ค่าส่วนกลาง</h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>

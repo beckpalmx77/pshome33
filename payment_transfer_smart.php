@@ -29,11 +29,11 @@ foreach ($BankCurr as $row_curr) {
             <!-- Container Fluid-->
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</h1>
+                    <h1 class="h5 mb-0 text-gray-800">ชำระค่าส่วนกลาง</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                         </li>
-                        <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</li>
+                        <li class="breadcrumb-item active" aria-current="page">โอนเงินแนบ Slip/ใบโอนเงิน/ใบเสร็จ</li>
                     </ol>
                 </div>
 
@@ -257,28 +257,6 @@ foreach ($BankCurr as $row_curr) {
 
 <script>
     $(document).ready(function () {
-
-/*
-        // Preview Image
-        $("#picture_payment").on("change", function () {
-            const file = this.files[0];
-            const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-            if (file && !allowedTypes.includes(file.type)) {
-                alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น (JPEG, PNG, GIF)");
-                this.value = "";
-            } else if (file && file.size > 30 * 1024 * 1024) {
-                alert("ขนาดไฟล์ต้องไม่เกิน 30 MB");
-                this.value = "";
-            } else {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    $("#preview_image").attr("src", e.target.result).show();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
- */
 
         // Submit Form with Loading Indicator
         $("#transfer_form").on("submit", function (event) {

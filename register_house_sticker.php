@@ -22,7 +22,7 @@ include('includes/Header.php');
             <!-- Container Fluid-->
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">สติกเกอร์ เข้า - ออก</h1>
+                    <h1 class="h5 mb-0 text-gray-800">สติกเกอร์ เข้า - ออก</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                         </li>
