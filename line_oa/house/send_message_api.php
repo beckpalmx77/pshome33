@@ -2,7 +2,7 @@
 require "../../config/connect_db.php";
 header("Access-Control-Allow-Origin: *");
 
-$channelAccessToken = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
+$channelAccessToken = 'ใส่ TOKEN จริงที่นี่';
 
 if (isset($_POST['user_id'], $_POST['remark'])) {
     $userId = $_POST['user_id'];
@@ -10,10 +10,14 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
     $place_name = $_POST['place_name'] ?? '';
     $remark = $_POST['remark'] ?? '';
     $check_type = $_POST['check_type'] ?? 'IN';
+    $latitude = '0';
+    $longitude = '0';
+
     $timestamp = date('Y-m-d H:i:s');
     $token_checkin = uniqid("ps33_", true);
     $photoNames = [];
 
+    // 🔍 ดึงข้อมูลผู้ใช้งาน
     $sql_get_data = "SELECT house_number, f_name, l_name FROM ims_house_line_user WHERE line_user_id = ?";
     $stmt = $conn->prepare($sql_get_data);
     $stmt->execute([$userId]);
@@ -29,7 +33,7 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
     $l_name = $row['l_name'];
     $house_number = $row['house_number'];
 
-    // อัปโหลดภาพ
+    // 📷 อัปโหลดภาพ
     if (isset($_FILES['photo'])) {
         $uploadDir = "uploads/";
         if (!file_exists($uploadDir)) {
@@ -70,17 +74,20 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
 
     $photoPaths = implode(",", $photoNames);
 
-    // ⛳ เพิ่ม latitude และ longitude ในฐานข้อมูล
+    // ⛳ บันทึกข้อมูลลงฐานข้อมูล
     $stmt = $conn->prepare("
-        INSERT INTO afront_contact 
-        (user_id, display_name, place_name, checkin_time, photo_path, check_type, token_checkin, remark,f_name,l_name,house_number) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO afront_contact (
+            user_id, display_name, place_name, checkin_time,
+            photo_path, check_type, token_checkin, remark,
+            f_name, l_name, house_number, latitude, longitude
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $success = $stmt->execute([
         $userId, $displayName, $place_name, $timestamp,
-        $photoPaths, $check_type, $token_checkin,
-        $remark,$f_name,$l_name,$house_number]);
+        $photoPaths, $check_type, $token_checkin, $remark,
+        $f_name, $l_name, $house_number, $latitude, $longitude
+    ]);
 
     if (!$success) {
         http_response_code(500);
@@ -88,7 +95,7 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
         exit;
     }
 
-    // ✅ ส่งข้อความ LINE
+    // 📲 ส่งข้อความผ่าน LINE
     $actionText = "บันทึกข้อมูล";
     $flexContents = [];
 

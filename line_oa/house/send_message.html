@@ -1,5 +1,5 @@
 <?php include('../../config/connect_db.php');
-    header('Content-Type: text/html; charset=utf-8');
+header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -97,7 +97,6 @@
 </div>
 
 <script>
-
   async function checkin() {
     try {
       await liff.init({ liffId: LIFF_ID });
@@ -125,19 +124,8 @@
 
       document.getElementById("spinner").style.display = "block";
 
-      navigator.geolocation.getCurrentPosition(
-              pos => {
-                formData.append("latitude", pos.coords.latitude);
-                formData.append("longitude", pos.coords.longitude);
-                submitForm(formData, profile, remark);
-              },
-              err => {
-                formData.append("latitude", 0);
-                formData.append("longitude", 0);
-                submitForm(formData, profile, remark);
-              },
-              { enableHighAccuracy: true, timeout: 5000 }
-      );
+      // ส่งข้อมูลทันที ไม่แนบพิกัด
+      submitForm(formData, profile, remark);
     } catch (err) {
       alert("เกิดข้อผิดพลาด: " + err.message);
     }
