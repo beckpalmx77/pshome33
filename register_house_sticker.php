@@ -39,7 +39,7 @@ include('includes/Header.php');
 
                                     <div class="form-group has-success">
 
-                                        <div class="row mt-2">
+                                        <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
                                                     <label for="full_name" class="control-label">ชื่อ</label>

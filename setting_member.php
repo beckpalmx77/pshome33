@@ -33,13 +33,6 @@ include('includes/Header.php');
                             <div class="card-body">
                                 <form id="setting_form" method="POST" enctype="multipart/form-data">
                                     <div class="form-group has-success">
-                                        <!--div class="row mt-2">
-                                            <div class="col-md-4">
-                                                <label for="house_number">บ้านเลขที่</label>
-                                                <input type="text" name="house_number" id="house_number" class="form-control" readonly>
-                                            </div>
-                                        </div-->
-
                                         <input type="hidden" name="house_number" id="house_number" class="form-control" readonly>
 
                                         <div class="row mt-2">
@@ -100,6 +93,7 @@ include('includes/Header.php');
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
