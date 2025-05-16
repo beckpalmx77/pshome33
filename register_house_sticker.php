@@ -48,7 +48,7 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
+                                        <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
                                                     <label for="house_number" class="control-label">บ้านเลขที่</label>
@@ -57,7 +57,7 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
+                                        <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group has-success">
                                                     <label for="house_status" class="control-label">สถานะที่อยู่อาศัย</label>
@@ -70,7 +70,7 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
+                                        <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="car_no1">ทะเบียนรถ 1</label>
@@ -79,7 +79,7 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <div class="row mt-2">
+                                        <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="car_no2">ทะเบียนรถ 2</label>
@@ -88,33 +88,7 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <!--div class="row mt-2">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no3">ทะเบียนรถ 3</label>
-                                                    <input type="text" name="car_no3" id="car_no3" class="form-control">
-                                                </div>
-                                            </div>
-                                        </div-->
-
-                                        <!--div class="row mt-2">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no4">ทะเบียนรถ 4</label>
-                                                    <input type="text" name="car_no4" id="car_no4" class="form-control">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mt-2">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no5">ทะเบียนรถ 5</label>
-                                                    <input type="text" name="car_no5" id="car_no5" class="form-control">
-                                                </div>
-                                            </div>
-                                        </div-->
-
+                                        <!-- สามารถลบ comment ทะเบียนรถ 3-5 ออก ถ้าต้องการใช้งานจริง -->
 
                                     </div>
 
