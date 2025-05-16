@@ -52,10 +52,9 @@ include('includes/Header.php');
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <label for="l_name">เข้าระบบผ่าน Web Browser ได้ที่</label><br>
-                                                <i class="fa-brands fa-chrome"></i> ps33.themediathai.com
-                                                <i class="fa-solid fa-circle-user"></i> user name :
+                                                ps33.themediathai.com<br>
+                                                <label for="l_name">user name :</label><br>
                                                 <input type="text" name="line_phone" id="line_phone" class="form-control" readonly="true">
-                                                </a>
                                             </div>
                                         </div>
 
