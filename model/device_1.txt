@@ -1,1 +1,0 @@
- AND house_number = '68/56'
