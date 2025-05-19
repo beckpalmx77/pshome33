@@ -196,8 +196,14 @@ include('includes/Header.php');
         } else {
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
+                const pictureUrl = profile.pictureUrl;
                 const displayName = profile.displayName;
-                //alert(userId);
+
+                fetch('model/save_user_profile.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `userId=${encodeURIComponent(userId)}&pictureUrl=${encodeURIComponent(pictureUrl)}&displayName=${encodeURIComponent(displayName)}`
+                });
 
                 fetch('model/get_house_car_number.php', {
                     method: 'POST',

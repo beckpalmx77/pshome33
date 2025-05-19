@@ -418,6 +418,15 @@ $curr_date = date("d-m-Y");
                 } else {
                     liff.getProfile().then(profile => {
                         const userId = profile.userId;
+                        const pictureUrl = profile.pictureUrl;
+                        const displayName = profile.displayName;
+
+                        fetch('model/save_user_profile.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `userId=${encodeURIComponent(userId)}&pictureUrl=${encodeURIComponent(pictureUrl)}&displayName=${encodeURIComponent(displayName)}`
+                        });
+
 
                         // ส่ง userId ไปยัง backend
                         fetch('model/get_house_number.php', {
