@@ -23,6 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
 
+        if ($exists) {
+            $sql = "UPDATE ims_house_payment SET line_picture_profile_show = :pictureUrl WHERE line_user_id = :userId";
+        }
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':pictureUrl', $pictureUrl);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->execute();
+
         echo 'success';
     } else {
         echo 'invalid';
