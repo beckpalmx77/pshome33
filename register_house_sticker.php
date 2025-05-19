@@ -23,11 +23,17 @@ include('includes/Header.php');
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">สติกเกอร์ เข้า - ออก</h1>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">สติกเกอร์ เข้า - ออก</li>
-                    </ol>
+                    <br>
+                    <!-- โปรไฟล์และข้อมูลผู้ใช้ -->
+                    <div class="d-flex align-items-center gap-3">
+                        <img id="profilePic"
+                             src=""
+                             class="rounded-circle"
+                             width="50"
+                             height="50"
+                             alt="Profile Pic"
+                             style="margin-right: 3rem;">  <div class="text-sm text-muted" id="user-info-liff3"></div>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -190,7 +196,7 @@ include('includes/Header.php');
         } else {
             liff.getProfile().then(profile => {
                 const userId = profile.userId;
-
+                const displayName = profile.displayName;
                 //alert(userId);
 
                 fetch('model/get_house_car_number.php', {
@@ -208,6 +214,8 @@ include('includes/Header.php');
                             document.getElementById('house_status').value = data.house_status || '';
                             document.getElementById('car_no1').value = data.car_no1 || '';
                             document.getElementById('car_no2').value = data.car_no2 || '';
+                            document.getElementById('user-info-liff3').innerText = displayName;
+                            $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
 
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');

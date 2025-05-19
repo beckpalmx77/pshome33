@@ -20,12 +20,19 @@ include('includes/Header.php');
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">ข้อมูลสมาชิก</h1>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
-                        <li class="breadcrumb-item active">แก้ไข ข้อมูลสมาชิก</li>
-                        <div class="text-sm text-muted" id="user-info-liff"></div>
-                    </ol>
+                    <br>
+                    <!-- โปรไฟล์และข้อมูลผู้ใช้ -->
+                    <div class="d-flex align-items-center gap-3">
+                        <img id="profilePic"
+                             src=""
+                             class="rounded-circle"
+                             width="50"
+                             height="50"
+                             alt="Profile Pic"
+                             style="margin-right: 3rem;">  <div class="text-sm text-muted" id="user-info-liff1"></div>
+                    </div>
                 </div>
+
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -34,7 +41,6 @@ include('includes/Header.php');
                                 <form id="setting_form" method="POST" enctype="multipart/form-data">
                                     <div class="form-group has-success">
                                         <input type="hidden" name="house_number" id="house_number" class="form-control" readonly>
-
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <label for="f_name">ชื่อ</label>
@@ -52,7 +58,8 @@ include('includes/Header.php');
                                         <div class="row mt-2">
                                             <div class="col-md-4">
                                                 <label for="l_name">เข้าระบบผ่าน Web Browser ได้ที่</label><br>
-                                                ps33.themediathai.com<br>
+                                                <p style="font-size: 15px;">https://ps33.themediathai.com</p>
+                                                <!--br-->
                                                 <label for="l_name">ชื่อผู้ใช้ :</label><br>
                                                 <input type="text" name="line_phone" id="line_phone" class="form-control" readonly="true">
                                             </div>
@@ -142,13 +149,14 @@ include('includes/Header.php');
                     .then(data => {
                         if (data.house_number) {
                             $('#line_user_id').val(userId);
+                            $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
                             $('#line_phone').val(data.line_phone || '');
                             $('#house_number').val(data.house_number || '');
                             $('#f_name').val(data.f_name || '');
                             $('#l_name').val(data.l_name || '');
                             houseNumber = data.house_number;
-                            document.getElementById('user-info-liff').innerText =
-                                `บ้านเลขที่: ${data.house_number} | ชื่อ: ${data.f_name} ${data.l_name}`;
+                            document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
+                            //document.getElementById('user-info-liff2').innerText = `ชื่อ: ${data.f_name} ${data.l_name}`;
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                             liff.closeWindow();

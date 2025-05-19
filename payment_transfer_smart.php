@@ -30,11 +30,18 @@ foreach ($BankCurr as $row_curr) {
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">ชำระค่าส่วนกลาง</h1>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page">โอนเงินแนบ Slip/ใบโอนเงิน/ใบเสร็จ</li>
-                    </ol>
+                    <br>
+                    <!-- โปรไฟล์และข้อมูลผู้ใช้ -->
+                    <div class="d-flex align-items-center gap-3">
+                        <img id="profilePic"
+                             src=""
+                             class="rounded-circle"
+                             width="50"
+                             height="50"
+                             alt="Profile Pic"
+                             style="margin-right: 1rem;">  <div class="text-sm text-muted" id="user-info-liff2"></div>
+                    </div>
+
                 </div>
 
                 <div class="row">
@@ -420,6 +427,12 @@ foreach ($BankCurr as $row_curr) {
                     const pictureUrl = profile.pictureUrl;
                     const displayName = profile.displayName;
 
+                    fetch('model/save_user_profile.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `userId=${encodeURIComponent(userId)}&pictureUrl=${encodeURIComponent(pictureUrl)}&displayName=${encodeURIComponent(displayName)}`
+                    });
+
                     fetch('model/get_house_number.php', {
                         method: 'POST',
                         headers: {
@@ -436,6 +449,10 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value =
                                     (data.f_name || '') + ' ' + (data.l_name || '');
+                                //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
+                                document.getElementById('user-info-liff2').innerText = `ชื่อ: ${data.f_name} ${data.l_name}`;
+                                $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
+
                             } else {
                                 alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                                 liff.closeWindow(); // กลับไปที่ LINE OA
