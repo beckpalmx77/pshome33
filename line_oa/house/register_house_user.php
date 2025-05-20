@@ -23,7 +23,7 @@
 <div class="container mt-5 d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow-lg p-4 text-center" style="width: 100%; max-width: 500px;">
         <div class="mb-4">
-            <img src="../checkin/ps33_logo.png" width="70" height="117" alt="Logo" />
+            <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
         </div>
         <h4 class="mb-4">ลงทะเบียนระบบ PS33</h4>
 

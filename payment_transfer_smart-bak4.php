@@ -20,9 +20,11 @@ foreach ($BankCurr as $row_curr) {
 
 <body id="page-top">
 <div id="wrapper">
+
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <div class="container py-4">
+            <!-- Container Fluid-->
+            <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">ชำระค่าส่วนกลาง</h1>
                     <br>
@@ -195,21 +197,13 @@ foreach ($BankCurr as $row_curr) {
                                     </div>
 
                                     <!-- แนบ Slip/ใบโอนเงิน/ใบเสร็จ -->
-                                    <!--div class="form-group has-success">
+                                    <div class="form-group has-success">
                                         <label for="picture_payment" class="control-label">แนบ
                                             Slip/ใบโอนเงิน/ใบเสร็จ</label>
                                         <input type="file" name="picture_payment" class="form-control"
                                                required id="picture_payment">
                                         <img id="preview_image" src="#" alt="Preview Image"
                                              style="display: none; margin-top: 10px; max-width: 300px;"/>
-                                    </div-->
-
-                                    <div class="mb-3">
-                                        <label for="picture_payment">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
-                                        <input type="file" name="picture_payment" class="form-control" id="picture_payment" required>
-                                        <div class="mt-2">
-                                            <img id="preview_image" alt="Preview Slip" class="img-fluid">
-                                        </div>
                                     </div>
 
                                     <!-- Loading Indicator -->
@@ -316,10 +310,8 @@ foreach ($BankCurr as $row_curr) {
         display: none;
         margin-top: 10px;
         max-width: 100%;
-        height: auto;
+        border-radius: 10px;
         border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     @media (max-width: 768px) {
@@ -539,7 +531,7 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('detail').value =
                                     (data.f_name || '') + ' ' + (data.l_name || '');
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
-                                document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
+                                document.getElementById('user-info-liff2').innerText = `ชื่อ: ${data.f_name} ${data.l_name}`;
                                 $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
 
                             } else {

@@ -39,7 +39,7 @@ include('includes/Header.php');
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card mb-12">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"></div>
+                            <!--div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"></div-->
                             <div class="card-body">
                                 <form id="sticker_form" method="POST" enctype="multipart/form-data">
 
@@ -144,6 +144,71 @@ include('includes/Header.php');
 <script src="js/MyFrameWork/framework_util.js"></script>
 
 <script src="line_oa/house/jsconfig/config_house_sticker.js"></script>
+
+<style>
+    body {
+        background-color: #f4f0f8; /* พื้นหลังม่วงพาสเทล */
+        color: #4a235a;
+    }
+
+    .card {
+        background-color: #fefaff; /* สีขาวอมม่วงอ่อน */
+        border: 1px solid #e0cffa;
+        border-radius: 9px;
+        box-shadow: 0 4px 6px rgba(180, 155, 255, 0.1);
+    }
+
+    .card-body {
+        padding-top: 0.25rem;
+    }
+
+    label.control-label {
+        margin-top: 0;
+        padding-top: 0;
+        display: block;
+    }
+
+
+    .form-control {
+        background-color: #ffffff;
+        border: 1px solid #d8c4f2;
+        border-radius: 8px;
+    }
+
+    .form-control:focus {
+        border-color: #b292e6;
+        box-shadow: 0 0 0 0.2rem rgba(178, 146, 230, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #a88bc8;
+        border-color: #a88bc8;
+    }
+
+    .btn-primary:hover {
+        background-color: #9673c4;
+        border-color: #9673c4;
+    }
+
+    .text-gray-800 {
+        color: #6b4699 !important;
+    }
+
+    .scroll-to-top {
+        background-color: #c9a7f5;
+        color: #fff;
+    }
+
+    .scroll-to-top:hover {
+        background-color: #b792ec;
+    }
+
+    .rounded-circle {
+        border: 2px solid #cfaef7;
+    }
+
+</style>
+
 
 <script>
     $(document).ready(function () {

@@ -71,14 +71,15 @@ ini_set('display_errors', 1);
                     </a>
                 </li>
 
+                <?php if ($_SESSION['account_type'] !== 'user') { ?>
                 <li class="nav-item dropdown no-arrow mx-1">
                     <a class="nav-link dropdown-toggle" href="manage-message.php" target="_self">
                         <span class="badge badge-danger">Message</span>
                         &nbsp;<i class="fa fa-bell"></i>&nbsp;
-                        <!--span class="badge badge-danger ms-2" id="message_badge">0</span-->
                         <span class="badge badge-danger ms-2" id="message_badge" style="display:none;">0</span>
                     </a>
                 </li>
+                <?php } ?>
 
                 <li class="nav-item dropdown no-arrow">
                     <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
