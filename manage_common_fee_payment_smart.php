@@ -24,19 +24,13 @@ $curr_date = date("d-m-Y");
 
             <div class="container-fluid" id="container-wrapper">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h5 mb-0 text-gray-800">ประวัติการชำระค่าส่วนกลาง</h1>
-                    <ol class="breadcrumb">
-                        <div class="text-sm text-muted" id="user-info-liff"></div>
-                    </ol>
+                    <h4 class="h5 mb-0 text-gray-800">ประวัติการชำระค่าส่วนกลาง</h4>
+                    <div class="text-sm text-muted" id="user-info-liff"></div>
                 </div>
 
-                <!-- Card Centered -->
-                <div class="row justify-content-center align-items-center min-vh-100">
-                    <div class="col-lg-10">
-                        <div class="card mb-4 shadow">
-                            <!--div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">รายการการชำระ</h6>
-                            </div-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card mb-12">
 
                             <div class="card-body">
                                 <section class="container-fluid">
@@ -72,64 +66,81 @@ $curr_date = date("d-m-Y");
                                                         <div class="form-group row">
                                                             <div class="col-sm-6">
                                                                 <label>เลขที่เอกสาร</label>
-                                                                <input type="text" class="form-control" id="doc_id" name="doc_id" readonly>
+                                                                <input type="text" class="form-control" id="doc_id"
+                                                                       name="doc_id" readonly>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <label>วันที่เอกสาร</label>
-                                                                <input type="text" class="form-control" id="payment_date" name="payment_date" readonly>
+                                                                <input type="text" class="form-control"
+                                                                       id="payment_date" name="payment_date" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-sm-6">
                                                                 <label>บ้านเลขที่</label>
-                                                                <input type="text" class="form-control" id="house_number" name="house_number" readonly>
+                                                                <input type="text" class="form-control"
+                                                                       id="house_number" name="house_number" readonly>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <label>ผู้ชำระ</label>
-                                                                <input type="text" class="form-control" id="detail" name="detail" readonly>
+                                                                <input type="text" class="form-control" id="detail"
+                                                                       name="detail" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-sm-4">
                                                                 <label>เดือนเริ่มต้น</label>
-                                                                <input type="text" class="form-control" id="month_name_start" name="month_name_start" readonly>
+                                                                <input type="text" class="form-control"
+                                                                       id="month_name_start" name="month_name_start"
+                                                                       readonly>
                                                             </div>
                                                             <div class="col-sm-4">
                                                                 <label>ถึงงวดเดือน</label>
-                                                                <input type="text" class="form-control" id="month_name_to" name="month_name_to" readonly>
+                                                                <input type="text" class="form-control"
+                                                                       id="month_name_to" name="month_name_to" readonly>
                                                             </div>
                                                             <div class="col-sm-4">
                                                                 <label>ปี</label>
-                                                                <input type="text" class="form-control" id="period_year" name="period_year" readonly>
+                                                                <input type="text" class="form-control" id="period_year"
+                                                                       name="period_year" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-sm-6">
                                                                 <label>จำนวนเงินโอน</label>
-                                                                <input type="text" class="form-control" id="amount" name="amount" readonly>
+                                                                <input type="text" class="form-control" id="amount"
+                                                                       name="amount" readonly>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <label>สถานะ</label>
-                                                                <input type="text" class="form-control" id="payment_status_desc" name="payment_status_desc" readonly>
+                                                                <input type="text" class="form-control"
+                                                                       id="payment_status_desc"
+                                                                       name="payment_status_desc" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
                                                             <div class="col-sm-6 text-center">
-                                                                <img id="preview_image" src="#" alt="Preview" style="display:none; max-width:100%; height:auto; margin-top:10px;" onclick="openImageInNewWindow(this.src)" />
+                                                                <img id="preview_image" src="#" alt="Preview"
+                                                                     style="display:none; max-width:100%; height:auto; margin-top:10px;"
+                                                                     onclick="openImageInNewWindow(this.src)"/>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <label>สถานะการอนุมัติ</label><br>
-                                                                <input type="radio" id="approved" name="payment_status" value="Y">
+                                                                <input type="radio" id="approved" name="payment_status"
+                                                                       value="Y">
                                                                 <label for="approved" class="btn btn-success">ยืนยันการชำระ</label>
-                                                                <input type="radio" id="rejected" name="payment_status" value="N">
+                                                                <input type="radio" id="rejected" name="payment_status"
+                                                                       value="N">
                                                                 <label for="rejected" class="btn btn-danger">ยังไม่ยืนยัน</label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <input type="hidden" name="id" id="id" />
-                                                        <input type="hidden" name="action" id="action" value="" />
-                                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                        <input type="hidden" name="id" id="id"/>
+                                                        <input type="hidden" name="action" id="action" value=""/>
+                                                        <button type="button" class="btn btn-danger"
+                                                                data-dismiss="modal">Close
+                                                        </button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -137,18 +148,23 @@ $curr_date = date("d-m-Y");
                                     </div>
 
                                     <!-- Modal แสดง Slip -->
-                                    <div class="modal fade" id="slipModal" tabindex="-1" role="dialog" aria-labelledby="slipModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="slipModal" tabindex="-1" role="dialog"
+                                         aria-labelledby="slipModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content text-center">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="slipModalLabel">หลักฐานการโอนเงิน</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                                                    </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <img id="slipImage" src="" alt="Slip Image" class="img-fluid rounded shadow-sm">
+                                                    <img id="slipImage" src="" alt="Slip Image"
+                                                         class="img-fluid rounded shadow-sm">
                                                 </div>
                                                 <div class="modal-footer justify-content-between">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">ปิด
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
