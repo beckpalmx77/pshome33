@@ -98,6 +98,9 @@ include('includes/Header.php');
 
                                     </div>
 
+                                    <input type="hidden" name="house_number_old" id="house_number_old" class="form-control">
+                                    <input type="hidden" name="phone_number" id="phone_number" class="form-control">
+
                                     <!-- Loading Indicator -->
                                     <div id="loading"
                                          style="display: none; text-align: center; margin-top: 20px;">
@@ -281,8 +284,10 @@ include('includes/Header.php');
                     .then(data => {
                         if (data.house_number) {
                             document.getElementById('house_number').value = data.house_number || '';
+                            document.getElementById('house_number_old').value = data.house_number || '';
                             document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
                             document.getElementById('house_status').value = data.house_status || '';
+                            document.getElementById('phone_number').value = data.phone_number || '';
                             document.getElementById('car_no1').value = data.car_no1 || '';
                             document.getElementById('car_no2').value = data.car_no2 || '';
                             document.getElementById('user-info-liff3').innerText = displayName;

@@ -10,9 +10,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // รับค่าจาก POST และตัดช่องว่าง
     $car_no1 = trim($_POST['car_no1'] ?? '');
     $car_no2 = trim($_POST['car_no2'] ?? '');
+    $phone_number = trim($_POST['phone_number'] ?? '');
     $house_status = trim($_POST['house_status'] ?? '');
     $house_number = trim($_POST['house_number'] ?? '');
+    $house_number_old = trim($_POST['house_number_old'] ?? '');
 
+    $txt = "Current " . $house_number . " | Old ".  $house_number_old . " | Phone ". $phone_number;
+
+/*
+    $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
+    fwrite($myfile, $txt);
+    fclose($myfile);
+*/
     $sql = "UPDATE ims_house 
             SET car_no1 = :car_no1, car_no2 = :car_no2 , house_status = :house_status
             WHERE house_number = :house_number";
