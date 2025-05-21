@@ -210,11 +210,16 @@ if ($_POST["action"] === 'GET_MESSAGE') {
     $empRecords = $stmt->fetchAll();
     $data = array();
 
+    $line_no = $row;
+
     foreach ($empRecords as $row) {
+
+        $line_no++;
 
         if ($_POST['sub_action'] === "GET_MASTER") {
             $data[] = array(
                 "id" => $row['id'],
+                "line_no" => $line_no,
                 "f_name" => $row['f_name'],
                 "l_name" => $row['l_name'],
                 "email" => $row['email'],
@@ -225,7 +230,7 @@ if ($_POST["action"] === 'GET_MESSAGE') {
                 "time_contact" => $row['time_contact'],
                 "create_date" => $row['create_date'],
                 "update_date" => $row['update_date'],
-                "detail" => "<button type='button' name='detail' id='" . $row['id'] . "' class='btn btn-secondary btn-xs detail' data-toggle='tooltip' title='Detail'>Detail</button>",
+                "detail" => "<button type='button' name='detail' id='" . $row['id'] . "' class='btn btn-secondary btn-xs detail' data-toggle='tooltip' title='Detail'>รายละเอียด</button>",
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "status" => $row['status'] === 'Y' ? "<div class='text-success'>" . $contact_y . "</div>" : "<div class='text-danger'> " . $contact_n . "</div>"

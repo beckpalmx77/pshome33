@@ -30,6 +30,12 @@ if (strlen($_SESSION['alogin']) === "") {
         $l_name = "";
     }
 
+    $months = [
+        '01' => 'มกราคม', '02' => 'กุมภาพันธ์', '03' => 'มีนาคม', '04' => 'เมษายน',
+        '05' => 'พฤษภาคม', '06' => 'มิถุนายน', '07' => 'กรกฎาคม', '08' => 'สิงหาคม',
+        '09' => 'กันยายน', '10' => 'ตุลาคม', '11' => 'พฤศจิกายน', '12' => 'ธันวาคม'
+    ];
+
     ?>
 
     <!DOCTYPE html>
@@ -119,56 +125,44 @@ if (strlen($_SESSION['alogin']) === "") {
                                         </div>
 
                                         <!-- งวดปี และ งวดเดือน ในบรรทัดเดียวกัน -->
-                                        <div class="form-group has-success">
-                                            <div class="row">
-                                                <!-- งวดเดือน -->
-                                                <div class="col-md-4">
-                                                    <label for="period_month_start"
-                                                           class="control-label">เริ่มงวดเดือน</label>
-                                                    <select name="period_month_start" class="form-control" required
-                                                            id="period_month_start">
-                                                        <option value="">เลือกงวดเดือน</option>
-                                                        <option value="1">มกราคม</option>
-                                                        <option value="2">กุมภาพันธ์</option>
-                                                        <option value="3">มีนาคม</option>
-                                                        <option value="4">เมษายน</option>
-                                                        <option value="5">พฤษภาคม</option>
-                                                        <option value="6">มิถุนายน</option>
-                                                        <option value="7">กรกฎาคม</option>
-                                                        <option value="8">สิงหาคม</option>
-                                                        <option value="9">กันยายน</option>
-                                                        <option value="10">ตุลาคม</option>
-                                                        <option value="11">พฤศจิกายน</option>
-                                                        <option value="12">ธันวาคม</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="period_month_to"
-                                                           class="control-label">ถึงงวดเดือน</label>
-                                                    <select name="period_month_to" class="form-control" required
-                                                            id="period_month_to">
-                                                        <option value="">เลือกงวดเดือน</option>
-                                                        <option value="1">มกราคม</option>
-                                                        <option value="2">กุมภาพันธ์</option>
-                                                        <option value="3">มีนาคม</option>
-                                                        <option value="4">เมษายน</option>
-                                                        <option value="5">พฤษภาคม</option>
-                                                        <option value="6">มิถุนายน</option>
-                                                        <option value="7">กรกฎาคม</option>
-                                                        <option value="8">สิงหาคม</option>
-                                                        <option value="9">กันยายน</option>
-                                                        <option value="10">ตุลาคม</option>
-                                                        <option value="11">พฤศจิกายน</option>
-                                                        <option value="12">ธันวาคม</option>
-                                                    </select>
-                                                </div>
-                                                <!-- งวดปี -->
-                                                <div class="col-md-4">
-                                                    <label for="period_year" class="control-label">งวดปี</label>
-                                                    <input type="number" name="period_year" class="form-control"
-                                                           required id="period_year" placeholder=""
-                                                           value="<?php echo date("Y") ?>">
-                                                </div>
+                                        <!-- งวดเดือนและงวดปี (แถวเดียว กระชับ) -->
+                                        <div class="form-group row align-items-end">
+                                            <div class="col-md-4">
+                                                <label for="period_month_start">เริ่มงวดเดือน</label>
+                                                <select name="period_month_start" id="period_month_start"
+                                                        class="form-control" required>
+                                                    <option value="">เลือก</option>
+                                                    <?php
+                                                    $months = [
+                                                        1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน',
+                                                        5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม',
+                                                        9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
+                                                    ];
+                                                    foreach ($months as $val => $name) {
+                                                        echo "<option value='$val'>$name</option>";
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label for="period_month_to">ถึงงวดเดือน</label>
+                                                <select name="period_month_to" id="period_month_to" class="form-control"
+                                                        required>
+                                                    <option value="">เลือก</option>
+                                                    <?php
+                                                    foreach ($months as $val => $name) {
+                                                        echo "<option value='$val'>$name</option>";
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label for="period_year">งวดปี</label>
+                                                <input type="number" name="period_year" id="period_year"
+                                                       class="form-control" required
+                                                       value="<?php echo date('Y'); ?>">
                                             </div>
                                         </div>
 
