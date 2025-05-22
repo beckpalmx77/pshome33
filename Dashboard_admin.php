@@ -45,6 +45,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     $unregistered_house = $all_total_house - $total_house;
 
+    if ($all_total_house > 0) {
+        $percent_chk = ($total_house / $all_total_house) * 100;
+    }
+
     ?>
 
     <!DOCTYPE html>
@@ -63,7 +67,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
                         <h6 class="m-0 font-weight-bold">สรุปข้อมูลภาพรวม</h6>
-                        <a href="#collapseCard" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCard" id="toggleCollapse">
+                        <a href="#collapseCard" data-toggle="collapse" role="button" aria-expanded="true"
+                           aria-controls="collapseCard" id="toggleCollapse">
                             <i class="fas fa-chevron-down text-white" id="collapseIcon"></i>
                         </a>
                     </div>
@@ -75,17 +80,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <div class="row">
                                 <!-- Chart -->
                                 <div class="col-xl-6 col-md-12 mb-4">
-                                    <div class="card border-left-danger shadow h-100 py-2">
+                                    <?php
+                                    // ตรวจสอบเงื่อนไขเพื่อกำหนดสีการ์ด
+                                    $cardClass = ($percent_chk >= 50) ? 'border-left-success' : 'border-left-danger';
+                                    $textClass = 'text-primary';
+                                    ?>
+                                    <div class="card <?= $cardClass ?> shadow h-100 py-2">
                                         <div class="card-body text-center d-flex flex-column justify-content-center">
-                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-3">
+                                            <div class="text-xs font-weight-bold <?= $textClass ?> text-uppercase mb-3">
                                                 เปรียบเทียบบ้านที่ลงทะเบียนแล้ว กับบ้านทั้งหมด
                                             </div>
-                                            <canvas id="totalHousePieChart" style="max-width: 100%; max-height: 400px;"></canvas>
+                                            <canvas id="totalHousePieChart"
+                                                    style="max-width: 100%; max-height: 400px;"></canvas>
                                             <p class="text-center mt-3">
                                                 <?php
                                                 if ($all_total_house > 0) {
                                                     $percent = ($total_house / $all_total_house) * 100;
-                                                    echo "จำนวนบ้านทั้งหมด (67 และ 68) : <strong>" . "621" . " หลัง</strong><br>";
+                                                    echo "จำนวนบ้านทั้งหมด (67 และ 68) : <strong>621 หลัง</strong><br>";
                                                     echo "จำนวนบ้านที่ลงทะเบียนในระบบทั้งหมด (67 และ 68) : <strong>" . number_format($total_house) . " หลัง</strong><br>";
                                                     echo "คิดเป็น <strong>" . number_format($percent, 2) . "%</strong> ของบ้านทั้งหมด";
                                                 } else {
@@ -114,7 +125,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <div class="row align-items-center">
                                                         <!-- รูป QR -->
                                                         <div class="col-auto">
-                                                            <img src="img/icon/PS33-COMMONFEE-LINEOA.png" alt="QR Code" class="img-fluid rounded shadow-sm" style="max-height: 60px;">
+                                                            <img src="img/icon/PS33-COMMONFEE-LINEOA.png"
+                                                                 alt="QR Code" class="img-fluid rounded shadow-sm"
+                                                                 style="max-height: 60px;">
                                                         </div>
 
                                                         <!-- ข้อความ -->
@@ -141,7 +154,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                         จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ทั้งหมด
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                        <?php echo number_format($count_67) + number_format($count_68); ?> หลัง
+                                                        <?php echo number_format($count_67) + number_format($count_68); ?>
+                                                        หลัง
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
@@ -217,14 +231,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             </div>
         </div>
 
-
-
     </div>
 
     <?php
     include('includes/Modal-Logout.php');
     include('includes/Footer.php');
     ?>
+
+    </div>
     <!-- Scroll to top -->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
@@ -289,7 +303,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
         });
     </script>
-
 
 
     </body>
