@@ -124,20 +124,6 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
             exit;
         }
 
-        // --- ดึง user_id ทั้งหมดจากฐานข้อมูล ---
-        $sql = "SELECT line_user_id FROM ims_house_line_user WHERE line_user_id IS NOT NULL";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        if (!$users) {
-            http_response_code(404);
-            echo "❌ ไม่พบผู้ใช้งานสำหรับส่งข้อความ";
-            exit;
-        }
-
-        $sendResults = [];
-
         // 🔧 Flex Message สำหรับรูปภาพ
         $flexMessages = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
@@ -178,38 +164,35 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
             ];
         }
 
-        // ✅ ส่งข้อความไปยังทุก user
-        foreach ($users as $uid) {
-            if (count($flexMessages) > 0) {
-                $messages = [
-                    [
-                        "type" => "text",
-                        "text" => "👤 ผู้ส่ง: {$displayName}\n📩 ข้อความ: {$remark}\n🕓 เวลา: {$timestamp}"
-                    ],
-                    [
-                        "type" => "flex",
-                        "altText" => "บันทึกข้อมูล check-in",
-                        "contents" => [
-                            "type" => "carousel",
-                            "contents" => $flexMessages
-                        ]
+        // ✅ ส่งข้อความกลับไปยังผู้ที่ส่งเท่านั้น
+        $messages = [];
+        if (count($flexMessages) > 0) {
+            $messages = [
+                [
+                    "type" => "text",
+                    "text" => "👤 ผู้ส่ง: {$displayName}\n📩 ข้อความ: {$remark}\n🕓 เวลา: {$timestamp}"
+                ],
+                [
+                    "type" => "flex",
+                    "altText" => "บันทึกข้อมูล check-in",
+                    "contents" => [
+                        "type" => "carousel",
+                        "contents" => $flexMessages
                     ]
-                ];
-            } else {
-                $messages = [
-                    [
-                        "type" => "text",
-                        "text" => "👤 ผู้ส่ง: {$displayName}\n📩 ข้อความ: {$remark}\n🕓 เวลา: {$timestamp}"
-                    ]
-                ];
-            }
-
-            $sendResult = sendLineMessage($channelAccessToken, $uid, $messages);
-            $sendResults[] = "userId: $uid HTTP_CODE: {$sendResult['httpCode']} Error: {$sendResult['error']}";
-            $flatRemark = str_replace(["\n", "\r"], " ", $remark);
-            $logLine = $uid . " - " . $flatRemark . "\n";
-            file_put_contents($logFileAll, $logLine, FILE_APPEND);
+                ]
+            ];
+        } else {
+            $messages = [
+                [
+                    "type" => "text",
+                    "text" => "👤 ผู้ส่ง: {$displayName}\n📩 ข้อความ: {$remark}\n🕓 เวลา: {$timestamp}"
+                ]
+            ];
         }
+
+        $sendResult = sendLineMessage($channelAccessToken, $userId, $messages);
+        $flatRemark = str_replace(["\n", "\r"], " ", $remark);
+        file_put_contents($logFileAll, $userId . " - " . $flatRemark . "\n", FILE_APPEND);
 
         echo "✅ บันทึกสำเร็จและส่ง LINE แล้ว";
 
