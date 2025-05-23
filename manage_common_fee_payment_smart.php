@@ -46,7 +46,7 @@ $curr_date = date("d-m-Y");
                                                 <th>สถานะ</th>
                                                 <th>ผู้ชำระ</th>
                                                 <th>Slip</th>
-                                                <th>Action</th>
+                                                <th>ใบเสร็จ</th>
                                             </tr>
                                             </thead>
                                         </table>
