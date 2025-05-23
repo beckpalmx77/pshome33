@@ -88,7 +88,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>Slip</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
-                                                    <th>Action</th>
+                                                    <th>ใบเสร็จ</th>
                                                 </tr>
                                                 </tfoot>
                                             </table>
