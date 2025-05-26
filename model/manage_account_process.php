@@ -272,6 +272,7 @@ if ($_POST["action"] === 'GET_ACCOUNT') {
             "email" => $row['email'],
             "first_name" => $row['first_name'],
             "last_name" => $row['last_name'],
+            "line_user_name" => $row['line_user_name'],
             "line_picture_profile" => $row['line_picture_profile'],
             "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
             "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",

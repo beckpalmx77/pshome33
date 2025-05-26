@@ -121,11 +121,18 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <div class="col-sm-8">
                                                                     <label for="description"
                                                                            class="control-label">รายการค่าใช้จ่าย</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="description"
-                                                                           name="description"
-                                                                           required="required"
-                                                                           placeholder="">
+                                                                    <input list="descriptionList" type="text" class="form-control"
+                                                                           id="description" name="description" required="required" placeholder="">
+                                                                    <datalist id="descriptionList">
+                                                                        <?php
+                                                                        $stmt = $conn->prepare("SELECT DISTINCT description FROM ims_expenses WHERE description IS NOT NULL AND description != '' ORDER BY description ASC");
+                                                                        $stmt->execute();
+                                                                        $descriptions = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                                                        foreach ($descriptions as $description) {
+                                                                            echo '<option value="' . htmlspecialchars($description) . '">';
+                                                                        }
+                                                                        ?>
+                                                                    </datalist>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">

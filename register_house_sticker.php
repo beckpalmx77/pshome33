@@ -96,6 +96,24 @@ include('includes/Header.php');
 
                                         <!-- สามารถลบ comment ทะเบียนรถ 3-5 ออก ถ้าต้องการใช้งานจริง -->
 
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="area_size">พื้นที่บ้าน ตรว.</label>
+                                                    <input type="text" name="area_size" id="area_size" class="form-control" readonly="true">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="common_fee">ค่าส่วนกลางรายเดือน (บาท)</label>
+                                                    <input type="text" name="common_fee" id="common_fee" class="form-control" readonly="true">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                     <input type="hidden" name="house_number_old" id="house_number_old" class="form-control">
@@ -285,6 +303,10 @@ include('includes/Header.php');
                         if (data.house_number) {
                             document.getElementById('house_number').value = data.house_number || '';
                             document.getElementById('house_number_old').value = data.house_number || '';
+
+                            document.getElementById('area_size').value = data.area_size || '';
+                            document.getElementById('common_fee').value = data.common_fee || '';
+
                             document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
                             document.getElementById('house_status').value = data.house_status || '';
                             document.getElementById('phone_number').value = data.phone_number || '';
