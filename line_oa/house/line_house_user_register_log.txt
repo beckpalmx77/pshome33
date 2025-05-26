@@ -1,0 +1,14 @@
+[SUCCESS] 2025-05-21 17:50:04 | UserID: Ufcc501f71b5fe4e1b130582105e1f3ca | Name: joyyyy
+[SUCCESS] 2025-05-25 10:01:07 | UserID: Ud3d1ab96c5d07bcd58395bc3aea74c7a | Name: อัญญารัตน์ พลอยโต
+[SUCCESS] 2025-05-25 13:29:33 | UserID: Uec6e66e75f8894439177b0753b11d88b | Name: สายหยุด
+[SUCCESS] 2025-05-25 17:38:43 | UserID: Uff3af23e4aee756b97adf656f8775751 | Name: aomjit_mc
+[SUCCESS] 2025-05-26 09:32:12 | UserID: Uef6d112a968206eee7f569236e04abe0 | Name: $b$o$2495
+[ERROR-INSERT] 2025-05-26 09:34:05 | Message: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away | UserID: U407733d82a11bb907609b2817197d67c
+[ERROR-FIND] 2025-05-26 09:34:05 | Message: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away | UserID: U407733d82a11bb907609b2817197d67c
+[ERROR-FIND] 2025-05-26 09:34:05 | Message: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away | UserID: U407733d82a11bb907609b2817197d67c
+[ERROR-FIND] 2025-05-26 09:34:05 | Message: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away | UserID: U407733d82a11bb907609b2817197d67c
+[ERROR-INSERT] 2025-05-26 09:34:05 | Message: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away | UserID: U407733d82a11bb907609b2817197d67c
+[SUCCESS] 2025-05-26 11:20:47 | UserID: U7aba0edfa3e1711b7084cee804ac83a9 | Name: ดรรชนี
+[SUCCESS] 2025-05-26 17:31:21 | UserID: U25f1f4ee861cbdbe361e18e98419ccee | Name: Wan🐷8995💐
+[SUCCESS] 2025-05-26 17:53:39 | UserID: U54c1d79e145758433b7c87d870368314 | Name: supwat
+[SUCCESS] 2025-05-26 18:05:29 | UserID: U9a5f364cf673d2898fe705e1d27b8394 | Name: chayanan

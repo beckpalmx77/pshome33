@@ -57,7 +57,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <!--th>เลขที่เอกสาร</th-->
                                                     <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
@@ -66,6 +65,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
+                                                    <th>ขนาดพื้นที่ ตรว</th>
+                                                    <th>ค่าเก็บขยะ</th>
+                                                    <th>ค่าส่วนกลาง</th>
+                                                    <th>จำนวนงวดที่ชำระ</th>
                                                     <th>ยอดชำระ</th>
                                                     <th>Slip</th>
                                                     <th>สถานะ</th>
@@ -73,9 +76,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ใบเสร็จ</th>
                                                 </tr>
                                                 </thead>
-                                                <tfoot>
+                                                <!--tfoot>
                                                 <tr>
-                                                    <!--th>เลขที่เอกสาร</th-->
                                                     <th>วันที่เอกสาร</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
@@ -84,13 +86,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>งวดเดือนเริ่มต้น</th>
                                                     <th>ถึงงวดเดือน</th>
                                                     <th>ปี</th>
+                                                    <th>ขนาดพื้นที่ ตรว</th>
+                                                    <th>ค่าเก็บขยะ</th>
+                                                    <th>ค่าส่วนกลาง</th>
+                                                    <th>จำนวนงวดที่ชำระ</th>
                                                     <th>ยอดชำระ</th>
                                                     <th>Slip</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>ใบเสร็จ</th>
                                                 </tr>
-                                                </tfoot>
+                                                </tfoot-->
                                             </table>
 
                                             <div id="result"></div>
@@ -426,7 +432,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'month_name_start'},
                     {data: 'month_name_to'},
                     {data: 'period_year'},
-                    {data: 'amount'},
+                    {data: 'area_size', className: 'dt-body-right'},
+                    { data: 'garbage_collection_fee', className: 'dt-body-right' },
+                    {data: 'common_fee', className: 'dt-body-right'},
+                    { data: 'payment_type', className: 'dt-body-center' },
+                    {data: 'amount', className: 'dt-body-right'},
                     {data: 'slip'},
                     {data: 'payment_status'},
                     {data: 'update'},

@@ -164,12 +164,22 @@ foreach ($BankCurr as $row_curr) {
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-6">
+                                                <!-- จำนวนเงินที่โอน -->
+                                                <div class="form-group has-success">
+                                                    <label for="common_fee"
+                                                           class="control-label">ค่าส่วนกลางรายเดือน (บาท)</label>
+                                                    <input type="number" name="common_fee" class="form-control"
+                                                           id="common_fee" readonly="true">
+                                                </div>
+                                            </div>
+
 
                                             <div class="col-md-6">
                                                 <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="amount"
-                                                           class="control-label">จำนวนเงินที่โอน</label>
+                                                           class="control-label">จำนวนเงินที่โอน (บาท)</label>
                                                     <input type="number" name="amount" class="form-control"
                                                            required id="amount">
                                                 </div>
@@ -538,9 +548,11 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value =
                                     (data.f_name || '') + ' ' + (data.l_name || '');
+                                document.getElementById('common_fee').value = data.common_fee;
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
                                 document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
                                 $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
+
 
                             } else {
                                 alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
@@ -618,6 +630,36 @@ foreach ($BankCurr as $row_curr) {
         }
     });
 
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paymentTypeInput = document.getElementById('payment_type');
+        const commonFeeInput = document.getElementById('common_fee');
+        const amountInput = document.getElementById('amount');
+        const paymentOptionMonthly = document.getElementById('option_monthly');
+
+        function calculateAmount() {
+            if (paymentOptionMonthly.checked) {
+                const months = parseInt(paymentTypeInput.value) || 0;
+                const commonFee = parseFloat(commonFeeInput.value) || 0;
+                const total = months * commonFee;
+                amountInput.value = total.toFixed(2);
+            } else {
+                amountInput.value = '';
+            }
+        }
+
+        // กรณี user เปลี่ยน input
+        paymentTypeInput.addEventListener('input', calculateAmount);
+        commonFeeInput.addEventListener('input', calculateAmount);
+        document.querySelectorAll('input[name="payment_option"]').forEach(el => {
+            el.addEventListener('change', calculateAmount);
+        });
+
+        // เรียกตอนเปิดหน้า
+        //calculateAmount();
+    });
 </script>
 
 </body>
