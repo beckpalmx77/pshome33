@@ -389,7 +389,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
-                    search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
+                    search: 'ค้นหา บ้านเลขที่', lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
                     infoEmpty: 'ไม่มีข้อมูล',
                     zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
