@@ -124,10 +124,12 @@
         <img src="ps33_logo.png" width="40" height="63" alt="Logo" />
     </div>
     <form id="checkinForm" enctype="multipart/form-data">
-        <label for="place_name">✎▤ รายละเอียดรายงาน/เหตุการณ์ :</label>
-        <textarea id="remark" placeholder="" rows="6" required></textarea>
-        <input type="hidden" id="place_name" value="พฤกษา 33" required />
-        <input type="hidden" id="check_type" value="IN" readonly />
+        <label for="remark">✎▤ รายละเอียดรายงาน/เหตุการณ์ :</label>
+        <textarea id="remark" name="remark" placeholder="" rows="6" required></textarea>
+
+        <input type="hidden" id="place_name" name="place_name" value="พฤกษา 33" />
+        <input type="hidden" id="check_type" name="check_type" value="IN" />
+
         <label for="photoInput">📷 รูปภาพ :</label>
         <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple />
         <!-- เพิ่มส่วน preview รูปที่นี่ -->
@@ -142,6 +144,9 @@
 </div>
 
 <script>
+    // กำหนด LIFF_ID (ถ้ายังไม่กำหนดใน config_job.js)
+    const LIFF_ID = "YOUR_LIFF_ID_HERE";
+
     // ฟังก์ชัน preview รูปภาพ
     document.getElementById('photoInput').addEventListener('change', function (event) {
         const preview = document.getElementById('imagePreview');
@@ -176,9 +181,14 @@
             const check_type = document.getElementById('check_type');
             const placeNameInput = document.getElementById('place_name');
             const remarkInput = document.getElementById('remark');
+            const btn = document.querySelector('button');
 
             if (!photoInput.files.length) return alert('กรุณาเลือกรูปถ่ายก่อน');
             if (!placeNameInput.value.trim()) return alert('กรุณากรอกชื่อสถานที่');
+            if (!remarkInput.value.trim()) return alert('กรุณากรอกรายละเอียดรายงาน');
+
+            // ปิดปุ่มกดบันทึกทันทีเพื่อป้องกันกดซ้ำ
+            btn.disabled = true;
 
             const placeName = placeNameInput.value;
             const remark = remarkInput.value;
@@ -202,6 +212,8 @@
             );
         } catch (err) {
             alert('เกิดข้อผิดพลาด: ' + err.message);
+            // ถ้ามี error ให้เปิดปุ่มกลับมา
+            document.querySelector('button').disabled = false;
         }
     }
 
@@ -228,9 +240,22 @@
             .then(res => res.text())
             .then(() => {
                 alert('✅ บันทึก สำเร็จแล้ว');
-                liff.closeWindow();
+                // เคลียร์ฟอร์มหลังบันทึก
+                document.getElementById('remark').value = '';
+                photoInput.value = '';
+                document.getElementById('imagePreview').innerHTML = '';
+
+                // เปิดปุ่มบันทึกให้กดใหม่ได้
+                document.querySelector('button').disabled = false;
+
+                // ถ้าอยากปิดหน้าต่างหลังบันทึก ก็ใช้บรรทัดนี้แทน
+                // liff.closeWindow();
             })
-            .catch(err => alert('❌ ไม่สามารถ บันทึก ได้: ' + err.message))
+            .catch(err => {
+                alert('❌ ไม่สามารถ บันทึก ได้: ' + err.message);
+                // ถ้า error ก็เปิดปุ่มกลับมาให้กดใหม่
+                document.querySelector('button').disabled = false;
+            })
             .finally(() => {
                 document.getElementById('spinner').style.display = 'none';
             });
