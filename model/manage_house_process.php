@@ -227,20 +227,20 @@ if ($_POST["action"] === 'GET_HOUSE') {
 */
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1 " . $where_house_number );
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1=1 " . $where_house_number );
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1 " . $where_house_number . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1=1 " . $where_house_number . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM v_ims_house WHERE 1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM v_ims_house WHERE 1=1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 
