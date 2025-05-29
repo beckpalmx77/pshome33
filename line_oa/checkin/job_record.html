@@ -1,109 +1,87 @@
 <!DOCTYPE html>
 <html lang="th">
-<?php header('Content-Type: text/html; charset=utf-8'); ?>
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#00B900" />
-    <meta name="description" content="ระบบจัดการข้อมูล" />
-    <meta name="author" content="PS33" />
-    <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="ระบบจัดการข้อมูล">
+    <meta name="author" content="PS33">
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="jsconfig/config_job.js"></script>
+    <script src="jsconfig/config_in.js"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #ffffff;
-            color: #333;
+            background-color: #121212;
+            color: #e0e0e0;
         }
-
         .container {
             max-width: 480px;
             margin: auto;
-            background-color: #f9f9f9;
+            background-color: #1e1e1e;
             padding: 20px;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
             box-sizing: border-box;
         }
-
         .text-center {
             text-align: center;
             margin-bottom: 20px;
         }
-
         label {
             display: block;
             margin-bottom: 6px;
             font-weight: bold;
+            color: #ffffff;
         }
-
-        input[type='file'],
-        input[type='text'] {
+        input[type="file"],
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             font-size: 16px;
-            border: 1px solid #ccc;
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #444;
             border-radius: 8px;
             margin-bottom: 16px;
             box-sizing: border-box;
         }
-
+        input[type="text"]::placeholder {
+            color: #aaaaaa;
+        }
         button {
             width: 100%;
             padding: 14px;
             font-size: 16px;
-            background-color: #00b900;
-            color: #fff;
+            background-color: #00B900;
+            color: #ffffff;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             box-sizing: border-box;
         }
-
         button:hover {
             background-color: #009600;
         }
-
         #spinner {
             display: none;
             text-align: center;
             margin-top: 20px;
         }
-
         .loader {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #00b900;
+            border: 6px solid #333;
+            border-top: 6px solid #00B900;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
             margin: auto;
         }
-
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        textarea {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            background-color: #ffffff;
-            color: #000000;
-            border: 1px solid #000000;
-            border-radius: 8px;
-            resize: vertical;
-            box-sizing: border-box;
-            margin-bottom: 16px;
-            line-height: 1.5;
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -111,24 +89,21 @@
 <div class="container">
     <div class="text-center">
         <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
-        <h5>📍 บันทึกงาน/เหตุการณ์</h5>
+        <h4 style="color: #ffffff;">📍 Check In</h4>
     </div>
-
     <form id="checkinForm" enctype="multipart/form-data">
-        <label for="remark">📌 รายละเอียด :</label>
+        <label for="place_name">✎▤ รายละเอียดรายงาน : </label>
         <textarea id="remark" placeholder="รายละเอียด" rows="4" required></textarea>
+        <input type="hidden" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required>
+        <input type="hidden" id="check_type" value="IN" readonly="true">
+        <label for="photoInput">📷 รูปภาพ : </label>
+        <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple>
 
-        <input type="hidden" id="place_name" value="พฤกษา 33" required />
-        <input type="hidden" id="check_type" value="IN" readonly="true" />
-
-        <label for="photoInput">📷 รูปภาพ :</label>
-        <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple />
-        <button type="button" onclick="checkin()">✅ กดเพื่อบันทึกข้อมูล</button>
+        <button type="button" onclick="checkin()">✅ กดเพื่อบันทึกรายการ</button>
     </form>
-
     <div id="spinner">
         <div class="loader"></div>
-        <p>กำลังอัปโหลด...</p>
+        <p style="color: #ffffff;">กำลังอัปโหลด...</p>
     </div>
 </div>
 
@@ -136,10 +111,7 @@
     async function checkin() {
         try {
             await liff.init({ liffId: LIFF_ID });
-            if (!liff.isLoggedIn()) {
-                liff.login();
-                return;
-            }
+            if (!liff.isLoggedIn()) { liff.login(); return; }
 
             const profile = await liff.getProfile();
             const photoInput = document.getElementById("photoInput");
@@ -151,68 +123,55 @@
 
             const placeName = placeNameInput.value;
 
-            const sendForm = (lat, lng) => {
-                const formData = new FormData();
-                formData.append("user_id", profile.userId);
-                formData.append("pictureUrl", profile.pictureUrl);
-                formData.append("check_type", check_type.value);
-                formData.append("display_name", profile.displayName);
-                formData.append("remark", document.getElementById("remark").value);
-                formData.append("place_name", placeName);
-                formData.append("latitude", lat);
-                formData.append("longitude", lng);
-
-                for (let i = 0; i < photoInput.files.length; i++) {
-                    formData.append("photo[]", photoInput.files[i]);
-                }
-
-                document.getElementById("spinner").style.display = "block";
-
-                fetch("https://ps33.themediathai.com/line_oa/checkin/job_record_api.php", {
-                    method: "POST",
-                    body: formData,
-                })
-                    .then((res) => res.text())
-                    .then(() => {
-                        // ส่งข้อความแจ้งเตือนผ่าน liff.sendMessages()
-                        liff
-                            .sendMessages([
-                                {
-                                    type: "text",
-                                    text: "📍 บันทึกข้อมูลสำเร็จแล้ว\nจาก: " + profile.displayName + "Lat " + position.coords.latitude + "Long " + position.coords.longitude,
-                                },
-                            ])
-                            .then(() => {
-                                alert("✅ บันทึกสำเร็จแล้ว");
-                                liff.closeWindow();
-                            })
-                            .catch((err) => {
-                                console.warn("ไม่สามารถส่งข้อความใน chat ได้", err);
-                                alert("✅ บันทึกสำเร็จ แต่ไม่สามารถส่งข้อความแจ้งเตือนได้");
-                                liff.closeWindow();
-                            });
-                    })
-                    .catch((err) => alert("❌ ไม่สามารถบันทึกได้: " + err.message))
-                    .finally(() => {
-                        document.getElementById("spinner").style.display = "none";
-                    });
-            };
-
             navigator.geolocation.getCurrentPosition(
-                (position) => sendForm(position.coords.latitude, position.coords.longitude),
-                (error) => {
-                    console.warn("❌ ไม่สามารถรับตำแหน่งได้: " + error.message);
-                    sendForm(0, 0);
-                }
+                position => {
+                    sendCheckin(profile, check_type.value, placeName, photoInput, position.coords.latitude, position.coords.longitude);
+                },
+                error => {
+                    sendCheckin(profile, check_type.value, placeName, photoInput, 0, 0);
+                },
+                { timeout: 10000 }
             );
+
         } catch (err) {
             alert("เกิดข้อผิดพลาด: " + err.message);
         }
     }
+
+    function sendCheckin(profile, checkType, placeName, photoInput, lat, lng) {
+        const formData = new FormData();
+        formData.append("user_id", profile.userId);
+        formData.append("check_type", checkType);
+        formData.append("display_name", profile.displayName);
+        formData.append("place_name", placeName);
+        formData.append("remark", remark);
+        formData.append("latitude", lat);
+        formData.append("longitude", lng);
+
+        for (let i = 0; i < photoInput.files.length; i++) {
+            formData.append("photo[]", photoInput.files[i]);
+        }
+
+        document.getElementById("spinner").style.display = "block";
+
+        fetch("https://ps33.themediathai.com/line_oa/checkin/checkin_api.php", {
+            method: "POST",
+            body: formData
+        })
+            .then(res => res.text())
+            .then(() => {
+                alert("✅ บันทึก สำเร็จแล้ว");
+                liff.closeWindow();
+            })
+            .catch(err => alert("❌ ไม่สามารถ บันทึก ได้: " + err.message))
+            .finally(() => {
+                document.getElementById("spinner").style.display = "none";
+            });
+    }
 </script>
 
 <script>
-    document.addEventListener("contextmenu", (event) => event.preventDefault());
+    document.addEventListener('contextmenu', event => event.preventDefault());
 </script>
 </body>
 </html>
