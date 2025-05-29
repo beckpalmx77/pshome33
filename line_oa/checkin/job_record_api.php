@@ -3,6 +3,7 @@ require "../../config/connect_db.php";
 header("Access-Control-Allow-Origin: *");
 
 $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
+$group_ps33_niti = 'Ca579b4e8daae57c0f07c3508696074ae';
 
 if (isset($_POST['user_id'], $_POST['remark']) && isset($_FILES['photo'])) {
     $userId = $_POST['user_id'];
@@ -74,10 +75,10 @@ if (isset($_POST['user_id'], $_POST['remark']) && isset($_FILES['photo'])) {
 
         $actionText = "บันทึกรายงาน" ;
 
-        // 1. ข้อความธรรมดา
+        // 1. ข้อความธรรมดา พร้อมชื่อผู้ส่ง
         $textMessage = [
             'type' => 'text',
-            'text' => "✅ {$actionText} สำเร็จ\nรายละเอียด: {$remark}\nเวลา: {$timestamp}"
+            'text' => "✅ {$actionText} สำเร็จโดยคุณ {$displayName}\nรายละเอียด: {$remark}\nเวลา: {$timestamp}"
         ];
 
         // 2. Flex Message รูปภาพ
@@ -124,37 +125,37 @@ if (isset($_POST['user_id'], $_POST['remark']) && isset($_FILES['photo'])) {
             ]
         ];
 
-        // รวมทั้งข้อความและ Flex message
-        $messageData = [
-            'to' => $userId,
-            'messages' => [
-                $textMessage,
-                $flexMessage
-            ]
-        ];
+        // ส่งข้อความไปทั้ง user และ group
+        $recipients = [$userId, $group_ps33_niti];
 
-        // ส่งไปยัง LINE
-        $ch = curl_init('https://api.line.me/v2/bot/message/push');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $channelAccessToken
-        ]);
+        foreach ($recipients as $recipient) {
+            $messageData = [
+                'to' => $recipient,
+                'messages' => [
+                    $textMessage,
+                    $flexMessage
+                ]
+            ];
 
-        $result = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
+            $ch = curl_init('https://api.line.me/v2/bot/message/push');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $channelAccessToken
+            ]);
 
-        file_put_contents("line_push_log.txt", "[$timestamp] HTTP CODE: $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
+            $result = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
 
-        if ($httpCode === 200) {
-            echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
-        } else {
-            echo "❌ $actionText สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
+            file_put_contents("line_push_log.txt", "[$timestamp] To: $recipient HTTP CODE: $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
         }
+
+        echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
+
     } else {
         http_response_code(500);
         echo "❌ อัปโหลดรูปไม่สำเร็จ";

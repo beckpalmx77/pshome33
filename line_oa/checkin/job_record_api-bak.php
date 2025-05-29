@@ -3,7 +3,16 @@ require "../../config/connect_db.php";
 header("Access-Control-Allow-Origin: *");
 
 $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
-$group_ps33_niti = 'Ca579b4e8daae57c0f07c3508696074ae';
+
+
+
+
+
+
+
+
+
+ = 'Ca579b4e8daae57c0f07c3508696074ae';
 
 if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['remark']) && isset($_FILES['photo'])) {
     $userId = $_POST['user_id'];
