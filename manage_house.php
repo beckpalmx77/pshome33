@@ -55,6 +55,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tr>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
+                                                    <th>ขนาดพื้นที่ (ตรว)</th>
+                                                    <th>ค่าเก็บขยะ (บาท)</th>
+                                                    <th>ค่าส่วนกลาง (บาท)</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
@@ -66,6 +69,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tr>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
+                                                    <th>ขนาดพื้นที่ (ตรว)</th>
+                                                    <th>ค่าเก็บขยะ (บาท)</th>
+                                                    <th>ค่าส่วนกลาง (บาท)</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
@@ -332,6 +338,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'columns': [
                     {data: 'house_number'},
                     {data: 'alley'},
+                    { data: 'area_size', className: 'text-right' },
+                    { data: 'garbage_collection_fee', className: 'text-right' },
+                    { data: 'common_fee', className: 'text-right' },
                     {data: 'contact_name'},
                     {data: 'phone_number'},
                     {
