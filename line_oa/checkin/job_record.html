@@ -14,14 +14,14 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #caf1ca; /* สีพื้นหลังเขียวเข้ม */
+            background-color: #caf1ca;
             color: #ffffff;
         }
 
         .container {
             max-width: 480px;
             margin: auto;
-            background-color: #acdeac; /* สี container */
+            background-color: #acdeac;
             padding: 20px;
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
@@ -106,7 +106,7 @@
     <form id="checkinForm" enctype="multipart/form-data">
         <label for="place_name">✎▤ รายละเอียดรายงาน :</label>
         <textarea id="remark" placeholder="รายละเอียด" rows="4" required></textarea>
-        <input type="hidden" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required>
+        <input type="hidden" id="place_name" value="พฤกษา 33" required>
         <input type="hidden" id="check_type" value="IN" readonly>
         <label for="photoInput">📷 รูปภาพ :</label>
         <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple>
@@ -183,6 +183,7 @@
 </script>
 
 <script>
+    // ป้องกันการคลิกขวา
     document.addEventListener('contextmenu', event => event.preventDefault());
 </script>
 </body>
