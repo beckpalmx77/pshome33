@@ -47,6 +47,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
+                                            <button type='button' name='btnExp' id='btnExp'
+                                                    class='btn btn-success btn-xs'>Export Excel
+                                                <i class="fa fa-file-excel-o"></i>
+                                            </button>
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
@@ -396,6 +400,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
         });
 
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btnExp").click(function () {
+                // ส่วนนี้จะเป็นการเปลี่ยนหน้าไปยังไฟล์ PHP ที่ export Excel
+                window.open('export_process/export_house_master_excel.php', '_blank');
+            });
+        });
     </script>
 
     </body>
