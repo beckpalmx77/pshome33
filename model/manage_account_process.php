@@ -249,6 +249,13 @@ if ($_POST["action"] === 'GET_ACCOUNT') {
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
+
+
+    if ($columnName==="line_no") {
+        $columnName = " line_no " ;
+        $columnSortOrder = " desc " ;
+    }
+
     $stmt = $conn->prepare("SELECT * FROM v_ims_user WHERE 1 " . $searchQuery
         . " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset");
 
