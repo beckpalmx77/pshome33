@@ -143,7 +143,7 @@ if ($_POST["action"] === 'GET_JOB_RECORD') {
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM v_jobrecord WHERE 1 " . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM v_jobrecord WHERE 1=1 ORDER BY id DESC " . $searchQuery . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 

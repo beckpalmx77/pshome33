@@ -53,19 +53,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>รหัสแผนก</th>
-                                                    <th>รายละเอียด</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
+                                                    <th>เลขที่บ้าน</th>
+                                                    <th>ขนาดพื้นที่บ้าน</th>
+                                                    <th>ค่าเก็บขยะ</th>
+                                                    <th>ค่าส่วนกลาง</th>
+                                                    <th>สถานะ</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
                                                 <tr>
-                                                    <th>รหัสแผนก</th>
-                                                    <th>รายละเอียด</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
+                                                    <th>เลขที่บ้าน</th>
+                                                    <th>ขนาดพื้นที่บ้าน</th>
+                                                    <th>ค่าเก็บขยะ</th>
+                                                    <th>ค่าส่วนกลาง</th>
+                                                    <th>สถานะ</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -89,30 +91,50 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                             <div class="modal-body">
 
                                                                 <div class="form-group">
-                                                                    <label for="house_number" class="control-label">รหัสแผนก</label>
+                                                                    <label for="house_number" class="control-label">เลขที่บ้าน</label>
                                                                     <input type="house_number" class="form-control"
                                                                            id="house_number" name="house_number"
-                                                                           placeholder="รหัสแผนก">
+                                                                           placeholder="">
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="area_size"
-                                                                           class="control-label">แผนก</label>
+                                                                           class="control-label">ขนาดพื้นที่</label>
                                                                     <input type="text" class="form-control"
                                                                            id="area_size"
                                                                            name="area_size"
                                                                            required="required"
-                                                                           placeholder="แผนก">
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="garbage_collection_fee"
+                                                                           class="control-label">ค่าเก็บขยะ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="garbage_collection_fee"
+                                                                           name="garbage_collection_fee"
+                                                                           required="required"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="common_fee"
+                                                                           class="control-label">ค่าส่วนกลาง</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="common_fee"
+                                                                           name="common_fee"
+                                                                           required="required"
+                                                                           placeholder="">
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="status"
-                                                                           class="control-label">Status</label>
+                                                                           class="control-label">สถานะ</label>
                                                                     <select id="status" name="status"
                                                                             class="form-control" data-live-search="true"
                                                                             title="Please select">
-                                                                        <option>N</option>
                                                                         <option>Y</option>
+                                                                        <option>N</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -204,31 +226,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </script>
 
     <script>
-
-        $("#area_size").blur(function () {
-            let method = $('#action').val();
-            if (method === "ADD") {
-                let house_number = $('#house_number').val();
-                let area_size = $('#area_size').val();
-                let formData = {action: "SEARCH", house_number: house_number, area_size: area_size};
-                $.ajax({
-                    url: 'model/manage_house_master_process.php',
-                    method: "POST",
-                    data: formData,
-                    success: function (data) {
-                        if (data == 2) {
-                            alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
-                        }
-                    }
-                })
-            }
-        });
-
-    </script>
-
-    <script>
         $(document).ready(function () {
-            let formData = {action: "GET_DEPARTMENT", sub_action: "GET_MASTER"};
+            let formData = {action: "GET_HOUSE_MASTER", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[7, 10, 20, 50, 100], [7, 10, 20, 50, 100]],
                 'language': {
@@ -253,9 +252,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'columns': [
                     {data: 'house_number'},
                     {data: 'area_size'},
+                    {data: 'garbage_collection_fee'},
+                    {data: 'common_fee'},
                     {data: 'status'},
-                    {data: 'update'},
-                    {data: 'delete'}
+                    {data: 'update'}
                 ]
             });
 
@@ -281,7 +281,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             <!-- *** FOR SUBMIT FORM *** -->
 
 
-
         });
 
     </script>
@@ -292,7 +291,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#recordModal').modal('show');
                 $('#id').val("");
                 $('#house_number').val("");
-                $('#house_number').val("");
+                $('#area_size').val("");
+                $('#garbage_collection_fee').val("");
+                $('#common_fee').val("");
+                $('#status').val("Y");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -317,12 +319,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let id = response[i].id;
                         let house_number = response[i].house_number;
                         let area_size = response[i].area_size;
+                        let garbage_collection_fee = response[i].garbage_collection_fee;
+                        let common_fee = response[i].common_fee;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#house_number').val(house_number);
                         $('#area_size').val(area_size);
+                        $('#garbage_collection_fee').val(garbage_collection_fee);
+                        $('#common_fee').val(common_fee);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -339,8 +345,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <script>
 
-        $("#TableRecordList").on('click', '.delete', function () {
+        $("#TableRecordList").on('click', '.update', function () {
             let id = $(this).attr("id");
+            //alert(id);
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
@@ -353,14 +360,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let id = response[i].id;
                         let house_number = response[i].house_number;
                         let area_size = response[i].area_size;
+                        let garbage_collection_fee = response[i].garbage_collection_fee;
+                        let common_fee = response[i].common_fee;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#house_number').val(house_number);
                         $('#area_size').val(area_size);
+                        $('#garbage_collection_fee').val(garbage_collection_fee);
+                        $('#common_fee').val(common_fee);
                         $('#status').val(status);
-                        $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
+                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');
                     }

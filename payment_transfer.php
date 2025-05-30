@@ -218,7 +218,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                             <p>กำลังบันทึกข้อมูล...</p>
                                         </div>
 
-                                        <button type="submit" class="btn btn-primary btn-block">บันทึกข้อมูล
+                                        <button type="submit" id="submit_btn" class="btn btn-primary btn-block">บันทึกข้อมูล
                                         </button>
                                     </form>
 
@@ -277,41 +277,30 @@ if (strlen($_SESSION['alogin']) === "") {
                 }
             });
 
-            // Submit Form with Loading Indicator
+            // Submit Form with Loading Indicator and prevent duplicate submit
             $("#transfer_form").on("submit", function (event) {
                 event.preventDefault();
+
+                // Disable submit button and show loading
+                $("#submit_btn").prop("disabled", true);
+                $("#loading").show();
+
                 // ตรวจสอบว่า period_month_start <= period_month_to หรือไม่
                 let period_month_start = parseInt($("#period_month_start").val());
                 let period_month_to = parseInt($("#period_month_to").val());
 
                 if (period_month_start > period_month_to) {
                     alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง (เริ่มต้นต้องน้อยกว่าหรือเท่ากับสิ้นสุด)");
+                    // Enable submit button and hide loading
+                    $("#submit_btn").prop("disabled", false);
+                    $("#loading").hide();
                     return;  // หยุดการบันทึกข้อมูล
                 }
 
-                //$("#loading").show();
                 let formData = new FormData(this);
-
-                formData.append('period_month_start', document.getElementById('period_month_start').value);
-                formData.append('period_month_to', document.getElementById('period_month_to').value);
-                formData.append('payment_type', document.getElementById('payment_type').value);
-
-                let dataToShow = '';
-
-                // สร้างข้อความที่จะแสดงใน alert
-                for (let [key, value] of formData.entries()) {
-                    dataToShow += `${key}: ${value} | `;
-                }
-
-                // ลบตัว '|' สุดท้ายออก (ถ้ามี)
-                if (dataToShow.endsWith(' | ')) {
-                    dataToShow = dataToShow.slice(0, -3);
-                }
-
-                // แสดงค่าใน alert
-                //alert(dataToShow);
-
-                //alert($("#period_month_start").val() + " | " + $("#period_month_to").val());
+                formData.append('period_month_start', $("#period_month_start").val());
+                formData.append('period_month_to', $("#period_month_to").val());
+                formData.append('payment_type', $("#payment_type").val());
 
                 $.ajax({
                     url: "model/manage_payment_transfer.php",
@@ -320,18 +309,23 @@ if (strlen($_SESSION['alogin']) === "") {
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        //$("#loading").hide();
+                        $("#loading").hide();
+
                         if (response == 1) {
                             alertify.success("โอนเงินและส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
                             $("#transfer_form")[0].reset();
                             $("#preview_image").hide().attr("src", "");
+                            // ปิดปุ่ม submit หลังบันทึกสำเร็จ เพื่อกัน submit ซ้ำ
+                            $("#submit_btn").prop("disabled", true);
                         } else {
                             alertify.error("ไม่สามารถบันทึกข้อมูลได้");
+                            $("#submit_btn").prop("disabled", false);
                         }
                     },
                     error: function () {
-                        //$("#loading").hide();
+                        $("#loading").hide();
                         alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                        $("#submit_btn").prop("disabled", false);
                     }
                 });
             });

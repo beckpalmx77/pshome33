@@ -13,8 +13,8 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM mdepartment "
-        . " WHERE mdepartment.id = " . $id;
+    $sql_get = "SELECT * FROM ims_house_master "
+        . " WHERE ims_house_master.id = " . $id;
 
     //$myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
     //fwrite($myfile, $sql_get);
@@ -25,8 +25,10 @@ if ($_POST["action"] === 'GET_DATA') {
 
     foreach ($results as $result) {
         $return_arr[] = array("id" => $result['id'],
-            "department_id" => $result['department_id'],
-            "department_desc" => $result['department_desc'],
+            "house_number" => $result['house_number'],
+            "area_size" => $result['area_size'],
+            "garbage_collection_fee" => $result['garbage_collection_fee'],
+            "common_fee" => $result['common_fee'],
             "status" => $result['status']);
     }
 
@@ -36,10 +38,10 @@ if ($_POST["action"] === 'GET_DATA') {
 
 if ($_POST["action"] === 'SEARCH') {
 
-    if ($_POST["department_id"] !== '') {
+    if ($_POST["house_number"] !== '') {
 
-        $department_id = $_POST["department_id"];
-        $sql_find = "SELECT * FROM mdepartment WHERE department_id = '" . $department_id . "'";
+        $house_number = $_POST["house_number"];
+        $sql_find = "SELECT * FROM ims_house_master WHERE house_number = '" . $house_number . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
@@ -50,22 +52,28 @@ if ($_POST["action"] === 'SEARCH') {
 }
 
 if ($_POST["action"] === 'ADD') {
-    if ($_POST["department_desc"] !== '') {
-        //$department_id = "D" . sprintf('%03s', LAST_ID($conn, "mdepartment", 'id'));
-        $department_id = $_POST["department_id"];
-        $department_desc = $_POST["department_desc"];
+    if ($_POST["common_fee"] !== '') {
+
+
+        $house_number = $_POST["house_number"];
+        $area_size = $_POST["area_size"];
+        $garbage_collection_fee = $_POST["garbage_collection_fee"];
+        $common_fee = $_POST["common_fee"];
         $status = $_POST["status"];
-        $sql_find = "SELECT * FROM mdepartment WHERE department_id = '" . $department_id . "'";
+
+        $sql_find = "SELECT * FROM ims_house_master WHERE house_number = '" . $house_number . "'";
 
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo $dup;
         } else {
-            $sql = "INSERT INTO mdepartment(department_id,department_desc,status) 
-                    VALUES (:department_id,:department_desc,:status)";
+            $sql = "INSERT INTO ims_house_master(house_number,common_fee,status) 
+                    VALUES (:house_number,:common_fee,:status)";
             $query = $conn->prepare($sql);
-            $query->bindParam(':department_id', $department_id, PDO::PARAM_STR);
-            $query->bindParam(':department_desc', $department_desc, PDO::PARAM_STR);
+            $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+            $query->bindParam(':area_size', $area_size, PDO::PARAM_STR);
+            $query->bindParam(':garbage_collection_fee', $garbage_collection_fee, PDO::PARAM_STR);
+            $query->bindParam(':common_fee', $common_fee, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
@@ -81,20 +89,27 @@ if ($_POST["action"] === 'ADD') {
 
 if ($_POST["action"] === 'UPDATE') {
 
-    if ($_POST["department_desc"] != '') {
+    if ($_POST["common_fee"] != '') {
 
         $id = $_POST["id"];
-        $department_id = $_POST["department_id"];
-        $department_desc = $_POST["department_desc"];
+
+        $house_number = $_POST["house_number"];
+        $area_size = $_POST["area_size"];
+        $garbage_collection_fee = $_POST["garbage_collection_fee"];
+        $common_fee = $_POST["common_fee"];
         $status = $_POST["status"];
-        $sql_find = "SELECT * FROM mdepartment WHERE id = '" . $id . "'";
+
+        $sql_find = "SELECT * FROM ims_house_master WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE mdepartment SET department_id=:department_id,department_desc=:department_desc,status=:status            
+            $sql_update = "UPDATE ims_house_master SET house_number=:house_number,area_size=:area_size,garbage_collection_fee=:garbage_collection_fee
+            ,common_fee=:common_fee,status=:status            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
-            $query->bindParam(':department_id', $department_id, PDO::PARAM_STR);
-            $query->bindParam(':department_desc', $department_desc, PDO::PARAM_STR);
+            $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+            $query->bindParam(':area_size', $area_size, PDO::PARAM_STR);
+            $query->bindParam(':garbage_collection_fee', $garbage_collection_fee, PDO::PARAM_STR);
+            $query->bindParam(':common_fee', $common_fee, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
@@ -108,11 +123,11 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    $sql_find = "SELECT * FROM mdepartment WHERE id = " . $id;
+    $sql_find = "SELECT * FROM ims_house_master WHERE id = " . $id;
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
-            $sql = "DELETE FROM mdepartment WHERE id = " . $id;
+            $sql = "DELETE FROM ims_house_master WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
             echo $del_success;
@@ -122,7 +137,7 @@ if ($_POST["action"] === 'DELETE') {
     }
 }
 
-if ($_POST["action"] === 'GET_DEPARTMENT') {
+if ($_POST["action"] === 'GET_HOUSE_MASTER') {
 
     ## Read value
     $draw = $_POST['draw'];
@@ -145,28 +160,28 @@ if ($_POST["action"] === 'GET_DEPARTMENT') {
 ## Search
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (department_id LIKE :department_id or
-        department_desc LIKE :department_desc ) ";
+        $searchQuery = " AND (house_number LIKE :house_number or
+        common_fee LIKE :common_fee ) ";
         $searchArray = array(
-            'department_id' => "%$searchValue%",
-            'department_desc' => "%$searchValue%",
+            'house_number' => "%$searchValue%",
+            'common_fee' => "%$searchValue%",
         );
     }
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM mdepartment ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house_master ");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM mdepartment WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_house_master WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-    $stmt = $conn->prepare("SELECT * FROM mdepartment WHERE 1 " . $searchQuery
+    $stmt = $conn->prepare("SELECT * FROM ims_house_master WHERE 1 " . $searchQuery
         . " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset");
 
 /*
@@ -193,8 +208,10 @@ if ($_POST["action"] === 'GET_DEPARTMENT') {
         if ($_POST['sub_action'] === "GET_MASTER") {
             $data[] = array(
                 "id" => $row['id'],
-                "department_id" => $row['department_id'],
-                "department_desc" => $row['department_desc'],
+                "house_number" => $row['house_number'],
+                "area_size" => $row['area_size'],
+                "garbage_collection_fee" => $row['garbage_collection_fee'],
+                "common_fee" => $row['common_fee'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "status" => $row['status'] === 'Y' ? "<div class='text-success'>" . $row['status'] . "</div>" : "<div class='text-muted'> " . $row['status'] . "</div>"
@@ -202,9 +219,9 @@ if ($_POST["action"] === 'GET_DEPARTMENT') {
         } else {
             $data[] = array(
                 "id" => $row['id'],
-                "department_id" => $row['department_id'],
-                "department_desc" => $row['department_desc'],
-                "select" => "<button type='button' name='select' id='" . $row['department_id'] . "@" . $row['department_desc'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
+                "house_number" => $row['house_number'],
+                "common_fee" => $row['common_fee'],
+                "select" => "<button type='button' name='select' id='" . $row['house_number'] . "@" . $row['common_fee'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
 </button>",
             );
         }

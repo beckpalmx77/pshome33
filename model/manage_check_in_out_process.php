@@ -144,7 +144,7 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM v_checkins WHERE 1 " . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM v_checkins WHERE 1=1 ORDER BY id DESC  " . $searchQuery . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 
