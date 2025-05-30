@@ -216,7 +216,8 @@ foreach ($BankCurr as $row_curr) {
 
                                     <div class="mb-3">
                                         <label for="picture_payment">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
-                                        <input type="file" name="picture_payment" class="form-control" id="picture_payment" required>
+                                        <input type="file" name="picture_payment" class="form-control"
+                                               id="picture_payment" required>
                                         <div class="mt-2">
                                             <img id="preview_image" alt="Preview Slip" class="img-fluid">
                                         </div>
@@ -229,7 +230,7 @@ foreach ($BankCurr as $row_curr) {
                                         <p>กำลังบันทึกข้อมูล...</p>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary btn-block">บันทึกข้อมูล
+                                    <button type="submit" id="submit_btn" class="btn btn-primary btn-block">บันทึกข้อมูล
                                     </button>
                                 </form>
 
@@ -329,7 +330,7 @@ foreach ($BankCurr as $row_curr) {
         height: auto;
         border: 1px solid #ccc;
         border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
     @media (max-width: 768px) {
@@ -361,7 +362,7 @@ foreach ($BankCurr as $row_curr) {
 </style>
 
 
-<script>
+<!--script>
     $(document).ready(function () {
 
         // Submit Form with Loading Indicator
@@ -429,15 +430,17 @@ foreach ($BankCurr as $row_curr) {
                         alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
                         $("#transfer_form")[0].reset();
                         $("#preview_image").hide().attr("src", "");
-
+                        $("#submit_btn").prop("disabled", true);
                         // ✅ ส่งข้อความกลับ LINE OA
                         if (liff.isInClient()) {
                             liff.getProfile().then(profile => {
                                 const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\nจำนวน ${amount} บาท\nบ้านเลขที่: ${house_number}
-                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} \nปี: ${period_year}\nวันที่ทำรายการ: ${date_time}`;
+                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} \nปี: ${period_year}\nวันที่ทำรายการ: ${date_time}\nโปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
                                 liff.sendMessages([{type: "text", text: message}])
                                     .then(() => {
-                                        liff.closeWindow();
+                                        setTimeout(() => {
+                                            liff.closeWindow();
+                                        }, 2000); // หน่วง 2 วิ
                                     })
                                     .catch(err => {
                                         console.error("ส่งข้อความล้มเหลว:", err);
@@ -456,6 +459,93 @@ foreach ($BankCurr as $row_curr) {
                 error: function () {
                     //$("#loading").hide();
                     alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                }
+            });
+        });
+    });
+</script-->
+
+<script>
+    $(document).ready(function () {
+        $("#transfer_form").on("submit", function (event) {
+            event.preventDefault();
+
+            let period_month_start = parseInt($("#period_month_start").val());
+            let period_month_to = parseInt($("#period_month_to").val());
+            let period_year = parseInt($("#period_year").val());
+            let amount = $("#amount").val();
+            let house_number = $("#house_number").val();
+            let period_month_start_name = monthNames[period_month_start];
+            let period_month_to_name = monthNames[period_month_to];
+
+            function padZero(n) {
+                return n < 10 ? '0' + n : n;
+            }
+
+            let date = new Date();
+            let current_date = padZero(date.getDate()) + "-" + padZero(date.getMonth() + 1) + "-" + date.getFullYear();
+            let current_time = padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
+            let date_time = current_date + " " + current_time;
+
+            if (period_month_start > period_month_to) {
+                alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง");
+                return;
+            }
+
+            // 🔒 ปิดปุ่ม + แสดงโหลด
+            $("#submit_btn").prop("disabled", true);
+            $("#loading").show();
+
+            let formData = new FormData(this);
+            formData.append('period_month_start', $("#period_month_start").val());
+            formData.append('period_month_to', $("#period_month_to").val());
+            formData.append('payment_type', $("#payment_type").val());
+
+            $.ajax({
+                url: "model/manage_payment_transfer_smart.php",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#loading").hide();
+
+                    if (response == 1) {
+                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
+                        $("#transfer_form")[0].reset();
+                        $("#preview_image").hide().attr("src", "");
+                        $("#submit_btn").prop("disabled", true); // ✅ ยังปิดไว้หลังสำเร็จ
+
+                        // ✅ ส่งข้อความกลับ LINE OA
+                        if (liff.isInClient()) {
+                            liff.getProfile().then(profile => {
+                                const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\nจำนวน ${amount} บาท\nบ้านเลขที่: ${house_number}
+\n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} \nปี: ${period_year}\nวันที่ทำรายการ: ${date_time}\nโปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                liff.sendMessages([{type: "text", text: message}])
+                                    .then(() => {
+                                        setTimeout(() => {
+                                            liff.closeWindow();
+                                        }, 2000);
+                                    })
+                                    .catch(err => {
+                                        console.error("ส่งข้อความล้มเหลว:", err);
+                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
+                                        liff.closeWindow();
+                                    });
+                            });
+                        } else {
+                            alertify.success("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
+                        }
+
+                    } else {
+                        alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
+                        $("#submit_btn").prop("disabled", false); // 🔓 เปิดกลับ
+                    }
+                },
+                error: function () {
+                    $("#loading").hide();
+                    alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                    $("#submit_btn").prop("disabled", false); // 🔓 เปิดกลับ
                 }
             });
         });
