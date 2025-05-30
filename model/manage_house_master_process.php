@@ -29,6 +29,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "area_size" => $result['area_size'],
             "garbage_collection_fee" => $result['garbage_collection_fee'],
             "common_fee" => $result['common_fee'],
+            "remark" => $result['remark'],
             "status" => $result['status']);
     }
 
@@ -59,6 +60,7 @@ if ($_POST["action"] === 'ADD') {
         $area_size = $_POST["area_size"];
         $garbage_collection_fee = $_POST["garbage_collection_fee"];
         $common_fee = $_POST["common_fee"];
+        $remark = $_POST["remark"];
         $status = $_POST["status"];
 
         $sql_find = "SELECT * FROM ims_house_master WHERE house_number = '" . $house_number . "'";
@@ -67,13 +69,14 @@ if ($_POST["action"] === 'ADD') {
         if ($nRows > 0) {
             echo $dup;
         } else {
-            $sql = "INSERT INTO ims_house_master(house_number,common_fee,status) 
-                    VALUES (:house_number,:common_fee,:status)";
+            $sql = "INSERT INTO ims_house_master(house_number,area_size,garbage_collection_fee,common_fee,remark,status) 
+                    VALUES (:house_number,:area_size,:garbage_collection_fee,:common_fee,:remark,:status)";
             $query = $conn->prepare($sql);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
             $query->bindParam(':area_size', $area_size, PDO::PARAM_STR);
             $query->bindParam(':garbage_collection_fee', $garbage_collection_fee, PDO::PARAM_STR);
             $query->bindParam(':common_fee', $common_fee, PDO::PARAM_STR);
+            $query->bindParam(':remark', $remark, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
@@ -97,6 +100,7 @@ if ($_POST["action"] === 'UPDATE') {
         $area_size = $_POST["area_size"];
         $garbage_collection_fee = $_POST["garbage_collection_fee"];
         $common_fee = $_POST["common_fee"];
+        $remark = $_POST["remark"];
         $status = $_POST["status"];
 
         $sql_find = "SELECT * FROM ims_house_master WHERE id = '" . $id . "'";
@@ -212,6 +216,7 @@ if ($_POST["action"] === 'GET_HOUSE_MASTER') {
                 "area_size" => $row['area_size'],
                 "garbage_collection_fee" => $row['garbage_collection_fee'],
                 "common_fee" => $row['common_fee'],
+                "remark" => $row['remark'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "status" => $row['status'] === 'Y' ? "<div class='text-success'>" . $row['status'] . "</div>" : "<div class='text-muted'> " . $row['status'] . "</div>"

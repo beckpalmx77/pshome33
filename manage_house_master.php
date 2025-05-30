@@ -128,6 +128,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </div>
 
                                                                 <div class="form-group">
+                                                                    <label for="remark"
+                                                                           class="control-label">หมายเหตุ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="remark"
+                                                                           name="remark"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
                                                                     <label for="status"
                                                                            class="control-label">สถานะ</label>
                                                                     <select id="status" name="status"
@@ -294,6 +303,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#area_size').val("");
                 $('#garbage_collection_fee').val("");
                 $('#common_fee').val("");
+                $('#remark').val("");
                 $('#status').val("Y");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
@@ -321,6 +331,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let area_size = response[i].area_size;
                         let garbage_collection_fee = response[i].garbage_collection_fee;
                         let common_fee = response[i].common_fee;
+                        let remark = response[i].remark;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
@@ -329,6 +340,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#area_size').val(area_size);
                         $('#garbage_collection_fee').val(garbage_collection_fee);
                         $('#common_fee').val(common_fee);
+                        $('#remark').val(remark);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -345,7 +357,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <script>
 
-        $("#TableRecordList").on('click', '.update', function () {
+        $("#TableRecordList").on('click', '.delete', function () {
             let id = $(this).attr("id");
             //alert(id);
             let formData = {action: "GET_DATA", id: id};
@@ -362,6 +374,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let area_size = response[i].area_size;
                         let garbage_collection_fee = response[i].garbage_collection_fee;
                         let common_fee = response[i].common_fee;
+                        let remark = response[i].remark;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
@@ -370,6 +383,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#area_size').val(area_size);
                         $('#garbage_collection_fee').val(garbage_collection_fee);
                         $('#common_fee').val(common_fee);
+                        $('#remark').val(remark);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('DELETE');
