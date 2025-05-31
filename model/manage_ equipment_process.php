@@ -22,10 +22,10 @@ if ($_POST["action"] === 'GET_DATA') {
         $return_arr[] = array("id" => $result['id'],
             "item_code" => $result['item_code'],
             "item_name" => $result['item_name'],
-            "category" => $result['category'],
+            "category_id" => $result['category_id'],
             "inv" => $result['inv'],
             "received_date" => $result['received_date'],
-            "category_name" => $result['category_name'],
+            "category_id_name" => $result['category_id_name'],
             "description" => $result['description'],
             "qty" => $result['qty'],
             "unit_id" => $result['unit_id'],
@@ -42,10 +42,10 @@ if ($_POST["action"] === 'GET_DATA') {
 
 if ($_POST["action"] === 'SEARCH') {
 
-    if ($_POST["category"] !== '') {
+    if ($_POST["category_id"] !== '') {
 
-        $category = $_POST["category"];
-        $sql_find = "SELECT * FROM inventory_items WHERE category = '" . $category . "'";
+        $category_id = $_POST["category_id"];
+        $sql_find = "SELECT * FROM inventory_items WHERE category_id = '" . $category_id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
@@ -57,18 +57,18 @@ if ($_POST["action"] === 'SEARCH') {
 
 if ($_POST["action"] === 'ADD') {
 
-    if (!empty($_POST["category"])) {
+    if (!empty($_POST["category_id"])) {
 
-        $category = $_POST["category"];
-        $brand = $_POST["brand"];
+        $category_id = $_POST["category_id"];
+        $brand_id = $_POST["brand_id"];
         $details = $_POST["details"];
         $received_date = $_POST["received_date"];
         $status = $_POST["status"];
 
         $table = "inventory_items";
         $field = "item_code";
-        $cond = " where category = '" . $category . "' ";
-        $item_code = $category . "-" . sprintf('%04s', LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond));
+        $cond = " where category_id = '" . $category_id . "' ";
+        $item_code = $category_id . "-" . sprintf('%04s', LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond));
 
         $file_names = [];
 
@@ -101,13 +101,13 @@ if ($_POST["action"] === 'ADD') {
 
         $file_attach = implode(',', $file_names);
 
-        $sql = "INSERT INTO inventory_items(item_name, item_code, category, brand, details, received_date, image_files,status)
-                VALUES (:item_name, :item_code, :category, :brand, :details, :received_date,:image_files,:status)";
+        $sql = "INSERT INTO inventory_items(item_name, item_code, category_id, brand_id, details, received_date, image_files,status)
+                VALUES (:item_name, :item_code, :category_id, :brand_id, :details, :received_date,:image_files,:status)";
         $query = $conn->prepare($sql);
         $query->bindParam(':item_name', $item_name, PDO::PARAM_STR);
         $query->bindParam(':item_code', $item_code, PDO::PARAM_STR);
-        $query->bindParam(':category', $category, PDO::PARAM_STR);
-        $query->bindParam(':brand', $brand, PDO::PARAM_STR);
+        $query->bindParam(':category_id', $category_id, PDO::PARAM_STR);
+        $query->bindParam(':brand_id', $brand_id, PDO::PARAM_STR);
         $query->bindParam(':details', $details, PDO::PARAM_STR);
         $query->bindParam(':received_date', $received_date, PDO::PARAM_STR);
         $query->bindParam(':image_files', $file_attach, PDO::PARAM_STR);
@@ -121,12 +121,12 @@ if ($_POST["action"] === 'ADD') {
 
 if ($_POST["action"] === 'UPDATE') {
 
-    if (!empty($_POST["category"])) {
+    if (!empty($_POST["category_id"])) {
 
         $id = $_POST["id"];
-        $category = $_POST["category"];
-        $brand = substr($category, 3, 2);
-        $details = substr($category, 6, 4);
+        $category_id = $_POST["category_id"];
+        $brand_id = substr($category_id, 3, 2);
+        $details = substr($category_id, 6, 4);
         $received_date = $_POST["received_date"];
         $description = $_POST["description"];
         $approve_status = $_POST["approve_status"];
@@ -198,8 +198,8 @@ if ($_POST["action"] === 'UPDATE') {
 
         // อัพเดตข้อมูลใน DB
         $sql_update = "UPDATE inventory_items 
-            SET category = :category,
-                brand = :brand,
+            SET category_id = :category_id,
+                brand_id = :brand_id,
                 details = :details,
                 received_date = :received_date,
                 description = :description,
@@ -213,8 +213,8 @@ if ($_POST["action"] === 'UPDATE') {
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
-        $query->bindParam(':category', $category);
-        $query->bindParam(':brand', $brand);
+        $query->bindParam(':category_id', $category_id);
+        $query->bindParam(':brand_id', $brand_id);
         $query->bindParam(':details', $details);
         $query->bindParam(':received_date', $received_date);
         $query->bindParam(':description', $description);
@@ -288,7 +288,7 @@ if ($_POST["action"] === 'GET_INVENTORY') {
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-    $stmt = $conn->prepare("SELECT * FROM inventory_items WHERE 1 " . $searchQuery
+    $stmt = $conn->prepare("SELECT * FROM v_inventory_items WHERE 1 " . $searchQuery
         . " ORDER BY id DESC LIMIT :limit,:offset");
 
 // Bind values
@@ -308,8 +308,8 @@ if ($_POST["action"] === 'GET_INVENTORY') {
             $data[] = array(
                 "item_code" => $row['item_code'],
                 "item_name" => $row['item_name'],
-                "category" => $row['category'],
-                "brand" => $row['brand'],
+                "category_id" => $row['category_id'],
+                "brand_id" => $row['brand_id'],
                 "model" => $row['model'],
                 "details" => $row['details'],
                 "received_date" => $row['received_date'],

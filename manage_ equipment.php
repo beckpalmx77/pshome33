@@ -172,6 +172,32 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
                                                             </div>
 
+                                                            <div class="form-group row">
+                                                                <input type="hidden" class="form-control"
+                                                                       id="brand_id"
+                                                                       name="brand_id">
+                                                                <div class="col-sm-10">
+                                                                    <label for="brand_name"
+                                                                           class="control-label">ยี่ห้อ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="brand_name"
+                                                                           name="brand_name"
+                                                                           readonly="true"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="col-sm-2">
+                                                                    <label for="qty"
+                                                                           class="control-label">เลือก</label>
+
+                                                                    <a data-toggle="modal" href="#Search-BRAND-Modal"
+                                                                       class="btn btn-primary">
+                                                                        Click <i class="fa fa-search"
+                                                                                 aria-hidden="true"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+
                                                             <div class="form-group">
                                                                 <label for="file_attach">แนบไฟล์ / รูปภาพ</label>
                                                                 <div id="dropArea">ลากไฟล์มาวางที่นี่ หรือ <strong>คลิกเพื่อเลือกไฟล์</strong>
@@ -273,6 +299,46 @@ if (strlen($_SESSION['alogin']) == "") {
                                             </div>
                                         </div>
 
+                                        <div class="modal fade" id="Search-BRAND-Modal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Modal title</h4>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">×
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="container"></div>
+                                                    <div class="modal-body">
+
+                                                        <div class="modal-body">
+
+                                                            <table cellpadding="0" cellspacing="0" border="0"
+                                                                   class="display"
+                                                                   id="TableBrandList"
+                                                                   width="100%">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>รหัสยี่ห้อ</th>
+                                                                    <th>รายละเอียด</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tfoot>
+                                                                <tr>
+                                                                    <th>รหัสยี่ห้อ</th>
+                                                                    <th>รายละเอียด</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
 
                                 </div>
                             </div>
@@ -301,8 +367,7 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
 
-
-    <!--script src="js/modal/show_brand_modal.js"></script-->
+    <script src="js/modal/show_brand_modal.js"></script>
     <script src="js/modal/show_m_category_modal.js"></script>
 
     <!-- Page level plugins -->
@@ -566,11 +631,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         let item_name = response[i].item_name;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
-                        let inv = response[i].inv;
-                        let qty = response[i].qty;
-                        let unit_id = response[i].unit_id;
-                        let unit_name = response[i].unit_name;
-                        let amount = response[i].amount;
+                        let brand_id = response[i].brand_id;
+                        let brand_name = response[i].brand_name;
                         let details = response[i].details;
                         let status = response[i].status;
                         let file_attach = response[i].file_attach;
@@ -623,11 +685,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#item_name').val(item_name);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);
-                        $('#inv').val(inv);
-                        $('#qty').val(qty);
-                        $('#unit_id').val(unit_id);
-                        $('#unit_name').val(unit_name);
-                        $('#amount').val(amount);
+                        $('#brand_id').val(brand_id);
+                        $('#brand_name').val(brand_name);
                         $('#details').val(details);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
@@ -662,11 +721,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         let item_name = response[i].item_name;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
-                        let inv = response[i].inv;
-                        let qty = response[i].qty;
-                        let unit_id = response[i].unit_id;
-                        let unit_name = response[i].unit_name;
-                        let amount = response[i].amount;
+                        let brand_id = response[i].brand_id;
+                        let brand_name = response[i].brand_name;
                         let details = response[i].details;
                         let status = response[i].status;
                         let file_attach = response[i].file_attach;
@@ -719,14 +775,11 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#item_name').val(item_name);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);
-                        $('#inv').val(inv);
-                        $('#qty').val(qty);
-                        $('#unit_id').val(unit_id);
-                        $('#unit_name').val(unit_name);
-                        $('#amount').val(amount);
+                        $('#brand_id').val(brand_id);
+                        $('#brand_name').val(brand_name);
                         $('#details').val(details);
                         $('#status').val(status);
-                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
+                        $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');
                     }
