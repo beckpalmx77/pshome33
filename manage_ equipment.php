@@ -198,6 +198,17 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
                                                             </div>
 
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12">
+                                                                    <label for="model"
+                                                                           class="control-label">รุ่น</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="model"
+                                                                           name="model"
+                                                                           placeholder="">
+                                                                </div>
+                                                            </div>
+
                                                             <div class="form-group">
                                                                 <label for="file_attach">แนบไฟล์ / รูปภาพ</label>
                                                                 <div id="dropArea">ลากไฟล์มาวางที่นี่ หรือ <strong>คลิกเพื่อเลือกไฟล์</strong>
@@ -232,9 +243,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <select id="status" name="status"
                                                                         class="form-control" data-live-search="true"
                                                                         title="Please select">
-                                                                    <option value="Y" selected>ใช้งาน</option>
-                                                                    <option value="L">เสีย/ชำรุด</option>
-                                                                    <option value="S">จำหน่าย</option>
+                                                                    <option value="ใช้งาน" selected>ใช้งาน</option>
+                                                                    <option value="เสียหาย/ชำรุด">เสียหาย/ชำรุด</option>
+                                                                    <option value="จำหน่าย">จำหน่าย</option>
                                                                 </select>
                                                             </div>
 
@@ -519,8 +530,8 @@ if (strlen($_SESSION['alogin']) == "") {
                 'columns': [
                     {data: 'item_code'},
                     {data: 'item_name'},
-                    {data: 'category'},
-                    {data: 'brand'},
+                    {data: 'category_name'},
+                    {data: 'brand_name'},
                     {data: 'model'},
                     {data: 'received_date'},
                     {data: 'status'},

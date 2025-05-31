@@ -57,65 +57,87 @@ if ($_POST["action"] === 'SEARCH') {
 
 if ($_POST["action"] === 'ADD') {
 
+    // Debug: แสดงค่าที่รับมาทั้งหมด (สำหรับ debug ชั่วคราว)
+    error_log("POST Data: " . print_r($_POST, true));
+    error_log("FILES Data: " . print_r($_FILES, true));
+
     if (!empty($_POST["category_id"])) {
 
         $category_id = $_POST["category_id"];
-        $brand_id = $_POST["brand_id"];
-        $details = $_POST["details"];
-        $received_date = $_POST["received_date"];
-        $status = $_POST["status"];
+        $brand_id = $_POST["brand_id"] ?? '';   // ใช้ null coalescing กันกรณีไม่มี key
+        $model = $_POST["model"] ?? '';
+        $details = $_POST["details"] ?? '';
+        $received_date = $_POST["received_date"] ?? '';
+        $status = $_POST["status"] ?? '';
 
         $table = "inventory_items";
         $field = "item_code";
-        $cond = " where category_id = '" . $category_id . "' ";
+        $cond = " WHERE category_id = '" . $category_id . "' ";
         $item_code = $category_id . "-" . sprintf('%04s', LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond));
 
         $file_names = [];
 
-        // ตรวจสอบและอัปโหลดไฟล์
         if (!empty($_FILES['file_attach']['name'][0])) {
             $uploadDir = '../uploads/equipment/';
-            $uploadedOriginals = []; // เก็บชื่อไฟล์ต้นฉบับ เพื่อป้องกันแนบซ้ำ
+            $uploadedOriginals = [];
 
             foreach ($_FILES['file_attach']['tmp_name'] as $key => $tmp_name) {
                 $originalName = basename($_FILES['file_attach']['name'][$key]);
 
-                // ป้องกันแนบไฟล์ต้นฉบับชื่อเดียวกันหลายครั้ง
                 if (in_array($originalName, $uploadedOriginals)) {
                     continue;
                 }
                 $uploadedOriginals[] = $originalName;
 
-                // ตั้งชื่อไฟล์ใหม่ให้ไม่ซ้ำ
                 $fileName = time() . '_' . uniqid() . '_' . $originalName;
                 $targetPath = $uploadDir . $fileName;
 
                 if (move_uploaded_file($tmp_name, $targetPath)) {
                     $file_names[] = $fileName;
+                    error_log("Uploaded file: $fileName");
+                } else {
+                    error_log("Failed to upload file: $originalName");
                 }
             }
+        } else {
+            error_log("No files uploaded.");
         }
 
-        // ลบชื่อไฟล์ซ้ำอีกชั้น (เพื่อความชัวร์)
         $file_names = array_unique($file_names);
-
         $file_attach = implode(',', $file_names);
 
-        $sql = "INSERT INTO inventory_items(item_name, item_code, category_id, brand_id, details, received_date, image_files,status)
-                VALUES (:item_name, :item_code, :category_id, :brand_id, :details, :received_date,:image_files,:status)";
+        // เตรียม sql insert
+        $sql = "INSERT INTO inventory_items(item_name, item_code, category_id, brand_id, model, details, received_date, image_files, status)
+                VALUES (:item_name, :item_code, :category_id, :brand_id, :model, :details, :received_date, :image_files, :status)";
         $query = $conn->prepare($sql);
+
+        // *** ปัญหา: ตัวแปร $item_name ไม่ถูกกำหนด ***
+        // ต้องกำหนด $item_name ก่อน bindParam เช่น:
+        $item_name = $_POST["item_name"] ?? '';  // เพิ่มเติม ถ้ามีค่า item_name
+
         $query->bindParam(':item_name', $item_name, PDO::PARAM_STR);
         $query->bindParam(':item_code', $item_code, PDO::PARAM_STR);
         $query->bindParam(':category_id', $category_id, PDO::PARAM_STR);
         $query->bindParam(':brand_id', $brand_id, PDO::PARAM_STR);
+        $query->bindParam(':model', $model, PDO::PARAM_STR);
         $query->bindParam(':details', $details, PDO::PARAM_STR);
         $query->bindParam(':received_date', $received_date, PDO::PARAM_STR);
         $query->bindParam(':image_files', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
-        $query->execute();
-        $lastInsertId = $conn->lastInsertId();
 
-        echo $lastInsertId ? $save_success : $error;
+        if ($query->execute()) {
+            $lastInsertId = $conn->lastInsertId();
+            echo $lastInsertId ? $save_success : $error;
+        } else {
+            // แสดง error จาก PDO
+            $errorInfo = $query->errorInfo();
+            error_log("PDO Error: " . print_r($errorInfo, true));
+            echo $error;
+        }
+
+    } else {
+        error_log("category_id is empty");
+        echo "Category ID is required.";
     }
 }
 
@@ -309,7 +331,9 @@ if ($_POST["action"] === 'GET_INVENTORY') {
                 "item_code" => $row['item_code'],
                 "item_name" => $row['item_name'],
                 "category_id" => $row['category_id'],
+                "category_name" => $row['category_name'],
                 "brand_id" => $row['brand_id'],
+                "brand_name" => $row['brand_name'],
                 "model" => $row['model'],
                 "details" => $row['details'],
                 "received_date" => $row['received_date'],
