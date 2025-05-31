@@ -37,6 +37,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 margin-bottom: 5px;
                 display: inline-block;
             }
+
             .month-checkbox input {
                 margin-right: 5px;
             }
@@ -53,7 +54,8 @@ if (strlen($_SESSION['alogin']) == "") {
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
                             <li class="breadcrumb-item active"><?php echo urldecode($_GET['s']) ?></li>
                         </ol>
@@ -63,14 +65,17 @@ if (strlen($_SESSION['alogin']) == "") {
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-body">
-                                    <form id="form_data" method="post" action="export_process/export_recieve_report_process.php" enctype="multipart/form-data">
+                                    <form id="form_data" method="post"
+                                          action="export_process/export_recieve_report_process.php"
+                                          enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <label>เลือกเดือน :</label><br>
                                                 <div>
                                                     <!-- checkbox เลือกทุกเดือน -->
                                                     <label class="month-checkbox">
-                                                        <input type="checkbox" name="months[]" value="all" id="check_all">
+                                                        <input type="checkbox" name="months[]" value="all"
+                                                               id="check_all">
                                                         ทั้งหมด
                                                     </label>
                                                     <?php foreach ($MonthRecords as $row) {
@@ -78,7 +83,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         $checked = ($row["month"] == $month_num) ? 'checked' : '';
                                                         ?>
                                                         <label class="month-checkbox">
-                                                            <input type="checkbox" name="months[]" value="<?php echo $row["month"]; ?>" class="month-checkbox-item" <?php echo $checked; ?>>
+                                                            <input type="checkbox" name="months[]"
+                                                                   value="<?php echo $row["month"]; ?>"
+                                                                   class="month-checkbox-item" <?php echo $checked; ?>>
                                                             <?php echo $row["month_name"]; ?>
                                                         </label>
                                                     <?php } ?>
@@ -96,10 +103,12 @@ if (strlen($_SESSION['alogin']) == "") {
 
                                                 <br>
                                                 <label for="soi">ซอย :</label>
-                                                <input type="text" name="soi" id="soi" class="form-control" placeholder="">
+                                                <input type="text" name="soi" id="soi" class="form-control"
+                                                       placeholder="">
 
                                                 <label for="house_no">บ้านเลขที่ :</label>
-                                                <input type="text" name="house_no" id="house_no" class="form-control" placeholder="">
+                                                <input type="text" name="house_no" id="house_no" class="form-control"
+                                                       placeholder="">
                                                 <br>
 
                                                 <div class="row">
@@ -119,7 +128,8 @@ if (strlen($_SESSION['alogin']) == "") {
                     </div>
 
                 </div>
-                <?php include('includes/Modal-Logout.php'); include('includes/Footer.php'); ?>
+                <?php include('includes/Modal-Logout.php');
+                include('includes/Footer.php'); ?>
             </div>
         </div>
     </div>
@@ -171,6 +181,26 @@ if (strlen($_SESSION['alogin']) == "") {
             checkAll.checked = allCheckedInit;
         });
     </script>
+
+    <script>
+        // ตรวจสอบก่อน submit ว่ามีการเลือกเดือนอย่างน้อย 1 เดือน
+        document.getElementById('form_data').addEventListener('submit', function (e) {
+            const monthCheckboxes = document.querySelectorAll('.month-checkbox-item');
+            let isChecked = false;
+            monthCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    isChecked = true;
+                }
+            });
+
+            if (!isChecked) {
+                e.preventDefault(); // ป้องกันการส่งฟอร์ม
+                alert('กรุณาเลือกอย่างน้อย 1 เดือน');
+            }
+        });
+
+    </script>
+
     </body>
     </html>
 <?php } ?>
