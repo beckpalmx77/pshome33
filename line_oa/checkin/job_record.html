@@ -101,7 +101,6 @@
             }
         }
 
-        /* เพิ่มสไตล์รูป preview */
         #imagePreview {
             display: flex;
             flex-wrap: wrap;
@@ -132,7 +131,6 @@
 
         <label for="photoInput">📷 รูปภาพ :</label>
         <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple />
-        <!-- เพิ่มส่วน preview รูปที่นี่ -->
         <div id="imagePreview"></div>
 
         <button type="button" onclick="checkin()">✅ กดเพื่อบันทึกรายการ</button>
@@ -144,19 +142,14 @@
 </div>
 
 <script>
-    // กำหนด LIFF_ID (ถ้ายังไม่กำหนดใน config_job.js)
-
-    // ฟังก์ชัน preview รูปภาพ
     document.getElementById('photoInput').addEventListener('change', function (event) {
         const preview = document.getElementById('imagePreview');
-        preview.innerHTML = ''; // เคลียร์รูปเก่า
-
+        preview.innerHTML = '';
         const files = event.target.files;
         if (!files.length) return;
 
         [...files].forEach(file => {
             if (!file.type.startsWith('image/')) return;
-
             const reader = new FileReader();
             reader.onload = function (e) {
                 const img = document.createElement('img');
@@ -186,7 +179,6 @@
             if (!placeNameInput.value.trim()) return alert('กรุณากรอกชื่อสถานที่');
             if (!remarkInput.value.trim()) return alert('กรุณากรอกรายละเอียดรายงาน');
 
-            // ปิดปุ่มกดบันทึกทันทีเพื่อป้องกันกดซ้ำ
             btn.disabled = true;
 
             const placeName = placeNameInput.value;
@@ -211,7 +203,6 @@
             );
         } catch (err) {
             alert('เกิดข้อผิดพลาด: ' + err.message);
-            // ถ้ามี error ให้เปิดปุ่มกลับมา
             document.querySelector('button').disabled = false;
         }
     }
@@ -239,20 +230,20 @@
             .then(res => res.text())
             .then(() => {
                 alert('✅ บันทึก สำเร็จแล้ว');
-                // เคลียร์ฟอร์มหลังบันทึก
+
+                // ✅ เคลียร์ฟอร์ม
                 document.getElementById('remark').value = '';
                 photoInput.value = '';
                 document.getElementById('imagePreview').innerHTML = '';
 
-                // เปิดปุ่มบันทึกให้กดใหม่ได้
+                // ✅ เปิดปุ่ม
                 document.querySelector('button').disabled = false;
 
-                // ถ้าอยากปิดหน้าต่างหลังบันทึก ก็ใช้บรรทัดนี้แทน
-                // liff.closeWindow();
+                // ✅ ปิดหน้าต่าง LIFF
+                liff.closeWindow();
             })
             .catch(err => {
                 alert('❌ ไม่สามารถ บันทึก ได้: ' + err.message);
-                // ถ้า error ก็เปิดปุ่มกลับมาให้กดใหม่
                 document.querySelector('button').disabled = false;
             })
             .finally(() => {
@@ -262,7 +253,6 @@
 </script>
 
 <script>
-    // ป้องกันการคลิกขวา
     document.addEventListener('contextmenu', event => event.preventDefault());
 </script>
 </body>
