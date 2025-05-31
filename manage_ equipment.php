@@ -661,7 +661,7 @@ if (strlen($_SESSION['alogin']) == "") {
                             fileList = file_attach.split(",").map(f => f.trim()).filter(f => f);
 
                             fileList.forEach(function (file, index) {
-                                let fileUrl = "uploads/files/" + file;
+                                let fileUrl = "uploads/equipment/" + file;
                                 let extension = file.split('.').pop().toLowerCase();
                                 let iconHTML = "";
 
@@ -752,7 +752,7 @@ if (strlen($_SESSION['alogin']) == "") {
                             fileList = file_attach.split(",").map(f => f.trim()).filter(f => f);
 
                             fileList.forEach(function (file, index) {
-                                let fileUrl = "uploads/files/" + file;
+                                let fileUrl = "uploads/equipment/" + file;
                                 let extension = file.split('.').pop().toLowerCase();
                                 let iconHTML = "";
 

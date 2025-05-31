@@ -143,17 +143,13 @@ if ($_POST["action"] === 'UPDATE') {
 
         $id = $_POST["id"];
         $category_id = $_POST["category_id"];
-        $brand_id = substr($category_id, 3, 2);
-        $details = substr($category_id, 6, 4);
-        $received_date = $_POST["received_date"];
-        $description = $_POST["description"];
-        $approve_status = $_POST["approve_status"];
-        $qty = $_POST["qty"];
-        $unit_id = $_POST["unit_id"];
-        $amount = $_POST["amount"];
-        $remark = $_POST["remark"];
-        $inv = $_POST["inv"];
-        $uploadDir = '../uploads/files/';
+        $brand_id = $_POST["brand_id"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
+        $model = $_POST["model"] ?? '-';
+        $details = $_POST["details"] ?? '-';
+        $received_date = $_POST["received_date"] ?? '-';
+        $status = $_POST["status"] ?? '';
+
+        $uploadDir = '../uploads/equipment/';
         $file_names = [];
 
         // ดึงชื่อไฟล์เก่าจาก DB
@@ -218,30 +214,20 @@ if ($_POST["action"] === 'UPDATE') {
         $sql_update = "UPDATE inventory_items 
             SET category_id = :category_id,
                 brand_id = :brand_id,
+                model = :model
                 details = :details,
-                received_date = :received_date,
-                description = :description,
-                qty = :qty,
-                unit_id = :unit_id,
-                amount = :amount,
-                remark = :remark,
-                approve_status = :approve_status,
-                inv = :inv,
+                received_date = :received_date,                
+                status = :status,                
                 file_attach = :file_attach
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
         $query->bindParam(':category_id', $category_id);
         $query->bindParam(':brand_id', $brand_id);
+        $query->bindParam(':model', $model);
         $query->bindParam(':details', $details);
         $query->bindParam(':received_date', $received_date);
-        $query->bindParam(':description', $description);
-        $query->bindParam(':qty', $qty);
-        $query->bindParam(':unit_id', $unit_id);
-        $query->bindParam(':amount', $amount);
-        $query->bindParam(':remark', $remark);
-        $query->bindParam(':approve_status', $approve_status);
-        $query->bindParam(':inv', $inv);
+        $query->bindParam(':status', $status);
         $query->bindParam(':file_attach', $finalFileAttach);
         $query->bindParam(':id', $id);
         $query->execute();
@@ -359,3 +345,4 @@ if ($_POST["action"] === 'GET_INVENTORY') {
     echo json_encode($response);
 
 }
+
