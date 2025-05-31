@@ -535,18 +535,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#item_name').val("");
                 $('#category_id').val("");
                 $('#category_name').val("");
-                $('#unit_id').val("");
-                $('#unit_name').val("");
                 $('#details').val("");
-                $('#inv').val("");
-                $('#qty').val("");
-                $('#amount').val("");
-
                 $('#file_attach').val("");
                 filesArray = [];
                 $('#previewList').html("");
                 $('#filePreview').html("");
-
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
