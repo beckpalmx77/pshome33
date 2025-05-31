@@ -30,17 +30,6 @@ if (strlen($_SESSION['alogin']) == "") {
     <head>
         <meta charset="UTF-8">
         <title>Export รายงานรับชำระ</title>
-        <style>
-            /* เพิ่มเล็กน้อยสำหรับ checkbox ให้ชิดกันสวยงาม */
-            .month-checkbox {
-                margin-right: 15px;
-                margin-bottom: 5px;
-                display: inline-block;
-            }
-            .month-checkbox input {
-                margin-right: 5px;
-            }
-        </style>
     </head>
     <body id="page-top">
     <div id="wrapper">
@@ -63,28 +52,20 @@ if (strlen($_SESSION['alogin']) == "") {
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-body">
-                                    <form id="form_data" method="post" action="export_process/export_recieve_report_process.php" enctype="multipart/form-data">
+                                    <form id="from_data" method="post" action="export_process/export_recieve_report_process.php" enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <label>เลือกเดือน :</label><br>
-                                                <div>
-                                                    <!-- checkbox เลือกทุกเดือน -->
-                                                    <label class="month-checkbox">
-                                                        <input type="checkbox" name="months[]" value="all" id="check_all">
-                                                        ทั้งหมด
-                                                    </label>
-                                                    <?php foreach ($MonthRecords as $row) {
-                                                        // กำหนดให้เดือนปัจจุบันถูกติ๊กไว้โดย default
-                                                        $checked = ($row["month"] == $month_num) ? 'checked' : '';
-                                                        ?>
-                                                        <label class="month-checkbox">
-                                                            <input type="checkbox" name="months[]" value="<?php echo $row["month"]; ?>" class="month-checkbox-item" <?php echo $checked; ?>>
+                                                <label for="month">เลือกเดือน :</label>
+                                                <select name="month" id="month" class="form-control" required>
+                                                    <option value="<?php echo $month_num; ?>" selected><?php echo $month_name; ?></option>
+                                                    <option value="all">ทั้งหมด</option>
+                                                    <?php foreach ($MonthRecords as $row) { ?>
+                                                        <option value="<?php echo $row["month"]; ?>">
                                                             <?php echo $row["month_name"]; ?>
-                                                        </label>
+                                                        </option>
                                                     <?php } ?>
-                                                </div>
+                                                </select>
 
-                                                <br>
                                                 <label for="year">เลือกปี :</label>
                                                 <select name="year" id="year" class="form-control" required>
                                                     <?php foreach ($YearRecords as $row) { ?>
@@ -140,35 +121,18 @@ if (strlen($_SESSION['alogin']) == "") {
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
     <script src="js/MyFrameWork/framework_util.js"></script>
 
+    <!-- Month Selector Behavior -->
     <script>
-        // จัดการ checkbox "ทั้งหมด" กับ checkbox เดือนอื่นๆ
         document.addEventListener('DOMContentLoaded', function () {
-            const checkAll = document.getElementById('check_all');
-            const monthCheckboxes = document.querySelectorAll('.month-checkbox-item');
+            const monthSelect = document.getElementById('month');
 
-            // ถ้าติ๊ก "ทั้งหมด" ให้ติ๊ก/ไม่ติ๊ก checkbox เดือนอื่นทั้งหมดด้วย
-            checkAll.addEventListener('change', function () {
-                monthCheckboxes.forEach(cb => {
-                    cb.checked = checkAll.checked;
-                });
+            monthSelect.addEventListener('change', function () {
+                if (monthSelect.value === 'all') {
+                    monthSelect.classList.add('bg-warning');
+                } else {
+                    monthSelect.classList.remove('bg-warning');
+                }
             });
-
-            // ถ้า checkbox เดือนอื่นๆ มีการติ๊ก/ไม่ติ๊ก ให้จัดการสถานะ "ทั้งหมด"
-            monthCheckboxes.forEach(cb => {
-                cb.addEventListener('change', function () {
-                    if (!this.checked) {
-                        checkAll.checked = false;
-                    } else {
-                        // ถ้า checkbox เดือนอื่นทุกตัวถูกติ๊ก ให้ติ๊ก "ทั้งหมด" ด้วย
-                        const allChecked = Array.from(monthCheckboxes).every(cb => cb.checked);
-                        checkAll.checked = allChecked;
-                    }
-                });
-            });
-
-            // ตั้งค่าเริ่มต้น ถ้า checkbox เดือนทั้งหมดถูกติ๊ก ให้ติ๊ก "ทั้งหมด" ด้วย
-            const allCheckedInit = Array.from(monthCheckboxes).every(cb => cb.checked);
-            checkAll.checked = allCheckedInit;
         });
     </script>
     </body>

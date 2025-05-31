@@ -2,89 +2,151 @@
 include('../config/connect_db.php');
 date_default_timezone_set('Asia/Bangkok');
 
-// รับค่าแบบ string ก่อน
-$month = isset($_POST["month"]) ? $_POST["month"] : '';
+// รับค่าจาก POST
+$months = isset($_POST["months"]) ? $_POST["months"] : [];
 $year = isset($_POST["year"]) ? (int)$_POST["year"] : 0;
 $soi = isset($_POST["soi"]) ? trim($_POST["soi"]) : '';
 $house_no = isset($_POST["house_no"]) ? trim($_POST["house_no"]) : '';
 
-$filename = "receive-" . $month . "-" . $year . "_" . date('Ymd_His') . ".csv";
-
-@header('Content-type: text/csv; charset=UTF-8');
-@header('Content-Encoding: UTF-8');
-@header("Content-Disposition: attachment; filename=" . $filename);
-
-// SQL Query base
-$select_query_daily = "SELECT * FROM v_ims_house_payment";
-$select_where_daily = " WHERE period_year = $year";
-
-// กรองเดือนเฉพาะเมื่อไม่ใช่ 'all'
-if ($month !== 'all') {
-    $month_int = (int)$month;
-    $select_where_daily .= " AND $month_int BETWEEN period_month_start AND period_month_to";
+// ตรวจสอบค่าปี ถ้าไม่ถูกต้องจบเลย
+if ($year <= 0) {
+    exit("กรุณาเลือกปีให้ถูกต้อง");
 }
 
-// เพิ่มเงื่อนไขหากมีการกรอก soi
+// ตรวจสอบเดือน ถ้าไม่มีค่า หรือไม่ใช่ array ให้ตั้งค่าเป็น all
+if (!is_array($months) || count($months) == 0) {
+    $months = ['all'];
+}
+
+// กำหนดชื่อไฟล์ export
+$month_label = (in_array('all', $months)) ? 'allmonths' : implode('-', $months);
+$filename = "receive-" . $month_label . "-" . $year . "_" . date('Ymd_His') . ".csv";
+
+// ตั้งค่า header สำหรับส่งไฟล์ CSV
+header('Content-Type: text/csv; charset=TIS-620');
+header('Content-Disposition: attachment; filename="' . $filename . '"');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+// สร้าง SQL base query และเงื่อนไข
+$sql = "SELECT 
+            payment_date,
+            month_name_start,
+            month_name_to,
+            period_year,
+            house_number,
+            detail,
+            amount,
+            created_at,
+            payment_status,
+            alley,
+            period_month_start,
+            period_month_to
+        FROM v_ims_house_payment
+        WHERE period_year = :year";
+$params = [':year' => $year];
+
+// กรองเดือนเมื่อไม่เลือก all
+if (!in_array('all', $months)) {
+    // แปลง array string เป็น int และหาค่าต่ำสุดและสูงสุดของเดือนที่เลือก
+    $months_int = array_map('intval', $months);
+    $min_month = min($months_int);
+    $max_month = max($months_int);
+
+    // กรองช่วงเดือน (เดือนในงวดเริ่มต้นและสิ้นสุดต้องครอบคลุมช่วงนี้)
+    $sql .= " AND period_month_start <= :max_month AND period_month_to >= :min_month";
+    $params[':max_month'] = $max_month;
+    $params[':min_month'] = $min_month;
+}
+
+// กรอง soi หากมี
 if ($soi !== '') {
-    $select_where_daily .= " AND alley LIKE :soi";
+    $sql .= " AND alley LIKE :soi";
+    $params[':soi'] = "%$soi%";
 }
 
-// เพิ่มเงื่อนไขหากมีการกรอก house_no
+// กรอง house_no หากมี
 if ($house_no !== '') {
-    $select_where_daily .= " AND house_number LIKE :house_no";
+    $sql .= " AND house_number LIKE :house_no";
+    $params[':house_no'] = "%$house_no%";
 }
 
-$select_group_order = " ORDER BY period_year, STR_TO_DATE(PAYMENT_DATE, '%d-%m-%Y'), created_at";
+$sql .= " ORDER BY period_year, STR_TO_DATE(payment_date, '%d-%m-%Y'), created_at";
 
-$String_Sql = $select_query_daily . $select_where_daily . $select_group_order;
+// *** Debug โค้ด ***
+//file_put_contents('debug_sql.txt', $sql . "\n\n" . print_r($params, true));
 
-// รวมข้อมูล POST กับ SQL query สำหรับ debug
-$debug_text = "POST data:\n";
-$debug_text .= "month = " . var_export($month, true) . "\n";
-$debug_text .= "year = " . var_export($year, true) . "\n";
-$debug_text .= "soi = " . var_export($soi, true) . "\n";
-$debug_text .= "house_no = " . var_export($house_no, true) . "\n\n";
+// เตรียม query
+$query = $conn->prepare($sql);
 
-$debug_text .= "SQL Query:\n" . $String_Sql;
-
-// เขียน debug ลงไฟล์
-// file_put_contents("device_a.txt", $debug_text);
-
-// สร้าง header ของไฟล์ CSV
-$data = "วันที่ทำรายการ,งวด-เดือน,งวดปี,บ้านเลขที่,ผู้ชำระเงิน,จำนวนเงิน(บาท),วันที่ทำรายการ,สถานะชำระ\n";
-
-// เตรียม execute
-$query = $conn->prepare($String_Sql);
-
-// binding param ถ้ามี
-if ($soi !== '') {
-    $query->bindValue(':soi', "%$soi%");
-}
-if ($house_no !== '') {
-    $query->bindValue(':house_no', "%$house_no%");
-}
-
-$query->execute();
-$results = $query->fetchAll(PDO::FETCH_OBJ);
-
-if ($query->rowCount() >= 1) {
-    foreach ($results as $result) {
-        $payment_status_desc = ($result->payment_status === "Y") ? "ยืนยัน" : "รอการยืนยัน";
-
-        $data .= " " . $result->payment_date . ",";
-        $data .= " " . $result->month_name_start . " - " . $result->month_name_to . ",";
-        $data .= " " . $result->period_year . ",";
-        $data .= " " . $result->house_number . ",";
-        $data .= " " . $result->detail . ",";
-        $data .= " " . $result->amount . ",";
-        $data .= " " . $result->created_at . ",";
-        $data .= " " . $payment_status_desc . "\n";
+// bind parameters
+foreach ($params as $key => $value) {
+    if (is_int($value)) {
+        $query->bindValue($key, $value, PDO::PARAM_INT);
+    } else {
+        $query->bindValue($key, $value, PDO::PARAM_STR);
     }
 }
 
-// แปลง encoding และส่งออก
-$data = iconv("utf-8", "tis-620", $data);
-echo $data;
+// ตรวจสอบ error ก่อน execute
+if (!$query) {
+    $errorInfo = $conn->errorInfo();
+    //file_put_contents('debug_sql_error.txt', "Prepare statement error:\n" . print_r($errorInfo, true));
+    exit("Prepare statement error");
+}
 
-exit();
-?>
+$execResult = $query->execute();
+
+if (!$execResult) {
+    $errorInfo = $query->errorInfo();
+    //file_put_contents('debug_sql_error.txt', "Execute error:\n" . print_r($errorInfo, true));
+    exit("Execute query error");
+}
+
+// กำหนดหัวข้อ CSV
+$header = [
+    "วันที่ชำระ",
+    "เดือนเริ่ม",
+    "เดือนสิ้นสุด",
+    "ปี",
+    "บ้านเลขที่",
+    "รายละเอียด",
+    "จำนวนเงิน",
+    "เวลาที่บันทึก",
+    "สถานะ",
+    "ซอย"
+];
+
+// สร้างไฟล์ CSV (output)
+$output = fopen('php://output', 'w');
+
+// เขียน header แปลงเป็น TIS-620
+fputcsv($output, array_map(function ($item) {
+    return iconv('UTF-8', 'TIS-620//IGNORE', $item);
+}, $header));
+
+// เขียนข้อมูลทีละแถว
+while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+    $line = [
+        $row['payment_date'],
+        $row['month_name_start'],
+        $row['month_name_to'],
+        $row['period_year'],
+        $row['house_number'],
+        $row['detail'],
+        $row['amount'],
+        $row['created_at'],
+        $row['payment_status']==="Y"?"ยืนยันการชำระ":"ยังไม่ยืนยันการชำระ",
+        $row['alley'],
+    ];
+
+    // แปลงข้อมูลเป็น TIS-620 ก่อนเขียน
+    $line_tis = array_map(function ($item) {
+        return iconv('UTF-8', 'TIS-620//IGNORE', $item);
+    }, $line);
+
+    fputcsv($output, $line_tis);
+}
+
+fclose($output);
+exit;
