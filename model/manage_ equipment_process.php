@@ -214,7 +214,7 @@ if ($_POST["action"] === 'UPDATE') {
         $sql_update = "UPDATE inventory_items 
             SET category_id = :category_id,
                 brand_id = :brand_id,
-                model = :model
+                model = :model,
                 details = :details,
                 received_date = :received_date,                
                 status = :status,                
@@ -235,8 +235,6 @@ if ($_POST["action"] === 'UPDATE') {
         echo $save_success;
     }
 }
-
-
 
 if ($_POST["action"] === 'DELETE') {
 
