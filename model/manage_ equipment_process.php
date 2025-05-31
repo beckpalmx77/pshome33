@@ -14,7 +14,7 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM inventory_items WHERE id = " . $id;
+    $sql_get = "SELECT * FROM v_inventory_items WHERE id = " . $id;
     $statement = $conn->query($sql_get);
     $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
@@ -23,17 +23,13 @@ if ($_POST["action"] === 'GET_DATA') {
             "item_code" => $result['item_code'],
             "item_name" => $result['item_name'],
             "category_id" => $result['category_id'],
-            "inv" => $result['inv'],
+            "category_name" => $result['category_name'],
+            "brand_id" => $result['brand_id'],
+            "brand_name" => $result['brand_name'],
             "received_date" => $result['received_date'],
-            "category_id_name" => $result['category_id_name'],
-            "description" => $result['description'],
-            "qty" => $result['qty'],
-            "unit_id" => $result['unit_id'],
-            "unit_name" => $result['unit_name'],
-            "amount" => $result['amount'],
+            "details" => $result['details'],
             "file_attach" => $result['file_attach'],
-            "remark" => $result['remark'],
-            "approve_status" => $result['approve_status']);
+            "status" => $result['status']);
     }
 
     echo json_encode($return_arr);
@@ -64,10 +60,10 @@ if ($_POST["action"] === 'ADD') {
     if (!empty($_POST["category_id"])) {
 
         $category_id = $_POST["category_id"];
-        $brand_id = $_POST["brand_id"] ?? '';   // ใช้ null coalescing กันกรณีไม่มี key
-        $model = $_POST["model"] ?? '';
-        $details = $_POST["details"] ?? '';
-        $received_date = $_POST["received_date"] ?? '';
+        $brand_id = $_POST["brand_id"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
+        $model = $_POST["model"] ?? '-';
+        $details = $_POST["details"] ?? '-';
+        $received_date = $_POST["received_date"] ?? '-';
         $status = $_POST["status"] ?? '';
 
         $table = "inventory_items";
@@ -107,8 +103,8 @@ if ($_POST["action"] === 'ADD') {
         $file_attach = implode(',', $file_names);
 
         // เตรียม sql insert
-        $sql = "INSERT INTO inventory_items(item_name, item_code, category_id, brand_id, model, details, received_date, image_files, status)
-                VALUES (:item_name, :item_code, :category_id, :brand_id, :model, :details, :received_date, :image_files, :status)";
+        $sql = "INSERT INTO inventory_items(item_name, item_code, category_id, brand_id, model, details, received_date, file_attach, status)
+                VALUES (:item_name, :item_code, :category_id, :brand_id, :model, :details, :received_date, :file_attach, :status)";
         $query = $conn->prepare($sql);
 
         // *** ปัญหา: ตัวแปร $item_name ไม่ถูกกำหนด ***
@@ -122,7 +118,7 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':model', $model, PDO::PARAM_STR);
         $query->bindParam(':details', $details, PDO::PARAM_STR);
         $query->bindParam(':received_date', $received_date, PDO::PARAM_STR);
-        $query->bindParam(':image_files', $file_attach, PDO::PARAM_STR);
+        $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
 
         if ($query->execute()) {

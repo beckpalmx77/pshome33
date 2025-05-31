@@ -639,6 +639,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
                         let received_date = response[i].received_date;
+                        let item_code = response[i].item_code;
                         let item_name = response[i].item_name;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
@@ -693,6 +694,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#received_date').val(received_date);
+                        $('#item_code').val(item_code);
                         $('#item_name').val(item_name);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);
