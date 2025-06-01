@@ -52,7 +52,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                     User
                                                                     Name (Email Address)</label>
                                                                 <div class="">
-                                                                    <input type="email" name="email"
+                                                                    <input type="text" name="text"
                                                                            class="form-control"
                                                                            required="required" id="email">
                                                                 </div>
@@ -234,20 +234,6 @@ if (strlen($_SESSION['alogin']) == "") {
                     alertify.error("error : " + response);
                 }
             });
-        });
-
-    </script>
-
-    <script>
-
-        $('#email').focusout(function () {
-            let email_address = $('#email').val();
-            if (ValidateEmail(email_address)) {
-                $('#email').val(email_address);
-            } else {
-                alertify.error("กรุณาป้อน รูปแบบ Email ที่ถูกต้อง");
-                $('#email').val("");
-            }
         });
 
     </script>
