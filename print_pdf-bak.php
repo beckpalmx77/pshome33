@@ -35,14 +35,14 @@ foreach ($items as $item) {
 }
 $thai_text_total = converNumberToThaiText($total);
 
-// กำหนดคลาส TCPDF ใหม่เพื่อสร้าง footer
+// ✅ กำหนดคลาส TCPDF ใหม่เพื่อสร้าง footer
 class CustomPDF extends TCPDF
 {
     public $printed_by = '';
 
     public function Footer()
     {
-        // ไม่ต้องทำ footer เพราะกำหนดใน HTML แล้ว
+        // ไม่ต้องทำการใส่ footer ในที่นี้เนื่องจากกำหนดไว้ใน HTML แล้ว
     }
 }
 
@@ -51,36 +51,19 @@ $pdf = new CustomPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->printed_by = isset($_SESSION['user_name']) ? 'ผู้พิมพ์: ' . $_SESSION['user_name'] : 'ผู้พิมพ์: ฝ่ายการเงิน';
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(true);
-
-// ลด margin เพื่อไม่ให้ล้นหน้า
-$pdf->SetMargins(8, 5, 8);
-
-// ลดขนาดฟอนต์
-$pdf->SetFont('THSarabunNew', '', 12);
-
+$pdf->SetMargins(10, 5, 15);
+$pdf->SetFont('THSarabunNew', '', 14);
 $pdf->AddPage();
 
 // ฟังก์ชันสร้าง HTML สำหรับใบเสร็จ
 function generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, $title_note = '')
 {
-    $full_name = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
-    $user_signature = isset($_SESSION['user_signature']) ? $_SESSION['user_signature'] : '';
-    $signature_path = $user_signature ? 'img_sig/' . $user_signature : '';
-    $signature_img = $user_signature && file_exists($signature_path)
-        ? '<img src="' . $signature_path . '" height="30">'
-        : '____________';
-
     $html = '
-    <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:20px; margin-top:20px; text-align:center;">
-        <tr>
-            <td>
-                <h2 style="margin-bottom: 5px;">ใบเสร็จรับเงิน ' . $title_note . '</h2>
-                <img src="img/logo/ps33-rec-logo.png" height="40" style="display: block; margin: 0 auto;">
-            </td>
-        </tr>
-    </table>
-
-    <table border="0" cellspacing="0" cellpadding="4" width="100%" style="font-size:12pt;">
+    <h2 style="text-align:center;">ใบเสร็จรับเงิน ' . $title_note . '</h2>
+    <div style="text-align:center;">
+        <img src="img/logo/ps33-rec-logo.png" height="50">
+    </div>
+    <table border="0" cellspacing="0" cellpadding="4">
         <tr>        
             <td><b>' . $company['company_name'] . '</b></td>
             <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . $receipt['doc_id'] . '</td>
@@ -91,10 +74,10 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         </tr>
     </table>';
 
-    $html .= '<table border="1" cellspacing="0" cellpadding="5" width="100%" style="table-layout: fixed; font-size:12pt;">
+    $html .= '<table border="1" cellspacing="0" cellpadding="5">
         <tr style="background-color:#f2f2f2;">
             <th width="10%" align="center"><b>#</b></th>
-            <th width="65%" align="center"><b>รายการ</b></th>
+            <th width="70%" align="center"><b>รายการ</b></th>
             <th width="10%" align="center"><b>จำนวน</b></th>
             <th width="15%" align="center"><b>จำนวนเงิน</b></th>
         </tr>';
@@ -123,50 +106,55 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 
     $html .= '</table><br><br>';
 
-    $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="margin-top:20px; margin-bottom:20px; font-size:12pt;">
-<tr>
-    <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . $receipt['detail'] . ')</td>
-    <td align="center">
-        <b>ผู้รับเงิน</b><br>
-        ' . $signature_img . '<br>
-        (' . $full_name . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: ผู้จัดการ / ฝ่ายการเงิน
-    </td>
-</tr>
-<tr>
-    <td align="left" style="font-size:10pt;">
-        วันที่พิมพ์: ' . date('d/m/Y H:i') . '
-    </td>
-    <td align="right" style="font-size:10pt;">
-        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'ฝ่ายการเงิน') . '
-    </td>
-</tr>
+    $html .= '<table border="0" cellspacing="0" cellpadding="5">
+    <tr>
+        <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . $receipt['detail'] . ')</td>
+        <td align="right"><b>ผู้รับเงิน</b> ____________</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td align="right">ตำแหน่ง: ผู้จัดการ / ฝ่ายการเงิน</td>
+    </tr>
+    <tr>
+        <td align="left" style="font-size:12px;">
+            วันที่พิมพ์: ' . date('d/m/Y H:i') . '
+        </td>
+        <td align="right" style="font-size:12px;">
+            ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'ฝ่ายการเงิน') . '
+        </td>
+    </tr>
 </table>';
-
     return $html;
 }
 
-// รวม HTML สองชุด (ต้นฉบับ + สำเนา) โดยเว้น space ระหว่างต้นฉบับกับสำเนา
+// รวม HTML สองชุด (ต้นฉบับ + สำเนา)
 $html = generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, "(ต้นฉบับ)");
-$html .= '<hr style="border-top: dashed 1px; margin: 30px 0;">';  // space เพิ่มขึ้นระหว่างต้นฉบับกับสำเนา
+$html .= '<hr style="border-top: dashed 1px; margin: 15px 0;">';
 $html .= generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, "(สำเนา)");
 
 // เขียนลง PDF
 $pdf->writeHTML($html, true, false, false, false, '');
 
-// อัปเดตสถานะการพิมพ์
 $print_status = $receipt['print_status'];
+
 if ($print_status == 'N') {
+    // ถ้า status เป็น N ให้ทำการอัปเดต print_first_date และ print_status
     $stmt_items = $conn->prepare("UPDATE ims_house_payment 
                                   SET print_status = 'Y', print_first_date = NOW() 
                                   WHERE id = :id AND print_status = 'N'");
 } else if ($print_status == 'Y') {
+    // ถ้า status เป็น Y ให้ทำการอัปเดต print_last_date
     $stmt_items = $conn->prepare("UPDATE ims_house_payment 
                                   SET print_last_date = NOW() 
                                   WHERE id = :id AND print_status = 'Y'");
 }
+
+// bind และ execute ครั้งเดียวเท่านั้น
 $stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt_items->execute();
 
-// สร้างชื่อไฟล์
+
+
+// สร้างชื่อไฟล์ตาม doc_id และ timestamp
 $filename = 'receipt_' . $receipt['doc_id'] . '_' . date('Ymd_His') . '.pdf';
-$pdf->Output($filename, 'I');
+$pdf->Output($filename, 'I'); // แสดง PDF บนเบราว์เซอร์

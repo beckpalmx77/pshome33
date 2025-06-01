@@ -49,6 +49,8 @@ if ($query->rowCount() == 1) {
             $_SESSION['house_number'] = $result->house_number;
             $_SESSION['line_picture_profile'] = $result->line_picture_profile;
 
+            $_SESSION['user_signature'] = $result->user_signature;
+
 /*
             $myfile = fopen("login.txt", "w") or die("Unable to open file!");
             fwrite($myfile, $_SESSION['house_number']);
