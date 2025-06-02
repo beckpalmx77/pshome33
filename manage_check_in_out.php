@@ -58,6 +58,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                     <th>รูป</th>
                                                     <th>เวลา</th>
                                                     <th>รายละเอียด</th>
+                                                    <!--th>จุด Check In</th-->
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -68,6 +69,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                     <th>รูป</th>
                                                     <th>เวลา</th>
                                                     <th>รายละเอียด</th>
+                                                    <!--th>จุด Check In</th-->
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -120,8 +122,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
 
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                        <label for="images">ภาพ: (Cick ที่รูปเพื่อขยาย)</label>
-                                                                        <div id="imagePreview" class="d-flex flex-wrap gap-2"></div>
+                                                                        <label for="images">ภาพ: (Cick
+                                                                            ที่รูปเพื่อขยาย)</label>
+                                                                        <div id="imagePreview"
+                                                                             class="d-flex flex-wrap gap-2"></div>
                                                                     </div>
                                                                 </div>
 
@@ -281,7 +285,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                     {data: 'emp_name'},
                     {
                         data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
-                        render: function(data, type, row) {
+                        render: function (data, type, row) {
                             let imageUrl = data ? data : 'img/icon/none_img.png'; // ถ้าไม่มี data ใช้รูป default
                             return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
