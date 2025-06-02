@@ -76,27 +76,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ใบเสร็จ</th>
                                                 </tr>
                                                 </thead>
-                                                <!--tfoot>
-                                                <tr>
-                                                    <th>วันที่เอกสาร</th>
-                                                    <th>บ้านเลขที่</th>
-                                                    <th>ซอย</th>
-                                                    <th>ผู้ชำระ</th>
-                                                    <th>picture</th>
-                                                    <th>งวดเดือนเริ่มต้น</th>
-                                                    <th>ถึงงวดเดือน</th>
-                                                    <th>ปี</th>
-                                                    <th>ขนาดพื้นที่ ตรว</th>
-                                                    <th>ค่าเก็บขยะ</th>
-                                                    <th>ค่าส่วนกลาง</th>
-                                                    <th>จำนวนงวดที่ชำระ</th>
-                                                    <th>ยอดชำระ</th>
-                                                    <th>Slip</th>
-                                                    <th>สถานะ</th>
-                                                    <th>Action</th>
-                                                    <th>ใบเสร็จ</th>
-                                                </tr>
-                                                </tfoot-->
                                             </table>
 
                                             <div id="result"></div>
@@ -288,7 +267,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             </div>
                                         </div>
 
-
                                 </div>
                             </div>
                         </div>
@@ -309,7 +287,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -354,6 +331,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             position: absolute;
             left: 0.65em;
             top: 30%;
+        }
+    </style>
+
+    <style>
+        .dataTables_wrapper {
+            overflow-x: auto;
         }
     </style>
 
@@ -403,9 +386,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                <?php if ($_SESSION['deviceType'] !== 'computer') {
-                    echo "'scrollX': true,";
-                } ?>
+                'scrollX': true,
                 'ajax': {
                     'url': 'model/manage_common_fee_payment_process.php',
                     'type': 'POST',
@@ -417,31 +398,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     }
                 },
                 'columns': [
-                    //{data: 'doc_id'},
-                    {data: 'payment_date'},
-                    {data: 'house_number'},
-                    {data: 'alley'},
-                    {data: 'detail'},
+                    { data: 'payment_date', width: '200px' },
+                    { data: 'house_number', width: '100px' },
+                    { data: 'alley', width: '100px' },
+                    { data: 'detail', width: '200px' },
                     {
-                        data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
+                        data: 'line_picture_profile',
+                        width: '60px',
                         render: function(data, type, row) {
-                            let imageUrl = data ? data : 'img/icon/none_img.png'; // ถ้าไม่มี data ใช้รูป default
+                            let imageUrl = data ? data : 'img/icon/none_img.png';
                             return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
                     },
-                    {data: 'month_name_start'},
-                    {data: 'month_name_to'},
-                    {data: 'period_year'},
-                    {data: 'area_size', className: 'dt-body-right'},
-                    { data: 'garbage_collection_fee', className: 'dt-body-right' },
-                    {data: 'common_fee', className: 'dt-body-right'},
-                    { data: 'payment_type', className: 'dt-body-center' },
-                    {data: 'amount', className: 'dt-body-right'},
-                    {data: 'slip'},
-                    {data: 'payment_status'},
-                    {data: 'update'},
-                    {data: 'print'},
-                ]
+                    { data: 'month_name_start', width: '120px' },
+                    { data: 'month_name_to', width: '120px' },
+                    { data: 'period_year', width: '100px' },
+                    { data: 'area_size', className: 'dt-body-right', width: '100px' },
+                    { data: 'garbage_collection_fee', className: 'dt-body-right', width: '120px' },
+                    { data: 'common_fee', className: 'dt-body-right', width: '120px' },
+                    { data: 'payment_type', className: 'dt-body-center', width: '100px' },
+                    { data: 'amount', className: 'dt-body-right', width: '120px' },
+                    { data: 'slip', width: '80px' },
+                    { data: 'payment_status', width: '100px' },
+                    { data: 'update', width: '80px' },
+                    { data: 'print', width: '80px' }
+                ],
+                'autoWidth': false // ปิด autowidth เพื่อให้ width ที่กำหนดมีผลจริง
             });
         });
     </script>

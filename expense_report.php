@@ -2,47 +2,54 @@
 include('includes/Header.php');
 if (strlen($_SESSION['alogin']) == "") {
     header("Location: index");
+    exit();
 } else {
-
     include("config/connect_db.php");
 
-    $month_num = ltrim(date('m'), '0');  // ตัด 0 หน้าเดือน
-
-    $sql_curr_month = " SELECT * FROM ims_month where month = '" . $month_num . "'";
-
+    $month_num = ltrim(date('m'), '0'); // Remove leading zero
+    $sql_curr_month = "SELECT * FROM ims_month WHERE month = ?";
     $stmt_curr_month = $conn->prepare($sql_curr_month);
-    $stmt_curr_month->execute();
+    $stmt_curr_month->execute([$month_num]);
     $MonthCurr = $stmt_curr_month->fetchAll();
     foreach ($MonthCurr as $row_curr) {
         $month_name = $row_curr["month_name"];
     }
 
-    $sql_month = " SELECT * FROM ims_month ";
+    $sql_month = "SELECT * FROM ims_month ORDER BY month ASC";
     $stmt_month = $conn->prepare($sql_month);
     $stmt_month->execute();
     $MonthRecords = $stmt_month->fetchAll();
 
-    $sql_year = " SELECT DISTINCT(exp_year) AS exp_year
- FROM ims_expenses WHERE exp_year >= 2024
- order by exp_year desc ";
+    $sql_year = "SELECT DISTINCT(period_year) AS period_year FROM ims_house_payment WHERE period_year >= 2024 ORDER BY period_year DESC";
     $stmt_year = $conn->prepare($sql_year);
     $stmt_year->execute();
     $YearRecords = $stmt_year->fetchAll();
-
     ?>
-
     <!DOCTYPE html>
     <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <title>Export รายงานรายจ่าย-ค่าใช้จ่าย นิติฯ</title>
+        <style>
+            /* เพิ่มเล็กน้อยสำหรับ checkbox ให้ชิดกันสวยงาม */
+            .month-checkbox {
+                margin-right: 15px;
+                margin-bottom: 5px;
+                display: inline-block;
+            }
 
+            .month-checkbox input {
+                margin-right: 5px;
+            }
+        </style>
+    </head>
     <body id="page-top">
     <div id="wrapper">
         <?php include('includes/Side-Bar.php'); ?>
-
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <?php include('includes/Top-Bar.php'); ?>
 
-                <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
@@ -50,154 +57,140 @@ if (strlen($_SESSION['alogin']) == "") {
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
-                            <li class="breadcrumb-item active"
-                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                            <li class="breadcrumb-item active"><?php echo urldecode($_GET['s']) ?></li>
                         </ol>
                     </div>
 
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"></div>
                                 <div class="card-body">
-                                    <section class="container-fluid">
+                                    <form id="form_data" method="post"
+                                          action="export_process/export_expense_report_process.php"
+                                          enctype="multipart/form-data">
                                         <div class="row">
-                                            <div class="col-md-12 col-md-offset-2">
-                                                <div class="panel">
-                                                    <div class="panel-body">
+                                            <div class="col-sm-12">
+                                                <label>เลือกเดือน :</label><br>
+                                                <div>
+                                                    <!-- checkbox เลือกทุกเดือน -->
+                                                    <label class="month-checkbox">
+                                                        <input type="checkbox" name="months[]" value="all"
+                                                               id="check_all">
+                                                        ทั้งหมด
+                                                    </label>
+                                                    <?php foreach ($MonthRecords as $row) {
+                                                        // กำหนดให้เดือนปัจจุบันถูกติ๊กไว้โดย default
+                                                        $checked = ($row["month"] == $month_num) ? 'checked' : '';
+                                                        ?>
+                                                        <label class="month-checkbox">
+                                                            <input type="checkbox" name="months[]"
+                                                                   value="<?php echo $row["month"]; ?>"
+                                                                   class="month-checkbox-item" <?php echo $checked; ?>>
+                                                            <?php echo $row["month_name"]; ?>
+                                                        </label>
+                                                    <?php } ?>
+                                                </div>
 
-                                                        <form id="from_data" method="post"
-                                                              action="export_process/export_expense_report_process.php"
-                                                              enctype="multipart/form-data">
-
-                                                            <input type="hidden" id="myCheckValue" name="myCheckValue">
-
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <label>เลือกเดือน :</label><br>
-                                                                    <div class="form-check form-check-inline">
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                               name="month[]" id="month_all" value="all"
-                                                                               onclick="toggleAllMonths(this)">
-                                                                        <label class="form-check-label" for="month_all">ทุกเดือน</label>
-                                                                    </div>
-                                                                    <?php foreach ($MonthRecords as $row) { ?>
-                                                                        <div class="form-check form-check-inline">
-                                                                            <input class="form-check-input month-checkbox"
-                                                                                   type="checkbox" name="month[]"
-                                                                                   id="month_<?php echo $row["month"]; ?>"
-                                                                                   value="<?php echo $row["month"]; ?>">
-                                                                            <label class="form-check-label"
-                                                                                   for="month_<?php echo $row["month"]; ?>"><?php echo $row["month_name"]; ?></label>
-                                                                        </div>
-                                                                    <?php } ?>
-
-                                                                    <br><br>
-
-                                                                    <label for="year">เลือกปี :</label>
-                                                                    <select name="year" id="year" class="form-control"
-                                                                            required>
-                                                                        <?php foreach ($YearRecords as $row) { ?>
-                                                                            <option value="<?php echo $row["exp_year"]; ?>">
-                                                                                <?php echo $row["exp_year"]; ?>
-                                                                            </option>
-                                                                        <?php } ?>
-                                                                    </select>
-
-                                                                    <br>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-12">
-                                                                            <button type="submit"
-                                                                                    class="btn btn-success"
-                                                                                    id="btnExport">
-                                                                                Export <i class="fa fa-check"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </form>
+                                                <br>
+                                                <label for="year">เลือกปี :</label>
+                                                <select name="year" id="year" class="form-control" required>
+                                                    <?php foreach ($YearRecords as $row) { ?>
+                                                        <option value="<?php echo $row["period_year"]; ?>">
+                                                            <?php echo $row["period_year"]; ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                </select>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <button type="submit" class="btn btn-success" id="btnExport">
+                                                            Export <i class="fa fa-check"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
+
                                             </div>
-                                            <!-- /.col-md-8 col-md-offset-2 -->
                                         </div>
-                                        <!-- /.row -->
-                                    </section>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!--Row-->
 
                 </div>
-                <!---Container Fluid-->
-
+                <?php include('includes/Modal-Logout.php');
+                include('includes/Footer.php'); ?>
             </div>
-
-            <?php
-            include('includes/Modal-Logout.php');
-            include('includes/Footer.php');
-            ?>
-
         </div>
     </div>
 
-    <!-- Scroll to top -->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+    <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
+    <!-- JS Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <!-- Select2 -->
     <script src="vendor/select2/dist/js/select2.min.js"></script>
-    <!-- Bootstrap Datepicker -->
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-    <!-- Bootstrap Touchspin -->
     <script src="vendor/bootstrap-touchspin/js/jquery.bootstrap-touchspin.js"></script>
-    <!-- ClockPicker -->
     <script src="vendor/clock-picker/clockpicker.js"></script>
-    <!-- RuangAdmin Javascript -->
     <script src="js/myadmin.min.js"></script>
-    <!-- Javascript for this page -->
-
     <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
-
     <script src="js/MyFrameWork/framework_util.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-
     <script>
-        function toggleAllMonths(source) {
-            const checkboxes = document.querySelectorAll('.month-checkbox');
-            checkboxes.forEach(cb => {
-                cb.checked = source.checked;
+        // จัดการ checkbox "ทั้งหมด" กับ checkbox เดือนอื่นๆ
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkAll = document.getElementById('check_all');
+            const monthCheckboxes = document.querySelectorAll('.month-checkbox-item');
+
+            // ถ้าติ๊ก "ทั้งหมด" ให้ติ๊ก/ไม่ติ๊ก checkbox เดือนอื่นทั้งหมดด้วย
+            checkAll.addEventListener('change', function () {
+                monthCheckboxes.forEach(cb => {
+                    cb.checked = checkAll.checked;
+                });
             });
-        }
-    </script>
 
-    <script>
-        document.getElementById("btnExport").addEventListener("click", function (e) {
-            const checkboxes = document.querySelectorAll('input[name="month[]"]:not(#month_all):checked');
-            const isAllChecked = document.getElementById("month_all").checked;
+            // ถ้า checkbox เดือนอื่นๆ มีการติ๊ก/ไม่ติ๊ก ให้จัดการสถานะ "ทั้งหมด"
+            monthCheckboxes.forEach(cb => {
+                cb.addEventListener('change', function () {
+                    if (!this.checked) {
+                        checkAll.checked = false;
+                    } else {
+                        // ถ้า checkbox เดือนอื่นทุกตัวถูกติ๊ก ให้ติ๊ก "ทั้งหมด" ด้วย
+                        const allChecked = Array.from(monthCheckboxes).every(cb => cb.checked);
+                        checkAll.checked = allChecked;
+                    }
+                });
+            });
 
-            if (checkboxes.length === 0 && !isAllChecked) {
-                e.preventDefault(); // หยุดส่งฟอร์ม
-                alert("แจ้งเตือน กรุณาเลือกเดือนอย่างน้อย 1 เดือนก่อนทำการ Export");
-                return false;
-            }
+            // ตั้งค่าเริ่มต้น ถ้า checkbox เดือนทั้งหมดถูกติ๊ก ให้ติ๊ก "ทั้งหมด" ด้วย
+            const allCheckedInit = Array.from(monthCheckboxes).every(cb => cb.checked);
+            checkAll.checked = allCheckedInit;
         });
     </script>
 
+    <script>
+        // ตรวจสอบก่อน submit ว่ามีการเลือกเดือนอย่างน้อย 1 เดือน
+        document.getElementById('form_data').addEventListener('submit', function (e) {
+            const monthCheckboxes = document.querySelectorAll('.month-checkbox-item');
+            let isChecked = false;
+            monthCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    isChecked = true;
+                }
+            });
+
+            if (!isChecked) {
+                e.preventDefault(); // ป้องกันการส่งฟอร์ม
+                alert('กรุณาเลือกอย่างน้อย 1 เดือน');
+            }
+        });
+
+    </script>
+
     </body>
-
     </html>
-
 <?php } ?>
