@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file_path = $upload_dir . $file_name;
 
         if (move_uploaded_file($picture_payment['tmp_name'], $file_path)) {
-            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show) 
-            VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type,:line_user_id,:line_picture_profile_show)";
+            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show,create_by) 
+            VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type,:line_user_id,:line_picture_profile_show,:create_by)";
             $stmt = $conn->prepare($ins_str);
 
             $stmt->bindParam(':doc_id', $doc_id);
@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':payment_type', $payment_type);
             $stmt->bindParam(':line_user_id', $line_user_id);
             $stmt->bindParam(':line_picture_profile_show', $pictureUrl);
+            $stmt->bindParam(':create_by', $detail);
 
             if ($stmt->execute()) {
                 // ======= ส่งเฉพาะข้อความไป LINE =======
@@ -96,8 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         // ไม่มีการอัปโหลดรูป
-        $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno,line_user_id,line_picture_profile_show) 
-        VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno, :line_user_id,:line_picture_profile_show)";
+        $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno,line_user_id,line_picture_profile_show,create_by) 
+        VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno, :line_user_id,:line_picture_profile_show,:create_by)";
         $stmt = $conn->prepare($ins_str);
 
         $stmt->bindParam(':doc_id', $doc_id);
@@ -112,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':runno', $runno);
         $stmt->bindParam(':line_user_id', $line_user_id);
         $stmt->bindParam(':line_picture_profile_show', $pictureUrl);
+        $stmt->bindParam(':create_by', $detail);
 
         if ($stmt->execute()) {
             // ======= ส่งเฉพาะข้อความไป LINE =======
