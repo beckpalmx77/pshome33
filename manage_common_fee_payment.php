@@ -54,7 +54,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                         </div-->
 
                                         <div class="col-md-12 col-md-offset-2">
-                                            <table id='TableRecordList' class='display dataTable'>
+                                            <table id="TableRecordList" class="display nowrap" style="width:100%;">
                                                 <thead>
                                                 <tr>
                                                     <th>วันที่เอกสาร</th>
@@ -62,18 +62,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ซอย</th>
                                                     <th>ผู้ชำระ</th>
                                                     <th>picture</th>
-                                                    <th>งวดเดือนเริ่มต้น</th>
-                                                    <th>ถึงงวดเดือน</th>
+                                                    <th>งวดเดือน</th>
                                                     <th>ปี</th>
-                                                    <th>ขนาดพื้นที่ ตรว</th>
-                                                    <th>ค่าเก็บขยะ</th>
                                                     <th>ค่าส่วนกลาง</th>
-                                                    <th>จำนวนงวดที่ชำระ</th>
+                                                    <th>จำนวนงวด</th>
                                                     <th>ยอดชำระ</th>
                                                     <th>Slip</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>ใบเสร็จ</th>
+                                                    <th>ขนาดพื้นที่ ตรว</th>
+                                                    <th>ค่าเก็บขยะ</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -410,18 +409,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
                     },
-                    { data: 'month_name_start', width: '120px' },
-                    { data: 'month_name_to', width: '120px' },
+                    { data: 'month_name_period', width: '120px' },
                     { data: 'period_year', width: '100px' },
-                    { data: 'area_size', className: 'dt-body-right', width: '100px' },
-                    { data: 'garbage_collection_fee', className: 'dt-body-right', width: '120px' },
                     { data: 'common_fee', className: 'dt-body-right', width: '120px' },
                     { data: 'payment_type', className: 'dt-body-center', width: '100px' },
                     { data: 'amount', className: 'dt-body-right', width: '120px' },
                     { data: 'slip', width: '80px' },
                     { data: 'payment_status', width: '100px' },
                     { data: 'update', width: '80px' },
-                    { data: 'print', width: '80px' }
+                    { data: 'print', width: '80px' },
+                    { data: 'area_size', className: 'dt-body-right', width: '100px' },
+                    { data: 'garbage_collection_fee', className: 'dt-body-right', width: '120px' }
                 ],
                 'autoWidth': false // ปิด autowidth เพื่อให้ width ที่กำหนดมีผลจริง
             });

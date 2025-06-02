@@ -223,6 +223,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "period_month_to" => $row['period_month_to'],
                 "month_name_start" => $row['month_name_start'],
                 "month_name_to" => $row['month_name_to'],
+                "month_name_period" => $row['month_name_start'] . " - " . $row['month_name_to'],
                 "period_year" => $row['period_year'],
                 "area_size" => $row['area_size'],
                 "garbage_collection_fee" => $row['garbage_collection_fee'],
