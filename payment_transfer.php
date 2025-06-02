@@ -413,6 +413,35 @@ if (strlen($_SESSION['alogin']) === "") {
 
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const houseNumberInput = document.getElementById("house_number");
+
+            houseNumberInput.addEventListener("change", function () {
+                const houseNumber = this.value;
+
+                if (houseNumber.trim() !== "") {
+                    fetch("model/get_house_master.php?house_number=" + encodeURIComponent(houseNumber))
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById("common_fee").value = data.common_fee;
+                                document.getElementById("area_size").value = data.area_size;
+                            } else {
+                                document.getElementById("common_fee").value = '';
+                                document.getElementById("area_size").value = '';
+                                alert("ไม่พบข้อมูลบ้านเลขที่นี้");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("เกิดข้อผิดพลาด:", error);
+                        });
+                }
+            });
+        });
+    </script>
+
+
 
     </body>
     </html>
