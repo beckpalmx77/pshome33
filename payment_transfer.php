@@ -24,10 +24,22 @@ if (strlen($_SESSION['alogin']) === "") {
         $house_number = $_SESSION['house_number'];
         $f_name = $_SESSION['first_name'];
         $l_name = $_SESSION['last_name'];
+
+        $sql_house_master = " SELECT * FROM ims_house_master where house_number = '" . $house_number . "'";
+        $stmt_house_master = $conn->prepare($sql_house_master);
+        $stmt_house_master->execute();
+        $hmCurr = $stmt_house_master->fetchAll();
+        foreach ($hmCurr as $hm_curr) {
+            $area_size = $hm_curr["area_size"] ;
+            $common_fee = $hm_curr["common_fee"] ;
+        }
+
     } else {
         $house_number = "";
         $f_name = "";
         $l_name = "";
+        $area_size = "";
+        $common_fee = "";
     }
 
     $months = [
@@ -169,7 +181,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                         <div class="form-group has-success">
                                             <div class="row">
                                                 <!-- งวดปี -->
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <!-- ชื่อผู้โอน -->
                                                     <div class="form-group has-success">
                                                         <label for="detail" class="control-label">ชื่อผู้โอน</label>
@@ -178,7 +190,25 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-2">
+                                                    <!-- จำนวนเงินที่โอน -->
+                                                    <div class="form-group has-success">
+                                                        <label for="area_size"
+                                                               class="control-label">พื้นที่บ้าน ตรว</label>
+                                                        <input type="number" name="area_size" id="area_size" class="form-control" readonly="true" value="<?php echo $area_size ?>">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <!-- จำนวนเงินที่โอน -->
+                                                    <div class="form-group has-success">
+                                                        <label for="common_fee"
+                                                               class="control-label">ค่าส่วนกลาง</label>
+                                                        <input type="number" name="common_fee" id="common_fee" class="form-control" readonly="true" value="<?php echo $common_fee ?>">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
                                                     <!-- จำนวนเงินที่โอน -->
                                                     <div class="form-group has-success">
                                                         <label for="amount"
