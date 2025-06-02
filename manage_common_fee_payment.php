@@ -73,6 +73,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ใบเสร็จ</th>
                                                     <th>ขนาดพื้นที่ ตรว</th>
                                                     <th>ค่าเก็บขยะ</th>
+                                                    <th>ลบข้อมูล</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -245,26 +246,61 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                         </div>
 
                                         <!-- Modal -->
-                                        <div class="modal fade" id="slipModal" tabindex="-1" role="dialog" aria-labelledby="slipModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="slipModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="slipModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content text-center">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="slipModalLabel">หลักฐานการโอนเงิน</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span> <!-- ปุ่มปิดมุมขวาบน -->
+                                                        <h5 class="modal-title" id="slipModalLabel">
+                                                            หลักฐานการโอนเงิน</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                            <!-- ปุ่มปิดมุมขวาบน -->
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <img id="slipImage" src="" alt="Slip Image" class="img-fluid rounded shadow-sm">
+                                                        <img id="slipImage" src="" alt="Slip Image"
+                                                             class="img-fluid rounded shadow-sm">
                                                     </div>
                                                     <div class="modal-footer justify-content-between">
                                                         <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a>
                                                         <button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button> <!-- ปุ่มปิดล่าง -->
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">ปิด
+                                                        </button> <!-- ปุ่มปิดล่าง -->
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
+                                        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
+                                                        <button type="button" class="close text-white"
+                                                                data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">ยกเลิก
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger"
+                                                                id="confirmDeleteBtn">ลบข้อมูล
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
 
                                 </div>
                             </div>
@@ -397,29 +433,30 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     }
                 },
                 'columns': [
-                    { data: 'payment_date', width: '200px' },
-                    { data: 'house_number', width: '100px' },
-                    { data: 'alley', width: '100px' },
-                    { data: 'detail', width: '200px' },
+                    {data: 'payment_date', width: '200px'},
+                    {data: 'house_number', width: '100px'},
+                    {data: 'alley', width: '100px'},
+                    {data: 'detail', width: '200px'},
                     {
                         data: 'line_picture_profile',
                         width: '60px',
-                        render: function(data, type, row) {
+                        render: function (data, type, row) {
                             let imageUrl = data ? data : 'img/icon/none_img.png';
                             return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
                     },
-                    { data: 'month_name_period', width: '120px' },
-                    { data: 'period_year', width: '100px' },
-                    { data: 'common_fee', className: 'dt-body-right', width: '120px' },
-                    { data: 'payment_type', className: 'dt-body-center', width: '100px' },
-                    { data: 'amount', className: 'dt-body-right', width: '120px' },
-                    { data: 'slip', width: '80px' },
-                    { data: 'payment_status', width: '100px' },
-                    { data: 'update', width: '80px' },
-                    { data: 'print', width: '80px' },
-                    { data: 'area_size', className: 'dt-body-right', width: '100px' },
-                    { data: 'garbage_collection_fee', className: 'dt-body-right', width: '120px' }
+                    {data: 'month_name_period', width: '120px'},
+                    {data: 'period_year', width: '100px'},
+                    {data: 'common_fee', className: 'dt-body-right', width: '120px'},
+                    {data: 'payment_type', className: 'dt-body-center', width: '100px'},
+                    {data: 'amount', className: 'dt-body-right', width: '120px'},
+                    {data: 'slip', width: '80px'},
+                    {data: 'payment_status', width: '100px'},
+                    {data: 'update', width: '80px'},
+                    {data: 'print', width: '80px'},
+                    {data: 'area_size', className: 'dt-body-right', width: '100px'},
+                    {data: 'garbage_collection_fee', className: 'dt-body-right', width: '120px'},
+                    {data: 'delete', width: '80px'},
                 ],
                 'autoWidth': false // ปิด autowidth เพื่อให้ width ที่กำหนดมีผลจริง
             });
@@ -603,7 +640,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             $.ajax({
                 url: "display_slip.php",
                 type: "GET",
-                data: { id: id },
+                data: {id: id},
                 dataType: "json",
                 success: function (response) {
                     if (response.status === 1) {
@@ -630,6 +667,35 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             win.print();
         });
     </script>
+
+    <script>
+        let deleteId = null;
+
+        $("#TableRecordList").on('click', '.delete', function () {
+            deleteId = $(this).attr("id");
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        $("#confirmDeleteBtn").on("click", function () {
+            if (deleteId) {
+                $.ajax({
+                    url: "model/manage_common_fee_payment_process.php",
+                    method: "POST",
+                    data: {id: deleteId, action: "DELETE"},
+                    success: function (response) {
+                        $("#confirmDeleteModal").modal("hide");
+                        $('#TableRecordList').DataTable().ajax.reload();
+                        alertify.success("ลบข้อมูลเรียบร้อยแล้ว");
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการลบข้อมูล");
+                    }
+                });
+            }
+        });
+
+    </script>
+
 
     </body>
     </html>

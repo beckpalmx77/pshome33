@@ -227,15 +227,24 @@ if (strlen($_SESSION['alogin']) === "") {
                                             <input name="remark" class="form-control" id="remark" value="-">
                                         </div>
 
-                                        <div class="form-check form-check-inline me-4">
-                                            <input class="form-check-input" type="radio" name="payment_method" id="method_cash" value="cash">
-                                            <label class="form-check-label" for="method_cash">จ่ายเงินสด</label>
+                                        <div class="form-group has-success d-flex align-items-center gap-3">
+                                            <!-- Radio: โอนเงิน -->
+                                            <div class="form-check form-check-inline mb-0">
+                                                <input class="form-check-input" type="radio" name="payment_method_radio" id="method_transfer" value="โอนเงิน" checked>
+                                                <label class="form-check-label" for="method_transfer">โอนเงิน</label>
+                                            </div>
+                                            <!-- Radio: เงินสด -->
+                                            <div class="form-check form-check-inline mb-0">
+                                                <input class="form-check-input" type="radio" name="payment_method_radio" id="method_cash" value="เงินสด">
+                                                <label class="form-check-label" for="method_cash">จ่ายเงินสด</label>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <label for="payment_method" class="control-label mb-0" style="margin-right: 15px;">วิธีการชำระเงิน</label>
+                                                <input name="payment_method" class="form-control w-auto" id="payment_method" value="">
+                                            </div>
+
                                         </div>
 
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="payment_method" id="method_transfer" value="transfer" checked>
-                                            <label class="form-check-label" for="method_transfer">โอนเงิน</label>
-                                        </div>
 
                                         <div class="form-group has-success">
                                             <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
@@ -351,6 +360,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 formData.append('period_month_start', $("#period_month_start").val());
                 formData.append('period_month_to', $("#period_month_to").val());
                 formData.append('payment_type', $("#payment_type").val());
+                formData.append('payment_method', $("#payment_method").val());
 
                 $.ajax({
                     url: "model/manage_payment_transfer.php",
@@ -460,6 +470,24 @@ if (strlen($_SESSION['alogin']) === "") {
             });
         });
     </script>
+
+    <script>
+        // เมื่อเปลี่ยน radio จะอัปเดต input ช่อง payment_method
+        document.querySelectorAll('input[name="payment_method_radio"]').forEach((radio) => {
+            radio.addEventListener('change', function () {
+                document.getElementById('payment_method').value = this.value;
+            });
+        });
+
+        // ตั้งค่าเริ่มต้นให้ตรงกับ radio ที่ถูกเลือกไว้
+        document.addEventListener('DOMContentLoaded', function () {
+            const selected = document.querySelector('input[name="payment_method_radio"]:checked');
+            if (selected) {
+                document.getElementById('payment_method').value = selected.value;
+            }
+        });
+    </script>
+
 
 
     </body>

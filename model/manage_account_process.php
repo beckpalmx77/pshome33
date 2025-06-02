@@ -31,7 +31,7 @@ if ($_POST["action"] === 'GET_DATA') {
 
 }
 
-if ($_POST["action"] === 'ADD' && $_SESSION['account_type'] === 'admin') {
+if ($_POST["action"] === 'ADD') {
 
     if ($_POST["email"] !== '') {
 

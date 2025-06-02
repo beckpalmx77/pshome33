@@ -43,12 +43,14 @@
 
             <div class="mb-3 text-start">
                 <label class="form-label">เลขที่บ้าน: (ใส่เฉพาะเลขที่บ้าน รูปแบบเช่น 99/99)</label>
-                <input type="text" id="house_number" name="house_number" class="form-control" required>
+                <input type="text" id="house_number" name="house_number" class="form-control" required
+                       oninput="this.value = this.value.replace(/[^0-9\/]/g, '')">
             </div>
 
             <div class="mb-3 text-start">
                 <label class="form-label">หมายเลขซอย: </label>
-                <input type="text" id="alley" name="alley" class="form-control" required>
+                <input type="text" id="alley" name="alley" class="form-control" required
+                       oninput="this.value = this.value.replace(/[^0-9\/]/g, '')">
             </div>
 
             <div class="mb-3 text-start">

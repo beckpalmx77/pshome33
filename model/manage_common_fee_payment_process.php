@@ -209,6 +209,16 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
             $color = ($status === 'Y') ? "green" : "gray";
             $print_disabled = ($status === 'Y') ? "" : "disabled";
 
+            // ปุ่ม Update
+            $update_button = ($_SESSION['account_type'] === "user")
+                ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
+                : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>";
+
+            // ปุ่ม Delete
+            $delete_button = ($_SESSION['account_type'] === "user")
+                ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
+                : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>";
+
             $data[] = [
                 "id" => $row['id'],
                 "doc_id" => $row['doc_id'],
@@ -233,10 +243,8 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "payment_status" => "<span style='color: $color;'>$message</span>",
                 "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' $print_disabled>Print</button>",
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
-                "update" => ($_SESSION['account_type'] === "user")
-                    ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
-                    : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
-                "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
+                "update" => $update_button,
+                "delete" => $delete_button,
                 "remark" => $row['remark']
             ];
         } else {
@@ -247,8 +255,8 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "select" => "<button type='button' name='select' id='{$row['house_number']}@{$row['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
             ];
         }
-
     }
+
 
 ## Response Return Value
     $response = array(
