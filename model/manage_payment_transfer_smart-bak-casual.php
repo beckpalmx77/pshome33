@@ -16,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $period_year = $_POST['period_year'];
     $amount = $_POST['amount'];
     $remark = $_POST['remark'];
-    $line_user_id = $_POST['line_user_id'];
-    $pictureUrl = $_POST['pictureUrl'];
-    $displayName = $_POST['displayName'];
+    $line_user_id = $_POST['line_user_id']; // รับ userId จาก LIFF
+    $pictureUrl = $_POST['pictureUrl']; // รับ userId จาก LIFF
+    $displayName = $_POST['displayName']; // รับ userId จาก LIFF
     $picture_payment = $_FILES['picture_payment'];
 
     $field = "runno";
@@ -26,9 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cond = " WHERE house_number = '" . $house_number . "' AND period_year = '" . $period_year . "'";
 
     $runno = LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond);
+
     $doc_id = "P-" . $house_number . "-" . $period_year . "-" . sprintf('%03s', $runno);
 
+    // หากมีการอัปโหลดไฟล์
     if ($picture_payment['error'] == 0) {
+        // ตรวจสอบประเภทไฟล์
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (!in_array($picture_payment['type'], $allowed_types)) {
             error_log("Invalid file type: " . $picture_payment['type']);
@@ -40,7 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file_name = time() . "_" . basename($picture_payment['name']);
         $file_path = $upload_dir . $file_name;
 
+        // อัปโหลดไฟล์
         if (move_uploaded_file($picture_payment['tmp_name'], $file_path)) {
+            // ตรวจสอบว่าไฟล์ภาพสามารถเข้าถึงได้
+            $image_url = 'https://ps33.themediathai.com/uploads/slips/' . $file_name;
+            if (!@getimagesize($image_url)) {
+                error_log("Image file not found or unreadable: " . $image_url);
+                echo "IMAGE_ERROR";
+                exit;
+            }
+
             $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show) 
             VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type,:line_user_id,:line_picture_profile_show)";
             $stmt = $conn->prepare($ins_str);
@@ -61,12 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':line_picture_profile_show', $pictureUrl);
 
             if ($stmt->execute()) {
-                // ======= ส่งเฉพาะข้อความไป LINE =======
-                $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
+                // ======= เริ่มส่งรูปไป LINE =======
+                $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU='; // เปลี่ยนตรงนี้
 
                 $messageData = [
                     'to' => $line_user_id,
                     'messages' => [
+                        [
+                            'type' => 'image',
+                            'originalContentUrl' => $image_url,
+                            'previewImageUrl' => $image_url
+                        ],
                         [
                             'type' => 'text',
                             'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
@@ -84,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);
-                // ======= จบส่งเฉพาะข้อความ =======
+                // ======= จบส่งรูปไป LINE =======
 
-                echo 1;
+                echo 1; // สำเร็จ
             } else {
                 echo 0;
             }
@@ -114,31 +131,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':line_picture_profile_show', $pictureUrl);
 
         if ($stmt->execute()) {
-            // ======= ส่งเฉพาะข้อความไป LINE =======
-            $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
-
-            $messageData = [
-                'to' => $line_user_id,
-                'messages' => [
-                    [
-                        'type' => 'text',
-                        'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
-                    ]
-                ]
-            ];
-
-            $ch = curl_init('https://api.line.me/v2/bot/message/push');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $access_token
-            ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            // ======= จบส่งเฉพาะข้อความ =======
-
             echo 1;
         } else {
             echo 0;

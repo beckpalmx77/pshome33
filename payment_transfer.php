@@ -184,7 +184,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-4">
                                                     <!-- ชื่อผู้โอน -->
                                                     <div class="form-group has-success">
-                                                        <label for="detail" class="control-label">ชื่อผู้โอน</label>
+                                                        <label for="detail" class="control-label">ชื่อผู้โอน/ผู้ชำระ</label>
                                                         <input type="text" name="detail" class="form-control" required
                                                                id="detail" value="<?php echo $f_name . " " . $l_name ?>">
                                                     </div>
@@ -227,16 +227,26 @@ if (strlen($_SESSION['alogin']) === "") {
                                             <input name="remark" class="form-control" id="remark" value="-">
                                         </div>
 
+                                        <div class="form-check form-check-inline me-4">
+                                            <input class="form-check-input" type="radio" name="payment_method" id="method_cash" value="cash">
+                                            <label class="form-check-label" for="method_cash">จ่ายเงินสด</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="payment_method" id="method_transfer" value="transfer" checked>
+                                            <label class="form-check-label" for="method_transfer">โอนเงิน</label>
+                                        </div>
+
                                         <div class="form-group has-success">
                                             <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
+
                                             <input name="bank_name" class="form-control" id="bank_name" value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>" readonly="true">
                                         </div>
 
                                         <!-- แนบ Slip/ใบโอนเงิน/ใบเสร็จ -->
                                         <div class="form-group has-success">
                                             <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
-                                            <input type="file" name="picture_payment" class="form-control"
-                                                   required id="picture_payment">
+                                            <input type="file" name="picture_payment" id="picture_payment" class="form-control">
                                             <img id="preview_image" src="#" alt="Preview Image"
                                                  style="display: none; margin-top: 10px; max-width: 300px;"/>
                                         </div>
@@ -291,40 +301,50 @@ if (strlen($_SESSION['alogin']) === "") {
             // Preview Image
             $("#picture_payment").on("change", function () {
                 const file = this.files[0];
+
+                if (!file) {
+                    // ไม่เลือกไฟล์: ซ่อน preview
+                    $("#preview_image").hide().attr("src", "");
+                    return;
+                }
+
                 const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-                if (file && !allowedTypes.includes(file.type)) {
+                if (!allowedTypes.includes(file.type)) {
                     alert("กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น (JPEG, PNG, GIF)");
                     this.value = "";
-                } else if (file && file.size > 30 * 1024 * 1024) {
+                    $("#preview_image").hide().attr("src", "");
+                    return;
+                }
+
+                if (file.size > 30 * 1024 * 1024) {
                     alert("ขนาดไฟล์ต้องไม่เกิน 30 MB");
                     this.value = "";
-                } else {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        $("#preview_image").attr("src", e.target.result).show();
-                    };
-                    reader.readAsDataURL(file);
+                    $("#preview_image").hide().attr("src", "");
+                    return;
                 }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#preview_image").attr("src", e.target.result).show();
+                };
+                reader.readAsDataURL(file);
             });
 
             // Submit Form with Loading Indicator and prevent duplicate submit
             $("#transfer_form").on("submit", function (event) {
                 event.preventDefault();
 
-                // Disable submit button and show loading
                 $("#submit_btn").prop("disabled", true);
                 $("#loading").show();
 
-                // ตรวจสอบว่า period_month_start <= period_month_to หรือไม่
                 let period_month_start = parseInt($("#period_month_start").val());
                 let period_month_to = parseInt($("#period_month_to").val());
 
                 if (period_month_start > period_month_to) {
                     alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง (เริ่มต้นต้องน้อยกว่าหรือเท่ากับสิ้นสุด)");
-                    // Enable submit button and hide loading
                     $("#submit_btn").prop("disabled", false);
                     $("#loading").hide();
-                    return;  // หยุดการบันทึกข้อมูล
+                    return;
                 }
 
                 let formData = new FormData(this);
@@ -342,10 +362,9 @@ if (strlen($_SESSION['alogin']) === "") {
                         $("#loading").hide();
 
                         if (response == 1) {
-                            alertify.success("โอนเงินและส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
+                            alertify.success("ชำระเงิน/โอน และส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
                             $("#transfer_form")[0].reset();
                             $("#preview_image").hide().attr("src", "");
-                            // ปิดปุ่ม submit หลังบันทึกสำเร็จ เพื่อกัน submit ซ้ำ
                             $("#submit_btn").prop("disabled", true);
                         } else {
                             alertify.error("ไม่สามารถบันทึกข้อมูลได้");
@@ -361,6 +380,7 @@ if (strlen($_SESSION['alogin']) === "") {
             });
         });
     </script>
+
 
     <script>
         $(document).ready(function () {
@@ -440,7 +460,6 @@ if (strlen($_SESSION['alogin']) === "") {
             });
         });
     </script>
-
 
 
     </body>
