@@ -86,8 +86,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
             <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . $receipt['doc_id'] . '</td>
         </tr>
         <tr>
-            <!--td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code'] . '<br><b>โทร:</b> ' . $company['phone'] . '</td-->
-            <td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code']  . '</td>
+            <td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code'] . '</td>
             <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['payment_date'])) . '</td>
         </tr>
     </table>';
@@ -130,7 +129,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     <td align="center">
         <b>ผู้รับเงิน</b><br>
         ' . $signature_img . '<br>
-        (' . $full_name . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: ผู้จัดการ / ฝ่ายการเงิน
+        (' . $full_name . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: เจ้าหน้าที่นิติฯ
     </td>
 </tr>
 <tr>
@@ -138,7 +137,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         วันที่พิมพ์: ' . date('d/m/Y H:i') . '
     </td>
     <td align="right" style="font-size:10pt;">
-        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'ฝ่ายการเงิน') . '
+        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'เจ้าหน้าที่นิติฯ') . '
     </td>
 </tr>
 </table>';

@@ -49,28 +49,24 @@ if ($export == '1') {
 
 function exportToCSV($data, $start_date, $end_date)
 {
+    // ตั้งชื่อไฟล์
     $filename = "payment_report_{$start_date}_to_{$end_date}.csv";
 
+    // บางครั้งเพิ่ม BOM UTF-8 เพื่อให้ Excel อ่านภาษาไทยถูกต้อง
     echo "\xEF\xBB\xBF"; // UTF-8 BOM
 
+    // ตั้ง header ให้เป็นไฟล์ดาวน์โหลด CSV
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=' . $filename);
 
     $output = fopen('php://output', 'w');
 
-    // Header
+    // เขียน header ของตาราง
     fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'สถานะ', 'หมายเหตุ']);
 
-    $sum_amount = 0; // ตัวแปรเก็บยอดรวม
-
-    // Rows
+    // เขียนข้อมูลแต่ละแถว
     foreach ($data as $index => $row) {
         $payment_status_desc = ($row->payment_status == 'Y') ? "ยืนยันการชำระ" : "ยังไม่ยืนยันการชำระ";
-
-        // แปลงค่า amount เป็นตัวเลขก่อนรวม
-        $amount = floatval($row->amount);
-        $sum_amount += $amount;
-
         fputcsv($output, [
             $index + 1,
             $row->payment_date,
@@ -81,22 +77,13 @@ function exportToCSV($data, $start_date, $end_date)
             $row->month_name_start . " - " . $row->month_name_start,
             $row->period_year,
             $row->payment_type,
-            number_format($amount, 2), // รูปแบบ 2 ตำแหน่งทศนิยม
+            $row->amount,
             $payment_status_desc,
             $row->remark
         ]);
     }
-
-    // แสดงแถวสุดท้ายเป็นยอดรวม
-    fputcsv($output, [
-        '', '', '', '', '', '', '', '', 'รวมทั้งหมด',
-        number_format($sum_amount, 2),
-        '', ''
-    ]);
-
     fclose($output);
 }
-
 
 ?>
 
@@ -233,13 +220,6 @@ function exportToCSV($data, $start_date, $end_date)
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="10" class="text-end">รวมทั้งหมด:</th>
-                    <th id="totalAmountFooter"></th>
-                    <th colspan="2"></th>
-                </tr>
-                </tfoot>
             </table>
 
         </div>
@@ -254,19 +234,7 @@ function exportToCSV($data, $start_date, $end_date)
 <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
-<!-- CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
-<!-- JS -->
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
-<!--script>
+<script>
     $(document).ready(function () {
         $('#PaymentTable').DataTable({
             responsive: true,
@@ -280,55 +248,7 @@ function exportToCSV($data, $start_date, $end_date)
             autoWidth: false
         });
     });
-</script-->
-
-<script>
-    $(document).ready(function () {
-        $('#PaymentTable').DataTable({
-            responsive: true,
-            'lengthMenu': [[10, 20, 50, 100], [10, 20, 50, 100]],
-            'language': {
-                search: 'ค้นหา',
-                lengthMenu: 'แสดง _MENU_ รายการ',
-                info: 'หน้าที่ _PAGE_ จาก _PAGES_',
-                infoEmpty: 'ไม่มีข้อมูล',
-                zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
-                infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
-                paginate: {
-                    previous: 'ก่อนหน้า',
-                    next: 'ต่อไป',
-                    last: 'สุดท้าย'
-                }
-            },
-            footerCallback: function (row, data, start, end, display) {
-                let api = this.api();
-
-                // ฟังก์ชันลบ format และแปลงเป็นตัวเลข
-                let parseValue = function (i) {
-                    return typeof i === 'string'
-                        ? parseFloat(i.replace(/[,]/g, '')) || 0
-                        : typeof i === 'number'
-                            ? i : 0;
-                };
-
-                // รวมคอลัมน์จำนวนเงินที่ index 10 (คอลัมน์ "จำนวนเงินที่ชำระ")
-                let total = api
-                    .column(10, { page: 'all' }) // ใช้ข้อมูลทั้งตาราง
-                    .data()
-                    .reduce(function (a, b) {
-                        return parseValue(a) + parseValue(b);
-                    }, 0);
-
-                // แสดงผลรวมใน footer
-                $(api.column(10).footer()).html(
-                    total.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' บาท'
-                );
-            }
-        });
-    });
 </script>
-
-
 
 </body>
 </html>
