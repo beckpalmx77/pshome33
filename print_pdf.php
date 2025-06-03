@@ -107,7 +107,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 
         $html .= '<tr>
             <td align="center">' . ($index + 1) . '</td>
-            <td><b>ค่าส่วนกลาง งวดเดือน </b> ' . $period_month . ' ' . $receipt['period_year'] . '</td>
+            <td><b>ค่าส่วนกลาง บ้านเลขที่ ' . $receipt['house_number'] . ' งวดเดือน </b> ' . $period_month . ' ' . $receipt['period_year'] . '</td>
             <td align="right">1</td>
             <td align="right">' . number_format($item['amount'], 2) . '</td>
         </tr>';
