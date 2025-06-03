@@ -246,7 +246,7 @@ if (strlen($_SESSION['alogin']) == "") {
             let today = new Date();
             let doc_date_start = "01" + "-" + getMonth2Digits(today) + "-" + today.getFullYear();
             let doc_date = getDay2Digits(today) + "-" + getMonth2Digits(today) + "-" + today.getFullYear();
-            $('#doc_date_start').val(doc_date_start);
+            $('#doc_date_start').val(doc_date);
             $('#doc_date_to').val(doc_date);
 
             // ตั้งค่า datepicker สำหรับวันที่เริ่มต้นและสิ้นสุด
