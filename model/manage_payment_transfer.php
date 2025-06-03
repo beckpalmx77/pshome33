@@ -20,6 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $picture_payment = $_FILES['picture_payment'];
     $payment_method = $_POST['payment_method'];
 
+    $create_by = $_SESSION['username'];
+
     // ตรวจสอบค่า amount ว่าเป็นตัวเลขหรือไม่
     if (!is_numeric($amount) || $amount <= 0) {
         echo 0; // ข้อมูล amount ไม่ถูกต้อง
@@ -39,13 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         . $period_year . " | " . $amount . " | " . $remark . " | "
         . $runno;
 
-/*
-    $my_file = fopen("doc_p.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
+    /*
+        $my_file = fopen("doc_p.txt", "w") or die("Unable to open file!");
+        fwrite($my_file, $txt);
+        fclose($my_file);
+    */
     // ฟังก์ชันตรวจสอบนามสกุลไฟล์ภาพที่อนุญาต
-    function isAllowedFileType($filename) {
+    function isAllowedFileType($filename)
+    {
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         return in_array($ext, $allowed);
@@ -73,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (move_uploaded_file($picture_payment['tmp_name'], $file_path)) {
             // Insert พร้อมไฟล์ภาพและ payment_type
-            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, runno, period_month_start, period_month_to, period_year, amount, picture_payment, remark, payment_type, payment_method,create_by]) 
+            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, runno, period_month_start, period_month_to, period_year, amount, picture_payment, remark, payment_type, payment_method,create_by) 
                 VALUES (:doc_id, :payment_date, :house_number, :detail, :runno, :period_month_start, :period_month_to, :period_year, :amount, :picture_payment, :remark, :payment_type, :payment_method,:create_by)";
             $stmt = $conn->prepare($ins_str);
 
@@ -90,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':remark', $remark);
             $stmt->bindParam(':payment_type', $payment_type);
             $stmt->bindParam(':payment_method', $payment_method);
-            $stmt->bindParam(':create_by', $_SESSION['username']);
+            $stmt->bindParam(':create_by', $create_by);
             echo $stmt->execute() ? 1 : 0;
         } else {
             echo 0; // อัปโหลดไฟล์ล้มเหลว
@@ -113,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':runno', $runno);
         $stmt->bindParam(':payment_type', $payment_type);
         $stmt->bindParam(':payment_method', $payment_method);
-        $stmt->bindParam(':create_by', $_SESSION['username']);
+        $stmt->bindParam(':create_by', $create_by);
 
         echo $stmt->execute() ? 1 : 0;
     }
