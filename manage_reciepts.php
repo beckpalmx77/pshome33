@@ -66,6 +66,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>การตรวจสอบ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -80,6 +81,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>หน่วยนับ</th>
                                                     <th>จำนวนเงิน</th>
                                                     <th>การตรวจสอบ</th>
+                                                    <th>Action</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -548,6 +550,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     {data: 'amount', className: 'text-right'},
                     {data: 'approve_status'},
                     {data: 'update'},
+                    {data: 'print'},
                     {data: 'delete'}
                 ]
             });
@@ -940,6 +943,20 @@ if (strlen($_SESSION['alogin']) == "") {
         });
 
     </script>
+
+
+    <script>
+
+        $("#TableRecordList").on('click', '.print', function () {
+            let id = $(this).attr("id");
+            alert("id = " + id);
+
+            //print_reciept_pdf.php
+
+        });
+
+    </script>
+
 
     </body>
     </html>
