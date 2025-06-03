@@ -141,7 +141,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <input type="hidden" class="form-control"
                                                                        id="category_id"
                                                                        name="category_id">
-                                                                <div class="col-sm-10">
+                                                                <div class="col-sm-4">
                                                                     <label for="category_name"
                                                                            class="control-label">ประเภทรายรับ/รายได้</label>
                                                                     <input type="text" class="form-control"
@@ -162,61 +162,40 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                                  aria-hidden="true"></i>
                                                                     </a>
                                                                 </div>
+                                                                <div class="col-sm-4">
+                                                                    <label for="supplier_name" class="control-label">ชื่อผู้ชำระเงิน</label>
+                                                                    <input type="text" class="form-control" id="supplier_name" name="supplier_name" required placeholder="">
+                                                                </div>
                                                             </div>
 
                                                             <div class="form-group row">
-                                                                <div class="col-sm-5">
-                                                                    <label for="qty"
-                                                                           class="control-label">จำนวน</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="qty"
-                                                                           name="qty"
-                                                                           required="required"
-                                                                           placeholder="">
+                                                                <div class="col-sm-3">
+                                                                    <label for="qty" class="control-label">จำนวน</label>
+                                                                    <input type="text" class="form-control" id="qty" name="qty" required placeholder="">
                                                                 </div>
-                                                                <input type="hidden" class="form-control"
-                                                                       id="unit_id"
-                                                                       name="unit_id">
-                                                                <div class="col-sm-5">
-                                                                    <label for="qty"
-                                                                           class="control-label">หน่วยนับ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="unit_name"
-                                                                           name="unit_name"
-                                                                           required="required"
-                                                                           readonly="true"
-                                                                           placeholder="">
+
+                                                                <input type="hidden" class="form-control" id="unit_id" name="unit_id">
+
+                                                                <div class="col-sm-3">
+                                                                    <label for="unit_name" class="control-label">หน่วยนับ</label>
+                                                                    <input type="text" class="form-control" id="unit_name" name="unit_name" required readonly placeholder="">
                                                                 </div>
 
                                                                 <div class="col-sm-2">
-                                                                    <label for="qty"
-                                                                           class="control-label">เลือก</label>
-
-                                                                    <a data-toggle="modal" href="#SearchUnitModal"
-                                                                       class="btn btn-primary">
-                                                                        Click <i class="fa fa-search"
-                                                                                 aria-hidden="true"></i>
+                                                                    <label class="control-label d-block">&nbsp;</label>
+                                                                    <a data-toggle="modal" href="#SearchUnitModal" class="btn btn-primary btn-block">
+                                                                        Click <i class="fa fa-search" aria-hidden="true"></i>
                                                                     </a>
                                                                 </div>
-                                                            </div>
-
-                                                            <div class="form-group row">
-                                                                <div class="col-sm-6">
-                                                                    <label for="amount" class="control-label">จำนวนเงิน
-                                                                        (บาท)</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="amount" name="amount" required
-                                                                           placeholder="">
+                                                                <div class="col-sm-4">
+                                                                    <label for="amount" class="control-label">จำนวนเงิน (บาท)</label>
+                                                                    <input type="text" class="form-control" id="amount" name="amount" required placeholder="">
                                                                 </div>
 
-                                                                <input type="hidden" class="form-control" id="inv"
-                                                                       name="inv" value="-">
-
-                                                                <!--div class="col-sm-6">
-                                                                    <label for="inv" class="control-label">หมายเลขใบเสร็จฯ
-                                                                        / Invoice</label>
-                                                                </div-->
+                                                                <input type="hidden" class="form-control" id="inv" name="inv" value="-">
                                                             </div>
+
+
 
                                                             <div class="form-group">
                                                                 <label for="file_attach">แนบไฟล์ / รูปภาพ</label>
