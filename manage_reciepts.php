@@ -59,7 +59,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>เดือน</th>
                                                     <th>ปี</th>
                                                     <th>รายการ</th>
-                                                    <th>ประเภทค่าใช้จ่าย</th>
+                                                    <th>ประเภทรายรับ/รายได้</th>
                                                     <th>จำนวนรายการ</th>
                                                     <th>หน่วยนับ</th>
                                                     <th>จำนวนเงิน</th>
@@ -75,7 +75,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>เดือน</th>
                                                     <th>ปี</th>
                                                     <th>รายการ</th>
-                                                    <th>ประเภทค่าใช้จ่าย</th>
+                                                    <th>ประเภทรายรับ/รายได้</th>
                                                     <th>จำนวนรายการ</th>
                                                     <th>หน่วยนับ</th>
                                                     <th>จำนวนเงิน</th>
@@ -105,13 +105,13 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <div class="modal-body">
                                                             <div class="form-group row">
                                                                 <div class="col-sm-4">
-                                                                    <label for="expense_date"
+                                                                    <label for="reciept_date"
                                                                            class="control-label">วันที่ทำรายการ</label>
                                                                     <i class="fa fa-calendar"
                                                                        aria-hidden="true"></i>
                                                                     <input type="text" class="form-control"
-                                                                           id="expense_date"
-                                                                           name="expense_date"
+                                                                           id="reciept_date"
+                                                                           name="reciept_date"
                                                                            value="<?php echo $curr_date ?>"
                                                                            required="required"
                                                                            readonly="true"
@@ -120,7 +120,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
                                                                 <div class="col-sm-8">
                                                                     <label for="description"
-                                                                           class="control-label">รายการค่าใช้จ่าย</label>
+                                                                           class="control-label">รายการรายรับ/รายได้</label>
                                                                     <input list="descriptionList" type="text" class="form-control"
                                                                            id="description" name="description" required="required" placeholder="">
                                                                     <datalist id="descriptionList">
@@ -141,7 +141,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                        name="category_id">
                                                                 <div class="col-sm-10">
                                                                     <label for="category_name"
-                                                                           class="control-label">ประเภทค่าใช้จ่าย</label>
+                                                                           class="control-label">ประเภทรายรับ/รายได้</label>
                                                                     <input type="text" class="form-control"
                                                                            id="category_name"
                                                                            name="category_name"
@@ -207,12 +207,13 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                            placeholder="">
                                                                 </div>
 
-                                                                <div class="col-sm-6">
+                                                                <input type="hidden" class="form-control" id="inv"
+                                                                       name="inv" value="-">
+
+                                                                <!--div class="col-sm-6">
                                                                     <label for="inv" class="control-label">หมายเลขใบเสร็จฯ
                                                                         / Invoice</label>
-                                                                    <input type="text" class="form-control" id="inv"
-                                                                           name="inv" placeholder="">
-                                                                </div>
+                                                                </div-->
                                                             </div>
 
                                                             <div class="form-group">
@@ -299,14 +300,14 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <thead>
                                                                 <tr>
                                                                     <th>รหัส</th>
-                                                                    <th>ประเภทค่าใช้จ่าย</th>
+                                                                    <th>ประเภทรายรับ/รายได้</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tfoot>
                                                                 <tr>
                                                                     <th>รหัส</th>
-                                                                    <th>ประเภทค่าใช้จ่าย</th>
+                                                                    <th>ประเภทรายรับ/รายได้</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </tfoot>
@@ -487,6 +488,28 @@ if (strlen($_SESSION['alogin']) == "") {
     </script>
 
     <script>
+
+        $("#reciept_date").blur(function () {
+            let method = $('#action').val();
+            if (method === "ADD") {
+                let reciept_date = $('#reciept_date').val();
+                let formData = {action: "SEARCH", reciept_date: reciept_date};
+                $.ajax({
+                    url: 'model/manage_reciepts_process.php',
+                    method: "POST",
+                    data: formData,
+                    success: function (data) {
+                        if (data == 2) {
+                            alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
+                        }
+                    }
+                })
+            }
+        });
+
+    </script>
+
+    <script>
         $(document).ready(function () {
             let formDataObj = {action: "GET_EXPENSE", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
@@ -510,14 +533,14 @@ if (strlen($_SESSION['alogin']) == "") {
                     echo "'scrollX': true,";
                 }?>
                 'ajax': {
-                    'url': 'model/manage_expense_process.php',
+                    'url': 'model/manage_reciepts_process.php',
                     'data': formDataObj
                 },
                 'columns': [
                     {data: 'doc_id'},
-                    {data: 'expense_date'},
+                    {data: 'reciept_date'},
                     {data: 'month_name'},
-                    {data: 'exp_year'},
+                    {data: 'rec_year'},
                     {data: 'description'},
                     {data: 'category_name'},
                     {data: 'qty', className: 'text-right'},
@@ -557,7 +580,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 formData.set('existing_files', existingFiles.join(','));
 
                 $.ajax({
-                    url: 'model/manage_expense_process.php',
+                    url: 'model/manage_reciepts_process.php',
                     method: "POST",
                     data: formData,
                     contentType: false,
@@ -591,7 +614,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
                 $('#recordModal').modal('show');
                 $('#id').val("");
-                $('#expense_date').val(formattedDate);
+                $('#reciept_date').val(formattedDate);
                 $('#description').val("");
                 $('#category_id').val("");
                 $('#category_name').val("");
@@ -622,14 +645,14 @@ if (strlen($_SESSION['alogin']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_expense_process.php',
+                url: 'model/manage_reciepts_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
                     let len = response.length;
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
-                        let expense_date = response[i].expense_date;
+                        let reciept_date = response[i].reciept_date;
                         let description = response[i].description;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
@@ -686,7 +709,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
-                        $('#expense_date').val(expense_date);
+                        $('#reciept_date').val(reciept_date);
                         $('#description').val(description);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);
@@ -718,14 +741,14 @@ if (strlen($_SESSION['alogin']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_expense_process.php',
+                url: 'model/manage_reciepts_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
                     let len = response.length;
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
-                        let expense_date = response[i].expense_date;
+                        let reciept_date = response[i].reciept_date;
                         let description = response[i].description;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
@@ -782,7 +805,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
-                        $('#expense_date').val(expense_date);
+                        $('#reciept_date').val(reciept_date);
                         $('#description').val(description);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);
@@ -808,7 +831,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script>
         $(document).ready(function () {
-            $('#expense_date').datepicker({
+            $('#reciept_date').datepicker({
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
                 language: "th",

@@ -118,10 +118,9 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $searchQuery = " ";
 
     if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number AND payment_status_desc LIKE :payment_status_desc) ";
+        $searchQuery = " AND (house_number LIKE :house_number) ";
         $searchArray = array(
-            'house_number' => "%$searchValue%",
-            'payment_status_desc' => "%$searchValue%"
+            'house_number' => "%$searchValue%"
         );
 
         // รวมข้อมูลทั้ง searchQuery และ searchArray
