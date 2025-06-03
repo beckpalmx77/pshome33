@@ -34,7 +34,7 @@ $("#TableBrandList").on('click', '.select', function () {
     let data = this.id.split('@');
     $('#brand_id').val(data[0]);
     $('#brand_name').val(data[1]);
-    $('#Search-Brand-Modal').modal('hide');
+    $('#Search-BRAND-Modal').modal('hide');
 });
 
 

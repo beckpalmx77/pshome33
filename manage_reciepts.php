@@ -946,17 +946,12 @@ if (strlen($_SESSION['alogin']) == "") {
 
 
     <script>
-
         $("#TableRecordList").on('click', '.print', function () {
             let id = $(this).attr("id");
-            alert("id = " + id);
-
-            //print_reciept_pdf.php
-
+            let url = "print_reciept_pdf.php?id=" + encodeURIComponent(id);
+            window.open(url, "_blank"); // เปิดหน้าใหม่
         });
-
     </script>
-
 
     </body>
     </html>

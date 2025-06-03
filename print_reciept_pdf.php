@@ -17,13 +17,13 @@ $stmt->execute();
 $company = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // ดึงข้อมูลใบเสร็จ
-$stmt = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE id = :id");
+$stmt = $conn->prepare("SELECT * FROM v_ims_reciepts WHERE id = :id");
 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 $receipt = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // ดึงรายการ
-$stmt_items = $conn->prepare("SELECT * FROM v_ims_house_payment WHERE id = :id");
+$stmt_items = $conn->prepare("SELECT * FROM v_ims_reciepts WHERE id = :id");
 $stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt_items->execute();
 $items = $stmt_items->fetchAll(PDO::FETCH_ASSOC);
@@ -88,7 +88,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         <tr>
             <!--td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code'] . '<br><b>โทร:</b> ' . $company['phone'] . '</td-->
             <td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code']  . '</td>
-            <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['payment_date'])) . '</td>
+            <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['reciept_date'])) . '</td>
         </tr>
     </table>';
 
@@ -101,13 +101,10 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         </tr>';
 
     foreach ($items as $index => $item) {
-        $period_month = $receipt['month_name_start'] == $receipt['month_name_to']
-            ? $receipt['month_name_start']
-            : $receipt['month_name_start'] . " - " . $receipt['month_name_to'];
 
         $html .= '<tr>
-            <td align="center">' . ($index + 1) . '</td>
-            <td><b>ค่าส่วนกลาง งวดเดือน </b> ' . $period_month . ' ' . $receipt['period_year'] . '</td>
+            <td align="center">' . ($index + 1) . '</td>            
+            <td>' . $item['description'] . '</td>
             <td align="right">1</td>
             <td align="right">' . number_format($item['amount'], 2) . '</td>
         </tr>';
@@ -126,7 +123,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 
     $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="margin-top:20px; margin-bottom:20px; font-size:12pt;">
 <tr>
-    <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . $receipt['detail'] . ')</td>
+    <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . $receipt['supplier_name'] . ')</td>
     <td align="center">
         <b>ผู้รับเงิน</b><br>
         ' . $signature_img . '<br>
@@ -155,6 +152,7 @@ $html .= generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 $pdf->writeHTML($html, true, false, false, false, '');
 
 // อัปเดตสถานะการพิมพ์
+/*
 $print_status = $receipt['print_status'];
 if ($print_status == 'N') {
     $stmt_items = $conn->prepare("UPDATE ims_house_payment 
@@ -167,6 +165,7 @@ if ($print_status == 'N') {
 }
 $stmt_items->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt_items->execute();
+*/
 
 // สร้างชื่อไฟล์
 $filename = 'receipt_' . $receipt['doc_id'] . '_' . date('Ymd_His') . '.pdf';
