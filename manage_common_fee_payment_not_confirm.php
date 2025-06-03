@@ -423,7 +423,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'serverMethod': 'post',
                 'scrollX': true,
                 'ajax': {
-                    'url': 'model/manage_common_fee_payment_process.php',
+                    'url': 'model/manage_common_fee_payment_not_confirm_process.php',
                     'type': 'POST',
                     'data': function (d) {
                         d.action = 'GET_COMMON_FEE';
@@ -478,7 +478,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                 // ส่งข้อมูลผ่าน AJAX
                 $.ajax({
-                    url: 'model/manage_common_fee_payment_process.php',
+                    url: 'model/manage_common_fee_payment_not_confirm_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -504,7 +504,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
             $.ajax({
                 type: "POST",
-                url: 'model/manage_common_fee_payment_process.php',
+                url: 'model/manage_common_fee_payment_not_confirm_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -679,7 +679,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         $("#confirmDeleteBtn").on("click", function () {
             if (deleteId) {
                 $.ajax({
-                    url: "model/manage_common_fee_payment_process.php",
+                    url: "model/manage_common_fee_payment_not_confirm_process.php",
                     method: "POST",
                     data: {id: deleteId, action: "DELETE"},
                     success: function (response) {

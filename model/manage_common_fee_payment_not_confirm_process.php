@@ -149,7 +149,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 */
 
 ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $where_house_number;
+    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' " . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
     $records = $stmt->fetch();
@@ -164,7 +164,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
 ## Total number of records with filtering
 
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
+    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' " . $searchQuery . $where_house_number;
 
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute($searchArray);
@@ -179,7 +179,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 */
 
 ## Fetch records
-    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number
+    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE payment_status = 'N' " . $searchQuery . $where_house_number
         . " ORDER BY id DESC " . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
