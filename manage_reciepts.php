@@ -597,6 +597,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#recordModal').modal('show');
                 $('#id').val("");
                 $('#reciept_date').val(formattedDate);
+                $('#supplier_name').val("");
                 $('#description').val("");
                 $('#category_id').val("");
                 $('#category_name').val("");
@@ -635,6 +636,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
                         let reciept_date = response[i].reciept_date;
+                        let supplier_name = response[i].supplier_name;
                         let description = response[i].description;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
@@ -646,7 +648,6 @@ if (strlen($_SESSION['alogin']) == "") {
                         let remark = response[i].remark;
                         let approve_status = response[i].approve_status;
                         let file_attach = response[i].file_attach;
-
                         let fileHTML = "";
                         let fileList = [];
 
@@ -687,11 +688,10 @@ if (strlen($_SESSION['alogin']) == "") {
 
 // เก็บชื่อไฟล์ใน hidden input เพื่อส่งกลับ PHP ตอน update
                         $("#existing_files").val(fileList.join(","));
-
-
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#reciept_date').val(reciept_date);
+                        $('#supplier_name').val(supplier_name);
                         $('#description').val(description);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);
@@ -731,6 +731,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
                         let reciept_date = response[i].reciept_date;
+                        let supplier_name = response[i].supplier_name;
                         let description = response[i].description;
                         let category_id = response[i].category_id;
                         let category_name = response[i].category_name;
@@ -784,10 +785,10 @@ if (strlen($_SESSION['alogin']) == "") {
 // เก็บชื่อไฟล์ใน hidden input เพื่อส่งกลับ PHP ตอน update
                         $("#existing_files").val(fileList.join(","));
 
-
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#reciept_date').val(reciept_date);
+                        $('#supplier_name').val(supplier_name);
                         $('#description').val(description);
                         $('#category_id').val(category_id);
                         $('#category_name').val(category_name);

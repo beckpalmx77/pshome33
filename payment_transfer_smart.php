@@ -152,7 +152,7 @@ foreach ($BankCurr as $row_curr) {
                                             <div class="col-md-6">
                                                 <!-- ชื่อผู้โอน -->
                                                 <div class="form-group has-success">
-                                                    <label for="detail" class="control-label">ชื่อผู้โอน</label>
+                                                    <label for="detail" class="control-label">ชื่อผู้ชำระ</label>
                                                     <input type="text" name="detail" class="form-control" required
                                                            id="detail">
                                                     <input type="hidden" id="line_user_id" name="line_user_id"
@@ -179,9 +179,9 @@ foreach ($BankCurr as $row_curr) {
                                                 <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="amount"
-                                                           class="control-label">จำนวนเงินที่โอน (บาท)</label>
+                                                           class="control-label">จำนวนเงินที่ชำระ (บาท)</label>
                                                     <input type="number" name="amount" class="form-control"
-                                                           required id="amount">
+                                                           required id="amount" readonly="true">
                                                 </div>
                                             </div>
                                         </div>
@@ -735,8 +735,10 @@ foreach ($BankCurr as $row_curr) {
                 const commonFee = parseFloat(commonFeeInput.value) || 0;
                 const total = months * commonFee;
                 amountInput.value = total.toFixed(2);
+                amountInput.readOnly = true; // ทำให้ amount เป็น readonly
             } else {
                 amountInput.value = '';
+                amountInput.readOnly = false; // ยกเลิก readonly หากไม่ได้เลือก monthly
             }
         }
 

@@ -213,7 +213,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <div class="form-group has-success">
                                                         <label for="amount"
                                                                class="control-label">จำนวนเงินที่โอน</label>
-                                                        <input type="number" name="amount" class="form-control"
+                                                        <input type="number" id = "amount" name="amount" class="form-control"
                                                                required id="amount">
                                                     </div>
                                                 </div>
@@ -430,17 +430,17 @@ if (strlen($_SESSION['alogin']) === "") {
                     if (!isNaN(startMonth) && !isNaN(paymentMonths)) {
                         let endMonth = startMonth + paymentMonths - 1;
                         if (endMonth > 12) {
-                            endMonth = endMonth % 12;
-                            if (endMonth === 0) endMonth = 12;
+                            endMonth = ((endMonth - 1) % 12) + 1;
                         }
                         $("#period_month_to").val(endMonth);
                     }
+                } else {
+                    $("#period_month_to").val('');
                 }
             }
 
-            $("#payment_type, #period_month_start").on("input change", updatePeriodMonthTo);
+            $("#payment_type, #period_month_start, #option_monthly").on("input change", updatePeriodMonthTo);
         });
-
     </script>
 
     <script>
@@ -488,7 +488,35 @@ if (strlen($_SESSION['alogin']) === "") {
         });
     </script>
 
+    <script>
+        $(document).ready(function () {
+            function calculateAmount() {
+                const commonFee = parseFloat($("#common_fee").val()) || 0;
+                const months = parseInt($("#payment_type").val()) || 0;
+                const isMonthly = $("#option_monthly").is(":checked");
 
+                if (isMonthly) {
+                    $("#amount").prop("readonly", true);
+                } else {
+                    $("#amount").prop("readonly", false);
+                }
+
+                if (commonFee > 0 && months > 0) {
+                    const amount = commonFee * months;
+                    $("#amount").val(amount.toFixed(2));
+                } else {
+                    $("#amount").val('');
+                }
+            }
+
+            // เรียกใช้เมื่อข้อมูลเปลี่ยน
+            $("#common_fee, #payment_type").on("input change", calculateAmount);
+            $("input[name='payment_option']").on("change", calculateAmount);
+
+            // เรียกทันทีเมื่อโหลดหน้า
+            calculateAmount();
+        });
+    </script>
 
     </body>
     </html>

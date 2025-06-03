@@ -159,7 +159,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                id="month_name_to"
                                                                                name="month_name_to"
                                                                                required="required"
-                                                                               readonly="true"
                                                                                placeholder="">
                                                                     </div>
                                                                     <div class="col-sm-4">
@@ -169,7 +168,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                id="period_year"
                                                                                name="period_year"
                                                                                required="required"
-                                                                               readonly="true"
                                                                                placeholder="">
                                                                     </div>
                                                                 </div>

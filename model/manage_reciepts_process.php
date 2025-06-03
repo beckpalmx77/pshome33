@@ -26,6 +26,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "inv" => $result['inv'],
             "category_id" => $result['category_id'],
             "category_name" => $result['category_name'],
+            "supplier_name" => $result['supplier_name'],
             "description" => $result['description'],
             "qty" => $result['qty'],
             "unit_id" => $result['unit_id'],
@@ -63,6 +64,7 @@ if ($_POST["action"] === 'ADD') {
         $rec_month = substr($_POST["reciept_date"], 3, 2);
         $rec_year = substr($_POST["reciept_date"], 6, 4);
         $category_id = $_POST["category_id"];
+        $supplier_name = $_POST["supplier_name"];
         $description = $_POST["description"];
         $approve_status = $_POST["approve_status"];
         $qty = $_POST["qty"];
@@ -109,8 +111,8 @@ if ($_POST["action"] === 'ADD') {
 
         $file_attach = implode(',', $file_names);
 
-        $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach)
-                VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach)";
+        $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name)
+                VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name)";
         $query = $conn->prepare($sql);
         $query->bindParam(':runno', $runno, PDO::PARAM_STR);
         $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
@@ -125,6 +127,7 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':remark', $remark, PDO::PARAM_STR);
         $query->bindParam(':inv', $inv, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
+        $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
 
         $query->execute();
         $lastInsertId = $conn->lastInsertId();
@@ -142,6 +145,7 @@ if ($_POST["action"] === 'UPDATE') {
         $rec_month = substr($reciept_date, 3, 2);
         $rec_year = substr($reciept_date, 6, 4);
         $category_id = $_POST["category_id"];
+        $supplier_name = $_POST["supplier_name"];
         $description = $_POST["description"];
         $approve_status = $_POST["approve_status"];
         $qty = $_POST["qty"];
@@ -223,7 +227,8 @@ if ($_POST["action"] === 'UPDATE') {
                 remark = :remark,
                 approve_status = :approve_status,
                 inv = :inv,
-                file_attach = :file_attach
+                file_attach = :file_attach,
+                supplier_name = :supplier_name
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
@@ -239,6 +244,7 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':approve_status', $approve_status);
         $query->bindParam(':inv', $inv);
         $query->bindParam(':file_attach', $finalFileAttach);
+        $query->bindParam(':supplier_name', $supplier_name);
         $query->bindParam(':id', $id);
         $query->execute();
 
@@ -330,6 +336,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
                 "rec_year" => $row['rec_year'],
                 "category_id" => $row['category_id'],
                 "category_name" => $row['category_name'],
+                "supplier_name" => $row['supplier_name'],
                 "description" => $row['description'],
                 "qty" => $row['qty'],
                 "unit_id" => $row['unit_id'],
