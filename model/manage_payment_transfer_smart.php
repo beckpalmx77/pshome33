@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $displayName = $_POST['displayName'];
     $picture_payment = $_FILES['picture_payment'];
 
-    $payment_method = "โอนเงิน-OA";
+    $payment_method = "โอนเงิน";
 
     $field = "runno";
     $table = "ims_house_payment";

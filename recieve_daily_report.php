@@ -94,7 +94,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                         <select class="form-control"
                                                                                 name="payment_method"
                                                                                 id="payment_method" required>
-                                                                            <option selected value="cash">เงินสด</option>
+                                                                            <option selected value="cash">เงินสด
+                                                                            </option>
                                                                             <option value="bank">เงินโอน</option>
                                                                             <option value="all">ทั้งหมด</option>
                                                                         </select>
