@@ -169,13 +169,17 @@ function exportToCSV($data, $start_date, $end_date)
 
             <!-- ปุ่ม Export Excel -->
             <form method="post" style="display: inline-block;">
-                <input type="hidden" name="doc_date_start" value="<?php echo htmlentities($start_date); ?>">
-                <input type="hidden" name="doc_date_to" value="<?php echo htmlentities($end_date); ?>">
-                <input type="hidden" name="payment_method"
+                <input type="hidden" name="doc_date_start" id="doc_date_start" value="<?php echo htmlentities($start_date); ?>">
+                <input type="hidden" name="doc_date_to" id = "doc_date_to" value="<?php echo htmlentities($end_date); ?>">
+                <input type="hidden" name="payment_method" id="payment_method"
                        value="<?php echo isset($_POST["payment_method"]) ? htmlentities($_POST["payment_method"]) : 'all'; ?>">
                 <input type="hidden" name="export" value="1"/>
                 <button type="submit" class="btn btn-success mb-3">
                     <i class="fa fa-file-excel-o"></i> Export Excel
+                </button>
+                <button type="button" class="btn btn-primary mb-3"
+                        onclick="openPrintWindow()">
+                    <i class="fa fa-print"></i> Print
                 </button>
             </form>
 
@@ -266,22 +270,6 @@ function exportToCSV($data, $start_date, $end_date)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-<!--script>
-    $(document).ready(function () {
-        $('#PaymentTable').DataTable({
-            responsive: true,
-            scrollX: true,
-            pageLength: 25,
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "ทั้งหมด"]],
-            language: {
-                url: "//cdn.datatables.net/plug-ins/1.13.5/i18n/th.json"
-            },
-            order: [[1, "asc"]],
-            autoWidth: false
-        });
-    });
-</script-->
-
 <script>
     $(document).ready(function () {
         $('#PaymentTable').DataTable({
@@ -328,7 +316,16 @@ function exportToCSV($data, $start_date, $end_date)
     });
 </script>
 
+<script>
+    function openPrintWindow() {
+        const startDate = document.querySelector('input[name="doc_date_start"]').value;
+        const endDate = document.querySelector('input[name="doc_date_to"]').value;
+        const paymentMethod = document.querySelector('input[name="payment_method"]').value;
 
+        const url = `receipt_pdf_out?doc_date_start=${encodeURIComponent(startDate)}&doc_date_to=${encodeURIComponent(endDate)}&payment_method=${encodeURIComponent(paymentMethod)}`;
+        window.open(url, '_blank');
+    }
+</script>
 
 </body>
 </html>
