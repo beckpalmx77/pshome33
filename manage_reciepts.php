@@ -391,7 +391,6 @@ if (strlen($_SESSION['alogin']) == "") {
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
     <style>
-
         .icon-input-btn {
             display: inline-block;
             position: relative;
