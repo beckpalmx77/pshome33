@@ -599,10 +599,10 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#reciept_date').val(formattedDate);
                 $('#supplier_name').val("");
                 $('#description').val("");
-                $('#category_id').val("");
-                $('#category_name').val("");
-                $('#unit_id').val("");
-                $('#unit_name').val("");
+                $('#category_id').val("T012");
+                $('#category_name').val("รายรับ");
+                $('#unit_id').val("U001");
+                $('#unit_name').val("รายการ");
                 $('#remark').val("");
                 $('#inv').val("");
                 $('#qty').val("");
