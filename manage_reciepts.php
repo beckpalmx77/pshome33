@@ -140,7 +140,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <div class="form-group row">
                                                                 <input type="hidden" class="form-control"
                                                                        id="category_id"
-                                                                       name="category_id">
+                                                                       name="category_id" value="T012">
                                                                 <div class="col-sm-4">
                                                                     <label for="category_name"
                                                                            class="control-label">ประเภทรายรับ/รายได้</label>
@@ -148,7 +148,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                            id="category_name"
                                                                            name="category_name"
                                                                            required="required"
-                                                                           readonly="true"
+                                                                           readonly="true" value="รายรับ"
                                                                            placeholder="">
                                                                 </div>
 
