@@ -20,7 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $picture_payment = $_FILES['picture_payment'];
     $payment_method = $_POST['payment_method'];
 
-    $create_by = $_SESSION['username'];
+    //$create_by = $_SESSION['username'];
+
+    $create_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
 
     // ตรวจสอบค่า amount ว่าเป็นตัวเลขหรือไม่
     if (!is_numeric($amount) || $amount <= 0) {

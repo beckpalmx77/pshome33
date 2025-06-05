@@ -106,16 +106,18 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 
         $html .= '<tr>
             <td align="center">' . ($index + 1) . '</td>
-            <td><b>ค่าส่วนกลาง บ้านเลขที่ ' . $receipt['house_number'] . ' งวดเดือน </b> ' . $period_month . ' ' . $receipt['period_year'] . '</td>
+            <td><b>ค่าส่วนกลาง บ้านเลขที่ ' . $receipt['house_number'] . ' งวดเดือน </b> ' . $period_month . ' ' . $receipt['period_year'] . ' </td>
+
             <td align="right">1</td>
             <td align="right">' . number_format($item['amount'], 2) . '</td>
         </tr>';
     }
 
     $html .= '<tr>
-        <td colspan="3" align="right"><b>รวมทั้งสิ้น:</b></td>
-        <td align="right"><b>' . number_format($total, 2) . '</b></td>
-    </tr>';
+    <td colspan="2" align="left"><b>วิธีการชำระเงิน : ' . $receipt['payment_method'] . '</b></td>
+    <td align="right"><b>รวมทั้งสิ้น:</b></td>
+    <td align="right"><b>' . number_format($total, 2) . '</b></td>
+</tr>';
 
     $html .= '<tr>
         <td colspan="4" align="right"><i>( ' . $thai_text_total . ' )</i></td>

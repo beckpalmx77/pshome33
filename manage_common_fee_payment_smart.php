@@ -590,7 +590,7 @@ include('includes/Footer.php');
 <script>
     $("#TableRecordList").on('click', '.print', function () {
         let id = $(this).attr("id");
-        let url = "print_pdf_smart.php?id=" + encodeURIComponent(id);
+        let url = "print_pdf_smart?id=" + encodeURIComponent(id);
         window.open(url, "_blank"); // เปิดหน้าใหม่
     });
 </script>

@@ -55,6 +55,8 @@ if ($_POST["action"] === 'UPDATE') {
         $id = $_POST["id"];
         $payment_status = ($_POST["payment_status"] === "Y") ? "Y" : "N";
 
+        $approve_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
+
         $sql_find = "SELECT COUNT(*) FROM ims_house_payment WHERE id = :id";
         $stmt = $conn->prepare($sql_find);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -62,9 +64,12 @@ if ($_POST["action"] === 'UPDATE') {
         $nRows = $stmt->fetchColumn();
 
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_house_payment SET payment_status = :payment_status WHERE id = :id";
+            $sql_update = "UPDATE ims_house_payment SET payment_status = :payment_status 
+            , approve_by = :approve_by
+            WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':payment_status', $payment_status, PDO::PARAM_STR);
+            $query->bindParam(':approve_by', $approve_by, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
             echo $save_success;
