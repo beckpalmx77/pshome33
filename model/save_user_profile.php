@@ -11,8 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $detail = $f_name . " " . $l_name;
 
     $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
-    fwrite($myfile, $pictureUrl  . " 1| " . $f_name . " 2| " . $l_name
-    . " 3| " . $line_phone . " 4| " . $detail . " 5| " . $displayName . " 6| " . $userId );
+    fwrite($myfile, $pictureUrl . " 1| " . $f_name . " 2| " . $l_name
+        . " 3| " . $line_phone . " 4| " . $detail . " 5| " . $displayName . " 6| " . $userId);
     fclose($myfile);
 
     if (!empty($userId)) {
@@ -22,38 +22,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->execute();
         $exists = $stmt->fetchColumn();
 
-        if ($exists) {
-            $sql = "UPDATE ims_house_line_user SET line_user_name = :displayName, line_picture_profile = :pictureUrl
+
+        $sql1 = "UPDATE ims_house_line_user SET line_user_name = :displayName, line_picture_profile = :pictureUrl
                     ,f_name = :f_name ,l_name = :l_name     
                     WHERE line_user_id = :userId";
-        }
 
-        $stmt = $conn->prepare($sql);
+
+        $stmt = $conn->prepare($sql1);
         $stmt->bindParam(':displayName', $displayName);
         $stmt->bindParam(':pictureUrl', $pictureUrl);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
 
-        if ($exists) {
-            $sql = "UPDATE ims_user SET first_name = :f_name ,last_name = :l_name     
-                    WHERE user_id = :line_phone";
-        }
 
-        $stmt = $conn->prepare($sql);
+        $sql2 = "UPDATE ims_user SET first_name = :f_name ,last_name = :l_name     
+                    WHERE user_id = :line_phone";
+
+
+        $stmt = $conn->prepare($sql2);
         $stmt->bindParam(':f_name', $f_name);
         $stmt->bindParam(':l_name', $l_name);
         $stmt->bindParam(':line_phone', $line_phone);
         $stmt->execute();
 
-        if ($exists) {
-            $sql = "UPDATE ims_house_payment SET line_picture_profile_show = :pictureUrl , detail = :detail WHERE line_user_id = :userId";
-        }
 
-        $stmt = $conn->prepare($sql);
+        $sql3 = "UPDATE ims_house_payment SET line_picture_profile_show = :pictureUrl , detail = :detail WHERE line_user_id = :userId";
+
+        $stmt = $conn->prepare($sql3);
         $stmt->bindParam(':detail', $detail);
         $stmt->bindParam(':pictureUrl', $pictureUrl);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
+
 
         echo 'success';
 
