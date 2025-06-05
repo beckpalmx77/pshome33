@@ -80,7 +80,11 @@
 </div>
 
 <script>
+  let isSubmitting = false; // เพิ่มตัวแปรสถานะ
+
   async function checkin() {
+    if (isSubmitting) return; // ถ้ากำลังส่งข้อมูลอยู่ ให้หยุด
+
     try {
       await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) { liff.login(); return; }
@@ -93,9 +97,11 @@
       if (!photoInput.files.length) return alert("กรุณาเลือกรูปถ่ายก่อน");
       if (!placeNameInput.value.trim()) return alert("กรุณากรอกชื่อสถานที่");
 
+      isSubmitting = true; // ตั้งสถานะว่ากำลังส่ง
+      document.querySelector("button").disabled = true; // ปิดปุ่ม
+
       const placeName = placeNameInput.value;
 
-      // พยายามดึงตำแหน่ง ถ้าไม่ได้ให้ใช้ 0
       navigator.geolocation.getCurrentPosition(
               position => {
                 sendCheckin(profile, check_type.value, placeName, photoInput, position.coords.latitude, position.coords.longitude);
@@ -105,9 +111,10 @@
               },
               { timeout: 10000 }
       );
-
     } catch (err) {
       alert("เกิดข้อผิดพลาด: " + err.message);
+      isSubmitting = false;
+      document.querySelector("button").disabled = false;
     }
   }
 
@@ -135,12 +142,17 @@
               alert("✅ Check-in สำเร็จแล้ว");
               liff.closeWindow();
             })
-            .catch(err => alert("❌ ไม่สามารถ Check-in ได้: " + err.message))
+            .catch(err => {
+              alert("❌ ไม่สามารถ Check-in ได้: " + err.message);
+              isSubmitting = false;
+              document.querySelector("button").disabled = false;
+            })
             .finally(() => {
               document.getElementById("spinner").style.display = "none";
             });
   }
 </script>
+
 
 <script>
   document.addEventListener('contextmenu', event => event.preventDefault());

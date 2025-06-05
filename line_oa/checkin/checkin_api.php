@@ -13,6 +13,19 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
     $lon = $_POST['longitude'];
     $timestamp = date('Y-m-d H:i:s');
 
+    // ตรวจสอบว่ามีการ check-in/check-out แล้วในนาทีนั้นหรือไม่
+    $minuteStart = date('Y-m-d H:i:00', strtotime($timestamp)); // เริ่มต้นของนาที
+    $minuteEnd = date('Y-m-d H:i:59', strtotime($timestamp));   // สิ้นสุดของนาที
+
+    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND check_type = ? AND checkin_time BETWEEN ? AND ?");
+    $checkStmt->execute([$userId, $check_type, $minuteStart, $minuteEnd]);
+    $alreadyChecked = $checkStmt->fetchColumn();
+
+    if ($alreadyChecked > 0) {
+        echo "⚠️ มีการบันทึก{$check_type} แล้วในช่วงเวลานี้";
+        exit;
+    }
+
     $uploadDir = __DIR__ . "/uploads/";
     if (!file_exists($uploadDir)) {
         mkdir($uploadDir, 0777, true);
@@ -63,13 +76,13 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
 
         $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
 
-        // 1. ข้อความธรรมดา
+        // ข้อความธรรมดา
         $textMessage = [
             'type' => 'text',
             'text' => "✅ {$actionText} สำเร็จ\nสถานที่: {$place_name}\nเวลา: {$timestamp}"
         ];
 
-        // 2. Flex Message รูปภาพ
+        // Flex Message รูปภาพ
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
             $imageUrl = "https://ps33.themediathai.com/line_oa/checkin/uploads/" . $photo;
@@ -113,7 +126,6 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
             ]
         ];
 
-        // รวมทั้งข้อความและ Flex message
         $messageData = [
             'to' => $userId,
             'messages' => [
@@ -122,7 +134,7 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
             ]
         ];
 
-        // ส่งไปยัง LINE
+        // ส่งข้อความไปยัง LINE
         $ch = curl_init('https://api.line.me/v2/bot/message/push');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
