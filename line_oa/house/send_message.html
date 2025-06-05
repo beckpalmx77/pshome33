@@ -107,10 +107,16 @@ header('Content-Type: text/html; charset=utf-8');
       }
 
       const profile = await liff.getProfile();
-      const remark = document.getElementById("remark").value;
+      const remark = document.getElementById("remark").value.trim();
       const placeName = document.getElementById("place_name").value;
       const check_type = document.getElementById("check_type").value;
       const photoInput = document.getElementById("photoInput");
+
+      // ✅ ตรวจสอบความยาว remark
+      if (remark.length < 15) {
+        alert("กรุณากรอกรายละเอียดอย่างน้อย 15 ตัวอักษร");
+        return;
+      }
 
       const formData = new FormData();
       formData.append("user_id", profile.userId);
@@ -125,12 +131,12 @@ header('Content-Type: text/html; charset=utf-8');
 
       document.getElementById("spinner").style.display = "block";
 
-      // ส่งข้อมูลทันที ไม่แนบพิกัด
       submitForm(formData, profile, remark);
     } catch (err) {
       alert("เกิดข้อผิดพลาด: " + err.message);
     }
   }
+
 
   function submitForm(formData, profile, remark) {
     fetch("https://ps33.themediathai.com/line_oa/house/send_message_api.php", {
