@@ -45,7 +45,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <div class="panel">
                                                     <div class="panel-body">
 
-                                                        <form id="from_data" method="post" action=""
+                                                        <form id="from_data" name="from_data" method="post" action=""
                                                               enctype="multipart/form-data">
                                                             <div class="modal-body">
                                                                 <h5 class="modal-title"><?php echo urldecode($_GET['s']) ?></h5>
@@ -88,12 +88,10 @@ if (strlen($_SESSION['alogin']) == "") {
 
                                                                 <!-- วิธีชำระเงิน -->
                                                                 <div class="form-group row mb-3">
-                                                                    <label for="payment_method"
-                                                                           class="col-sm-2 col-form-label text-end">วิธีชำระเงิน:</label>
+                                                                    <input type="hidden" id="payment_method" name="payment_method" value="">
+                                                                    <label for="payment_method_option" class="col-sm-2 col-form-label text-end">วิธีชำระเงิน:</label>
                                                                     <div class="col-sm-4">
-                                                                        <select class="form-control"
-                                                                                name="payment_method"
-                                                                                id="payment_method" required>
+                                                                        <select class="form-control" name="payment_method_option" id="payment_method_option" required>
                                                                             <option selected value="cash">เงินสด</option>
                                                                             <option value="bank">เงินโอน</option>
                                                                             <option value="all">ทั้งหมด</option>
@@ -268,9 +266,10 @@ if (strlen($_SESSION['alogin']) == "") {
             // ดึงค่าทั้งหมดจากฟอร์ม
             let formData = new FormData(document.forms['from_data']);
 
-            // แสดงค่าที่จะถูกส่งไปใน Console
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
+            let output = '';
+
+            for (let [key, value] of formData.entries()) {
+                output += key + ": " + value + "\n";
             }
 
             // ตั้งค่าการส่งแบบฟอร์ม
@@ -281,10 +280,25 @@ if (strlen($_SESSION['alogin']) == "") {
             // ซ่อน loader หลังจากการส่ง
             setTimeout(function () {
                 document.getElementById('spinner').style.display = 'none';
-            }, 4000); // ปรับเวลาตามต้องการ
+            }, 3000); // ปรับเวลาตามต้องการ
 
             return true;
         }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectPayment = document.getElementById('payment_method_option');
+            const hiddenPayment = document.getElementById('payment_method');
+
+            // ตั้งค่าเริ่มต้นตอนโหลดหน้า (ให้ตรงกับค่า selected ใน select)
+            hiddenPayment.value = selectPayment.value;
+
+            // เมื่อมีการเปลี่ยนแปลงใน select
+            selectPayment.addEventListener('change', function() {
+                hiddenPayment.value = this.value;
+            });
+        });
     </script>
 
 

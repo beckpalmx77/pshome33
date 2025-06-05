@@ -15,7 +15,7 @@ if (isset($_POST["payment_method"])) {
     if ($pm === "cash") {
         $payment_method_sql = " AND payment_method = 'เงินสด' ";
     } elseif ($pm === "bank") {
-        $payment_method_sql = " AND payment_method = 'เงินโอน' ";
+        $payment_method_sql = " AND payment_method = 'โอนเงิน' ";
     } elseif ($pm === "all") {
         // ไม่ต้องเพิ่มเงื่อนไข
         $payment_method_sql = "";
@@ -34,6 +34,7 @@ function fetchPaymentData($conn, $table, $start_date, $end_date, $payment_method
         AND STR_TO_DATE(:end_date, '%d-%m-%Y')
     ORDER BY STR_TO_DATE(payment_date, '%d-%m-%Y');
     ";
+
     $query = $conn->prepare($sql);
     $query->bindParam(':start_date', $start_date);
     $query->bindParam(':end_date', $end_date);
@@ -59,7 +60,7 @@ function exportToCSV($data, $start_date, $end_date)
     $output = fopen('php://output', 'w');
 
     // Header
-    fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'สถานะ', 'หมายเหตุ']);
+    fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'สถานะ', 'วิธีชำระ']);
 
     $sum_amount = 0; // ตัวแปรเก็บยอดรวม
 
@@ -83,7 +84,7 @@ function exportToCSV($data, $start_date, $end_date)
             $row->payment_type,
             number_format($amount, 2), // รูปแบบ 2 ตำแหน่งทศนิยม
             $payment_status_desc,
-            $row->remark
+            $row->payment_method
         ]);
     }
 
@@ -202,7 +203,7 @@ function exportToCSV($data, $start_date, $end_date)
                     <th>จำนวนงวด</th>
                     <th>จำนวนเงินที่ชำระ</th>
                     <th>สถานะ</th>
-                    <th>หมายเหตุ</th>
+                    <th>วิธีชำระ</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -233,7 +234,7 @@ function exportToCSV($data, $start_date, $end_date)
                         <td><?php echo htmlentities($row_house_payment->payment_type); ?></td>
                         <td><?php echo htmlentities($row_house_payment->amount); ?></td>
                         <td><?php echo $payment_status_desc; ?></td>
-                        <td><?php echo htmlentities($row_house_payment->remark); ?></td>
+                        <td><?php echo htmlentities($row_house_payment->payment_method); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

@@ -111,15 +111,15 @@ if (strlen($_SESSION['alogin']) === "") {
                                                         <label class="control-label">ตัวเลือกการชำระ</label>
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio"
-                                                                   name="payment_option" id="option_monthly"
-                                                                   value="monthly" checked>
-                                                            <label class="form-check-label" for="option_monthly">ชำระรายเดือน</label>
+                                                                   name="payment_option" id="option_yearly"
+                                                                   value="yearly" checked>
+                                                            <label class="form-check-label" for="option_yearly">ชำระรายปี</label>
                                                         </div>
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio"
-                                                                   name="payment_option" id="option_yearly"
-                                                                   value="yearly">
-                                                            <label class="form-check-label" for="option_yearly">ชำระรายปี</label>
+                                                                   name="payment_option" id="option_monthly"
+                                                                   value="monthly">
+                                                            <label class="form-check-label" for="option_monthly">ชำระรายเดือน</label>
                                                         </div>
                                                     </div>
                                                 </div>
