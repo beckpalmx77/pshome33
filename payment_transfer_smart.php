@@ -181,7 +181,7 @@ foreach ($BankCurr as $row_curr) {
                                                     <label for="amount"
                                                            class="control-label">จำนวนเงินที่ชำระ (บาท)</label>
                                                     <input type="number" name="amount" class="form-control"
-                                                           required id="amount" readonly="true">
+                                                           required id="amount">
                                                 </div>
                                             </div>
                                         </div>
@@ -203,16 +203,6 @@ foreach ($BankCurr as $row_curr) {
                                         <input name="bank_account_no" class="form-control" id="bank_account_no"
                                                value="<?php echo $bank_account_no ?>" readonly="true">
                                     </div>
-
-                                    <!-- แนบ Slip/ใบโอนเงิน/ใบเสร็จ -->
-                                    <!--div class="form-group has-success">
-                                        <label for="picture_payment" class="control-label">แนบ
-                                            Slip/ใบโอนเงิน/ใบเสร็จ</label>
-                                        <input type="file" name="picture_payment" class="form-control"
-                                               required id="picture_payment">
-                                        <img id="preview_image" src="#" alt="Preview Image"
-                                             style="display: none; margin-top: 10px; max-width: 300px;"/>
-                                    </div-->
 
                                     <div class="mb-3">
                                         <label for="picture_payment">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
@@ -361,110 +351,6 @@ foreach ($BankCurr as $row_curr) {
     }
 </style>
 
-
-<!--script>
-    $(document).ready(function () {
-
-        // Submit Form with Loading Indicator
-        $("#transfer_form").on("submit", function (event) {
-            event.preventDefault();
-            // ตรวจสอบว่า period_month_start <= period_month_to หรือไม่
-            let period_month_start = parseInt($("#period_month_start").val());
-            let period_month_to = parseInt($("#period_month_to").val());
-            let period_year = parseInt($("#period_year").val());
-
-            let amount = $("#amount").val();
-            let house_number = $("#house_number").val();
-
-            let period_month_start_name = monthNames[period_month_start];
-            let period_month_to_name = monthNames[period_month_to];
-
-
-            function padZero(n) {
-                return n < 10 ? '0' + n : n;
-            }
-
-            let date = new Date();
-            let current_date = padZero(date.getDate()) + "-" + padZero(date.getMonth() + 1) + "-" + date.getFullYear();
-            let current_time = padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
-            let date_time = current_date + " " + current_time;
-
-            if (period_month_start > period_month_to) {
-                alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง (เริ่มต้นต้องน้อยกว่าหรือเท่ากับสิ้นสุด)");
-                return;  // หยุดการบันทึกข้อมูล
-            }
-
-            //$("#loading").show();
-            let formData = new FormData(this);
-
-            formData.append('period_month_start', document.getElementById('period_month_start').value);
-            formData.append('period_month_to', document.getElementById('period_month_to').value);
-            formData.append('payment_type', document.getElementById('payment_type').value);
-
-            let dataToShow = '';
-
-            // สร้างข้อความที่จะแสดงใน alert
-            for (let [key, value] of formData.entries()) {
-                dataToShow += `${key}: ${value} | `;
-            }
-
-            // ลบตัว '|' สุดท้ายออก (ถ้ามี)
-            if (dataToShow.endsWith(' | ')) {
-                dataToShow = dataToShow.slice(0, -3);
-            }
-
-            // แสดงค่าใน alert
-            //alert(dataToShow);
-
-            //alert($("#period_month_start").val() + " | " + $("#period_month_to").val());
-
-            $.ajax({
-                url: "model/manage_payment_transfer_smart.php",
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    //$("#loading").hide();
-                    if (response == 1) {
-                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip/ใบโอนเงิน/ใบเสร็จ สำเร็จ");
-                        $("#transfer_form")[0].reset();
-                        $("#preview_image").hide().attr("src", "");
-                        $("#submit_btn").prop("disabled", true);
-                        // ✅ ส่งข้อความกลับ LINE OA
-                        if (liff.isInClient()) {
-                            liff.getProfile().then(profile => {
-                                const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\nจำนวน ${amount} บาท\nบ้านเลขที่: ${house_number}
-                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} \nปี: ${period_year}\nวันที่ทำรายการ: ${date_time}\nโปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
-                                liff.sendMessages([{type: "text", text: message}])
-                                    .then(() => {
-                                        setTimeout(() => {
-                                            liff.closeWindow();
-                                        }, 2000); // หน่วง 2 วิ
-                                    })
-                                    .catch(err => {
-                                        console.error("ส่งข้อความล้มเหลว:", err);
-                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
-                                        liff.closeWindow();
-                                    });
-                            });
-                        } else {
-                            alertify.success("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
-                        }
-
-                    } else {
-                        alertify.error("ไม่สามารถบันทึกข้อมูลได้" + response);
-                    }
-                },
-                error: function () {
-                    //$("#loading").hide();
-                    alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
-                }
-            });
-        });
-    });
-</script-->
-
 <script>
     $(document).ready(function () {
         $("#transfer_form").on("submit", function (event) {
@@ -473,7 +359,7 @@ foreach ($BankCurr as $row_curr) {
             let period_month_start = parseInt($("#period_month_start").val());
             let period_month_to = parseInt($("#period_month_to").val());
             let period_year = parseInt($("#period_year").val());
-            let amount = $("#amount").val();
+            let amount = parseFloat($("#amount").val()) || 0;
             let house_number = $("#house_number").val();
             let period_month_start_name = monthNames[period_month_start];
             let period_month_to_name = monthNames[period_month_to];
@@ -489,6 +375,11 @@ foreach ($BankCurr as $row_curr) {
 
             if (period_month_start > period_month_to) {
                 alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง");
+                return;
+            }
+
+            if (amount <= 0) {
+                alertify.error("จำนวนเงินต้องมากกว่า 0 บาท");
                 return;
             }
 
@@ -514,9 +405,8 @@ foreach ($BankCurr as $row_curr) {
                         alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
                         $("#transfer_form")[0].reset();
                         $("#preview_image").hide().attr("src", "");
-                        $("#submit_btn").prop("disabled", true); // ✅ ยังปิดไว้หลังสำเร็จ
+                        $("#submit_btn").prop("disabled", true);
 
-                        // ✅ ส่งข้อความกลับ LINE OA
                         if (liff.isInClient()) {
                             liff.getProfile().then(profile => {
                                 const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\nจำนวน ${amount} บาท\nบ้านเลขที่: ${house_number}
@@ -539,18 +429,19 @@ foreach ($BankCurr as $row_curr) {
 
                     } else {
                         alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
-                        $("#submit_btn").prop("disabled", false); // 🔓 เปิดกลับ
+                        $("#submit_btn").prop("disabled", false);
                     }
                 },
                 error: function () {
                     $("#loading").hide();
                     alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
-                    $("#submit_btn").prop("disabled", false); // 🔓 เปิดกลับ
+                    $("#submit_btn").prop("disabled", false);
                 }
             });
         });
     });
 </script>
+
 
 <script>
     $(document).ready(function () {
@@ -727,32 +618,82 @@ foreach ($BankCurr as $row_curr) {
         const paymentTypeInput = document.getElementById('payment_type');
         const commonFeeInput = document.getElementById('common_fee');
         const amountInput = document.getElementById('amount');
-        const paymentOptionMonthly = document.getElementById('option_monthly');
+        const paymentOptionInputs = document.querySelectorAll('input[name="payment_option"]');
 
-        function calculateAmount() {
-            if (paymentOptionMonthly.checked) {
-                const months = parseInt(paymentTypeInput.value) || 0;
-                const commonFee = parseFloat(commonFeeInput.value) || 0;
-                const total = months * commonFee;
-                amountInput.value = total.toFixed(2);
-                amountInput.readOnly = true; // ทำให้ amount เป็น readonly
-            } else {
-                amountInput.value = '';
-                amountInput.readOnly = false; // ยกเลิก readonly หากไม่ได้เลือก monthly
+        function getSelectedPaymentOption() {
+            for (const el of paymentOptionInputs) {
+                if (el.checked) return el.value;
             }
+            return null;
         }
 
-        // กรณี user เปลี่ยน input
-        paymentTypeInput.addEventListener('input', calculateAmount);
-        commonFeeInput.addEventListener('input', calculateAmount);
-        document.querySelectorAll('input[name="payment_option"]').forEach(el => {
-            el.addEventListener('change', calculateAmount);
-        });
+        function calculateAmount() {
+            const commonFee = parseFloat(commonFeeInput.value) || 0;
+            const paymentOption = getSelectedPaymentOption();
 
-        // เรียกตอนเปิดหน้า
-        //calculateAmount();
+            let paymentType = 0;
+
+            if (paymentOption === 'monthly') {
+                paymentType = parseInt(paymentTypeInput.value) || 0;
+            } else if (paymentOption === 'yearly') {
+                paymentType = 12;
+            }
+
+            const total = paymentType * commonFee;
+            amountInput.value = total.toFixed(2);
+
+            // debug log
+            console.log('[calculateAmount]');
+            console.log('commonFee:', commonFee);
+            console.log('paymentOption:', paymentOption);
+            console.log('paymentType:', paymentType);
+            console.log('total amount:', amountInput.value);
+        }
+
+        function handlePaymentOptionChange() {
+            const selectedOption = getSelectedPaymentOption();
+
+            console.log('[handlePaymentOptionChange] selectedOption:', selectedOption);
+
+            if (selectedOption === 'yearly') {
+                paymentTypeInput.value = 12;
+                //paymentTypeInput.disabled = false;  // ไม่ disable
+                amountInput.readOnly = false;
+            } else if (selectedOption === 'monthly') {
+                paymentTypeInput.value = 1;
+                //paymentTypeInput.disabled = false;  // ไม่ disable
+                amountInput.readOnly = true;
+            }
+
+            calculateAmount();
+        }
+
+        paymentTypeInput.addEventListener('input', () => {
+            console.log('[paymentTypeInput input] value:', paymentTypeInput.value);
+            calculateAmount();
+        });
+        commonFeeInput.addEventListener('input', () => {
+            console.log('[commonFeeInput input] value:', commonFeeInput.value);
+            calculateAmount();
+        });
+        paymentOptionInputs.forEach(el =>
+            el.addEventListener('change', handlePaymentOptionChange)
+        );
+
+        // ✅ เรียกหลังจากได้ data.common_fee แล้ว
+        window.initWithCommonFeeInput = function () {
+            // ตั้งค่ารายเดือนเป็น default
+            document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
+            paymentTypeInput.value = 1;
+            //paymentTypeInput.disabled = false;
+            amountInput.readOnly = true;
+
+            console.log('[initWithCommonFeeInput] init default monthly');
+            calculateAmount();
+        };
     });
 </script>
+
 
 </body>
 </html>

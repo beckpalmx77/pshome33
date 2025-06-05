@@ -447,6 +447,8 @@ if (strlen($_SESSION['alogin']) === "") {
         document.addEventListener("DOMContentLoaded", function () {
             const houseNumberInput = document.getElementById("house_number");
 
+            let amount_cal = 0;
+
             houseNumberInput.addEventListener("change", function () {
                 const houseNumber = this.value;
 
@@ -457,6 +459,8 @@ if (strlen($_SESSION['alogin']) === "") {
                             if (data.success) {
                                 document.getElementById("common_fee").value = data.common_fee;
                                 document.getElementById("area_size").value = data.area_size;
+                                amount_cal = parseFloat(data.common_fee) * parseFloat(document.getElementById("payment_type").value);
+                                document.getElementById("amount").value = amount_cal;
                             } else {
                                 document.getElementById("common_fee").value = '';
                                 document.getElementById("area_size").value = '';
@@ -516,6 +520,10 @@ if (strlen($_SESSION['alogin']) === "") {
             // เรียกทันทีเมื่อโหลดหน้า
             calculateAmount();
         });
+    </script>
+
+    <script>
+
     </script>
 
     </body>
