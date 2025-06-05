@@ -80,14 +80,14 @@ foreach ($BankCurr as $row_curr) {
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="radio"
                                                                name="payment_option" id="option_yearly"
-                                                               value="yearly" checked>
+                                                               value="yearly">
                                                         <label class="form-check-label"
                                                                for="option_yearly">ชำระรายปี</label>
                                                     </div>
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="radio"
                                                                name="payment_option" id="option_monthly"
-                                                               value="monthly">
+                                                               value="monthly" checked>
                                                         <label class="form-check-label" for="option_monthly">ชำระรายเดือน</label>
                                                     </div>
                                                 </div>
