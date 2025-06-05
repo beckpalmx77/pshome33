@@ -238,11 +238,23 @@ include('includes/Header.php');
         if ($('#change_password_check').is(':checked')) {
             const pwd = $('#password').val().trim();
             const confirmPwd = $('#confirm_password').val().trim();
-            if (!pwd || !confirmPwd) return alert("กรุณากรอกรหัสผ่านให้ครบ");
-            if (pwd !== confirmPwd) return alert("รหัสผ่านไม่ตรงกัน");
+            if (!pwd || !confirmPwd) {
+                alert("กรุณากรอกรหัสผ่านให้ครบ");
+                return;
+            }
+            if (pwd !== confirmPwd) {
+                alert("รหัสผ่านไม่ตรงกัน");
+                return;
+            }
         }
 
+        // Debug ข้อมูลในฟอร์มก่อนส่ง
         const formData = new FormData(this);
+
+        // แสดงค่า key และ value ใน FormData
+        for (let pair of formData.entries()) {
+            console.log(pair[0]+ ': ' + pair[1]);
+        }
 
         $.ajax({
             url: "model/manage_setting_member_process.php",
@@ -251,13 +263,15 @@ include('includes/Header.php');
             contentType: false,
             processData: false,
             success: function (response) {
+                console.log('Response:', response);
                 if (response == 1) {
                     alert("บันทึกข้อมูลสำเร็จ");
                 } else {
                     alert("ไม่สามารถบันทึกข้อมูลได้");
                 }
             },
-            error: function () {
+            error: function (xhr, status, error) {
+                console.error('AJAX error:', status, error);
                 alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
             }
         });

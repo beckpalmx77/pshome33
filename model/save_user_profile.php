@@ -28,31 +28,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     WHERE line_user_id = :userId";
 
 
-        $stmt = $conn->prepare($sql1);
-        $stmt->bindParam(':displayName', $displayName);
-        $stmt->bindParam(':pictureUrl', $pictureUrl);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
+        $stmt1 = $conn->prepare($sql1);
+        $stmt1->bindParam(':displayName', $displayName);
+        $stmt1->bindParam(':pictureUrl', $pictureUrl);
+        $stmt1->bindParam(':f_name', $f_name);
+        $stmt1->bindParam(':l_name', $l_name);
+        $stmt1->bindParam(':userId', $userId);
+        $stmt1->execute();
 
 
         $sql2 = "UPDATE ims_user SET first_name = :f_name ,last_name = :l_name     
                     WHERE user_id = :line_phone";
 
 
-        $stmt = $conn->prepare($sql2);
-        $stmt->bindParam(':f_name', $f_name);
-        $stmt->bindParam(':l_name', $l_name);
-        $stmt->bindParam(':line_phone', $line_phone);
-        $stmt->execute();
+        $stmt2 = $conn->prepare($sql2);
+        $stmt2->bindParam(':f_name', $f_name);
+        $stmt2->bindParam(':l_name', $l_name);
+        $stmt2->bindParam(':line_phone', $line_phone);
+        $stmt2->execute();
 
 
         $sql3 = "UPDATE ims_house_payment SET line_picture_profile_show = :pictureUrl , detail = :detail WHERE line_user_id = :userId";
 
-        $stmt = $conn->prepare($sql3);
-        $stmt->bindParam(':detail', $detail);
-        $stmt->bindParam(':pictureUrl', $pictureUrl);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
+        $stmt3 = $conn->prepare($sql3);
+        $stmt3->bindParam(':pictureUrl', $pictureUrl);
+        $stmt3->bindParam(':detail', $detail);
+        $stmt3->bindParam(':userId', $userId);
+        $stmt3->execute();
 
 
         echo 'success';
