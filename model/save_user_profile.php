@@ -11,8 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $detail = $f_name . " " . $l_name;
 
     $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
-    fwrite($myfile, $pictureUrl  . " | " . $f_name . " | " . $l_name
-    . " | " . $line_phone . " | " . $detail . " | " . $displayName . " | " . $userId );
+    fwrite($myfile, $pictureUrl  . " 1| " . $f_name . " 2| " . $l_name
+    . " 3| " . $line_phone . " 4| " . $detail . " 5| " . $displayName . " 6| " . $userId );
     fclose($myfile);
 
     if (!empty($userId)) {
