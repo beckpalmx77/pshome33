@@ -149,6 +149,9 @@ include('includes/Header.php');
                         </div>
 
                         <input type="hidden" id="line_user_id" name="line_user_id">
+                        <input type="hidden" id="displayName" name="displayName">
+                        <input type="hidden" id="pictureUrl" name="pictureUrl">
+
 
                         <div id="loading" style="display: none;">
                             <img src="img/spin/spin_cir.gif" alt="Loading..." style="width: 50px;">
@@ -204,9 +207,11 @@ include('includes/Header.php');
                     .then(data => {
                         if (data.house_number) {
                             $('#line_user_id').val(userId);
+                            $('#displayName').val(displayName);
                             $('#profilePic').attr('src', pictureUrl || "../img/user-001.png");
                             $('#line_phone').val(data.line_phone || '');
                             $('#house_number').val(data.house_number || '');
+                            $('#pictureUrl').val(pictureUrl);
                             $('#f_name').val(data.f_name || '');
                             $('#l_name').val(data.l_name || '');
                             document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
@@ -238,43 +243,30 @@ include('includes/Header.php');
         if ($('#change_password_check').is(':checked')) {
             const pwd = $('#password').val().trim();
             const confirmPwd = $('#confirm_password').val().trim();
-            if (!pwd || !confirmPwd) {
-                alert("กรุณากรอกรหัสผ่านให้ครบ");
-                return;
-            }
-            if (pwd !== confirmPwd) {
-                alert("รหัสผ่านไม่ตรงกัน");
-                return;
-            }
+            if (!pwd || !confirmPwd) return alert("กรุณากรอกรหัสผ่านให้ครบ");
+            if (pwd !== confirmPwd) return alert("รหัสผ่านไม่ตรงกัน");
         }
 
-        // ใช้ serialize แทน FormData
-        const serializedData = $(this).serialize();
-
-        console.log('Serialized Data:', serializedData);
+        const formData = new FormData(this);
 
         $.ajax({
             url: "model/manage_setting_member_process.php",
             type: "POST",
-            data: serializedData,
-            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-            processData: true,
+            data: formData,
+            contentType: false,
+            processData: false,
             success: function (response) {
-                console.log('Response:', response);
                 if (response == 1) {
                     alert("บันทึกข้อมูลสำเร็จ");
                 } else {
                     alert("ไม่สามารถบันทึกข้อมูลได้");
                 }
             },
-            error: function (xhr, status, error) {
-                console.error('AJAX error:', status, error);
+            error: function () {
                 alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
             }
         });
     });
-
 </script>
-
 </body>
 </html>
