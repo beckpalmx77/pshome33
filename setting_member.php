@@ -248,20 +248,17 @@ include('includes/Header.php');
             }
         }
 
-        // Debug ข้อมูลในฟอร์มก่อนส่ง
-        const formData = new FormData(this);
+        // ใช้ serialize แทน FormData
+        const serializedData = $(this).serialize();
 
-        // แสดงค่า key และ value ใน FormData
-        for (let pair of formData.entries()) {
-            console.log(pair[0]+ ': ' + pair[1]);
-        }
+        console.log('Serialized Data:', serializedData);
 
         $.ajax({
             url: "model/manage_setting_member_process.php",
             type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
+            data: serializedData,
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            processData: true,
             success: function (response) {
                 console.log('Response:', response);
                 if (response == 1) {
@@ -276,6 +273,8 @@ include('includes/Header.php');
             }
         });
     });
+
 </script>
+
 </body>
 </html>
