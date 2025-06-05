@@ -14,6 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $line_user_id = $_POST['line_user_id'] ?? '';
     $password = $_POST['password'] ?? '';
 
+    $detail = $f_name . " " . $l_name;
+
+    $displayName = $_POST['displayName'] ?? '';
+    $pictureUrl = $_POST['pictureUrl'] ?? '';
+
     // อัปเดตตาราง ims_house_line_user
     $sql1 = "UPDATE ims_house_line_user 
              SET f_name = :f_name, l_name = :l_name, line_phone = :line_phone
@@ -23,6 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt1->bindParam(':l_name', $l_name, PDO::PARAM_STR);
     $stmt1->bindParam(':line_phone', $line_phone, PDO::PARAM_STR);
     $stmt1->bindParam(':line_user_id', $line_user_id, PDO::PARAM_STR);
+
+    $sql2 = "UPDATE ims_house_payment SET line_picture_profile_show = :pictureUrl , detail = :detail WHERE line_user_id = :userId";
+    $stmt2 = $conn->prepare($sql2);
+    $stmt2->bindParam(':pictureUrl', $pictureUrl);
+    $stmt2->bindParam(':detail', $detail);
+    $stmt2->bindParam(':line_user_id', $line_user_id);
+    $stmt2->execute();
 
     if ($stmt1->execute()) {
         // อัปเดตตาราง ims_user ถ้ามี line_phone ตรงกับ user_id

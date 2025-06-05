@@ -10,11 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $line_phone = $_POST['line_phone'] ?? '';
     $detail = $f_name . " " . $l_name;
 
-    $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
-    fwrite($myfile, $pictureUrl . " 1| " . $f_name . " 2| " . $l_name
-        . " 3| " . $line_phone . " 4| " . $detail . " 5| " . $displayName . " 6| " . $userId);
-    fclose($myfile);
-
     if (!empty($userId)) {
         // UPDATE หรือ INSERT ถ้าไม่มี record
         $stmt = $conn->prepare("SELECT COUNT(*) FROM ims_house_line_user WHERE line_user_id = :userId");
