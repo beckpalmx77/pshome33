@@ -496,7 +496,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 const isMonthly = $("#option_monthly").is(":checked");
 
                 if (isMonthly) {
-                    $("#amount").prop("readonly", true);
+                    $("#amount").prop("readonly", false);
                 } else {
                     $("#amount").prop("readonly", false);
                 }
