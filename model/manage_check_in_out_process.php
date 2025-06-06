@@ -6,7 +6,6 @@ include('../config/connect_db.php');
 include('../config/lang.php');
 include('../util/record_util.php');
 
-$channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
 
 if ($_POST["action"] === 'GET_DATA') {
 
@@ -14,8 +13,8 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM v_checkins_time "
-        . " WHERE v_checkins_time.id = " . $id;
+    $sql_get = "SELECT * FROM v_checkins "
+        . " WHERE v_checkins.id = " . $id;
 
     $statement = $conn->query($sql_get);
     $results = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +40,7 @@ if ($_POST["action"] === 'SEARCH') {
     if ($_POST["display_name"] !== '') {
 
         $display_name = $_POST["display_name"];
-        $sql_find = "SELECT * FROM v_checkins_time WHERE display_name = '" . $display_name . "'";
+        $sql_find = "SELECT * FROM v_checkins WHERE display_name = '" . $display_name . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
@@ -59,10 +58,10 @@ if ($_POST["action"] === 'UPDATE') {
         $display_name = $_POST["display_name"];
         $checkin_time = $_POST["checkin_time"];
         $remark = $_POST["remark"];
-        $sql_find = "SELECT * FROM v_checkins_time WHERE id = '" . $id . "'";
+        $sql_find = "SELECT * FROM v_checkins WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE v_checkins_time SET display_name=:display_name,checkin_time=:checkin_time,alley=:alley,phone_number=:phone_number,remark=:remark            
+            $sql_update = "UPDATE v_checkins SET display_name=:display_name,checkin_time=:checkin_time,alley=:alley,phone_number=:phone_number,remark=:remark            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':display_name', $display_name, PDO::PARAM_STR);
@@ -80,11 +79,11 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    $sql_find = "SELECT * FROM v_checkins_time WHERE id = " . $id;
+    $sql_find = "SELECT * FROM v_checkins WHERE id = " . $id;
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
-            $sql = "DELETE FROM v_checkins_time WHERE id = " . $id;
+            $sql = "DELETE FROM v_checkins WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
             echo $del_success;
@@ -132,20 +131,20 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
 */
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1 ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins WHERE 1 ");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM v_checkins_time WHERE 1=1 ORDER BY id DESC  " . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM v_checkins WHERE 1=1 ORDER BY id DESC  " . $searchQuery . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 
@@ -171,14 +170,6 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
     foreach ($empRecords as $row) {
 
         if ($_POST['sub_action'] === "GET_MASTER") {
-
-            $mapLink = "";
-            if (!empty($row['latitude']) && !empty($row['longitude'])) {
-                $mapLink = "<a href='https://www.google.com/maps?q={$row['latitude']},{$row['longitude']}' target='_blank' class='btn btn-sm btn-outline-primary' data-toggle='tooltip' title='เปิดแผนที่'>
-                        <i class='fa fa-map-marker'></i> Map
-                    </a>";
-            }
-
             $data[] = array(
                 "id" => $row['id'],
                 "display_name" => $row['display_name'],
@@ -190,7 +181,6 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
                 "longitude" => $row['longitude'],
                 "check_type" => $row['check_type'],
                 "photo_path" => $row['photo_path'],
-                "map" => $mapLink, // เพิ่มปุ่ม Google Map
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "detail" => "<button type='button' name='detail' id='" . $row['id'] . "' class='btn btn-secondary btn-xs detail' data-toggle='tooltip' title='Detail'>Detail</button>",
