@@ -31,7 +31,6 @@ $curr_date = date("d-m-Y");
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card mb-12">
-
                             <div class="card-body">
                                 <section class="container-fluid">
                                     <div class="col-md-12 col-md-offset-2">
