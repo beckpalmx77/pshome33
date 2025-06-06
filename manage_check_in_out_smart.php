@@ -114,14 +114,13 @@ include('includes/Footer.php');
 <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
 <style>
-    /* สีพาสเทลส้ม */
     :root {
-        --pastel-orange: #ffb47d;
-        --pastel-orange-dark: #e6995c;
-        --text-color: #4a3c2b;
-        --background-light: #fff7f0;
-        --button-success: #a2d5ac;
-        --button-danger: #f7a1a1;
+        --pastel-purple: #d6c8ff;
+        --pastel-purple-dark: #a89ed1;
+        --text-color: #3e3756;
+        --background-light: #f8f5ff;
+        --button-success: #c4e1f0;
+        --button-danger: #f7a1d1;
     }
 
     body {
@@ -139,7 +138,7 @@ include('includes/Footer.php');
         max-width: 1200px;
         margin: 20px auto;
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(255, 180, 125, 0.25);
+        box-shadow: 0 2px 10px rgba(214, 200, 255, 0.25);
         padding: 20px;
     }
 
@@ -167,7 +166,7 @@ include('includes/Footer.php');
     }
 
     h1.h5 {
-        color: var(--pastel-orange-dark);
+        color: var(--pastel-purple-dark);
         font-weight: 700;
         margin: 0;
     }
@@ -180,22 +179,22 @@ include('includes/Footer.php');
 
     .text-sm {
         font-size: 0.9rem;
-        color: var(--pastel-orange-dark);
+        color: var(--pastel-purple-dark);
     }
 
     /* Card */
     .card {
         background: white;
-        border: 1px solid var(--pastel-orange);
+        border: 1px solid var(--pastel-purple);
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(255, 180, 125, 0.1);
+        box-shadow: 0 4px 8px rgba(214, 200, 255, 0.1);
         margin-bottom: 1rem;
     }
 
     .card-header {
-        border-bottom: 1px solid var(--pastel-orange);
+        border-bottom: 1px solid var(--pastel-purple);
         padding: 1rem 1.5rem;
-        background-color: var(--pastel-orange);
+        background-color: var(--pastel-purple);
         color: white;
         font-weight: 600;
         border-radius: 8px 8px 0 0;
@@ -215,21 +214,16 @@ include('includes/Footer.php');
 
     table.dataTable th,
     table.dataTable td {
-        border: 1px solid var(--pastel-orange);
+        border: 1px solid var(--pastel-purple);
         padding: 8px 12px;
         text-align: center;
         font-size: 0.9rem;
         color: var(--text-color);
     }
 
-    table.dataTable thead th {
-        background-color: var(--pastel-orange);
-        color: white;
-        font-weight: 600;
-    }
-
+    table.dataTable thead th,
     table.dataTable tfoot th {
-        background-color: var(--pastel-orange);
+        background-color: var(--pastel-purple);
         color: white;
         font-weight: 600;
     }
@@ -238,11 +232,11 @@ include('includes/Footer.php');
     .form-control {
         width: 100%;
         padding: 8px 10px;
-        border: 1px solid var(--pastel-orange);
+        border: 1px solid var(--pastel-purple);
         border-radius: 4px;
         font-size: 0.9rem;
         color: var(--text-color);
-        background-color: #fff7f0;
+        background-color: #f8f5ff;
     }
 
     .form-group {
@@ -253,7 +247,7 @@ include('includes/Footer.php');
         font-weight: 600;
         margin-bottom: 0.3rem;
         display: block;
-        color: var(--pastel-orange-dark);
+        color: var(--pastel-purple-dark);
     }
 
     .row {
@@ -298,20 +292,20 @@ include('includes/Footer.php');
 
     .btn-success {
         background-color: var(--button-success);
-        color: #2e662d;
+        color: #245a6e;
     }
 
     .btn-success:hover {
-        background-color: #82c884;
+        background-color: #b0d4e6;
     }
 
     .btn-danger {
         background-color: var(--button-danger);
-        color: #7a2323;
+        color: #6e2a50;
     }
 
     .btn-danger:hover {
-        background-color: #f08a8a;
+        background-color: #ee90c3;
     }
 
     .btn-secondary {
@@ -327,14 +321,14 @@ include('includes/Footer.php');
     .modal-content {
         border-radius: 8px;
         padding: 1rem;
-        border: 1px solid var(--pastel-orange);
-        box-shadow: 0 6px 15px rgba(255, 180, 125, 0.3);
+        border: 1px solid var(--pastel-purple);
+        box-shadow: 0 6px 15px rgba(214, 200, 255, 0.3);
         background-color: white;
         color: var(--text-color);
     }
 
     .modal-header {
-        border-bottom: 1px solid var(--pastel-orange);
+        border-bottom: 1px solid var(--pastel-purple);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -344,7 +338,7 @@ include('includes/Footer.php');
     .modal-header h4,
     .modal-header h5 {
         margin: 0;
-        color: var(--pastel-orange-dark);
+        color: var(--pastel-purple-dark);
     }
 
     .modal-body {
@@ -355,7 +349,7 @@ include('includes/Footer.php');
     .close {
         font-size: 1.5rem;
         font-weight: bold;
-        color: var(--pastel-orange-dark);
+        color: var(--pastel-purple-dark);
         cursor: pointer;
         background: transparent;
         border: none;
@@ -365,7 +359,7 @@ include('includes/Footer.php');
     .zoom-container img {
         max-width: 200px;
         border-radius: 6px;
-        box-shadow: 0 2px 8px rgba(255, 180, 125, 0.5);
+        box-shadow: 0 2px 8px rgba(214, 200, 255, 0.5);
         cursor: pointer;
         transition: transform 0.3s ease;
     }
@@ -471,11 +465,11 @@ include('includes/Footer.php');
                     const pictureUrl = profile.pictureUrl;
                     const displayName = profile.displayName;
 
-                    alert("displayName = " + displayName);
+                    //alert("displayName = " + displayName);
 
                     // บันทึกโปรไฟล์ผู้ใช้
-/*
-                    fetch('model/save_user_profile.php', {
+
+                    fetch('model/save_emp_user_profile.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -483,16 +477,66 @@ include('includes/Footer.php');
                         body: `userId=${encodeURIComponent(userId)}&pictureUrl=${encodeURIComponent(pictureUrl)}&displayName=${encodeURIComponent(displayName)}`
                     });
 
-*/
-
                     // แสดงชื่อผู้ใช้ (ถ้าต้องการ)
-                    //document.getElementById('user-info-liff').innerText = `${displayName}`;
+                    document.getElementById('user-info-liff').innerText = `${displayName}`;
 
                     // หรือหากคุณมีการโหลดข้อมูล DataTable โดยไม่ใช้ house_number สามารถเรียกฟังก์ชันได้เลย เช่น:
-                    //loadDataTable();
+                    loadDataTable(userId);
                 });
             }
         });
+</script>
+
+<script>
+
+    function loadDataTable(userId) {
+        let formData = {
+            action: "GET_CHECK_IN_OUT",
+            sub_action: "GET_MASTER",
+            userId: userId // ✅ ส่ง userId ไปที่ backend
+        };
+
+        $('#TableRecordList').DataTable({
+            'destroy': true,
+            'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
+            'language': {
+                search: 'ค้นหา',
+                lengthMenu: 'แสดง _MENU_ รายการ',
+                info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+                infoEmpty: 'ไม่มีข้อมูล',
+                zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+                infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+                paginate: {
+                    previous: 'ก่อนหน้า',
+                    last: 'สุดท้าย',
+                    next: 'ต่อไป'
+                }
+            },
+            'processing': true,
+            'serverSide': true,
+            'serverMethod': 'post',
+            <?php if ($_SESSION['deviceType'] !== 'computer') echo "'scrollX': true,"; ?>
+            'ajax': {
+                'url': 'model/manage_check_in_out_smart_process.php',
+                'data': formData
+            },
+            'columns': [
+                {data: 'display_name'},
+                {data: 'emp_name'},
+                {
+                    data: 'line_picture_profile',
+                    render: function (data) {
+                        let imageUrl = data ? data : 'img/icon/none_img.png';
+                        return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
+                    }
+                },
+                {data: 'checkin_time'},
+                {data: 'check_type'},
+                {data: 'detail'}
+            ]
+        });
+    }
+
 </script>
 
 
