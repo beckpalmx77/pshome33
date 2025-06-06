@@ -481,11 +481,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 $(this).find(".fa").css({'font-size': btnFont, 'color': btnColor});
             });
         });
-    </script>GET_REC
+    </script>
 
     <script>
         $(document).ready(function () {
-            let formDataObj = {action: "", sub_action: "GET_MASTER"};
+            let formDataObj = {action: "GET_REC", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
