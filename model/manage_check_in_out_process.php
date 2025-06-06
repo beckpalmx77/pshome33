@@ -13,8 +13,8 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM v_checkins "
-        . " WHERE v_checkins.id = " . $id;
+    $sql_get = "SELECT * FROM v_checkins_time "
+        . " WHERE v_checkins_time.id = " . $id;
 
     $statement = $conn->query($sql_get);
     $results = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -40,7 +40,7 @@ if ($_POST["action"] === 'SEARCH') {
     if ($_POST["display_name"] !== '') {
 
         $display_name = $_POST["display_name"];
-        $sql_find = "SELECT * FROM v_checkins WHERE display_name = '" . $display_name . "'";
+        $sql_find = "SELECT * FROM v_checkins_time WHERE display_name = '" . $display_name . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
@@ -58,10 +58,10 @@ if ($_POST["action"] === 'UPDATE') {
         $display_name = $_POST["display_name"];
         $checkin_time = $_POST["checkin_time"];
         $remark = $_POST["remark"];
-        $sql_find = "SELECT * FROM v_checkins WHERE id = '" . $id . "'";
+        $sql_find = "SELECT * FROM checkins WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE v_checkins SET display_name=:display_name,checkin_time=:checkin_time,alley=:alley,phone_number=:phone_number,remark=:remark            
+            $sql_update = "UPDATE checkins SET display_name=:display_name,checkin_time=:checkin_time,alley=:alley,phone_number=:phone_number,remark=:remark            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':display_name', $display_name, PDO::PARAM_STR);
@@ -79,11 +79,11 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    $sql_find = "SELECT * FROM v_checkins WHERE id = " . $id;
+    $sql_find = "SELECT * FROM checkins WHERE id = " . $id;
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
-            $sql = "DELETE FROM v_checkins WHERE id = " . $id;
+            $sql = "DELETE FROM checkins WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
             echo $del_success;
@@ -131,20 +131,20 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
 */
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins WHERE 1 ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1 ");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM v_checkins WHERE 1=1 ORDER BY id DESC  " . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM v_checkins_time WHERE 1=1 ORDER BY id DESC  " . $searchQuery . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 

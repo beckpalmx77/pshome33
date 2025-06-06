@@ -501,7 +501,14 @@ include('includes/Footer.php');
 </script>
 
 <script>
+    const deviceType = "<?= $_SESSION['deviceType'] ?? 'computer' ?>";
+
     function loadDataTable(userId) {
+        if (!userId) {
+            console.error("User ID is required to load data.");
+            return;
+        }
+
         const formData = {
             action: "GET_CHECK_IN_OUT",
             sub_action: "GET_MASTER",
@@ -527,10 +534,13 @@ include('includes/Footer.php');
             processing: true,
             serverSide: true,
             serverMethod: 'post',
-            <?php if ($_SESSION['deviceType'] !== 'computer') echo "'scrollX': true,"; ?>
+            scrollX: deviceType !== 'computer',
             ajax: {
                 url: 'model/manage_check_in_out_smart_process.php',
-                data: formData
+                data: formData,
+                error: function (xhr, error, thrown) {
+                    console.error("DataTable AJAX error:", xhr.responseText);
+                }
             },
             columns: [
                 { data: 'display_name' },
@@ -547,9 +557,13 @@ include('includes/Footer.php');
                 { data: 'detail' }
             ]
         });
+
+        // Optional: Loading indicator (if you have one)
+        $('#TableRecordList').on('processing.dt', function (e, settings, processing) {
+            $('#loading-spinner').toggle(processing);
+        });
     }
 </script>
-
 
 
 </body>
