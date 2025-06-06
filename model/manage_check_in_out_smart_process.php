@@ -23,6 +23,8 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
         exit;
     }
 
+    $AnduserId = " AND line_user_id = '" . $userId .  "' ";
+
     ## Read value
     $draw = $_POST['draw'];
     $row = $_POST['start'];
@@ -59,20 +61,20 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
     */
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1 ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1=1 " . $AnduserId);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_checkins_time WHERE 1=1 " . $AnduserId . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM v_checkins_time WHERE 1=1 ORDER BY id DESC  " . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM v_checkins_time WHERE 1=1  " . $AnduserId . $searchQuery . " ORDER BY id DESC  " . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 
