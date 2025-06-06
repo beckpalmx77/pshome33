@@ -58,6 +58,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                     <th>รูป</th>
                                                     <th>เวลา</th>
                                                     <th>รายละเอียด</th>
+                                                    <th>จุด Check In</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -68,6 +69,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                                                     <th>รูป</th>
                                                     <th>เวลา</th>
                                                     <th>รายละเอียด</th>
+                                                    <th>จุด Check In</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -288,6 +290,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['display_name']) == ""
                     },
                     {data: 'checkin_time'},
                     {data: 'check_type'},
+                    {data: 'map_link' },
                     {data: 'detail'}
                 ]
             });

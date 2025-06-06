@@ -42,30 +42,35 @@ $curr_date = date("d-m-Y");
                                                 <th>รูป</th>
                                                 <th>เวลา</th>
                                                 <th>รายละเอียด</th>
-                                                <!--th>จุด Check In</th-->
-                                                <th>Action</th>
+                                                <th>จุด Check In</th>
                                             </tr>
                                             </thead>
-                                            <tfoot>
-                                            <tr>
-                                                <th>ชื่อ Line</th>
-                                                <th>ชื่อ-นามสกุล</th>
-                                                <th>รูป</th>
-                                                <th>เวลา</th>
-                                                <th>รายละเอียด</th>
-                                                <!--th>จุด Check In</th-->
-                                                <th>Action</th>
-                                            </tr>
-                                            </tfoot>
                                         </table>
                                         <div id="result"></div>
                                     </div>
-
                                 </section>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal แสดงแผนที่ -->
+                <div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="mapModalLabel">ตำแหน่งบนแผนที่</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="ปิด">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="mapContainer" style="height: 400px;">
+                                <!-- แผนที่จะถูกโหลดเข้ามาที่นี่ -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div> <!-- /container-wrapper -->
         </div> <!-- /content -->
     </div> <!-- /content-wrapper -->
@@ -501,7 +506,6 @@ include('includes/Footer.php');
 </script>
 
 <script>
-    const deviceType = "<?= $_SESSION['deviceType'] ?? 'computer' ?>";
 
     function loadDataTable(userId) {
         if (!userId) {
@@ -534,7 +538,7 @@ include('includes/Footer.php');
             processing: true,
             serverSide: true,
             serverMethod: 'post',
-            scrollX: deviceType !== 'computer',
+            scrollX: true,
             ajax: {
                 url: 'model/manage_check_in_out_smart_process.php',
                 data: formData,
@@ -554,7 +558,7 @@ include('includes/Footer.php');
                 },
                 { data: 'checkin_time' },
                 { data: 'check_type' },
-                { data: 'detail' }
+                { data: 'map_link' }
             ]
         });
 
@@ -562,6 +566,18 @@ include('includes/Footer.php');
         $('#TableRecordList').on('processing.dt', function (e, settings, processing) {
             $('#loading-spinner').toggle(processing);
         });
+    }
+</script>
+
+<script>
+    function openMapModal(lat, lng) {
+        const mapIframe = `
+        <iframe width="100%" height="100%" frameborder="0" style="border:0"
+            src="https://www.google.com/maps?q=${lat},${lng}&hl=th&z=16&output=embed" allowfullscreen>
+        </iframe>
+    `;
+        document.getElementById('mapContainer').innerHTML = mapIframe;
+        $('#mapModal').modal('show');
     }
 </script>
 

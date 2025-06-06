@@ -181,6 +181,7 @@ if ($_POST["action"] === 'GET_CHECK_IN_OUT') {
                 "longitude" => $row['longitude'],
                 "check_type" => $row['check_type'],
                 "photo_path" => $row['photo_path'],
+                "map_link" => "<a href='https://www.google.com/maps?q=" . $row['latitude'] . "," . $row['longitude'] . "' target='_blank' class='btn btn-sm btn-primary' title='Open in Google Maps'>Map</a>",
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "detail" => "<button type='button' name='detail' id='" . $row['id'] . "' class='btn btn-secondary btn-xs detail' data-toggle='tooltip' title='Detail'>Detail</button>",
