@@ -455,51 +455,64 @@ include('includes/Footer.php');
 <script src="line_oa/checkin/jsconfig/config_check_in_out.js"></script>
 
 <script>
-    liff.init({liffId: LIFF_ID})
-        .then(() => {
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            } else {
-                liff.getProfile().then(profile => {
-                    const userId = profile.userId;
-                    const pictureUrl = profile.pictureUrl;
-                    const displayName = profile.displayName;
 
-                    //alert("displayName = " + displayName);
+    document.addEventListener('DOMContentLoaded', () => {
+        liff.init({ liffId: LIFF_ID })
+            .then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
 
-                    // บันทึกโปรไฟล์ผู้ใช้
+                return liff.getProfile();
+            })
+            .then(profile => {
+                if (!profile) return;
 
-                    fetch('model/save_emp_user_profile.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: `userId=${encodeURIComponent(userId)}&pictureUrl=${encodeURIComponent(pictureUrl)}&displayName=${encodeURIComponent(displayName)}`
-                    });
+                const userId = profile.userId;
+                const pictureUrl = profile.pictureUrl;
+                const displayName = profile.displayName;
 
-                    // แสดงชื่อผู้ใช้ (ถ้าต้องการ)
-                    document.getElementById('user-info-liff').innerText = `${displayName}`;
+                // บันทึกโปรไฟล์ผู้ใช้
+                fetch('model/save_emp_user_profile.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        userId: userId,
+                        pictureUrl: pictureUrl,
+                        displayName: displayName
+                    })
+                }).catch(err => console.error('Error saving profile:', err));
 
-                    // หรือหากคุณมีการโหลดข้อมูล DataTable โดยไม่ใช้ house_number สามารถเรียกฟังก์ชันได้เลย เช่น:
-                    loadDataTable(userId);
-                });
-            }
-        });
+                // แสดงชื่อผู้ใช้
+                const userInfoElem = document.getElementById('user-info-liff');
+                if (userInfoElem) {
+                    userInfoElem.innerText = displayName;
+                }
+
+                // โหลด DataTable
+                loadDataTable(userId);
+            })
+            .catch(err => {
+                console.error('LIFF init or profile error:', err);
+            });
+    });
 </script>
 
 <script>
-
     function loadDataTable(userId) {
-        let formData = {
+        const formData = {
             action: "GET_CHECK_IN_OUT",
             sub_action: "GET_MASTER",
-            userId: userId // ✅ ส่ง userId ไปที่ backend
+            userId: userId
         };
 
         $('#TableRecordList').DataTable({
-            'destroy': true,
-            'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
-            'language': {
+            destroy: true,
+            lengthMenu: [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
+            language: {
                 search: 'ค้นหา',
                 lengthMenu: 'แสดง _MENU_ รายการ',
                 info: 'หน้าที่ _PAGE_ จาก _PAGES_',
@@ -512,32 +525,32 @@ include('includes/Footer.php');
                     next: 'ต่อไป'
                 }
             },
-            'processing': true,
-            'serverSide': true,
-            'serverMethod': 'post',
+            processing: true,
+            serverSide: true,
+            serverMethod: 'post',
             <?php if ($_SESSION['deviceType'] !== 'computer') echo "'scrollX': true,"; ?>
-            'ajax': {
-                'url': 'model/manage_check_in_out_smart_process.php',
-                'data': formData
+            ajax: {
+                url: 'model/manage_check_in_out_smart_process.php',
+                data: formData
             },
-            'columns': [
-                {data: 'display_name'},
-                {data: 'emp_name'},
+            columns: [
+                { data: 'display_name' },
+                { data: 'emp_name' },
                 {
                     data: 'line_picture_profile',
                     render: function (data) {
-                        let imageUrl = data ? data : 'img/icon/none_img.png';
-                        return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
+                        const imageUrl = data || 'img/icon/none_img.png';
+                        return `<img src="${imageUrl}" alt="image" style="width: 50px; height: auto;">`;
                     }
                 },
-                {data: 'checkin_time'},
-                {data: 'check_type'},
-                {data: 'detail'}
+                { data: 'checkin_time' },
+                { data: 'check_type' },
+                { data: 'detail' }
             ]
         });
     }
-
 </script>
+
 
 
 </body>
