@@ -23,12 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $payment_method = "โอนเงิน";
 
+    $result_save = 0;
+
     $stmt = $conn->prepare("SELECT * FROM ims_house_line_user WHERE line_user_id = :line_user_id");
     $stmt->bindParam(':line_user_id', $line_user_id, PDO::PARAM_INT);
     $stmt->execute();
     $line_user = $stmt->fetch(PDO::FETCH_ASSOC);
     $f_name = $line_user['f_name'];
     $l_name = $line_user['l_name'];
+    $contact_name = $f_name . " " . $l_name;
+    $line_phone = $line_user['line_phone'];
 
     $field = "runno";
     $table = "ims_house_payment";
@@ -72,6 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':payment_method', $payment_method);
 
             if ($stmt->execute()) {
+
+                $updateSql = "UPDATE ims_house SET contact_name = :contact_name , phone_number = :phone_number WHERE house_number = :house_number";
+                $updateStmt = $conn->prepare($updateSql);
+                $updateStmt->bindParam(':contact_name', $contact_name);
+                $updateStmt->bindParam(':phone_number', $line_phone);
+                $updateStmt->bindParam(':house_number', $house_number);
+                $updateStmt->execute();
+
                 // ======= ส่งเฉพาะข้อความไป LINE =======
                 $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
 
@@ -127,6 +139,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':payment_method', $payment_method);
 
         if ($stmt->execute()) {
+
+            $updateSql = "UPDATE ims_house SET contact_name = :contact_name , phone_number = :phone_number WHERE house_number = :house_number";
+            $updateStmt = $conn->prepare($updateSql);
+            $updateStmt->bindParam(':contact_name', $contact_name);
+            $updateStmt->bindParam(':phone_number', $line_phone);
+            $updateStmt->bindParam(':house_number', $house_number);
+            $updateStmt->execute();
+
             // ======= ส่งเฉพาะข้อความไป LINE =======
             $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
 
