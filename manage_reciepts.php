@@ -195,7 +195,23 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <input type="hidden" class="form-control" id="inv" name="inv" value="-">
                                                             </div>
 
+                                                            <div class="form-group has-success d-flex align-items-center gap-3">
+                                                                <!-- Radio: โอนเงิน -->
+                                                                <div class="form-check form-check-inline mb-0">
+                                                                    <input class="form-check-input" type="radio" name="payment_method_radio" id="method_transfer" value="โอนเงิน">
+                                                                    <label class="form-check-label" for="method_transfer">โอนเงิน</label>
+                                                                </div>
+                                                                <!-- Radio: เงินสด -->
+                                                                <div class="form-check form-check-inline mb-0">
+                                                                    <input class="form-check-input" type="radio" name="payment_method_radio" id="method_cash" value="เงินสด" checked>
+                                                                    <label class="form-check-label" for="method_cash">จ่ายเงินสด</label>
+                                                                </div>
+                                                                <div class="d-flex align-items-center">
+                                                                    <label for="payment_method" class="control-label mb-0" style="margin-right: 15px;">วิธีการชำระเงิน</label>
+                                                                    <input name="payment_method" class="form-control w-auto" id="payment_method" value="">
+                                                                </div>
 
+                                                            </div>
 
                                                             <div class="form-group">
                                                                 <label for="file_attach">แนบไฟล์ / รูปภาพ</label>
@@ -465,33 +481,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 $(this).find(".fa").css({'font-size': btnFont, 'color': btnColor});
             });
         });
-    </script>
-
-    <script>
-
-        $("#reciept_date").blur(function () {
-            let method = $('#action').val();
-            if (method === "ADD") {
-                let reciept_date = $('#reciept_date').val();
-                let formData = {action: "SEARCH", reciept_date: reciept_date};
-                $.ajax({
-                    url: 'model/manage_reciepts_process.php',
-                    method: "POST",
-                    data: formData,
-                    success: function (data) {
-                        if (data == 2) {
-                            alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
-                        }
-                    }
-                })
-            }
-        });
-
-    </script>
+    </script>GET_REC
 
     <script>
         $(document).ready(function () {
-            let formDataObj = {action: "GET_EXPENSE", sub_action: "GET_MASTER"};
+            let formDataObj = {action: "", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
@@ -701,6 +695,19 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#amount').val(amount);
                         $('#remark').val(remark);
                         $('#approve_status').val(approve_status);
+
+                        let payment_method = response[i].payment_method;
+
+                        // ตั้งค่าให้ radio ตรงกับ payment_method
+                        if (payment_method === "โอนเงิน") {
+                            $("#method_transfer").prop("checked", true);
+                        } else if (payment_method === "เงินสด") {
+                            $("#method_cash").prop("checked", true);
+                        }
+
+                        // ใส่ค่าใน input hidden หรือ text (ถ้ามี)
+                        $("#payment_method").val(payment_method);
+
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
@@ -798,6 +805,19 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#amount').val(amount);
                         $('#remark').val(remark);
                         $('#approve_status').val(approve_status);
+
+                        let payment_method = response[i].payment_method;
+
+                        // ตั้งค่าให้ radio ตรงกับ payment_method
+                        if (payment_method === "โอนเงิน") {
+                            $("#method_transfer").prop("checked", true);
+                        } else if (payment_method === "เงินสด") {
+                            $("#method_cash").prop("checked", true);
+                        }
+
+                        // ใส่ค่าใน input hidden หรือ text (ถ้ามี)
+                        $("#payment_method").val(payment_method);
+
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');
@@ -931,6 +951,24 @@ if (strlen($_SESSION['alogin']) == "") {
             window.open(url, "_blank"); // เปิดหน้าใหม่
         });
     </script>
+
+    <script>
+        // เมื่อเปลี่ยน radio จะอัปเดต input ช่อง payment_method
+        document.querySelectorAll('input[name="payment_method_radio"]').forEach((radio) => {
+            radio.addEventListener('change', function () {
+                document.getElementById('payment_method').value = this.value;
+            });
+        });
+
+        // ตั้งค่าเริ่มต้นให้ตรงกับ radio ที่ถูกเลือกไว้
+        document.addEventListener('DOMContentLoaded', function () {
+            const selected = document.querySelector('input[name="payment_method_radio"]:checked');
+            if (selected) {
+                document.getElementById('payment_method').value = selected.value;
+            }
+        });
+    </script>
+
 
     </body>
     </html>

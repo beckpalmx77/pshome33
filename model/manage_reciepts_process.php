@@ -34,6 +34,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "amount" => $result['amount'],
             "file_attach" => $result['file_attach'],
             "remark" => $result['remark'],
+            "payment_method" => $result['payment_method'],
             "approve_status" => $result['approve_status']);
     }
 
@@ -72,6 +73,8 @@ if ($_POST["action"] === 'ADD') {
         $unit_id = $_POST["unit_id"];
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
+        $payment_method = $_POST["payment_method"];
+
 
         $field = "runno";
         $table = "ims_reciepts";
@@ -111,8 +114,8 @@ if ($_POST["action"] === 'ADD') {
 
         $file_attach = implode(',', $file_names);
 
-        $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name)
-                VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name)";
+        $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name,payment_method)
+                VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name,:payment_method)";
         $query = $conn->prepare($sql);
         $query->bindParam(':runno', $runno, PDO::PARAM_STR);
         $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
@@ -128,7 +131,7 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':inv', $inv, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
-
+        $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
         $query->execute();
         $lastInsertId = $conn->lastInsertId();
 
@@ -152,6 +155,7 @@ if ($_POST["action"] === 'UPDATE') {
         $unit_id = $_POST["unit_id"];
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
+        $payment_method = $_POST["payment_method"];
         $inv = $_POST["inv"];
         $uploadDir = '../uploads/files/';
         $file_names = [];
@@ -228,7 +232,8 @@ if ($_POST["action"] === 'UPDATE') {
                 approve_status = :approve_status,
                 inv = :inv,
                 file_attach = :file_attach,
-                supplier_name = :supplier_name
+                supplier_name = :supplier_name,
+                payment_method = :payment_method
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
@@ -245,6 +250,7 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':inv', $inv);
         $query->bindParam(':file_attach', $finalFileAttach);
         $query->bindParam(':supplier_name', $supplier_name);
+        $query->bindParam(':payment_method', $payment_method);
         $query->bindParam(':id', $id);
         $query->execute();
 
@@ -272,7 +278,7 @@ if ($_POST["action"] === 'DELETE') {
     }
 }
 
-if ($_POST["action"] === 'GET_EXPENSE') {
+if ($_POST["action"] === 'GET_REC') {
 
 ## Read value
     $draw = $_POST['draw'];
@@ -337,6 +343,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
                 "category_id" => $row['category_id'],
                 "category_name" => $row['category_name'],
                 "supplier_name" => $row['supplier_name'],
+                "payment_method" => $row['payment_method'],
                 "description" => $row['description'],
                 "qty" => $row['qty'],
                 "unit_id" => $row['unit_id'],
