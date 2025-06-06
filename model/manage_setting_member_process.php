@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $line_user_id = $_POST['line_user_id'] ?? '';
     $password = $_POST['password'] ?? '';
     $displayName = $_POST['displayName'] ?? '';
-    $line_picture_profile_show = $_POST['displayName'] ?? '';
+    $line_picture_profile_show = $_POST['profilePic'] ?? '';
     $pictureUrl = $_POST['pictureUrl'] ?? '';
 
     $detail = $f_name . " " . $l_name;
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              WHERE line_user_id = :line_user_id";
         $stmt3 = $conn->prepare($sql3);
         $stmt3->bindParam(':detail', $detail, PDO::PARAM_STR);
-        $stmt3->bindParam(':line_picture_profile_show', $line_picture_profile_show, PDO::PARAM_STR);
+        $stmt3->bindParam(':line_picture_profile_show', $pictureUrl, PDO::PARAM_STR);
         $stmt3->bindParam(':line_user_id', $line_user_id, PDO::PARAM_STR);
         $stmt3->execute();
 

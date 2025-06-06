@@ -27,6 +27,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <input type="text" id="account_type" name="account_type" value="<?php echo $_SESSION['account_type']; ?>">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
@@ -94,7 +95,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <form method="post" id="recordForm">
                                                         <div class="modal-body">
                                                             <div class="modal-body">
-
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-6">
                                                                         <label for="doc_id"
@@ -578,7 +578,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         }
     </script>
 
-    <script>
+    <!--script>
         $(document).ready(function () {
             $('#printButton').on('click', function (event) {
                 event.preventDefault();
@@ -610,13 +610,22 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 tempForm.remove();
             });
         });
-    </script>
+    </script-->
 
-    <script>
+    <!--script>
         $("#TableRecordList").on('click', '.print', function () {
             let id = $(this).attr("id");
             let url = "print_pdf.php?id=" + encodeURIComponent(id);
             window.open(url, "_blank"); // เปิดหน้าใหม่
+        });
+    </script-->
+
+    <script>
+        $("#TableRecordList").on('click', '.print', function () {
+            let account_type = $('#account_type').val();
+            let id = $(this).attr("id");
+            let url = (account_type === 'user') ? "print_pdf_smart?id=" : "print_pdf?id=";
+            window.open(url + encodeURIComponent(id), "_blank");
         });
     </script>
 
