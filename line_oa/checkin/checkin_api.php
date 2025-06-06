@@ -13,16 +13,21 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
     $lon = $_POST['longitude'];
     $timestamp = date('Y-m-d H:i:s');
 
-    // ตรวจสอบว่ามีการ check-in/check-out แล้วในนาทีนั้นหรือไม่
-    $minuteStart = date('Y-m-d H:i:00', strtotime($timestamp)); // เริ่มต้นของนาที
-    $minuteEnd = date('Y-m-d H:i:59', strtotime($timestamp));   // สิ้นสุดของนาที
+    // ตรวจสอบว่ามี check-in/out ซ้ำภายใน 5 นาทีหรือไม่
+    $fiveMinAgo = date('Y-m-d H:i:s', strtotime('-5 minutes', strtotime($timestamp)));
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND check_type = ? AND checkin_time BETWEEN ? AND ?");
+    $stmt->execute([$userId, $check_type, $fiveMinAgo, $timestamp]);
+    if ($stmt->fetchColumn() > 0) {
+        echo "⚠️ ไม่สามารถ{$check_type} ได้ซ้ำภายใน 5 นาที";
+        exit;
+    }
 
-    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND check_type = ? AND checkin_time BETWEEN ? AND ?");
-    $checkStmt->execute([$userId, $check_type, $minuteStart, $minuteEnd]);
-    $alreadyChecked = $checkStmt->fetchColumn();
-
-    if ($alreadyChecked > 0) {
-        echo "⚠️ มีการบันทึก{$check_type} แล้วในช่วงเวลานี้";
+    // ตรวจสอบว่า check_type เดิมซ้ำกับรายการล่าสุดหรือไม่
+    $stmt = $conn->prepare("SELECT check_type FROM checkins WHERE user_id = ? ORDER BY checkin_time DESC LIMIT 1");
+    $stmt->execute([$userId]);
+    $lastType = $stmt->fetchColumn();
+    if ($lastType && $lastType === $check_type) {
+        echo "⚠️ ไม่สามารถ{$check_type} ซ้ำได้ กรุณาสลับเป็น " . ($check_type === 'IN' ? 'OUT' : 'IN');
         exit;
     }
 
@@ -40,26 +45,15 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
         $token_checkin = uniqid("ps33_", true);
 
         $imageInfo = getimagesize($tmpName);
-        if ($imageInfo === false) {
-            continue;
-        }
+        if ($imageInfo === false) continue;
         $mime = $imageInfo['mime'];
 
         switch ($mime) {
-            case 'image/jpeg':
-                $image = imagecreatefromjpeg($tmpName);
-                break;
-            case 'image/png':
-                $image = imagecreatefrompng($tmpName);
-                break;
-            case 'image/webp':
-                $image = imagecreatefromwebp($tmpName);
-                break;
-            case 'image/gif':
-                $image = imagecreatefromgif($tmpName);
-                break;
-            default:
-                continue 2;
+            case 'image/jpeg': $image = imagecreatefromjpeg($tmpName); break;
+            case 'image/png': $image = imagecreatefrompng($tmpName); break;
+            case 'image/webp': $image = imagecreatefromwebp($tmpName); break;
+            case 'image/gif': $image = imagecreatefromgif($tmpName); break;
+            default: continue 2;
         }
 
         if ($image && imagejpeg($image, $newFilePath, 90)) {
@@ -70,19 +64,16 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
 
     if (!empty($photoNames)) {
         $photoPaths = implode(",", $photoNames);
-
         $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
 
         $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
 
-        // ข้อความธรรมดา
         $textMessage = [
             'type' => 'text',
             'text' => "✅ {$actionText} สำเร็จ\nสถานที่: {$place_name}\nเวลา: {$timestamp}"
         ];
 
-        // Flex Message รูปภาพ
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
             $imageUrl = "https://ps33.themediathai.com/line_oa/checkin/uploads/" . $photo;
@@ -128,13 +119,9 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['pl
 
         $messageData = [
             'to' => $userId,
-            'messages' => [
-                $textMessage,
-                $flexMessage
-            ]
+            'messages' => [$textMessage, $flexMessage]
         ];
 
-        // ส่งข้อความไปยัง LINE
         $ch = curl_init('https://api.line.me/v2/bot/message/push');
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
