@@ -23,6 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $payment_method = "โอนเงิน";
 
+    $stmt = $conn->prepare("SELECT * FROM ims_house_line_user WHERE line_user_id = :line_user_id");
+    $stmt->bindParam(':line_user_id', $line_user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $line_user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $f_name = $line_user['f_name'];
+    $l_name = $line_user['l_name'];
+
     $field = "runno";
     $table = "ims_house_payment";
     $cond = " WHERE house_number = '" . $house_number . "' AND period_year = '" . $period_year . "'";
@@ -151,4 +158,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-?>
