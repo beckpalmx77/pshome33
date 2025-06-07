@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
         $exists = $stmt->fetchColumn();
-
+/*
         if ($exists) {
             $sql = "UPDATE ims_house_line_user SET line_user_name = :displayName, line_picture_profile = :pictureUrl
                     ,f_name = :f_name ,l_name = :l_name     
@@ -50,6 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':pictureUrl', $pictureUrl);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
+*/
 
         echo 'success';
 

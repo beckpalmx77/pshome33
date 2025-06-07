@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute();
         }
 
-
+/*
         $sql3 = "UPDATE ims_house_payment 
              SET detail = :detail , line_picture_profile_show = :line_picture_profile_show
              WHERE line_user_id = :line_user_id";
@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt3->bindParam(':line_picture_profile_show', $pictureUrl, PDO::PARAM_STR);
         $stmt3->bindParam(':line_user_id', $line_user_id, PDO::PARAM_STR);
         $stmt3->execute();
+*/
 
 
         echo 1;
