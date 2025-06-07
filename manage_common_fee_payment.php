@@ -27,7 +27,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
-                        <input type="text" id="account_type" name="account_type" value="<?php echo $_SESSION['account_type']; ?>">
+                        <input type="hidden" id="account_type" name="account_type" value="<?php echo $_SESSION['account_type']; ?>">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
