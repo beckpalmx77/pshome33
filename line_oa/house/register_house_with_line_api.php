@@ -12,7 +12,7 @@ $linePictureProfile = $_POST['picture'] ?? '';
 $lineStatusProfile  = $_POST['statusMessage'] ?? '';
 $f_name             = $_POST['f_name'] ?? '';
 $l_name             = $_POST['l_name'] ?? '';
-$house_number       = $_POST['house_number'] ?? '';
+$house_number = preg_replace('/\s+/', '', $_POST['house_number']);
 $alley              = $_POST['alley'] ?? '';
 $password_raw       = $_POST['password'] ?? 'default_password';
 

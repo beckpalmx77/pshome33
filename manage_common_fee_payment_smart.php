@@ -631,7 +631,7 @@ include('includes/Footer.php');
 
 
                     // ส่ง userId ไปยัง backend
-                    fetch('model/get_house_number.php', {
+                    fetch('model/get_house_number_smart.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'

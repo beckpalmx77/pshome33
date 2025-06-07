@@ -306,6 +306,30 @@ if (strlen($_SESSION['alogin']) === "") {
     <script src="js/MyFrameWork/framework_util.js"></script>
 
     <script>
+        function cleanHouseNumber(value) {
+            // ลบช่องว่างทั้งหมด และอักขระที่ไม่ใช่ตัวเลขหรือ /
+            return value.replace(/\s+/g, '').replace(/[^0-9\/]/g, '');
+        }
+
+        const houseNumberInput = document.getElementById("house_number");
+
+        // กรองตอนพิมพ์
+        houseNumberInput.addEventListener("input", function () {
+            this.value = cleanHouseNumber(this.value);
+        });
+
+        // ตรวจสอบอีกครั้งเมื่อเปลี่ยนค่า (เช่น copy/paste แล้วคลิกออก)
+        houseNumberInput.addEventListener("change", function () {
+            this.value = cleanHouseNumber(this.value);
+        });
+
+        // ตรวจสอบอีกครั้งเมื่อ focus หลุด (leave field)
+        houseNumberInput.addEventListener("blur", function () {
+            this.value = cleanHouseNumber(this.value);
+        });
+    </script>
+
+    <script>
         $(document).ready(function () {
             // Preview Image
             $("#picture_payment").on("change", function () {

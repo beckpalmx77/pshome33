@@ -62,7 +62,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
                                                     <th>Action</th>
-                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -75,7 +74,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
-                                                    <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -312,7 +310,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         $(document).ready(function () {
             let formData = {action: "GET_HOUSE", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
-                'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
+                'lengthMenu': [[5, 10, 20, 50, 100, 500 , 621], [5, 10, 20, 50, 100, 500, 621]],
                 'language': {
                     search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
@@ -350,7 +348,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
                     },
-                    {data: 'update'},
                     {data: 'delete'}
                 ]
             });

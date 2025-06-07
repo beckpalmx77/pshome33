@@ -77,12 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($stmt->execute()) {
 
+/*
                 $updateSql = "UPDATE ims_house SET contact_name = :contact_name , phone_number = :phone_number WHERE house_number = :house_number";
                 $updateStmt = $conn->prepare($updateSql);
                 $updateStmt->bindParam(':contact_name', $contact_name);
                 $updateStmt->bindParam(':phone_number', $line_phone);
                 $updateStmt->bindParam(':house_number', $house_number);
                 $updateStmt->execute();
+*/
 
                 // ======= ส่งเฉพาะข้อความไป LINE =======
                 $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
