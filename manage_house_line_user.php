@@ -151,9 +151,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                                              src=""
                                                                              alt="line_picture_profile"
                                                                              class="img-fluid img-thumbnail"
-                                                                             style="max-height: 150px;">
+                                                                             style="max-height: 150px; cursor: pointer;"
+                                                                             data-toggle="modal"
+                                                                             data-target="#imageModal">
                                                                     </div>
                                                                 </div>
+
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -174,6 +177,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="modal fade" id="imageModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="imageModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+
+                                                    <!-- ปุ่ม X -->
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="imageModalLabel">รูปภาพ</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span> <!-- ตัว X -->
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- รูปภาพ -->
+                                                    <div class="modal-body text-center">
+                                                        <img id="modalImage" src="" alt="Preview" class="img-fluid">
+                                                    </div>
+
+                                                    <!-- ปุ่ม "ปิด" -->
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">ปิด
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
 
                                 </div>
                             </div>
@@ -452,6 +486,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
         });
 
     </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#line_picture_profile_img').on('click', function () {
+                var src = $(this).attr('src');
+                $('#modalImage').attr('src', src);
+            });
+        });
+    </script>
+
 
     </body>
     </html>
