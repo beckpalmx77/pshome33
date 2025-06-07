@@ -15,27 +15,24 @@ function writeLog($message) {
 
 writeLog("🔧 เริ่มต้นประมวลผล check-in");
 
-// ตรวจสอบค่าที่ส่งมาครบหรือไม่ (user_id, latitude, longitude, place_name, check_type และ ไฟล์ photo)
-if (
-    isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['place_name'], $_POST['check_type'])
-    && isset($_FILES['photo'])
-) {
+// ตรวจสอบค่าที่ส่งมาครบหรือไม่ (user_id, place_name, check_type)
+if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
     $userId = $_POST['user_id'];
     $displayName = $_POST['display_name'] ?? 'Unknown';
     $place_name = $_POST['place_name'];
     $check_type = $_POST['check_type'];
-    $lat = $_POST['latitude'];
-    $lon = $_POST['longitude'];
+    $lat = $_POST['latitude'] ?? null;  // latitude กับ longitude อาจไม่มีส่งมาก็ได้
+    $lon = $_POST['longitude'] ?? null;
     $timestamp = date('Y-m-d H:i:s');
 
-    writeLog("📥 รับข้อมูลจาก client: user_id=$userId, display_name=$displayName, check_type=$check_type");
+    writeLog(sprintf("📥 รับข้อมูลจาก client: user_id=%s, display_name=%s, check_type=%s, location=%s || %s", $userId, $displayName, $check_type, $lat ?? 'null', $lon ?? 'null'));
 
-    // ตรวจสอบการเช็คซ้ำภายใน 5 นาที
-    $fiveMinAgo = date('Y-m-d H:i:s', strtotime('-5 minutes', strtotime($timestamp)));
+    // ตรวจสอบการเช็คซ้ำภายใน 1 นาที (เดิมเขียนว่า 5 นาที แต่โค้ดจริง -1 นาที)
+    $oneMinAgo = date('Y-m-d H:i:s', strtotime('-1 minutes', strtotime($timestamp)));
     $stmt = $conn->prepare("SELECT COUNT(*) FROM checkins WHERE user_id = ? AND check_type = ? AND checkin_time BETWEEN ? AND ?");
-    $stmt->execute([$userId, $check_type, $fiveMinAgo, $timestamp]);
+    $stmt->execute([$userId, $check_type, $oneMinAgo, $timestamp]);
     $count = $stmt->fetchColumn();
-    writeLog("🔁 เช็คซ้ำภายใน 5 นาที: $count");
+    writeLog("🔁 เช็คซ้ำภายใน 1 นาที: $count");
 
     if ($count > 0) {
         echo "⚠️ ไม่สามารถ{$check_type} ได้ซ้ำภายใน 5 นาที";
@@ -69,70 +66,81 @@ if (
     $photoNames = [];
     $token_checkin = uniqid("ps33_", true);
 
-    // ตรวจสอบว่า $_FILES['photo']['tmp_name'] เป็น array หรือไม่ (รองรับหลายรูป)
-    $files = $_FILES['photo'];
-    $fileCount = is_array($files['tmp_name']) ? count($files['tmp_name']) : 1;
+    // ตรวจสอบว่ามีไฟล์รูปส่งมาหรือไม่
+    if (isset($_FILES['photo']) && !empty($_FILES['photo']['tmp_name'])) {
+        $files = $_FILES['photo'];
+        $fileCount = is_array($files['tmp_name']) ? count($files['tmp_name']) : 1;
 
-    for ($i = 0; $i < $fileCount; $i++) {
-        $tmpName = is_array($files['tmp_name']) ? $files['tmp_name'][$i] : $files['tmp_name'];
-        $originalName = is_array($files['name']) ? pathinfo($files['name'][$i], PATHINFO_FILENAME) : pathinfo($files['name'], PATHINFO_FILENAME);
+        for ($i = 0; $i < $fileCount; $i++) {
+            $tmpName = is_array($files['tmp_name']) ? $files['tmp_name'][$i] : $files['tmp_name'];
+            $originalName = is_array($files['name']) ? pathinfo($files['name'][$i], PATHINFO_FILENAME) : pathinfo($files['name'], PATHINFO_FILENAME);
 
-        if (!$tmpName || !is_uploaded_file($tmpName)) {
-            writeLog("❌ ไฟล์รูปภาพที่ $i ไม่ถูกอัปโหลดอย่างถูกต้อง");
-            continue;
-        }
+            if (!$tmpName || !is_uploaded_file($tmpName)) {
+                writeLog("❌ ไฟล์รูปภาพที่ $i ไม่ถูกอัปโหลดอย่างถูกต้อง");
+                continue;
+            }
 
-        $newFileName = uniqid("checkin_") . "_" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName) . ".jpg";
-        $newFilePath = $uploadDir . $newFileName;
+            $newFileName = uniqid("checkin_") . "_" . preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName) . ".jpg";
+            $newFilePath = $uploadDir . $newFileName;
 
-        $imageInfo = getimagesize($tmpName);
-        if ($imageInfo === false) {
-            writeLog("❌ ไฟล์ $originalName ไม่ใช่รูปภาพ");
-            continue;
-        }
+            $imageInfo = getimagesize($tmpName);
+            if ($imageInfo === false) {
+                writeLog("❌ ไฟล์ $originalName ไม่ใช่รูปภาพ");
+                continue;
+            }
 
-        $mime = $imageInfo['mime'];
-        switch ($mime) {
-            case 'image/jpeg':
-                $image = imagecreatefromjpeg($tmpName);
-                break;
-            case 'image/png':
-                $image = imagecreatefrompng($tmpName);
-                break;
-            case 'image/webp':
-                $image = imagecreatefromwebp($tmpName);
-                break;
-            case 'image/gif':
-                $image = imagecreatefromgif($tmpName);
-                break;
-            default:
-                writeLog("❌ ไม่รองรับ MIME: $mime");
-                continue 2;
-        }
+            $mime = $imageInfo['mime'];
+            switch ($mime) {
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($tmpName);
+                    break;
+                case 'image/png':
+                    $image = imagecreatefrompng($tmpName);
+                    break;
+                case 'image/webp':
+                    $image = imagecreatefromwebp($tmpName);
+                    break;
+                case 'image/gif':
+                    $image = imagecreatefromgif($tmpName);
+                    break;
+                default:
+                    writeLog("❌ ไม่รองรับ MIME: $mime");
+                    continue 2;
+            }
 
-        if ($image && imagejpeg($image, $newFilePath, 90)) {
-            $photoNames[] = $newFileName;
-            imagedestroy($image);
-            writeLog("✅ บันทึกรูป: $newFileName");
-        } else {
-            writeLog("❌ บันทึกรูปไม่สำเร็จ: $newFileName");
+            if ($image && imagejpeg($image, $newFilePath, 90)) {
+                $photoNames[] = $newFileName;
+                imagedestroy($image);
+                writeLog("✅ บันทึกรูป: $newFileName");
+            } else {
+                writeLog("❌ บันทึกรูปไม่สำเร็จ: $newFileName");
+            }
         }
     }
 
+    // ถ้าไม่มีรูป ให้ photo_path เป็น NULL หรือค่าว่างก็ได้
+    $photoPaths = !empty($photoNames) ? implode(",", $photoNames) : null;
+
+    // บันทึกข้อมูลลงฐานข้อมูลได้เลยไม่ว่ามีรูปหรือไม่มีรูป
+    $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
+    writeLog("📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย");
+
+    $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
+
+    // ส่งข้อความแจ้งเตือน LINE
+    $textMessage = [
+        'type' => 'text',
+        'text' => "✅ {$actionText} สำเร็จ\nสถานที่: {$place_name}\nเวลา: {$timestamp}"
+    ];
+
+    $messageData = [
+        'to' => $userId,
+        'messages' => [$textMessage]
+    ];
+
+    // ถ้ามีรูปภาพ ให้เพิ่ม Flex Message รูปภาพด้วย
     if (!empty($photoNames)) {
-        $photoPaths = implode(",", $photoNames);
-        $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
-        writeLog("📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย");
-
-        $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
-
-        // ส่งข้อความแจ้งเตือน LINE
-        $textMessage = [
-            'type' => 'text',
-            'text' => "✅ {$actionText} สำเร็จ\nสถานที่: {$place_name}\nเวลา: {$timestamp}"
-        ];
-
         $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
             $imageUrl = "https://ps33.themediathai.com/line_oa/checkin/uploads/" . $photo;
@@ -175,37 +183,33 @@ if (
             ]
         ];
 
-        $messageData = [
-            'to' => $userId,
-            'messages' => [$textMessage, $flexMessage]
-        ];
-
-        $ch = curl_init('https://api.line.me/v2/bot/message/push');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $channelAccessToken
-        ]);
-
-        $result = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
-
-        writeLog("📤 ส่ง LINE: HTTP=$httpCode, Result=$result, Error=$error");
-
-        if ($httpCode === 200) {
-            echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
-        } else {
-            echo "❌ $actionText สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
-        }
-    } else {
-        http_response_code(500);
-        writeLog("❌ ไม่มีรูปที่อัปโหลดได้");
-        echo "❌ อัปโหลดรูปไม่สำเร็จ";
+        // เพิ่ม Flex message เข้าไปในข้อความที่จะส่ง
+        $messageData['messages'][] = $flexMessage;
     }
+
+    // ส่งข้อความ LINE
+    $ch = curl_init('https://api.line.me/v2/bot/message/push');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: ' . 'Bearer ' . $channelAccessToken
+    ]);
+
+    $result = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    writeLog("📤 ส่ง LINE: HTTP=$httpCode, Result=$result, Error=$error");
+
+    if ($httpCode === 200) {
+        echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
+    } else {
+        echo "❌ $actionText สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
+    }
+
 } else {
     http_response_code(400);
     writeLog("❌ ค่าที่ส่งมาไม่ครบ: " . json_encode($_POST));

@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#00B900">
-  <meta name="description" content="ระบบจัดการข้อมูล">
-  <meta name="author" content="PS33">
-  <link rel="icon" href="../img/favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#00B900" />
+  <meta name="description" content="ระบบจัดการข้อมูล" />
+  <meta name="author" content="PS33" />
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script src="jsconfig/config_out.js"></script>
   <style>
-    body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background-color: #ffffff; color: #333; }
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #ffffff;
+      color: #333;
+    }
     .container {
       max-width: 480px;
       margin: auto;
@@ -20,9 +26,17 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       box-sizing: border-box;
     }
-    .text-center { text-align: center; margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-weight: bold; }
-    input[type="file"], input[type="text"] {
+    .text-center {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input[type="file"],
+    input[type="text"] {
       width: 100%;
       padding: 12px;
       font-size: 16px;
@@ -42,8 +56,14 @@
       cursor: pointer;
       box-sizing: border-box;
     }
-    button:hover { background-color: #d10000; }
-    #spinner { display: none; text-align: center; margin-top: 20px; }
+    button:hover {
+      background-color: #d10000;
+    }
+    #spinner {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
     .loader {
       border: 6px solid #f3f3f3;
       border-top: 6px solid #ff0000;
@@ -53,7 +73,14 @@
       animation: spin 1s linear infinite;
       margin: auto;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -64,12 +91,12 @@
   </div>
   <form id="checkinForm" enctype="multipart/form-data">
     <label for="place_name">📌 สถานที่ : </label>
-    <input type="text" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required>
+    <input type="text" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required />
 
-    <input type="text" id="check_type" value="OUT" readonly="true">
+    <input type="text" id="check_type" value="OUT" readonly="true" />
 
     <label for="photoInput">📷 รูปภาพ : </label>
-    <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple>
+    <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple />
 
     <button type="button" onclick="checkin()">✅ กดเพื่อ Check-out</button>
   </form>
@@ -83,67 +110,76 @@
   async function checkin() {
     try {
       await liff.init({ liffId: LIFF_ID });
-      if (!liff.isLoggedIn()) { liff.login(); return; }
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
 
       const profile = await liff.getProfile();
-      const photoInput = document.getElementById("photoInput");
-      const check_type = document.getElementById("check_type");
-      const placeNameInput = document.getElementById("place_name");
+      const photoInput = document.getElementById('photoInput');
+      const check_type = document.getElementById('check_type');
+      const placeNameInput = document.getElementById('place_name');
 
-      if (!photoInput.files.length) return alert("กรุณาเลือกรูปถ่ายก่อน");
-      if (!placeNameInput.value.trim()) return alert("กรุณากรอกชื่อสถานที่");
+      if (!placeNameInput.value.trim()) {
+        return alert('กรุณากรอกชื่อสถานที่');
+      }
 
       const placeName = placeNameInput.value;
 
-      // พยายามดึงตำแหน่ง ถ้าไม่ได้ให้ใช้ 0
       navigator.geolocation.getCurrentPosition(
-              position => {
-                sendCheckin(profile, check_type.value, placeName, photoInput, position.coords.latitude, position.coords.longitude);
+              (position) => {
+                sendCheckin(
+                        profile,
+                        check_type.value,
+                        placeName,
+                        photoInput,
+                        position.coords.latitude,
+                        position.coords.longitude
+                );
               },
-              error => {
+              (error) => {
                 sendCheckin(profile, check_type.value, placeName, photoInput, 0, 0);
               },
               { timeout: 10000 }
       );
-
     } catch (err) {
-      alert("เกิดข้อผิดพลาด: " + err.message);
+      alert('เกิดข้อผิดพลาด: ' + err.message);
     }
   }
 
   function sendCheckin(profile, checkType, placeName, photoInput, lat, lng) {
     const formData = new FormData();
-    formData.append("user_id", profile.userId);
-    formData.append("check_type", checkType);
-    formData.append("display_name", profile.displayName);
-    formData.append("place_name", placeName);
-    formData.append("latitude", lat);
-    formData.append("longitude", lng);
+    formData.append('user_id', profile.userId);
+    formData.append('check_type', checkType);
+    formData.append('display_name', profile.displayName);
+    formData.append('place_name', placeName);
+    formData.append('latitude', lat);
+    formData.append('longitude', lng);
 
     for (let i = 0; i < photoInput.files.length; i++) {
-      formData.append("photo[]", photoInput.files[i]);
+      formData.append('photo[]', photoInput.files[i]);
     }
 
-    document.getElementById("spinner").style.display = "block";
+    document.getElementById('spinner').style.display = 'block';
 
-    fetch("https://ps33.themediathai.com/line_oa/checkin/checkin_api.php", {
-      method: "POST",
-      body: formData
+    fetch('https://ps33.themediathai.com/line_oa/checkin/checkin_api.php', {
+      method: 'POST',
+      body: formData,
     })
-            .then(res => res.text())
+            .then((res) => res.text())
             .then(() => {
-              alert("✅ Check-out สำเร็จแล้ว");
+              alert('✅ Check-out สำเร็จแล้ว');
               liff.closeWindow();
             })
-            .catch(err => alert("❌ ไม่สามารถ Check-out ได้: " + err.message))
+            .catch((err) => alert('❌ ไม่สามารถ Check-out ได้: ' + err.message))
             .finally(() => {
-              document.getElementById("spinner").style.display = "none";
+              document.getElementById('spinner').style.display = 'none';
             });
   }
 </script>
 
 <script>
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  document.addEventListener('contextmenu', (event) => event.preventDefault());
 </script>
 </body>
 </html>
