@@ -107,11 +107,17 @@ header('Content-Type: text/html; charset=utf-8');
 </div>
 
 <script>
+    
     async function checkin() {
+        const saveBtn = document.getElementById("saveBtn");
+
         try {
+            saveBtn.disabled = true; // ปิดการกดปุ่มซ้ำ
+
             await liff.init({liffId: LIFF_ID});
             if (!liff.isLoggedIn()) {
                 liff.login();
+                saveBtn.disabled = false; // ถ้า login ต้องเปิดปุ่มคืน
                 return;
             }
 
@@ -121,9 +127,9 @@ header('Content-Type: text/html; charset=utf-8');
             const check_type = document.getElementById("check_type").value;
             const photoInput = document.getElementById("photoInput");
 
-            // ✅ ตรวจสอบความยาว remark
             if (remark.length < 15) {
                 alert("กรุณากรอกรายละเอียดอย่างน้อย 15 ตัวอักษร");
+                saveBtn.disabled = false; // เปิดปุ่มถ้า validate ไม่ผ่าน
                 return;
             }
 
@@ -140,9 +146,16 @@ header('Content-Type: text/html; charset=utf-8');
 
             document.getElementById("spinner").style.display = "block";
 
-            submitForm(formData, profile, remark);
+            // รอผลการส่งฟอร์มก่อนเปิดปุ่มอีกครั้ง
+            await submitForm(formData, profile, remark);
+
+            saveBtn.disabled = false; // เปิดปุ่มหลังส่งเสร็จ
+            document.getElementById("spinner").style.display = "none";
+
         } catch (err) {
             alert("เกิดข้อผิดพลาด: " + err.message);
+            saveBtn.disabled = false; // เปิดปุ่มเมื่อเกิด error
+            document.getElementById("spinner").style.display = "none";
         }
     }
 
