@@ -102,4 +102,9 @@
       <server host="localhost" id="6ec32849-2bc6-4b3d-a37c-4ae2b50beaba" name="localhost" port="8888" use_path_mappings="true" />
     </servers>
   </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
 </project>
