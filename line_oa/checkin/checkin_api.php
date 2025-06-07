@@ -22,6 +22,7 @@ if (
 ) {
     $userId = $_POST['user_id'];
     $displayName = $_POST['display_name'] ?? 'Unknown';
+    $pictureUrl = $_POST['pictureUrl'];
     $place_name = $_POST['place_name'];
     $check_type = $_POST['check_type'];
     $lat = $_POST['latitude'];
@@ -124,6 +125,11 @@ if (
         $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
         writeLog("📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย");
+
+        $stmt = $conn->prepare("UPDATE ims_employee_line_user 
+        SET line_picture_profile = ? 
+        WHERE user_id = ?");
+        $stmt->execute([$pictureUrl, $userId]);
 
         $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
 
