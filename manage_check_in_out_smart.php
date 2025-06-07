@@ -61,7 +61,7 @@ $curr_date = date("d-m-Y");
                             <div class="modal-header">
                                 <h5 class="modal-title" id="mapModalLabel">ตำแหน่งบนแผนที่</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="ปิด">
-                                    <span aria-hidden="true">&times;</span>
+                                    <span aria-hidden="true">&times; ปิด</span>
                                 </button>
                             </div>
                             <div class="modal-body" id="mapContainer" style="height: 400px;">
