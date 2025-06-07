@@ -22,17 +22,21 @@ if (isset($_POST["payment_method"])) {
     }
 }
 
-$house_payment_data = fetchPaymentData($conn, 'v_ims_house_payment', $start_date, $end_date, $payment_method_sql);
+$reciepts_data = fetchRecieptsData($conn, 'v_ims_reciepts', $start_date, $end_date, $payment_method_sql);
 
-function fetchPaymentData($conn, $table, $start_date, $end_date, $payment_method_sql)
+function fetchRecieptsData($conn, $table, $start_date, $end_date, $payment_method_sql)
 {
+    if (empty($start_date) || empty($end_date)) {
+        return []; // ป้องกัน query ถ้าไม่มีวันที่
+    }
+
     $sql = "
     SELECT * FROM $table 
     WHERE 1=1 $payment_method_sql
-    AND STR_TO_DATE(payment_date, '%d-%m-%Y') 
+    AND STR_TO_DATE(reciept_date, '%d-%m-%Y') 
         BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') 
         AND STR_TO_DATE(:end_date, '%d-%m-%Y')
-    ORDER BY STR_TO_DATE(payment_date, '%d-%m-%Y');
+    ORDER BY STR_TO_DATE(reciept_date, '%d-%m-%Y');
     ";
 
     $query = $conn->prepare($sql);
@@ -42,15 +46,16 @@ function fetchPaymentData($conn, $table, $start_date, $end_date, $payment_method
     return $query->fetchAll(PDO::FETCH_OBJ);
 }
 
+
 // ถ้าส่งคำขอ export ให้ส่งออก CSV แทน
 if ($export == '1') {
-    exportToCSV($house_payment_data, $start_date, $end_date);
+    exportToCSV($reciepts_data, $start_date, $end_date);
     exit; // จบการทำงานหลังส่งไฟล์
 }
 
 function exportToCSV($data, $start_date, $end_date)
 {
-    $filename = "payment_report_{$start_date}_to_{$end_date}.csv";
+    $filename = "reciepts_report_{$start_date}_to_{$end_date}.csv";
 
     echo "\xEF\xBB\xBF"; // UTF-8 BOM
 
@@ -60,13 +65,13 @@ function exportToCSV($data, $start_date, $end_date)
     $output = fopen('php://output', 'w');
 
     // Header
-    fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'สถานะ', 'วิธีชำระ']);
+    fputcsv($output, ['ลำดับ', 'วันที่', 'ปี', 'รายละเอียดรายรับ', 'ผู้ชำระ', 'วิธีชำระ', 'จำนวนเงิน (บาท)', 'สถานะ']);
 
     $sum_amount = 0; // ตัวแปรเก็บยอดรวม
 
     // Rows
     foreach ($data as $index => $row) {
-        $payment_status_desc = ($row->payment_status == 'Y') ? "ยืนยันการชำระ" : "ยังไม่ยืนยันการชำระ";
+        $approve_status_desc = ($row->approve_status == 'Y') ? "ยืนยันการชำระ" : "ยังไม่ยืนยันการชำระ";
 
         // แปลงค่า amount เป็นตัวเลขก่อนรวม
         $amount = floatval($row->amount);
@@ -74,23 +79,19 @@ function exportToCSV($data, $start_date, $end_date)
 
         fputcsv($output, [
             $index + 1,
-            $row->payment_date,
-            $row->detail,
-            $row->house_number,
-            $row->area_size,
+            $row->reciept_date,
+            $row->rec_year,
+            $row->description,
+            $row->supplier_name,
             $row->payment_method,
-            $row->month_name_start . " - " . $row->month_name_start,
-            $row->period_year,
-            $row->payment_type,
             number_format($amount, 2), // รูปแบบ 2 ตำแหน่งทศนิยม
-            $payment_status_desc,
-            $row->payment_method
+            $approve_status_desc
         ]);
     }
 
     // แสดงแถวสุดท้ายเป็นยอดรวม
     fputcsv($output, [
-        '', '', '', '', '', '', '', '', 'รวมทั้งหมด',
+        '', '', '', '', '', 'รวมทั้งหมด',
         number_format($sum_amount, 2),
         '', ''
     ]);
@@ -170,8 +171,9 @@ function exportToCSV($data, $start_date, $end_date)
 
             <!-- ปุ่ม Export Excel -->
             <form method="post" style="display: inline-block;">
-                <input type="hidden" name="doc_date_start" id="doc_date_start" value="<?php echo htmlentities($start_date); ?>">
-                <input type="hidden" name="doc_date_to" id = "doc_date_to" value="<?php echo htmlentities($end_date); ?>">
+                <input type="hidden" name="doc_date_start" id="doc_date_start"
+                       value="<?php echo htmlentities($start_date); ?>">
+                <input type="hidden" name="doc_date_to" id="doc_date_to" value="<?php echo htmlentities($end_date); ?>">
                 <input type="hidden" name="payment_method" id="payment_method"
                        value="<?php echo isset($_POST["payment_method"]) ? htmlentities($_POST["payment_method"]) : 'all'; ?>">
                 <input type="hidden" name="export" value="1"/>
@@ -186,63 +188,53 @@ function exportToCSV($data, $start_date, $end_date)
 
             <button class="btn btn-danger mb-3" onclick="window.close()">ปิด (Close)</button>
 
-            <h4><span class="badge bg-info">แสดงข้อมูลการรับชำระค่าส่วนกลาง</span></h4>
+            <h4><span class="badge bg-info">แสดงข้อมูลการรายรับ/รายได้</span></h4>
 
-            <table id="PaymentTable" class="table table-striped table-bordered">
+            <table id="RecieptsTable" class="table table-striped table-bordered">
                 <thead>
                 <tr>
-                    <th>#</th>
+                    <th>ลำดับ</th>
                     <th>วันที่</th>
-                    <th>ผู้ชำระ</th>
-                    <th>บ้านเลขที่</th>
-                    <th>พื้นที่บ้าน ตรว</th>
-                    <th>ค่าส่วนกลาง</th>
-                    <th>ชำระโดย</th>
-                    <th>งวดเดือน</th>
                     <th>ปี</th>
-                    <th>จำนวนงวด</th>
-                    <th>จำนวนเงินที่ชำระ</th>
-                    <th>สถานะ</th>
+                    <th>รายละเอียดรายรับ</th>
+                    <th>ผู้ชำระ</th>
                     <th>วิธีชำระ</th>
+                    <th>จำนวนเงิน (บาท)</th>
+                    <th>สถานะ</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($house_payment_data as $index => $row_house_payment): ?>
+                <?php foreach ($reciepts_data as $index => $row_reciepts): ?>
                     <?php
-                    $payment_status_desc = '';
-                    switch ($row_house_payment->payment_status) {
+                    $approve_status_desc = '';
+                    switch ($row_reciepts->approve_status) {
                         case 'Y':
-                            $payment_status_desc = "<span style='color: green;'>ยืนยันการชำระ</span>";
+                            $approve_status_desc = "<span style='color: green;'>ยืนยันการชำระ</span>";
                             break;
                         case 'N':
-                            $payment_status_desc = "<span style='color: red;'>ยังไม่ยืนยันการชำระ</span>";
+                            $approve_status_desc = "<span style='color: red;'>ยังไม่ยืนยันการชำระ</span>";
                             break;
                         default:
-                            $payment_status_desc = "<span>ไม่ระบุสถานะ</span>";
+                            $approve_status_desc = "<span>ไม่ระบุสถานะ</span>";
                     }
                     ?>
                     <tr>
                         <td><?php echo htmlentities($index + 1); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->payment_date); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->detail); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->house_number); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->area_size); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->common_fee); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->payment_method); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->month_name_start . " - " . $row_house_payment->month_name_start); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->period_year); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->payment_type); ?></td>
-                        <td><?php echo htmlentities($row_house_payment->amount); ?></td>
-                        <td><?php echo $payment_status_desc; ?></td>
-                        <td><?php echo htmlentities($row_house_payment->payment_method); ?></td>
+                        <td><?php echo htmlentities($row_reciepts->reciept_date); ?></td>
+                        <td><?php echo htmlentities($row_reciepts->rec_year); ?></td>
+                        <td><?php echo htmlentities($row_reciepts->description); ?></td>
+                        <td><?php echo htmlentities($row_reciepts->supplier_name); ?></td>
+                        <td><?php echo htmlentities($row_reciepts->payment_method); ?></td>
+                        <td class="text-end"><?php echo htmlentities($row_reciepts->amount); ?></td>
+                        <td><?php echo $approve_status_desc; ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="10" class="text-end">รวมทั้งหมด:</th>
-                    <th id="totalAmountFooter"></th>
-                    <th colspan="2"></th>
+                    <th colspan="6" class="text-end">รวมทั้งหมด:</th>
+                    <th class="text-end">id="totalAmountFooter"></th>
+                    <th colspan="1"></th>
                 </tr>
                 </tfoot>
             </table>
@@ -273,7 +265,7 @@ function exportToCSV($data, $start_date, $end_date)
 
 <script>
     $(document).ready(function () {
-        $('#PaymentTable').DataTable({
+        $('#RecieptsTable').DataTable({
             responsive: true,
             'lengthMenu': [[10, 20, 50, 100], [10, 20, 50, 100]],
             'language': {
@@ -300,17 +292,17 @@ function exportToCSV($data, $start_date, $end_date)
                             ? i : 0;
                 };
 
-                // รวมคอลัมน์จำนวนเงินที่ index 10 (คอลัมน์ "จำนวนเงินที่ชำระ")
+                // รวมคอลัมน์จำนวนเงินที่ index (คอลัมน์ "จำนวนเงินที่ชำระ")
                 let total = api
-                    .column(10, { page: 'all' }) // ใช้ข้อมูลทั้งตาราง
+                    .column(6, {page: 'all'}) // ใช้ข้อมูลทั้งตาราง
                     .data()
                     .reduce(function (a, b) {
                         return parseValue(a) + parseValue(b);
                     }, 0);
 
                 // แสดงผลรวมใน footer
-                $(api.column(10).footer()).html(
-                    total.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' บาท'
+                $(api.column(6).footer()).html(
+                    total.toLocaleString('en-US', {minimumFractionDigits: 2})
                 );
             }
         });

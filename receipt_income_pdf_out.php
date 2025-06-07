@@ -21,7 +21,7 @@ $start_date = $_GET["doc_date_start"] ?? '';
 $end_date = $_GET["doc_date_to"] ?? '';
 $pm = $_GET["payment_method"] ?? 'all';
 
-$header_text = "รายการรับเงินค่าส่วนกลาง";
+$header_text = "รายการรายรับ-รายได้";
 
 // ===== 3. เงื่อนไข payment_method =====
 $payment_method_sql = "";
@@ -36,7 +36,8 @@ if ($pm === "cash") {
 }
 
 // ===== 4. สร้าง PDF ด้วยคลาสใหม่ MYPDF =====
-$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+//$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf = new MYPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator('My System');
 $pdf->SetAuthor('My System');
 $pdf->SetTitle('รายงานรายการรายรับ');
@@ -55,13 +56,16 @@ $pdf->Image(__DIR__ . '/img/logo/PS33Logo-01.png', 5, 5, 20);
 $pdf->Ln(15); // เว้นระยะห่างหลังโลโก้
 
 // ===== 5. ดึงข้อมูลจากฐานข้อมูล =====
+
+$table = "v_ims_reciepts";
+
 $sql = "
-    SELECT * FROM v_ims_house_payment 
-    WHERE STR_TO_DATE(payment_date, '%d-%m-%Y') 
-          BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') 
-          AND STR_TO_DATE(:end_date, '%d-%m-%Y')
-          $payment_method_sql
-    ORDER BY STR_TO_DATE(payment_date, '%d-%m-%Y');
+    SELECT * FROM $table 
+    WHERE 1=1 $payment_method_sql
+    AND STR_TO_DATE(reciept_date, '%d-%m-%Y') 
+        BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') 
+        AND STR_TO_DATE(:end_date, '%d-%m-%Y')
+    ORDER BY STR_TO_DATE(reciept_date, '%d-%m-%Y');    
 ";
 
 $stmt = $conn->prepare($sql);
@@ -74,49 +78,45 @@ $html = '<h4 style="text-align:center;">' . $header_text . ' (' . $payment_metho
 $html .= '<table border="1" cellpadding="4" cellspacing="0">
     <thead>
         <tr style="background-color:#f2f2f2;">
-            <th width="6%">ลำดับ</th>
-            <th width="12%">วันที่รับชำระ</th>
-            <th width="10%">บ้านเลขที่</th>
-            <th width="12%">เดือนเริ่ม</th>
-            <th width="12%">เดือนสิ้นสุด</th>
-            <th width="7%">ปี</th>
-            <th width="14%">จำนวนเงิน</th>
-            <th width="17%">สถานะ</th>
-            <th width="10%">วิธีชำระ</th>
+            <th width="5%" align="center">ลำดับ</th>
+            <th width="10%" align="center">วันที่</th>
+            <th width="5%" align="center">ปี</th>
+            <th width="30%" align="center">รายละเอียดรายรับ</th>
+            <th width="15%" align="center">ผู้ชำระ</th>
+            <th width="10%" align="center">วิธีชำระ</th>
+            <th width="15%" align="center">จำนวนเงิน (บาท)</th>
+            <th width="10%" align="center">สถานะ</th>            
         </tr>
-    </thead>
-    <tbody>';
+    </thead>';
 
 $i = 1;
 $total_amount = 0;
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $amount = (float)$row['amount'];
     $total_amount += $amount;
-
+    $approve_status_desc = $row['approve_status']==="Y"?"ยืนยันการชำระ":"ยังไม่ยืนยัน";
     $html .= '<tr>
-        <td width="6%">' . $i++ . '</td>
-        <td width="12%">' . date('d/m/Y', strtotime($row['payment_date'])) . '</td>
-        <td width="10%">' . htmlspecialchars($row['house_number']) . '</td>
-        <td width="12%">' . htmlspecialchars($row['month_name_start']) . '</td>
-        <td width="12%">' . htmlspecialchars($row['month_name_to']) . '</td>
-        <td width="7%" align="center">' . htmlspecialchars($row['period_year']) . '</td>
-        <td width="14%" align="right">' . number_format($amount, 2) . '</td>
-        <td width="17%">' . htmlspecialchars($row['payment_status_desc']) . '</td>
+        <td width="5%">' . $i++ . '</td>
+        <td width="10%">' . date('d/m/Y', strtotime($row['reciept_date'])) . '</td>
+        <td width="5%">' . htmlspecialchars($row['rec_year']) . '</td>        
+        <td width="30%">' . htmlspecialchars($row['description']) . '</td>
+        <td width="15%">' . htmlspecialchars($row['supplier_name']) . '</td>        
         <td width="10%">' . htmlspecialchars($row['payment_method']) . '</td>
+        <td width="15%" align="right">' . number_format($amount, 2) . '</td>
+        <td width="10%">' . htmlspecialchars($approve_status_desc) . '</td>
     </tr>';
 }
 
 $html .= '</tbody>
     <tfoot>
         <tr style="background-color:#d9edf7; font-weight:bold;">
-            <td width="6%"></td>
-            <td width="12%"></td>
-            <td width="10%"></td>
-            <td width="12%"></td>
-            <td width="12%"></td>
-            <td width="7%" align="center">รวม</td>
-            <td width="14%" align="right">' . number_format($total_amount, 2) . '</td>
-            <td width="17%"></td>
+            <td width="5%"></td>
+            <td width="10%"></td>            
+            <td width="5%"></td>
+            <td width="30%"></td>
+            <td width="15%"></td>
+            <td width="10%" align="center">รวม</td>
+            <td width="15%" align="right">' . number_format($total_amount, 2) . '</td>            
             <td width="10%"></td>
         </tr>
     </tfoot>
