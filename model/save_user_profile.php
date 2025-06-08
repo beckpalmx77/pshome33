@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':pictureUrl', $pictureUrl);
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
-        
+
         /*
                 if ($exists) {
                     $sql = "UPDATE ims_user SET first_name = :f_name ,last_name = :l_name
