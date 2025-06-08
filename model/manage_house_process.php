@@ -72,6 +72,7 @@ if ($_POST["action"] === 'ADD') {
         $car_no3 = $_POST["car_no3"];
         $car_no4 = $_POST["car_no4"];
         $car_no5 = $_POST["car_no5"];
+        $create_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
 
         // ป้องกัน SQL Injection โดยใช้ prepare
         $sql_find = "SELECT COUNT(*) FROM ims_house WHERE house_number = :house_number";
@@ -85,10 +86,10 @@ if ($_POST["action"] === 'ADD') {
         } else {
             $sql = "INSERT INTO ims_house (
                         house_number, contact_name, phone_number, alley, remark,
-                        car_no1, car_no2, car_no3, car_no4, car_no5, house_status
+                        car_no1, car_no2, car_no3, car_no4, car_no5, house_status, create_by
                     ) VALUES (
                         :house_number, :contact_name, :phone_number, :alley, :remark,
-                        :car_no1, :car_no2, :car_no3, :car_no4, :car_no5, :house_status
+                        :car_no1, :car_no2, :car_no3, :car_no4, :car_no5, :house_status, :create_by
                     )";
             $query = $conn->prepare($sql);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
@@ -102,6 +103,7 @@ if ($_POST["action"] === 'ADD') {
             $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
             $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
             $query->bindParam(':house_status', $house_status, PDO::PARAM_STR);
+            $query->bindParam(':create_by', $create_by, PDO::PARAM_STR);
             $query->execute();
 
             $lastInsertId = $conn->lastInsertId();
@@ -124,6 +126,7 @@ if ($_POST["action"] === 'UPDATE') {
         $car_no3 = $_POST["car_no3"];
         $car_no4 = $_POST["car_no4"];
         $car_no5 = $_POST["car_no5"];
+        $update_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
 
         $sql_find = "SELECT COUNT(*) FROM ims_house WHERE id = :id";
         $stmt = $conn->prepare($sql_find);
@@ -143,7 +146,8 @@ if ($_POST["action"] === 'UPDATE') {
                 car_no3 = :car_no3,
                 car_no4 = :car_no4,
                 car_no5 = :car_no5,
-                house_status = :house_status
+                house_status = :house_status,
+                update_by = :update_by                
                 WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
@@ -157,6 +161,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
             $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
             $query->bindParam(':house_status', $house_status, PDO::PARAM_STR);
+            $query->bindParam(':update_by', $update_by, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;

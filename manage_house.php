@@ -62,6 +62,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -74,6 +75,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
+                                                    <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -348,6 +350,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
                         }
                     },
+                    {data: 'update'},
                     {data: 'delete'}
                 ]
             });
