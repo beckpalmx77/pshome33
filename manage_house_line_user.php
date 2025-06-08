@@ -298,7 +298,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
         $(document).ready(function () {
             let formData = {action: "GET_HOUSE", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
-                'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
+                'lengthMenu': [[5, 10, 20, 50, 100, 500 , 621], [5, 10, 20, 50, 100, 500 , 621]],
                 'language': {
                     search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
