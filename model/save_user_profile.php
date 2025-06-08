@@ -18,28 +18,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
         $exists = $stmt->fetchColumn();
-
+/*
         if ($exists) {
-            $sql = "UPDATE ims_house_line_user SET 
+            $sql = "UPDATE ims_house_line_user SET
                     line_email = :line_email
                     ,line_user_name = :displayName, line_picture_profile = :pictureUrl
-                    ,f_name = :f_name ,l_name = :l_name     
+                    ,f_name = :f_name ,l_name = :l_name
                     WHERE line_user_id = :userId";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':line_email', $line_email);
+            $stmt->bindParam(':displayName', $displayName);
+            $stmt->bindParam(':pictureUrl', $pictureUrl);
+            $stmt->bindParam(':userId', $userId);
+            $stmt->execute();
 
-            $txt = $sql;
-            $my_file = fopen("a-sql.txt", "w") or die("Unable to open file!");
-            fwrite($my_file, $txt);
-            fclose($my_file);
+            $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
+            fwrite($myfile, $line_email  . " | " . $displayName . " | " . $userId
+            . " | " . $pictureUrl . " | " . $sql );
+            fclose($myfile);
+
         }
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':line_email', $line_email);
-        $stmt->bindParam(':displayName', $displayName);
-        $stmt->bindParam(':pictureUrl', $pictureUrl);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->execute();
 
-        /*
                 if ($exists) {
                     $sql = "UPDATE ims_user SET first_name = :f_name ,last_name = :l_name
                             WHERE user_id = :line_phone";
@@ -69,4 +69,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo 'invalid';
     }
 }
-?>
+

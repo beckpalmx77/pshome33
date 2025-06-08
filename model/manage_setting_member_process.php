@@ -18,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pictureUrl = $_POST['pictureUrl'] ?? '';
 
     $detail = $f_name . " " . $l_name;
-/*
+
     $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
     fwrite($myfile, $f_name  . " | " . $l_name . " | " . $line_phone
     . " | " . $line_user_id . " | " . $displayName . " | " . $pictureUrl);
     fclose($myfile);
-*/
+
     // อัปเดตตาราง ims_house_line_user
     $sql1 = "UPDATE ims_house_line_user 
              SET f_name = :f_name, l_name = :l_name, line_phone = :line_phone
