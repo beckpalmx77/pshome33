@@ -27,6 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     WHERE line_user_id = :userId";
         }
 
+        $txt = $sql;
+        $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
+        fwrite($my_file, $txt);
+        fclose($my_file);
+
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':line_email', $line_email);
         $stmt->bindParam(':displayName', $displayName);
