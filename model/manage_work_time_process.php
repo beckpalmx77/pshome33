@@ -97,17 +97,24 @@ if ($_POST["action"] === 'UPDATE') {
         $work_time_detail = $_POST["work_time_detail"];
         $work_time_start = $_POST["work_time_start"];
         $work_time_stop = $_POST["work_time_stop"];
+        $break_time_start = $_POST["break_time_start"];
+        $break_time_stop = $_POST["break_time_stop"];
         $status = $_POST["status"];
         $sql_find = "SELECT * FROM mwork_time WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE mwork_time SET work_time_id=:work_time_id,work_time_detail=:work_time_detail,work_time_start=:work_time_start,work_time_stop=:work_time_stop,status=:status            
+            $sql_update = "UPDATE mwork_time SET work_time_id=:work_time_id,work_time_detail=:work_time_detail
+            ,work_time_start=:work_time_start,work_time_stop=:work_time_stop
+            ,break_time_start=:break_time_start,break_time_stop=:break_time_stop
+            ,status=:status            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':work_time_id', $work_time_id, PDO::PARAM_STR);
             $query->bindParam(':work_time_detail', $work_time_detail, PDO::PARAM_STR);
             $query->bindParam(':work_time_start', $work_time_start, PDO::PARAM_STR);
             $query->bindParam(':work_time_stop', $work_time_stop, PDO::PARAM_STR);
+            $query->bindParam(':break_time_start', $break_time_start, PDO::PARAM_STR);
+            $query->bindParam(':break_time_stop', $break_time_stop, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
