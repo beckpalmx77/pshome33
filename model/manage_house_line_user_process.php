@@ -204,6 +204,19 @@ if ($_POST["action"] === 'GET_HOUSE') {
     foreach ($empRecords as $row) {
 
         if ($_POST['sub_action'] === "GET_MASTER") {
+
+            $update_btn = "";
+            $delete_btn = "";
+
+            if ($_SESSION['account_type'] === 'admin') {
+                $update_btn = "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>";
+                $delete_btn = "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>";
+            } else {
+                $update_btn = "<button type='button' class='btn btn-info btn-xs' disabled data-toggle='tooltip' title='Update (เฉพาะแอดมิน)'>Update</button>";
+                $delete_btn = "<button type='button' class='btn btn-danger btn-xs' disabled data-toggle='tooltip' title='Delete (เฉพาะแอดมิน)'>Delete</button>";
+            }
+
+
             $data[] = array(
                 "id" => $row['id'],
                 "line_user_id" => $row['line_user_id'],
@@ -215,8 +228,8 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "l_name" => $row['l_name'],
                 "line_picture_profile" => $row['line_picture_profile'],
                 "line_picture_profile_text" => $row['line_picture_profile'],
-                "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
-                "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>"
+                "update" => $update_btn,
+                "delete" => $delete_btn
             );
         } else {
             $data[] = array(
