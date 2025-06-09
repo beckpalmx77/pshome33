@@ -135,29 +135,25 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                     </datalist>
                                                                 </div>
                                                             </div>
-                                                            <div class="form-group row">
-                                                                <input type="hidden" class="form-control"
-                                                                       id="category_id"
-                                                                       name="category_id">
-                                                                <div class="col-sm-10">
-                                                                    <label for="category_name"
-                                                                           class="control-label">ประเภทค่าใช้จ่าย</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="category_name"
-                                                                           name="category_name"
-                                                                           required="required"
-                                                                           readonly="true"
-                                                                           placeholder="">
+
+                                                            <div class="form-group row align-items-center">
+                                                                <!-- category_id -->
+                                                                <div class="col-md-2">
+                                                                    <label for="category_id" class="control-label">รหัสประเภท</label>
+                                                                    <input type="text" class="form-control" id="category_id" name="category_id" required readonly="true">
                                                                 </div>
 
-                                                                <div class="col-sm-2">
-                                                                    <label for="qty"
-                                                                           class="control-label">เลือก</label>
+                                                                <!-- category_name -->
+                                                                <div class="col-md-6">
+                                                                    <label for="category_name" class="control-label">ประเภทค่าใช้จ่าย</label>
+                                                                    <input type="text" class="form-control" id="category_name" name="category_name" readonly>
+                                                                </div>
 
-                                                                    <a data-toggle="modal" href="#Search-PG-Modal"
-                                                                       class="btn btn-primary">
-                                                                        Click <i class="fa fa-search"
-                                                                                 aria-hidden="true"></i>
+                                                                <!-- ปุ่ม Click -->
+                                                                <div class="col-md-4">
+                                                                    <label class="control-label d-block">&nbsp;</label>
+                                                                    <a data-toggle="modal" href="#Search-PG-Modal" class="btn btn-primary w-100">
+                                                                        Click <i class="fa fa-search" aria-hidden="true"></i>
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -529,55 +525,65 @@ if (strlen($_SESSION['alogin']) == "") {
                 ]
             });
 
-            // *** FOR SUBMIT FORM ***
-            $("#recordModal").on('submit', '#recordForm', function (event) {
-                event.preventDefault();
-                $('#save').attr('disabled', 'disabled');
-
-                // ใช้ FormData กับฟอร์มโดยตรง
-                const formElement = document.getElementById('recordForm');
-                const formData = new FormData(formElement);
-
-                // ดึง existing files จาก hidden input ที่เป็น string เช่น "file1.jpg,file2.png"
-                let existingFilesStr = $('#existing_files').val() || '';
-                let existingFiles = existingFilesStr ? existingFilesStr.split(',') : [];
-
-                // รวมชื่อไฟล์ใหม่จาก filesArray (ที่เป็น FileList หรือ array ของ File objects)
-                // โดยกรองไฟล์ซ้ำจากชื่อไฟล์
-                if (typeof filesArray !== 'undefined' && filesArray.length > 0) {
-                    filesArray.forEach(file => {
-                        // ตรวจสอบชื่อไฟล์ซ้ำ
-                        if (!existingFiles.includes(file.name)) {
-                            formData.append('file_attach[]', file);  // เพิ่มไฟล์ใหม่ที่ไม่ซ้ำ
-                        }
-                    });
-                }
-
-                // ส่ง existing files (ชื่อไฟล์) ไปด้วย (ให้ backend รู้ว่าไฟล์เดิมอะไรยังคงอยู่)
-                formData.set('existing_files', existingFiles.join(','));
-
-                $.ajax({
-                    url: 'model/manage_expense_process.php',
-                    method: "POST",
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (data) {
-                        alertify.success(data);
-                        $('#recordForm')[0].reset();
-                        $('#recordModal').modal('hide');
-                        $('#save').attr('disabled', false);
-                        $('#TableRecordList').DataTable().ajax.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        alertify.error("Error: " + error);
-                        $('#save').attr('disabled', false);
-                    }
-                });
-            });
-            // *** END FOR SUBMIT FORM ***
         });
     </script>
+
+    <script>
+        // *** FOR SUBMIT FORM ***
+        $("#recordModal").on('submit', '#recordForm', function (event) {
+            event.preventDefault();
+            $('#save').attr('disabled', 'disabled');
+
+            // ตรวจสอบ category_id ว่ามีการเลือกหรือยัง
+            let categoryId = $('#category_id').val();
+            if (!categoryId || categoryId === '0') {
+                alertify.error("กรุณาเลือกหมวดหมู่ค่าใช้จ่าย (Category)");
+                $('#save').attr('disabled', false);
+                return; // ยกเลิกการ submit
+            }
+
+            // ใช้ FormData กับฟอร์มโดยตรง
+            const formElement = document.getElementById('recordForm');
+            const formData = new FormData(formElement);
+
+            // ดึง existing files จาก hidden input ที่เป็น string เช่น "file1.jpg,file2.png"
+            let existingFilesStr = $('#existing_files').val() || '';
+            let existingFiles = existingFilesStr ? existingFilesStr.split(',') : [];
+
+            // รวมชื่อไฟล์ใหม่จาก filesArray (ที่เป็น FileList หรือ array ของ File objects)
+            // โดยกรองไฟล์ซ้ำจากชื่อไฟล์
+            if (typeof filesArray !== 'undefined' && filesArray.length > 0) {
+                filesArray.forEach(file => {
+                    if (!existingFiles.includes(file.name)) {
+                        formData.append('file_attach[]', file);
+                    }
+                });
+            }
+
+            formData.set('existing_files', existingFiles.join(','));
+
+            $.ajax({
+                url: 'model/manage_expense_process.php',
+                method: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    alertify.success(data);
+                    $('#recordForm')[0].reset();
+                    $('#recordModal').modal('hide');
+                    $('#save').attr('disabled', false);
+                    $('#TableRecordList').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    alertify.error("Error: " + error);
+                    $('#save').attr('disabled', false);
+                }
+            });
+        });
+        // *** END FOR SUBMIT FORM ***
+    </script>
+
 
     <script>
         $(document).ready(function () {
