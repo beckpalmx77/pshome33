@@ -57,42 +57,59 @@ if ($_POST["action"] === 'SEARCH') {
 }
 
 if ($_POST["action"] === 'UPDATE') {
-    if ($_POST["line_user_name"] !== '') {
+    if (!empty($_POST["line_user_name"]) && !empty($_POST["id"])) {
         $id = $_POST["id"];
         $line_user_id = $_POST["line_user_id"];
         $line_user_name = $_POST["line_user_name"];
-        $phone_number = $_POST["phone_number"];
+        $line_phone = $_POST["line_phone"];
         $user_type = $_POST["user_type"];
         $f_name = $_POST["f_name"];
         $l_name = $_POST["l_name"];
         $line_picture_profile = $_POST["line_picture_profile"];
 
+/*
+        $txt = "line id = " . $line_user_id . "\n\rline user name = " . $line_user_name . "\n\rphone = " . $line_phone . "\n\ruser type = " . $user_type
+            . "\n\rf_name = " . $f_name . "\n\rl_name = " . $l_name . "\n\r pic = " . $line_picture_profile;
+        $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
+        fwrite($myfile, $txt);
+        fclose($myfile);
+*/
+
         $sql_find = "SELECT COUNT(*) FROM ims_house_line_user WHERE id = :id";
         $stmt = $conn->prepare($sql_find);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $nRows = $stmt->fetchColumn();
 
         if ($nRows > 0) {
             $sql_update = "UPDATE ims_house_line_user SET                
                 line_user_name = :line_user_name,
-                phone_number = :phone_number,
+                line_phone = :line_phone,
                 user_type = :user_type,                
                 l_name = :l_name,
                 f_name = :f_name,
                 line_picture_profile = :line_picture_profile
                 WHERE id = :id";
+
             $query = $conn->prepare($sql_update);
             $query->bindParam(':line_user_name', $line_user_name, PDO::PARAM_STR);
-            $query->bindParam(':phone_number', $phone_number, PDO::PARAM_STR);
+            $query->bindParam(':line_phone', $line_phone, PDO::PARAM_STR);
             $query->bindParam(':user_type', $user_type, PDO::PARAM_STR);
             $query->bindParam(':l_name', $l_name, PDO::PARAM_STR);
             $query->bindParam(':f_name', $f_name, PDO::PARAM_STR);
             $query->bindParam(':line_picture_profile', $line_picture_profile, PDO::PARAM_STR);
-            $query->bindParam(':id', $id, PDO::PARAM_STR);
-            $query->execute();
-            echo $save_success;
+            $query->bindParam(':id', $id, PDO::PARAM_INT);
+
+            if ($query->execute()) {
+                echo "บันทึกข้อมูลเรียบร้อยแล้ว";
+            } else {
+                echo "เกิดข้อผิดพลาดในการบันทึก";
+            }
+        } else {
+            echo "ไม่พบข้อมูลสำหรับอัปเดต";
         }
+    } else {
+        echo "ข้อมูลไม่ครบถ้วน";
     }
 }
 

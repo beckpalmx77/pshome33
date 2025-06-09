@@ -487,28 +487,6 @@ if (strlen($_SESSION['alogin']) == "") {
     </script>
 
     <script>
-
-        $("#expense_date").blur(function () {
-            let method = $('#action').val();
-            if (method === "ADD") {
-                let expense_date = $('#expense_date').val();
-                let formData = {action: "SEARCH", expense_date: expense_date};
-                $.ajax({
-                    url: 'model/manage_expense_process.php',
-                    method: "POST",
-                    data: formData,
-                    success: function (data) {
-                        if (data == 2) {
-                            alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
-                        }
-                    }
-                })
-            }
-        });
-
-    </script>
-
-    <script>
         $(document).ready(function () {
             let formDataObj = {action: "GET_EXPENSE", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({

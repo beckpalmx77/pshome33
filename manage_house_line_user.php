@@ -162,6 +162,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
+                                                            <input type="hidden" name="user_type" id="user_type" value=""/>
                                                             <input type="hidden" name="id" id="id"/>
                                                             <input type="hidden" name="action" id="action" value=""/>
                                                             <span class="icon-input-btn">
