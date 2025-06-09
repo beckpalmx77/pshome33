@@ -158,38 +158,27 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
                                                             </div>
 
-                                                            <div class="form-group row">
-                                                                <div class="col-sm-5">
-                                                                    <label for="qty"
-                                                                           class="control-label">จำนวน</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="qty"
-                                                                           name="qty"
-                                                                           required="required"
-                                                                           placeholder="">
-                                                                </div>
-                                                                <input type="hidden" class="form-control"
-                                                                       id="unit_id"
-                                                                       name="unit_id">
-                                                                <div class="col-sm-5">
-                                                                    <label for="qty"
-                                                                           class="control-label">หน่วยนับ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="unit_name"
-                                                                           name="unit_name"
-                                                                           required="required"
-                                                                           readonly="true"
-                                                                           placeholder="">
+                                                            <div class="form-group row align-items-end">
+                                                                <!-- จำนวน -->
+                                                                <div class="col-sm-4">
+                                                                    <label for="qty" class="control-label">จำนวน</label>
+                                                                    <input type="text" class="form-control" id="qty" name="qty" required>
                                                                 </div>
 
-                                                                <div class="col-sm-2">
-                                                                    <label for="qty"
-                                                                           class="control-label">เลือก</label>
+                                                                <!-- ซ่อน unit_id ไว้ -->
+                                                                <input type="hidden" id="unit_id" name="unit_id" required>
 
-                                                                    <a data-toggle="modal" href="#SearchUnitModal"
-                                                                       class="btn btn-primary">
-                                                                        Click <i class="fa fa-search"
-                                                                                 aria-hidden="true"></i>
+                                                                <!-- หน่วยนับ -->
+                                                                <div class="col-sm-4">
+                                                                    <label for="unit_name" class="control-label">หน่วยนับ</label>
+                                                                    <input type="text" class="form-control" id="unit_name" name="unit_name" readonly required>
+                                                                </div>
+
+                                                                <!-- ปุ่มเลือก -->
+                                                                <div class="col-sm-4">
+                                                                    <label class="control-label d-block">เลือก</label>
+                                                                    <a data-toggle="modal" href="#SearchUnitModal" class="btn btn-primary w-100">
+                                                                        Click <i class="fa fa-search"></i>
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -540,6 +529,13 @@ if (strlen($_SESSION['alogin']) == "") {
                 alertify.error("กรุณาเลือกหมวดหมู่ค่าใช้จ่าย (Category)");
                 $('#save').attr('disabled', false);
                 return; // ยกเลิกการ submit
+            }
+
+            if ($('#unit_id').val().trim() === '') {
+                alertify.error('กรุณาเลือกหน่วยนับ');
+                $('#unit_name').focus();
+                e.preventDefault();
+                return false;
             }
 
             // ใช้ FormData กับฟอร์มโดยตรง
