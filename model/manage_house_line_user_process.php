@@ -178,7 +178,7 @@ if ($_POST["action"] === 'GET_HOUSE') {
 
 ## Fetch records
 
-    $sql_get_date = "SELECT * FROM ims_house_line_user WHERE 1=1 " . $where_line_user_id . $searchQuery . " LIMIT :limit,:offset";
+    $sql_get_date = "SELECT * FROM ims_house_line_user WHERE 1=1 " . $where_line_user_id . $searchQuery . " ORDER BY id DESC LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_date);
 
@@ -228,8 +228,8 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "l_name" => $row['l_name'],
                 "line_picture_profile" => $row['line_picture_profile'],
                 "line_picture_profile_text" => $row['line_picture_profile'],
-                "update" => $update_btn,
-                "delete" => $delete_btn
+                "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
+                "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>"
             );
         } else {
             $data[] = array(
