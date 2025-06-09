@@ -53,6 +53,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
+                                                    <th>ลำดับ</th>
                                                     <th>LINE User ID</th>
                                                     <th>LINE User NAME</th>
                                                     <th>ชื่อ</th>
@@ -65,6 +66,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                 </thead>
                                                 <tfoot>
                                                 <tr>
+                                                    <th>ลำดับ</th>
                                                     <th>LINE User ID</th>
                                                     <th>LINE User NAME</th>
                                                     <th>ชื่อ</th>
@@ -322,6 +324,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                     'data': formData
                 },
                 'columns': [
+                    {data: 'no'},
                     {data: 'line_user_id'},
                     {data: 'line_user_name'},
                     {data: 'f_name'},

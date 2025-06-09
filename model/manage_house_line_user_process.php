@@ -175,7 +175,6 @@ if ($_POST["action"] === 'GET_HOUSE') {
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
-
 ## Fetch records
 
     $sql_get_date = "SELECT * FROM ims_house_line_user WHERE 1=1 " . $where_line_user_id . $searchQuery . " ORDER BY id DESC LIMIT :limit,:offset";
@@ -201,6 +200,8 @@ if ($_POST["action"] === 'GET_HOUSE') {
     $empRecords = $stmt->fetchAll();
     $data = array();
 
+    $counter = $row + 1; // เริ่มลำดับตาม offset
+
     foreach ($empRecords as $row) {
 
         if ($_POST['sub_action'] === "GET_MASTER") {
@@ -218,6 +219,7 @@ if ($_POST["action"] === 'GET_HOUSE') {
 
 
             $data[] = array(
+                "no" => $counter, // 🆕 ลำดับ
                 "id" => $row['id'],
                 "line_user_id" => $row['line_user_id'],
                 "user_type" => $row['user_type'],
@@ -240,6 +242,8 @@ if ($_POST["action"] === 'GET_HOUSE') {
 </button>",
             );
         }
+
+        $counter++; // เพิ่มลำดับ
 
     }
 
