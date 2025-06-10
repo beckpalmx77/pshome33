@@ -29,7 +29,7 @@ if (strlen($_SESSION['alogin']) == "") {
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <title>Export รายงานรายจ่าย-ค่าใช้จ่าย นิติฯ</title>
+        <title>Export รายงานรับชำระ</title>
         <style>
             /* เพิ่มเล็กน้อยสำหรับ checkbox ให้ชิดกันสวยงาม */
             .month-checkbox {
@@ -80,11 +80,11 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     </label>
                                                     <?php foreach ($MonthRecords as $row) {
                                                         // กำหนดให้เดือนปัจจุบันถูกติ๊กไว้โดย default
-                                                        $checked = ($row["month"] == $month_num) ? 'checked' : '';
+                                                        $checked = ($row["month_id"] == $month_num) ? 'checked' : '';
                                                         ?>
                                                         <label class="month-checkbox">
                                                             <input type="checkbox" name="months[]"
-                                                                   value="<?php echo $row["month"]; ?>"
+                                                                   value="<?php echo $row["month_id"]; ?>"
                                                                    class="month-checkbox-item" <?php echo $checked; ?>>
                                                             <?php echo $row["month_name"]; ?>
                                                         </label>

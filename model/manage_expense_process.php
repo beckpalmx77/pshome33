@@ -340,6 +340,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
                 "receipt_name" => $row['receipt_name'],
                 "payment_method" => $row['payment_method'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
+                "print" => "<button type='button' name='print' id='" . $row['id'] . "' class='btn btn-outline-success btn-xs print' data-toggle='tooltip' title='Print'>Print</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "approve_status" => $row['approve_status'] === 'Y' ? "<div class='text-success'>" . $approve_y . "</div>" : "<div class='text-muted'> " . $approve_n . "</div>"
             );

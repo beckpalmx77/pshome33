@@ -1,26 +1,18 @@
 <?php
-
 include('../config/connect_db.php');
 date_default_timezone_set('Asia/Bangkok');
 
 // รับค่าจาก POST
 $year = isset($_POST["year"]) ? trim($_POST["year"]) : '';
-$months = isset($_POST["months"]) ? $_POST["months"] : [];
+$month = isset($_POST["month"]) ? trim($_POST["month"]) : '';
 
 // ตรวจสอบข้อมูลปี
 if ($year == '') {
     exit("กรุณาเลือกปีให้ถูกต้อง");
 }
 
-// ตรวจสอบว่า $months เป็น array และไม่ว่าง
-$monthList = [];
-if (is_array($months) && count($months) > 0) {
-    $monthList = array_filter($months); // ลบค่าว่าง
-}
-
 // ตั้งชื่อไฟล์
-$monthText = count($monthList) > 0 ? implode('-', $monthList) : 'all-months';
-$filename = "expenses-" . $monthText . "-" . $year . "_" . date('Ymd_His') . ".csv";
+$filename = "expenses-" . $month . "-" . $year . "_" . date('Ymd_His') . ".csv";
 
 // Header สำหรับดาวน์โหลด
 header('Content-Type: text/csv; charset=TIS-620');
@@ -29,22 +21,38 @@ header('Pragma: no-cache');
 header('Expires: 0');
 
 // สร้าง SQL
-$sql = "SELECT * FROM v_ims_expenses WHERE exp_year = :year";
+$sql = "SELECT 
+            doc_id,
+            receipt_name,
+            expense_date,
+            exp_month,
+            exp_year,
+            inv,
+            category_id,
+            description,
+            qty,
+            unit_id,
+            amount,
+            remark,
+            approve_status,
+            created_at,
+            payment_method
+        FROM ims_expenses
+        WHERE 1=1";
 
-$params = [':year' => $year];
+$params = [];
 
-// เงื่อนไขเดือน (ถ้ามี)
-if (count($monthList) > 0) {
-    $placeholders = [];
-    foreach ($monthList as $index => $month) {
-        $ph = ':month' . $index;
-        $placeholders[] = $ph;
-        $params[$ph] = $month;
-    }
-    $sql .= " AND exp_month IN (" . implode(',', $placeholders) . ")";
+if ($year !== '') {
+    $sql .= " AND exp_year = :year";
+    $params[':year'] = $year;
 }
 
-$sql .= " ORDER BY id";
+if ($month !== '') {
+    $sql .= " AND exp_month = :month";
+    $params[':month'] = $month;
+}
+
+$sql .= " ORDER BY expense_date DESC";
 
 // เตรียม query
 $query = $conn->prepare($sql);
@@ -53,9 +61,10 @@ foreach ($params as $key => $value) {
 }
 $query->execute();
 
-// หัวตาราง CSV
+// เขียน header ของไฟล์ CSV
 $header = [
-    "จ่ายให้ (ผู้ขาย-ผู้รับเหมา)",
+    "เลขที่เอกสาร",
+    "ชื่อใบเสร็จ",
     "วันที่ใช้จ่าย",
     "เดือน",
     "ปี",
@@ -71,25 +80,22 @@ $header = [
     "วิธีชำระเงิน"
 ];
 
-// เขียน CSV
 $output = fopen('php://output', 'w');
-fputcsv($output, array_map(
-    fn($item) => iconv('UTF-8', 'TIS-620//IGNORE', is_null($item) ? '' : strval($item)),
-    $header
-));
+fputcsv($output, array_map(fn($item) => iconv('UTF-8', 'TIS-620//IGNORE', $item), $header));
 
-// เขียนข้อมูลแต่ละแถว
+// เขียนข้อมูล
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
     $line = [
+        $row['doc_id'],
         $row['receipt_name'],
         $row['expense_date'],
         $row['exp_month'],
         $row['exp_year'],
         $row['inv'],
-        $row['category_name'],
+        $row['category_id'],
         $row['description'],
         $row['qty'],
-        $row['unit_name'],
+        $row['unit_id'],
         $row['amount'],
         $row['remark'],
         $row['approve_status'] === "Y" ? "อนุมัติแล้ว" : "รออนุมัติ",
@@ -97,10 +103,7 @@ while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
         $row['payment_method']
     ];
 
-    fputcsv($output, array_map(
-        fn($item) => iconv('UTF-8', 'TIS-620//IGNORE', is_null($item) ? '' : strval($item)),
-        $line
-    ));
+    fputcsv($output, array_map(fn($item) => iconv('UTF-8', 'TIS-620//IGNORE', $item), $line));
 }
 
 fclose($output);
