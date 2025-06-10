@@ -33,6 +33,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "amount" => $result['amount'],
             "file_attach" => $result['file_attach'],
             "remark" => $result['remark'],
+            "receipt_name" => $result['receipt_name'],
+            "payment_method" => $result['payment_method'],
             "approve_status" => $result['approve_status']);
     }
 
@@ -40,20 +42,6 @@ if ($_POST["action"] === 'GET_DATA') {
 
 }
 
-if ($_POST["action"] === 'SEARCH') {
-
-    if ($_POST["expense_date"] !== '') {
-
-        $expense_date = $_POST["expense_date"];
-        $sql_find = "SELECT * FROM ims_expenses WHERE expense_date = '" . $expense_date . "'";
-        $nRows = $conn->query($sql_find)->fetchColumn();
-        if ($nRows > 0) {
-            echo 2;
-        } else {
-            echo 1;
-        }
-    }
-}
 
 if ($_POST["action"] === 'ADD') {
 
@@ -70,6 +58,8 @@ if ($_POST["action"] === 'ADD') {
         $unit_id = $_POST["unit_id"];
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
+        $receipt_name = $_POST["receipt_name"];
+        $payment_method = $_POST["payment_method"];
 
         $field = "runno";
         $table = "ims_expenses";
@@ -109,8 +99,8 @@ if ($_POST["action"] === 'ADD') {
 
         $file_attach = implode(',', $file_names);
 
-        $sql = "INSERT INTO ims_expenses(runno, doc_id, expense_date, exp_month, exp_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach)
-                VALUES (:runno, :doc_id, :expense_date, :exp_month, :exp_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach)";
+        $sql = "INSERT INTO ims_expenses(runno, doc_id, expense_date, exp_month, exp_year, category_id, description, qty, unit_id, amount, remark, receipt_name, inv, file_attach, payment_method)
+                VALUES (:runno, :doc_id, :expense_date, :exp_month, :exp_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :receipt_name,  :inv, :file_attach, :payment_method)";
         $query = $conn->prepare($sql);
         $query->bindParam(':runno', $runno, PDO::PARAM_STR);
         $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
@@ -124,7 +114,9 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':amount', $amount, PDO::PARAM_STR);
         $query->bindParam(':remark', $remark, PDO::PARAM_STR);
         $query->bindParam(':inv', $inv, PDO::PARAM_STR);
+        $query->bindParam(':receipt_name', $receipt_name, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
+        $query->bindParam(':payment_method', $payment_method);
 
         $query->execute();
         $lastInsertId = $conn->lastInsertId();
@@ -148,6 +140,8 @@ if ($_POST["action"] === 'UPDATE') {
         $unit_id = $_POST["unit_id"];
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
+        $receipt_name = $_POST["receipt_name"];
+        $payment_method = $_POST["payment_method"];
         $inv = $_POST["inv"];
         $uploadDir = '../uploads/files/';
         $file_names = [];
@@ -222,8 +216,10 @@ if ($_POST["action"] === 'UPDATE') {
                 amount = :amount,
                 remark = :remark,
                 approve_status = :approve_status,
+                receipt_name = :receipt_name,
                 inv = :inv,
-                file_attach = :file_attach
+                file_attach = :file_attach,
+                payment_method = :payment_method
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
@@ -237,8 +233,10 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':amount', $amount);
         $query->bindParam(':remark', $remark);
         $query->bindParam(':approve_status', $approve_status);
+        $query->bindParam(':receipt_name', $receipt_name);
         $query->bindParam(':inv', $inv);
         $query->bindParam(':file_attach', $finalFileAttach);
+        $query->bindParam(':payment_method', $payment_method);
         $query->bindParam(':id', $id);
         $query->execute();
 
@@ -339,6 +337,8 @@ if ($_POST["action"] === 'GET_EXPENSE') {
                 "inv" => $row['inv'],
                 "amount" => $row['amount'],
                 "remark" => $row['remark'],
+                "receipt_name" => $row['receipt_name'],
+                "payment_method" => $row['payment_method'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "approve_status" => $row['approve_status'] === 'Y' ? "<div class='text-success'>" . $approve_y . "</div>" : "<div class='text-muted'> " . $approve_n . "</div>"

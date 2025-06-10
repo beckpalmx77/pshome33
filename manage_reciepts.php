@@ -208,7 +208,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
                                                                 <div class="d-flex align-items-center">
                                                                     <label for="payment_method" class="control-label mb-0" style="margin-right: 15px;">วิธีการชำระเงิน</label>
-                                                                    <input name="payment_method" class="form-control w-auto" id="payment_method" value="">
+                                                                    <input name="payment_method" class="form-control w-auto" id="payment_method" value="เงินสด">
                                                                 </div>
 
                                                             </div>

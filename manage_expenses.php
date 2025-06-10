@@ -89,13 +89,12 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <div id="result"></div>
 
                                         </div>
-
                                         <div class="modal fade" id="recordModal">
-                                            <div class="modal-dialog modal-lg">
+                                            <div class="modal-dialog modal-xl"> <!-- modal-xl เพื่อให้กว้างขึ้น -->
                                                 <div class="modal-content">
 
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
+                                                        <h4 class="modal-title">บันทึกค่าใช้จ่าย</h4>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                                 aria-hidden="true">×
                                                         </button>
@@ -103,26 +102,20 @@ if (strlen($_SESSION['alogin']) == "") {
 
                                                     <form method="post" id="recordForm" enctype="multipart/form-data">
                                                         <div class="modal-body">
+                                                            <!-- Row 1 -->
                                                             <div class="form-group row">
-                                                                <div class="col-sm-4">
-                                                                    <label for="expense_date"
-                                                                           class="control-label">วันที่ทำรายการ</label>
-                                                                    <i class="fa fa-calendar"
-                                                                       aria-hidden="true"></i>
+                                                                <div class="col-md-3">
+                                                                    <label for="expense_date">วันที่ทำรายการ</label>
                                                                     <input type="text" class="form-control"
-                                                                           id="expense_date"
-                                                                           name="expense_date"
-                                                                           value="<?php echo $curr_date ?>"
-                                                                           required="required"
-                                                                           readonly="true"
-                                                                           placeholder="">
+                                                                           id="expense_date" name="expense_date"
+                                                                           value="<?php echo $curr_date ?>" required
+                                                                           readonly>
                                                                 </div>
-
-                                                                <div class="col-sm-8">
-                                                                    <label for="description"
-                                                                           class="control-label">รายการค่าใช้จ่าย</label>
-                                                                    <input list="descriptionList" type="text" class="form-control"
-                                                                           id="description" name="description" required="required" placeholder="">
+                                                                <div class="col-md-3">
+                                                                    <label for="description">รายการค่าใช้จ่าย</label>
+                                                                    <input list="descriptionList" type="text"
+                                                                           class="form-control" id="description"
+                                                                           name="description" required>
                                                                     <datalist id="descriptionList">
                                                                         <?php
                                                                         $stmt = $conn->prepare("SELECT DISTINCT description FROM ims_expenses WHERE description IS NOT NULL AND description != '' ORDER BY description ASC");
@@ -134,126 +127,136 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                         ?>
                                                                     </datalist>
                                                                 </div>
-                                                            </div>
-
-                                                            <div class="form-group row align-items-center">
-                                                                <!-- category_id -->
-                                                                <div class="col-md-2">
-                                                                    <label for="category_id" class="control-label">รหัสประเภท</label>
-                                                                    <input type="text" class="form-control" id="category_id" name="category_id" required readonly="true">
+                                                                <div class="col-md-1">
+                                                                    <label for="category_id">รหัสประเภท</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="category_id" name="category_id" required
+                                                                           readonly>
                                                                 </div>
-
-                                                                <!-- category_name -->
-                                                                <div class="col-md-6">
-                                                                    <label for="category_name" class="control-label">ประเภทค่าใช้จ่าย</label>
-                                                                    <input type="text" class="form-control" id="category_name" name="category_name" readonly>
+                                                                <div class="col-md-3">
+                                                                    <label for="category_name">ประเภทค่าใช้จ่าย</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="category_name" name="category_name"
+                                                                           readonly>
                                                                 </div>
-
-                                                                <!-- ปุ่ม Click -->
-                                                                <div class="col-md-4">
-                                                                    <label class="control-label d-block">&nbsp;</label>
-                                                                    <a data-toggle="modal" href="#Search-PG-Modal" class="btn btn-primary w-100">
-                                                                        Click <i class="fa fa-search" aria-hidden="true"></i>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group row align-items-end">
-                                                                <!-- จำนวน -->
-                                                                <div class="col-sm-4">
-                                                                    <label for="qty" class="control-label">จำนวน</label>
-                                                                    <input type="text" class="form-control" id="qty" name="qty" required>
-                                                                </div>
-
-                                                                <!-- ซ่อน unit_id ไว้ -->
-                                                                <input type="hidden" id="unit_id" name="unit_id" required>
-
-                                                                <!-- หน่วยนับ -->
-                                                                <div class="col-sm-4">
-                                                                    <label for="unit_name" class="control-label">หน่วยนับ</label>
-                                                                    <input type="text" class="form-control" id="unit_name" name="unit_name" readonly required>
-                                                                </div>
-
-                                                                <!-- ปุ่มเลือก -->
-                                                                <div class="col-sm-4">
-                                                                    <label class="control-label d-block">เลือก</label>
-                                                                    <a data-toggle="modal" href="#SearchUnitModal" class="btn btn-primary w-100">
+                                                                <div class="col-md-2 d-flex align-items-end">
+                                                                    <a data-toggle="modal" href="#Search-PG-Modal"
+                                                                       class="btn btn-primary w-100">
                                                                         Click <i class="fa fa-search"></i>
                                                                     </a>
                                                                 </div>
                                                             </div>
 
+                                                            <!-- Row 2 -->
                                                             <div class="form-group row">
-                                                                <div class="col-sm-6">
-                                                                    <label for="amount" class="control-label">จำนวนเงิน
-                                                                        (บาท)</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="amount" name="amount" required
-                                                                           placeholder="">
+                                                                <div class="col-md-3">
+                                                                    <label for="qty">จำนวน</label>
+                                                                    <input type="text" class="form-control" id="qty"
+                                                                           name="qty" required>
                                                                 </div>
-
-                                                                <div class="col-sm-6">
-                                                                    <label for="inv" class="control-label">หมายเลขใบเสร็จฯ
-                                                                        / Invoice</label>
-                                                                    <input type="text" class="form-control" id="inv"
-                                                                           name="inv" placeholder="">
+                                                                <input type="hidden" id="unit_id" name="unit_id">
+                                                                <div class="col-md-3">
+                                                                    <label for="unit_name">หน่วยนับ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="unit_name" name="unit_name" readonly
+                                                                           required>
+                                                                </div>
+                                                                <div class="col-md-3 d-flex align-items-end">
+                                                                    <a data-toggle="modal" href="#SearchUnitModal"
+                                                                       class="btn btn-primary w-100">
+                                                                        Click <i class="fa fa-search"></i>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label for="amount">จำนวนเงิน (บาท)</label>
+                                                                    <input type="text" class="form-control" id="amount"
+                                                                           name="amount" required>
                                                                 </div>
                                                             </div>
 
+                                                            <!-- Row 3 -->
+                                                            <div class="form-group row align-items-end">
+                                                                <!-- จ่ายให้ -->
+                                                                <div class="col-md-3">
+                                                                    <label for="receipt_name">จ่ายให้ (ผู้ขาย/ผู้รับเหมา)</label>
+                                                                    <input type="text" class="form-control" id="receipt_name" name="receipt_name" required>
+                                                                </div>
+
+                                                                <!-- วิธีชำระเงิน -->
+                                                                <div class="col-md-3">
+                                                                    <label for="payment_method">วิธีการชำระเงิน</label>
+                                                                    <div class="d-flex align-items-center flex-wrap gap-2">
+                                                                        <div class="form-check me-3">
+                                                                            <input class="form-check-input" type="radio" name="payment_method_radio" id="method_transfer" value="โอนเงิน">
+                                                                            <label class="form-check-label" for="method_transfer">โอนเงิน</label>
+                                                                        </div>
+                                                                        <div class="form-check me-3">
+                                                                            <input class="form-check-input" type="radio" name="payment_method_radio" id="method_cash" value="เงินสด" checked>
+                                                                            <label class="form-check-label" for="method_cash">เงินสด</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="text" class="form-control mt-2" name="payment_method" id="payment_method" placeholder="เงินสด">
+                                                                </div>
+
+                                                                <!-- ใบเสร็จ -->
+                                                                <div class="col-md-3">
+                                                                    <label for="inv">หมายเลขใบเสร็จ / Invoice</label>
+                                                                    <input type="text" class="form-control" id="inv" name="inv">
+                                                                </div>
+
+                                                                <!-- สถานะตรวจสอบ -->
+                                                                <div class="col-md-3">
+                                                                    <label for="approve_status">การตรวจสอบรายการ</label>
+                                                                    <select id="approve_status" name="approve_status" class="form-control">
+                                                                        <option value="N" selected>ยังไม่ยืนยัน (รอตรวจสอบ)</option>
+                                                                        <option value="Y">ยืนยันรายการ (อนุมัติ)</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                            <!-- Row 4: แนบไฟล์ -->
                                                             <div class="form-group">
                                                                 <label for="file_attach">แนบไฟล์ / รูปภาพ</label>
-                                                                <div id="dropArea">ลากไฟล์มาวางที่นี่ หรือ <strong>คลิกเพื่อเลือกไฟล์</strong>
+                                                                <div id="dropArea">
+                                                                    ลากไฟล์มาวางที่นี่ หรือ
+                                                                    <strong>คลิกเพื่อเลือกไฟล์</strong>
                                                                     <input type="file" id="file_attach"
                                                                            name="file_attach[]" multiple hidden>
                                                                 </div>
-                                                                <div id="previewList" class="preview-grid"></div>
+                                                                <div id="previewList" class="preview-grid mt-2"></div>
+                                                                <input type="hidden" id="existing_files"
+                                                                       name="existing_files">
                                                             </div>
 
-                                                            <input type="hidden" id="existing_files"
-                                                                   name="existing_files">
-
+                                                            <!-- Row 5: แสดงไฟล์แนบ -->
                                                             <div class="form-group">
                                                                 <label>ไฟล์แนบ</label>
                                                                 <div id="filePreview"
                                                                      class="border rounded p-2 bg-light"></div>
                                                             </div>
-
-                                                            <div class="form-group row">
-                                                                <div class="col-sm-12">
-                                                                    <label for="remark"
-                                                                           class="control-label">หมายเหตุ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="remark"
-                                                                           name="remark"
-                                                                           placeholder="">
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label for="approve_status" class="control-label">การตรวจสอบรายการ</label>
-                                                                <select id="approve_status" name="approve_status"
-                                                                        class="form-control" data-live-search="true"
-                                                                        title="Please select">
-                                                                    <option value="N" selected>ยังไม่ยืนยัน
-                                                                        (รอตรวจสอบ)
-                                                                    </option>
-                                                                    <option value="Y">ยืนยันรายการ (อนุมัติ)
-                                                                    </option>
-                                                                </select>
-                                                            </div>
-
                                                         </div>
+
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label for="remark">หมายเหตุ</label>
+                                                                <input type="text" class="form-control" id="remark"
+                                                                       name="remark">
+                                                            </div>
+                                                        </div>
+
                                                         <div class="modal-footer">
-                                                            <input type="hidden" name="id" id="id"/>
-                                                            <input type="hidden" name="action" id="action" value=""/>
+                                                            <input type="hidden" name="id" id="id">
+                                                            <input type="hidden" name="action" id="action" value="">
                                                             <span class="icon-input-btn">
-                                                                <i class="fa fa-check"></i>
+                                                        <i class="fa fa-check"></i>
                                                             <input type="submit" name="save" id="save"
-                                                                   class="btn btn-primary" value="Save"/>
+                                                                   class="btn btn-primary" value="Save">
                                                             </span>
                                                             <button type="button" class="btn btn-danger"
-                                                                    data-dismiss="modal">Close <i
-                                                                        class="fa fa-times"></i>
+                                                                    data-dismiss="modal">
+                                                                Close <i class="fa fa-times"></i>
                                                             </button>
                                                         </div>
                                                     </form>
@@ -261,6 +264,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 </div>
                                             </div>
                                         </div>
+
 
                                         <div class="modal fade" id="Search-PG-Modal">
                                             <div class="modal-dialog modal-lg">
@@ -394,6 +398,31 @@ if (strlen($_SESSION['alogin']) == "") {
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
     <style>
+        .modal-xl {
+            max-width: 95% !important;
+        }
+
+        #dropArea {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .preview-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .preview-grid img {
+            width: 100px;
+            height: auto;
+        }
+    </style>
+
+
+    <style>
 
         .icon-input-btn {
             display: inline-block;
@@ -521,13 +550,13 @@ if (strlen($_SESSION['alogin']) == "") {
         // *** FOR SUBMIT FORM ***
         $("#recordModal").on('submit', '#recordForm', function (event) {
             event.preventDefault();
-            $('#save').attr('disabled', 'disabled');
+            //$('#save').attr('disabled', 'disabled');
 
             // ตรวจสอบ category_id ว่ามีการเลือกหรือยัง
             let categoryId = $('#category_id').val();
             if (!categoryId || categoryId === '0') {
                 alertify.error("กรุณาเลือกหมวดหมู่ค่าใช้จ่าย (Category)");
-                $('#save').attr('disabled', false);
+                //$('#save').attr('disabled', false);
                 return; // ยกเลิกการ submit
             }
 
@@ -571,7 +600,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     $('#save').attr('disabled', false);
                     $('#TableRecordList').DataTable().ajax.reload();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     alertify.error("Error: " + error);
                     $('#save').attr('disabled', false);
                 }
@@ -603,7 +632,8 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#inv').val("");
                 $('#qty').val("");
                 $('#amount').val("");
-
+                $('#payment_method').val("");
+                $('#approve_status').val("");
                 $('#file_attach').val("");
                 filesArray = [];
                 $('#previewList').html("");
@@ -643,6 +673,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         let remark = response[i].remark;
                         let approve_status = response[i].approve_status;
                         let file_attach = response[i].file_attach;
+                        let receipt_name = response[i].receipt_name;
 
                         let fileHTML = "";
                         let fileList = [];
@@ -698,6 +729,20 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#unit_name').val(unit_name);
                         $('#amount').val(amount);
                         $('#remark').val(remark);
+                        $('#receipt_name').val(receipt_name);
+
+                        let payment_method = response[i].payment_method;
+
+                        // ตั้งค่าให้ radio ตรงกับ payment_method
+                        if (payment_method === "โอนเงิน") {
+                            $("#method_transfer").prop("checked", true);
+                        } else if (payment_method === "เงินสด") {
+                            $("#method_cash").prop("checked", true);
+                        }
+
+                        // ใส่ค่าใน input hidden หรือ text (ถ้ามี)
+                        $("#payment_method").val(payment_method);
+
                         $('#approve_status').val(approve_status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -739,6 +784,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         let remark = response[i].remark;
                         let approve_status = response[i].approve_status;
                         let file_attach = response[i].file_attach;
+                        let receipt_name = response[i].receipt_name;
 
                         let fileHTML = "";
                         let fileList = [];
@@ -794,6 +840,20 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#unit_name').val(unit_name);
                         $('#amount').val(amount);
                         $('#remark').val(remark);
+                        $('#receipt_name').val(receipt_name);
+
+                        let payment_method = response[i].payment_method;
+
+                        // ตั้งค่าให้ radio ตรงกับ payment_method
+                        if (payment_method === "โอนเงิน") {
+                            $("#method_transfer").prop("checked", true);
+                        } else if (payment_method === "เงินสด") {
+                            $("#method_cash").prop("checked", true);
+                        }
+
+                        // ใส่ค่าใน input hidden หรือ text (ถ้ามี)
+                        $("#payment_method").val(payment_method);
+
                         $('#approve_status').val(approve_status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('DELETE');
@@ -918,6 +978,14 @@ if (strlen($_SESSION['alogin']) == "") {
             $("#existing_files").val(updatedFiles.join(","));
         });
 
+    </script>
+
+    <script>
+        document.querySelectorAll('input[name="payment_method_radio"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.getElementById('payment_method').value = this.value;
+            });
+        });
     </script>
 
     </body>
