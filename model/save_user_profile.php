@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
         $exists = $stmt->fetchColumn();
+
 /*
         if ($exists) {
             $sql = "UPDATE ims_house_line_user SET

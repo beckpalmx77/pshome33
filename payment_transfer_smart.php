@@ -439,7 +439,7 @@ foreach ($BankCurr as $row_curr) {
                     const pictureUrl = profile.pictureUrl;
                     const displayName = profile.displayName;
 
-                    fetch('model/save_user_profile.php', {
+                    fetch('model/save_user_profile_payment.php', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                         body: `userId=${encodeURIComponent(userId)}&pictureUrl=${encodeURIComponent(pictureUrl)}&displayName=${encodeURIComponent(displayName)}`
