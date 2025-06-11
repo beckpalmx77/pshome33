@@ -40,6 +40,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "remark" => $result['remark'],
             "created_at" => $result['created_at'],
             "updated_at" => $result['updated_at'],
+            "line_picture_profile_show" => $result['line_picture_profile_show'],
             "alley" => $result['alley']
         ];
     }
