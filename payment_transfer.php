@@ -227,22 +227,33 @@ if (strlen($_SESSION['alogin']) === "") {
                                             <input name="remark" class="form-control" id="remark" value="-">
                                         </div>
 
-                                        <div class="form-group has-success d-flex align-items-center gap-3">
-                                            <!-- Radio: โอนเงิน -->
-                                            <div class="form-check form-check-inline mb-0">
-                                                <input class="form-check-input" type="radio" name="payment_method_radio" id="method_transfer" value="โอนเงิน" checked>
-                                                <label class="form-check-label" for="method_transfer">โอนเงิน</label>
-                                            </div>
-                                            <!-- Radio: เงินสด -->
-                                            <div class="form-check form-check-inline mb-0">
-                                                <input class="form-check-input" type="radio" name="payment_method_radio" id="method_cash" value="เงินสด">
-                                                <label class="form-check-label" for="method_cash">จ่ายเงินสด</label>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <label for="payment_method" class="control-label mb-0" style="margin-right: 15px;">วิธีการชำระเงิน</label>
-                                                <input name="payment_method" class="form-control w-auto" id="payment_method" value="">
-                                            </div>
+                                        <!-- วิธีชำระเงิน -->
+                                        <div class="col-md-12 mb-3">
+                                            <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
+                                            <div class="d-flex align-items-center gap-3 flex-wrap custom-radio-row">
+                                                <!-- ปุ่มเลือกวิธีชำระเงิน -->
+                                                <div class="d-flex gap-3 flex-shrink-0">
+                                                    <div class="form-check form-check-inline custom-radio">
+                                                        <input class="form-check-input" type="radio"
+                                                               name="payment_method_radio"
+                                                               id="method_transfer" value="โอนเงิน">
+                                                        <label class="form-check-label" for="method_transfer">💳 โอนเงิน</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline custom-radio">
+                                                        <input class="form-check-input" type="radio"
+                                                               name="payment_method_radio"
+                                                               id="method_cash" value="เงินสด" checked>
+                                                        <label class="form-check-label" for="method_cash">💵 เงินสด</label>
+                                                    </div>
+                                                </div>
 
+                                                <!-- ช่องแสดงค่าที่เลือก -->
+                                                <div class="flex-grow-1">
+                                                    <input type="text" class="form-control"
+                                                           name="payment_method" id="payment_method"
+                                                           placeholder="ระบุวิธีการชำระเงิน" readonly>
+                                                </div>
+                                            </div>
                                         </div>
 
 
@@ -304,6 +315,29 @@ if (strlen($_SESSION['alogin']) === "") {
     <script src="js/myadmin.min.js"></script>
     <script src="js/modal/show_department_modal.js"></script>
     <script src="js/MyFrameWork/framework_util.js"></script>
+
+    <style>
+        .custom-radio .form-check-input {
+            transform: scale(1.2);
+            margin-right: 6px;
+        }
+
+        .custom-radio .form-check-label {
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .custom-radio-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 
     <script>
         function cleanHouseNumber(value) {

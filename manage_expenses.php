@@ -199,33 +199,34 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
 
                                                                 <!-- วิธีชำระเงิน -->
-                                                                <div class="col-md-3">
-                                                                    <label for="payment_method">วิธีการชำระเงิน</label>
-                                                                    <div class="d-flex align-items-center flex-wrap gap-2">
-                                                                        <div class="form-check me-3">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                   name="payment_method_radio"
-                                                                                   id="method_transfer" value="โอนเงิน">
-                                                                            <label class="form-check-label"
-                                                                                   for="method_transfer">โอนเงิน</label>
+                                                                <div class="col-md-4">
+                                                                    <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
+                                                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                                                        <!-- radio buttons -->
+                                                                        <div class="d-flex gap-3 flex-shrink-0">
+                                                                            <div class="form-check form-check-inline">
+                                                                                <input class="form-check-input" type="radio"
+                                                                                       name="payment_method_radio"
+                                                                                       id="method_transfer" value="โอนเงิน">
+                                                                                <label class="form-check-label" for="method_transfer">💳 โอนเงิน</label>
+                                                                            </div>
+                                                                            <div class="form-check form-check-inline">
+                                                                                <input class="form-check-input" type="radio"
+                                                                                       name="payment_method_radio"
+                                                                                       id="method_cash" value="เงินสด" checked>
+                                                                                <label class="form-check-label" for="method_cash">💵 เงินสด</label>
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="form-check me-3">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                   name="payment_method_radio"
-                                                                                   id="method_cash" value="เงินสด"
-                                                                                   checked>
-                                                                            <label class="form-check-label"
-                                                                                   for="method_cash">เงินสด</label>
-                                                                        </div>
+                                                                        <!-- input field -->
+                                                                        <input type="text" class="form-control flex-grow-1"
+                                                                               name="payment_method" id="payment_method"
+                                                                               placeholder="ระบุวิธีการชำระเงิน" readonly>
                                                                     </div>
-                                                                    <input type="text" class="form-control mt-2"
-                                                                           name="payment_method" id="payment_method"
-                                                                           placeholder="เงินสด">
                                                                 </div>
 
                                                                 <!-- ใบเสร็จ -->
-                                                                <div class="col-md-3">
-                                                                    <label for="inv">หมายเลขใบเสร็จ / Invoice</label>
+                                                                <div class="col-md-2">
+                                                                    <label for="inv">เลขใบเสร็จ/Invoice</label>
                                                                     <input type="text" class="form-control" id="inv"
                                                                            name="inv">
                                                                 </div>
@@ -499,6 +500,36 @@ if (strlen($_SESSION['alogin']) == "") {
             cursor: pointer;
         }
 
+    </style>
+
+    <style>
+        .custom-radio-group {
+            background-color: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .custom-radio .form-check-input {
+            margin-top: 0.25rem;
+            transform: scale(1.2); /* ขยายปุ่ม radio */
+            margin-right: 6px;
+        }
+
+        .custom-radio .form-check-label {
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .custom-radio .form-check-input:checked {
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .form-control[readonly] {
+            background-color: #e9ecef;
+        }
     </style>
 
     <script>
