@@ -31,6 +31,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "unit_id" => $result['unit_id'],
             "unit_name" => $result['unit_name'],
             "amount" => $result['amount'],
+            "price_per_unit" => $result['price_per_unit'],
+            "total_amount" => $result['total_amount'],
             "file_attach" => $result['file_attach'],
             "remark" => $result['remark'],
             "receipt_name" => $result['receipt_name'],
@@ -57,6 +59,8 @@ if ($_POST["action"] === 'ADD') {
         $inv = $_POST["inv"];
         $unit_id = $_POST["unit_id"];
         $amount = $_POST["amount"];
+        $price_per_unit = $_POST["price_per_unit"];
+        $total_amount = $_POST["total_amount"];
         $remark = $_POST["remark"];
         $receipt_name = $_POST["receipt_name"];
         $payment_method = $_POST["payment_method"];
@@ -99,8 +103,10 @@ if ($_POST["action"] === 'ADD') {
 
         $file_attach = implode(',', $file_names);
 
-        $sql = "INSERT INTO ims_expenses(runno, doc_id, expense_date, exp_month, exp_year, category_id, description, qty, unit_id, amount, remark, receipt_name, inv, file_attach, payment_method)
-                VALUES (:runno, :doc_id, :expense_date, :exp_month, :exp_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :receipt_name,  :inv, :file_attach, :payment_method)";
+        $sql = "INSERT INTO ims_expenses(runno, doc_id, expense_date, exp_month, exp_year, category_id, description, qty, unit_id, amount, remark
+                , receipt_name, inv, file_attach, payment_method, price_per_unit, total_amount)
+                VALUES (:runno, :doc_id, :expense_date, :exp_month, :exp_year, :category_id, :description, :qty, :unit_id, :amount, :remark
+                , :receipt_name,  :inv, :file_attach, :payment_method, :price_per_unit, :total_amount)";
         $query = $conn->prepare($sql);
         $query->bindParam(':runno', $runno, PDO::PARAM_STR);
         $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
@@ -117,6 +123,8 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':receipt_name', $receipt_name, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':payment_method', $payment_method);
+        $query->bindParam(':price_per_unit', $price_per_unit);
+        $query->bindParam(':total_amount', $total_amount);
 
         $query->execute();
         $lastInsertId = $conn->lastInsertId();
@@ -139,6 +147,8 @@ if ($_POST["action"] === 'UPDATE') {
         $qty = $_POST["qty"];
         $unit_id = $_POST["unit_id"];
         $amount = $_POST["amount"];
+        $price_per_unit = $_POST["price_per_unit"];
+        $total_amount = $_POST["total_amount"];
         $remark = $_POST["remark"];
         $receipt_name = $_POST["receipt_name"];
         $payment_method = $_POST["payment_method"];
@@ -219,7 +229,9 @@ if ($_POST["action"] === 'UPDATE') {
                 receipt_name = :receipt_name,
                 inv = :inv,
                 file_attach = :file_attach,
-                payment_method = :payment_method
+                payment_method = :payment_method,
+                price_per_unit = :price_per_unit,
+                total_amount = :total_amount
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
@@ -237,6 +249,8 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':inv', $inv);
         $query->bindParam(':file_attach', $finalFileAttach);
         $query->bindParam(':payment_method', $payment_method);
+        $query->bindParam(':price_per_unit', $price_per_unit);
+        $query->bindParam(':total_amount', $total_amount);
         $query->bindParam(':id', $id);
         $query->execute();
 
