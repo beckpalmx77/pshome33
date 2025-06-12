@@ -462,6 +462,7 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('detail').value = (data.f_name || '') + ' ' + (data.l_name || '');
                                 document.getElementById('common_fee').value = data.common_fee;
                                 document.getElementById('amount').value = data.common_fee * document.getElementById('payment_type').value;
+                                document.getElementById('amount').readOnly = true;
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
                                 document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
                                 $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
