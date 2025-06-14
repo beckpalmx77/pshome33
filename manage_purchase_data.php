@@ -116,7 +116,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <br>
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
-                                <input type="hidden" name="action" id="action" value=""/>
+                                <input type="text" name="action" id="action" value=""/>
 
                                 <!-- ปุ่ม Save พร้อมไอคอนด้านขวา -->
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
@@ -218,12 +218,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $("#main_menu").html(queryString["main_menu"] || "");
 
             // ✅ ต้องอยู่ภายใน $(document).ready)
+
+            $('#action').val(queryString["action"]);
+
             if (queryString["action"] !== 'ADD' && queryString["doc_no"]) {
                 $('#doc_no').val(queryString["doc_no"]);
                 $('#doc_date').val(queryString["doc_date"]);
                 $('#requester').val(queryString["requester"]);
                 $('#supplier_name').val(queryString["supplier_name"]);
                 $('#purpose').val(queryString["purpose"]);
+                $('#totalAmount').val(queryString["total_amount"]);
                 loadDetailData(queryString["doc_no"]);
             }
         });
@@ -241,19 +245,34 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 dataType: 'json',
                 success: function (response) {
                     if (Array.isArray(response)) {
+                        $('#detailTable tbody').empty(); // ล้างก่อนโหลดใหม่
                         response.forEach(item => {
                             $('#detailTable tbody').append(`
-        <tr>
-            <td><input type="text" class="form-control product_id" value="${item.product_id}" readonly></td>
-            <td><input type="text" class="form-control product_name" value="${item.product_name}"></td>
-            <td><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
-            <td><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
-            <td><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
-            <td><input type="text" class="form-control item-unit-code" value="${item.unit_id}" readonly></td>
-            <td><input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly></td>
-            <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
-        </tr>
-        `);
+<tr>
+    <td style="width: 15%;">
+        <div class="d-flex">
+            <input type="text" class="form-control product_id" value="${item.product_id}" readonly style="flex: 1;">
+            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-item" style="white-space: nowrap;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
+    </td>
+    <td style="width: 20%;"><input type="text" class="form-control product_name" value="${item.product_name}"></td>
+    <td style="width: 11%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
+    <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
+    <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
+    <td style="width: 12%;">
+        <div class="d-flex">
+            <input type="text" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
+            <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
+    </td>
+    <td style="width: 20%;"><input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly></td>
+    <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
+</tr>
+                    `);
                         });
                     } else if (response.error) {
                         alertify.error("Error: " + response.error);
@@ -267,6 +286,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 }
             });
         }
+
 
     </script>
 
@@ -482,13 +502,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).ready(function () {
-            $('#submit').on('click', function (e) {
+            $('#save').on('click', function (e) {
                 e.preventDefault();
 
                 const details = [];
                 let valid = true;
 
-                if (!$('#doc_no').val() || !$('#doc_date').val() || !$('#requester').val()) {
+                if (!$('#doc_date').val() || !$('#requester').val()) {
                     alert('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
                     return;
                 }
@@ -500,6 +520,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     const price = parseFloat($(this).find('.item-price').val());
                     const unit_id = $(this).find('.item-unit-code').val();
                     const unit_name = $(this).find('.item-unit-name').val();
+
+                    //alert(product_id + " | " + product_name );
 
                     if (!product_id || !product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
                         valid = false;
@@ -513,6 +535,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 if (!valid) return;
 
                 const payload = {
+                    action: $('#action').val(),
                     doc_no: $('#doc_no').val(),
                     date: $('#doc_date').val(),
                     requester: $('#requester').val(),
@@ -524,7 +547,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#submit').prop('disabled', true);
 
                 $.ajax({
-                    url: 'model/manage_purchase_data_process.php',
+                    url: 'model/manage_purchase_data_detail_process.php',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(payload),

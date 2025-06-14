@@ -47,11 +47,11 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
     $doc_no = $_GET['doc_no'] ?? '';
 
     // เขียน log doc_no ลงไฟล์
-    file_put_contents('debug_log.txt', "doc_no: " . $doc_no . "\n", FILE_APPEND);
+    //file_put_contents('debug_log.txt', "doc_no: " . $doc_no . "\n", FILE_APPEND);
 
     if (empty($doc_no)) {
         // เขียน log กรณี doc_no ว่าง
-        file_put_contents('debug_log.txt', "Empty doc_no\n", FILE_APPEND);
+        //file_put_contents('debug_log.txt', "Empty doc_no\n", FILE_APPEND);
         echo json_encode([]);
         exit;
     }
@@ -67,12 +67,12 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // เขียน log ผลลัพธ์ที่ได้ (json)
-        file_put_contents('debug_log.txt', "Results: " . json_encode($results) . "\n", FILE_APPEND);
+        //file_put_contents('debug_log.txt', "Results: " . json_encode($results) . "\n", FILE_APPEND);
 
         echo json_encode($results);
     } catch (PDOException $e) {
         // เขียน log error
-        file_put_contents('debug_log.txt', "PDO Error: " . $e->getMessage() . "\n", FILE_APPEND);
+        //file_put_contents('debug_log.txt', "PDO Error: " . $e->getMessage() . "\n", FILE_APPEND);
 
         echo json_encode(['error' => $e->getMessage()]);
     }
