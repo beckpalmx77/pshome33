@@ -509,7 +509,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 let valid = true;
 
                 if (!$('#doc_date').val() || !$('#requester').val()) {
-                    alert('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
+                    alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
                     return;
                 }
 
@@ -525,7 +525,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                     if (!product_id || !product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
                         valid = false;
-                        alert("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
+                        alertify.error("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
                         return false; // break loop
                     }
 
@@ -553,7 +553,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     data: JSON.stringify(payload),
                     success: function (res) {
                         if (res.status === 'success') {
-                            alert('บันทึกสำเร็จแล้ว');
+                            alertify.success('บันทึกสำเร็จแล้ว');
                             location.reload();
                         } else {
                             alert('เกิดข้อผิดพลาด: ' + res.message);
@@ -561,7 +561,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         }
                     },
                     error: function () {
-                        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+                        alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
                         $('#submit').prop('disabled', false);
                     }
                 });

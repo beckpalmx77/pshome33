@@ -273,7 +273,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
         $("#confirmDeleteBtn").on("click", function () {
             if (deleteId) {
                 $.ajax({
-                    url: "model/manage_common_fee_payment_process.php",
+                    url: "model/manage_purchase_detail_process.php",
                     method: "POST",
                     data: {id: deleteId, action: "DELETE"},
                     success: function (response) {
