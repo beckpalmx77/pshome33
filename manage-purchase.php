@@ -74,97 +74,33 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
                                         </div>
 
-                                        <div class="modal fade" id="recordModal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-                                                    <form method="post" id="recordForm">
-                                                        <div class="modal-body">
-                                                            <div class="modal-body">
 
-                                                                <div class="form-group">
-                                                                    <label for="doc_no"
-                                                                           class="control-label">เลขที่บ้าน</label>
-                                                                    <input type="doc_no" class="form-control"
-                                                                           id="doc_no" name="doc_no"
-                                                                           placeholder="">
-                                                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="supplier_name"
-                                                                           class="control-label">ขนาดพื้นที่</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="supplier_name"
-                                                                           name="supplier_name"
-                                                                           required="required"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="doc_date"
-                                                                           class="control-label">ค่าเก็บขยะ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="doc_date"
-                                                                           name="doc_date"
-                                                                           required="required"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="common_fee"
-                                                                           class="control-label">ค่าส่วนกลาง</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="common_fee"
-                                                                           name="common_fee"
-                                                                           required="required"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="remark"
-                                                                           class="control-label">หมายเหตุ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="remark"
-                                                                           name="remark"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="status"
-                                                                           class="control-label">สถานะ</label>
-                                                                    <select id="status" name="status"
-                                                                            class="form-control" data-live-search="true"
-                                                                            title="Please select">
-                                                                        <option>Y</option>
-                                                                        <option>N</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <input type="hidden" name="id" id="id"/>
-                                                            <input type="hidden" name="action" id="action" value=""/>
-                                                            <span class="icon-input-btn">
-                                                                <i class="fa fa-check"></i>
-                                                            <input type="submit" name="save" id="save"
-                                                                   class="btn btn-primary" value="Save"/>
-                                                            </span>
-                                                            <button type="button" class="btn btn-danger"
-                                                                    data-dismiss="modal">Close <i
-                                                                        class="fa fa-window-close"></i>
-                                                            </button>
-                                                        </div>
-                                                    </form>
-
-                                                </div>
-                                            </div>
-                                        </div>
-
+                    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+                         aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
+                                    <button type="button" class="close text-white"
+                                            data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">ยกเลิก
+                                    </button>
+                                    <button type="button" class="btn btn-danger"
+                                            id="confirmDeleteBtn">ลบข้อมูล
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -322,6 +258,34 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     alertify.error("error : " + response);
                 }
             });
+        });
+
+    </script>
+
+    <script>
+        let deleteId = null;
+
+        $("#TableRecordList").on('click', '.delete', function () {
+            deleteId = $(this).attr("id");
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        $("#confirmDeleteBtn").on("click", function () {
+            if (deleteId) {
+                $.ajax({
+                    url: "model/manage_common_fee_payment_process.php",
+                    method: "POST",
+                    data: {id: deleteId, action: "DELETE"},
+                    success: function (response) {
+                        $("#confirmDeleteModal").modal("hide");
+                        $('#TableRecordList').DataTable().ajax.reload();
+                        alertify.success("ลบข้อมูลเรียบร้อยแล้ว");
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการลบข้อมูล");
+                    }
+                });
+            }
         });
 
     </script>
