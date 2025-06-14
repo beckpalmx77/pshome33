@@ -116,7 +116,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <br>
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
-                                <input type="text" name="action" id="action" value=""/>
+                                <input type="hidden" name="action" id="action" value=""/>
 
                                 <!-- ปุ่ม Save พร้อมไอคอนด้านขวา -->
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
