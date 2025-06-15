@@ -2,129 +2,74 @@
 session_start();
 error_reporting(0);
 
-include('../config/connect_db.php');
-include('../config/lang.php');
-include('../util/record_util.php');
-include('../util/reorder_record.php');
+require_once('../config/connect_db.php');
+require_once('../config/lang.php');
+require_once('../util/record_util.php');
+require_once('../util/reorder_record.php');
 
 if ($_POST["action"] === 'GET_COMMON_FEE') {
 
-    ## Read value
+    // รับค่าเบื้องต้นจาก DataTables
     $draw = $_POST['draw'];
     $row = $_POST['start'];
-    $rowperpage = $_POST['length']; // Rows display per page
-    $columnIndex = $_POST['order'][0]['column']; // Column index
-    $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
-    //$columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
-    $columnSortOrder = 'desc'; // asc or desc
-    $searchValue = $_POST['search']['value']; // Search value
+    $rowperpage = $_POST['length'];
+    $columnIndex = $_POST['order'][0]['column'];
+    $columnName = $_POST['columns'][$columnIndex]['data'];
+    $columnSortOrder = 'desc';
+    $searchValue = $_POST['search']['value'];
 
-    $searchArray = array();
-
-## Search
-    $searchQuery = " ";
-
-    if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number) ";
-        $searchArray = array(
-            'house_number' => "%$searchValue%"
-        );
-
-        // รวมข้อมูลทั้ง searchQuery และ searchArray
-/*
-        $txt = "Search Query:\n" . $searchQuery . "\n\nSearch Array:\n" . print_r($searchArray, true);
-        // เขียนลงไฟล์
-        $my_file = fopen("device_0.txt", "w") or die("Unable to open file!");
-        fwrite($my_file, $txt);
-        fclose($my_file);
-*/
-
+    // ค้นหา
+    $searchQuery = '';
+    $searchArray = [];
+    if (!empty($searchValue)) {
+        $searchQuery = " AND house_number LIKE :house_number ";
+        $searchArray['house_number'] = "%$searchValue%";
     }
 
+    // เงื่อนไขบ้านของ user เฉพาะกรณี account_type = user
+    $where_house_number = ($_SESSION['account_type'] === "user")
+        ? " AND house_number = :user_house "
+        : "";
 
-    $where_house_number = " ";
     if ($_SESSION['account_type'] === "user") {
-        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+        $searchArray['user_house'] = $_SESSION['house_number'];
     }
 
-/*
-    $txt = $where_house_number;
-    $my_file = fopen("device_1.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
+    // นับทั้งหมด (ไม่กรอง)
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' $where_house_number");
+    $stmt->execute(array_filter($searchArray, fn($k) => $k === 'user_house', ARRAY_FILTER_USE_KEY));
+    $totalRecords = $stmt->fetch()['allcount'];
 
-## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' " . $where_house_number;
-    $stmt = $conn->prepare($sql_getdata);
-    $stmt->execute();
-    $records = $stmt->fetch();
-    $totalRecords = $records['allcount'];
-
-/*
-    $txt = $sql_getdata;
-    $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
-
-## Total number of records with filtering
-
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' " . $searchQuery . $where_house_number;
-
-    $stmt = $conn->prepare($sql_getdata);
+    // นับหลังกรอง
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' $searchQuery $where_house_number");
     $stmt->execute($searchArray);
-    $records = $stmt->fetch();
-    $totalRecordwithFilter = $records['allcount'];
+    $totalRecordwithFilter = $stmt->fetch()['allcount'];
 
-/*
-    $txt = $sql_getdata;
-    $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
+    // ดึงข้อมูลจริง
+    $sql = "SELECT * FROM v_ims_house_payment 
+            WHERE payment_status = 'N' $searchQuery $where_house_number 
+            ORDER BY id DESC LIMIT :start, :limit";
+    $stmt = $conn->prepare($sql);
 
-## Fetch records
-    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE payment_status = 'N' " . $searchQuery . $where_house_number
-        . " ORDER BY id DESC " . " LIMIT :limit,:offset";
-
-    $stmt = $conn->prepare($sql_getdata);
-
-// Bind values
-    foreach ($searchArray as $key => $search) {
-        $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
+    foreach ($searchArray as $key => $value) {
+        $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
     }
 
-    $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
+    $stmt->bindValue(':start', (int)$row, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', (int)$rowperpage, PDO::PARAM_INT);
     $stmt->execute();
     $empRecords = $stmt->fetchAll();
-    $data = array();
 
-/*
-    $txt = $sql_getdata . "  " . $row . "," . $rowperpage;
-    $my_file = fopen("device_c.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
+    $data = [];
 
     foreach ($empRecords as $row) {
-
         if ($_POST['sub_action'] === "GET_MASTER") {
-            $status = $row['payment_status'];
-            $payment_status_desc = ($status === 'Y') ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
-            $color = ($status === 'Y') ? "green" : "gray";
-            $print_disabled = ($status === 'Y') ? "" : "disabled";
+            $isPaid = $row['payment_status'] === 'Y';
+            $isUser = $_SESSION['account_type'] === "user";
 
-            // ปุ่ม Update
-            $update_button = ($_SESSION['account_type'] === "user")
-                ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
-                : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>";
-
-            // ปุ่ม Delete
-            $delete_button = ($_SESSION['account_type'] === "user")
-                ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
-                : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>";
+            $payment_status_desc = $isPaid ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
+            $color = $isPaid ? "green" : "gray";
+            $print_disabled = $isPaid ? "" : "disabled";
 
             $data[] = [
                 "id" => $row['id'],
@@ -140,7 +85,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "period_month_to" => $row['period_month_to'],
                 "month_name_start" => $row['month_name_start'],
                 "month_name_to" => $row['month_name_to'],
-                "month_name_period" => $row['month_name_start'] . " - " . $row['month_name_to'],
+                "month_name_period" => "{$row['month_name_start']} - {$row['month_name_to']}",
                 "period_year" => $row['period_year'],
                 "area_size" => $row['area_size'],
                 "garbage_collection_fee" => $row['garbage_collection_fee'],
@@ -151,8 +96,8 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "payment_status_desc" => "<span style='color: $color;'>$payment_status_desc</span>",
                 "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' $print_disabled>Print</button>",
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
-                "update" => $update_button,
-                "delete" => $delete_button,
+                "update" => "<button type='button' class='btn btn-info btn-xs update' name='update' id='{$row['id']}' " . ($isUser ? "disabled" : "") . ">Update</button>",
+                "delete" => "<button type='button' class='btn btn-danger btn-xs delete' name='delete' id='{$row['id']}' " . ($isUser ? "disabled" : "") . ">Delete</button>",
                 "remark" => $row['remark']
             ];
         } else {
@@ -165,16 +110,11 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         }
     }
 
-
-## Response Return Value
-    $response = array(
+    // ส่งผลลัพธ์กลับ
+    echo json_encode([
         "draw" => intval($draw),
         "iTotalRecords" => $totalRecords,
         "iTotalDisplayRecords" => $totalRecordwithFilter,
         "aaData" => $data
-    );
-
-    echo json_encode($response);
-
+    ]);
 }
-
