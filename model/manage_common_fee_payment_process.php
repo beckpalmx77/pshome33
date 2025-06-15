@@ -207,23 +207,18 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     fclose($my_file);
 */
 
+    $isUser = $_SESSION['account_type'] === "user";
+    $isMaster = $_POST['sub_action'] === "GET_MASTER";
+
+    $statusMeta = [
+        'Y' => ['desc' => "ชำระเรียบร้อยแล้ว", 'color' => 'green', 'can_print' => true],
+        'N' => ['desc' => "ยังไม่ยืนยันการชำระ", 'color' => 'gray', 'can_print' => false],
+    ];
+
     foreach ($empRecords as $row) {
-
-        if ($_POST['sub_action'] === "GET_MASTER") {
+        if ($isMaster) {
             $status = $row['payment_status'];
-            $payment_status_desc = ($status === 'Y') ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
-            $color = ($status === 'Y') ? "green" : "gray";
-            $print_disabled = ($status === 'Y') ? "" : "disabled";
-
-            // ปุ่ม Update
-            $update_button = ($_SESSION['account_type'] === "user")
-                ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
-                : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>";
-
-            // ปุ่ม Delete
-            $delete_button = ($_SESSION['account_type'] === "user")
-                ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
-                : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>";
+            $meta = $statusMeta[$status] ?? ['desc' => '-', 'color' => 'gray', 'can_print' => false];
 
             $data[] = [
                 "id" => $row['id'],
@@ -247,11 +242,13 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "amount" => $row['amount'],
                 "payment_status" => $row['payment_status'],
                 "line_picture_profile" => $row['line_picture_profile_show'],
-                "payment_status_desc" => "<span style='color: $color;'>$payment_status_desc</span>",
-                "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' $print_disabled>Print</button>",
+                "payment_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
+                "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
-                "update" => $update_button,
-                "delete" => $delete_button,
+                "update" => $isUser ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
+                    : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                "delete" => $isUser ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
+                    : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
                 "remark" => $row['remark']
             ];
         } else {
@@ -263,6 +260,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
             ];
         }
     }
+
 
 
 ## Response Return Value
