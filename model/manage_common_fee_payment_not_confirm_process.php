@@ -8,70 +8,77 @@ require_once('../util/record_util.php');
 require_once('../util/reorder_record.php');
 
 if ($_POST["action"] === 'GET_COMMON_FEE') {
+    $draw = intval($_POST['draw']);
+    $start = intval($_POST['start']);
+    $length = intval($_POST['length']);
+    $columnIndex = intval($_POST['order'][0]['column']);
+    $columnName = $_POST['columns'][$columnIndex]['data'] ?? 'id';
+    $columnSortOrder = strtolower($_POST['order'][0]['dir'] ?? 'desc') === 'asc' ? 'ASC' : 'DESC';
+    $searchValue = trim($_POST['search']['value']);
 
-    // รับค่าเบื้องต้นจาก DataTables
-    $draw = $_POST['draw'];
-    $row = $_POST['start'];
-    $rowperpage = $_POST['length'];
-    $columnIndex = $_POST['order'][0]['column'];
-    $columnName = $_POST['columns'][$columnIndex]['data'];
-    $columnSortOrder = 'desc';
-    $searchValue = $_POST['search']['value'];
-
-    // ค้นหา
-    $searchQuery = '';
-    $searchArray = [];
-    if (!empty($searchValue)) {
-        $searchQuery = " AND house_number LIKE :house_number ";
-        $searchArray['house_number'] = "%$searchValue%";
+    // ป้องกัน injection ใน column name (white-list)
+    $validColumns = ['id', 'doc_id', 'payment_date', 'house_number', 'contact_name', 'payment_status'];
+    if (!in_array($columnName, $validColumns)) {
+        $columnName = 'id';
     }
 
-    // เงื่อนไขบ้านของ user เฉพาะกรณี account_type = user
-    $where_house_number = ($_SESSION['account_type'] === "user")
-        ? " AND house_number = :user_house "
-        : "";
+    // สร้างเงื่อนไข WHERE
+    $whereClauses = ["payment_status = 'N'"];
+    $params = [];
 
     if ($_SESSION['account_type'] === "user") {
-        $searchArray['user_house'] = $_SESSION['house_number'];
+        $whereClauses[] = "house_number = :user_house";
+        $params['user_house'] = $_SESSION['house_number'];
     }
 
-    // นับทั้งหมด (ไม่กรอง)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' $where_house_number");
-    $stmt->execute(array_filter($searchArray, fn($k) => $k === 'user_house', ARRAY_FILTER_USE_KEY));
-    $totalRecords = $stmt->fetch()['allcount'];
+    if ($searchValue !== '') {
+        $whereClauses[] = "house_number LIKE :search_house";
+        $params['search_house'] = "%$searchValue%";
+    }
 
-    // นับหลังกรอง
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE payment_status = 'N' $searchQuery $where_house_number");
-    $stmt->execute($searchArray);
-    $totalRecordwithFilter = $stmt->fetch()['allcount'];
+    $whereSQL = implode(' AND ', $whereClauses);
 
-    // ดึงข้อมูลจริง
+    // ฟังก์ชันช่วยนับจำนวน record
+    function countRecords($conn, $whereSQL, $params) {
+        $sql = "SELECT COUNT(*) AS cnt FROM v_ims_house_payment WHERE $whereSQL";
+        $stmt = $conn->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue(":$key", $val);
+        }
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    $totalRecords = countRecords($conn, "payment_status = 'N'" . (isset($params['user_house']) ? " AND house_number = :user_house" : ""), array_filter($params, fn($k) => $k === 'user_house', ARRAY_FILTER_USE_KEY));
+    $totalRecordwithFilter = countRecords($conn, $whereSQL, $params);
+
+    // ดึงข้อมูล
+    //$sql = "SELECT * FROM v_ims_house_payment WHERE $whereSQL ORDER BY $columnName $columnSortOrder LIMIT :start, :length";
     $sql = "SELECT * FROM v_ims_house_payment 
-            WHERE payment_status = 'N' $searchQuery $where_house_number 
-            ORDER BY id DESC LIMIT :start, :limit";
+        WHERE $whereSQL 
+        ORDER BY id DESC 
+        LIMIT :start, :length";
+
     $stmt = $conn->prepare($sql);
 
-    foreach ($searchArray as $key => $value) {
-        $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
+    foreach ($params as $key => $val) {
+        $stmt->bindValue(":$key", $val);
     }
-
-    $stmt->bindValue(':start', (int)$row, PDO::PARAM_INT);
-    $stmt->bindValue(':limit', (int)$rowperpage, PDO::PARAM_INT);
+    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+    $stmt->bindValue(':length', $length, PDO::PARAM_INT);
     $stmt->execute();
-    $empRecords = $stmt->fetchAll();
 
-    $data = [];
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($empRecords as $row) {
-        if ($_POST['sub_action'] === "GET_MASTER") {
+    // ฟังก์ชันช่วยแปลงข้อมูลให้เหมาะสม
+    function formatRow($row, $isUser, $sub_action) {
+        if ($sub_action === "GET_MASTER") {
             $isPaid = $row['payment_status'] === 'Y';
-            $isUser = $_SESSION['account_type'] === "user";
-
             $payment_status_desc = $isPaid ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
             $color = $isPaid ? "green" : "gray";
             $print_disabled = $isPaid ? "" : "disabled";
 
-            $data[] = [
+            return [
                 "id" => $row['id'],
                 "doc_id" => $row['doc_id'],
                 "payment_date" => $row['payment_date'],
@@ -101,7 +108,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "remark" => $row['remark']
             ];
         } else {
-            $data[] = [
+            return [
                 "id" => $row['id'],
                 "house_number" => $row['house_number'],
                 "contact_name" => $row['contact_name'],
@@ -110,11 +117,18 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         }
     }
 
-    // ส่งผลลัพธ์กลับ
+    $data = [];
+    $isUser = $_SESSION['account_type'] === "user";
+    $sub_action = $_POST['sub_action'] ?? '';
+
+    foreach ($rows as $row) {
+        $data[] = formatRow($row, $isUser, $sub_action);
+    }
+
     echo json_encode([
-        "draw" => intval($draw),
-        "iTotalRecords" => $totalRecords,
-        "iTotalDisplayRecords" => $totalRecordwithFilter,
+        "draw" => $draw,
+        "iTotalRecords" => intval($totalRecords),
+        "iTotalDisplayRecords" => intval($totalRecordwithFilter),
         "aaData" => $data
     ]);
 }
