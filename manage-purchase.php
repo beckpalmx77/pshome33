@@ -236,6 +236,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let doc_no = response[i].doc_no;
                         let doc_date = response[i].doc_date;
                         let requester = response[i].requester;
+                        let supplier_id = response[i].supplier_id;
                         let supplier_name = response[i].supplier_name;
                         let purpose = response[i].purpose;
                         let total_amount = response[i].total_amount;
@@ -248,6 +249,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                             + '&doc_date=' + doc_date
                             + '&purpose=' + purpose
                             + '&requester=' + requester
+                            + '&supplier_id=' + supplier_id
                             + '&supplier_name=' + supplier_name
                             + '&total_amount=' + total_amount
                             + '&action=UPDATE';

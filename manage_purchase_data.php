@@ -63,27 +63,49 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>ผู้ขอเบิก</label>
-                                        <input type="text" id="requester" class="form-control" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-8">
                                     <div class="form-group">
                                         <label>วัตถุประสงค์</label>
                                         <input type="text" id="purpose" class="form-control" required>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="col-md-2">
+                            <!-- บรรทัดใหม่สำหรับผู้ขอเบิก และผู้ขาย -->
+                            <div class="row mt-2">
+                                <div class="col-md-5 position-relative">
                                     <div class="form-group">
-                                        <label>ผู้ขาย/ผู้รับเหมา</label>
-                                        <input type="text" id="supplier_name" class="form-control" required>
+                                        <label for="requester" class="control-label">ผู้ขอเบิก</label>
+                                        <input type="text" id="requester" name="requester" class="form-control" autocomplete="off" required>
+                                        <input type="hidden" id="requester_id" name="requester_id">
+                                        <div id="requester_list" class="list-group position-absolute" style="z-index: 1000;"></div>
                                     </div>
                                 </div>
+
+
+                                <input type="hidden" class="form-control" id="supplier_id" name="supplier_id">
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="supplier_name" class="control-label">ชื่อผู้ขาย</label>
+                                        <input type="text" class="form-control" id="supplier_name" name="supplier_name" autocomplete="off" required placeholder="">
+                                        <input type="hidden" id="supplier_id" name="supplier_id">
+                                        <div id="supplier_list" class="list-group position-absolute" style="z-index:1000;"></div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <div class="form-group">
+                                        <label class="control-label" style="visibility:hidden;">เลือกชื่อผู้ขาย</label>
+                                        <a data-toggle="modal" href="#SearchSupModal" class="btn btn-primary">
+                                            Click <i class="fa fa-search" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
                             </div>
+
 
                             <div class="d-flex align-items-center mt-4 mb-3">
                                 <h5 class="text-primary mb-0 mr-2">รายการพัสดุ</h5>
@@ -188,6 +210,40 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         </div>
                     </div>
 
+                    <div class="modal fade" id="SearchSupModal">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">เลือกผู้ขาย</h4>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×
+                                    </button>
+                                </div>
+
+                                <div class="container"></div>
+                                <div class="modal-body">
+
+                                    <div class="modal-body">
+
+                                        <table cellpadding="0" cellspacing="0" border="0"
+                                               class="display"
+                                               id="TableSupplierList"
+                                               width="100%">
+                                            <thead>
+                                            <tr>
+                                                <th>รหัสผู้ขาย</th>
+                                                <th>ชื่อผู้ขาย</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
 
             </div>
@@ -199,9 +255,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <!-- Bootstrap 4 JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
+    <script src="vendor/datatables/v11/bootbox.min.js"></script>
+    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
     <!-- Bootstrap Datepicker JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
+    <!-- ใส่ใน <head> -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- ใส่ก่อน </body> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="js/modal/show_supplier_modal.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -225,6 +293,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#doc_no').val(queryString["doc_no"]);
                 $('#doc_date').val(queryString["doc_date"]);
                 $('#requester').val(queryString["requester"]);
+                $('#supplier_id').val(queryString["supplier_id"]);
                 $('#supplier_name').val(queryString["supplier_name"]);
                 $('#purpose').val(queryString["purpose"]);
                 $('#totalAmount').val(queryString["total_amount"]);
@@ -539,6 +608,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     doc_no: $('#doc_no').val(),
                     date: $('#doc_date').val(),
                     requester: $('#requester').val(),
+                    supplier_id: $('#supplier_id').val(),
+                    supplier_name: $('#supplier_name').val(),
                     purpose: $('#purpose').val(),
                     details: details
                 };
@@ -569,6 +640,80 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         });
 
     </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#supplier_name').on('keyup', function () {
+                let query = $(this).val();
+
+                if (query.length >= 2) {
+                    $.ajax({
+                        url: 'model/get_suppliers.php',
+                        method: 'POST',
+                        data: { query: query },
+                        success: function (data) {
+                            $('#supplier_list').fadeIn().html(data);
+                        }
+                    });
+                } else {
+                    $('#supplier_list').fadeOut();
+                }
+            });
+
+            // เมื่อคลิกรายการ
+            $(document).on('click', '.supplier-item', function () {
+                let name = $(this).data('name');
+                let id = $(this).data('id');
+
+                $('#supplier_name').val(name);
+                $('#supplier_id').val(id);
+                $('#supplier_list').fadeOut();
+            });
+
+            // คลิกนอก list ให้หาย
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#supplier_name, #supplier_list').length) {
+                    $('#supplier_list').fadeOut();
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#requester').on('keyup', function () {
+                let query = $(this).val();
+
+                if (query.length >= 2) {
+                    $.ajax({
+                        url: 'model/get_requester.php',
+                        method: 'POST',
+                        data: { query: query },
+                        success: function (data) {
+                            $('#requester_list').fadeIn().html(data);
+                        }
+                    });
+                } else {
+                    $('#requester_list').fadeOut();
+                }
+            });
+
+            $(document).on('click', '.requester-item', function () {
+                const name = $(this).data('name');
+                const id = $(this).data('id');
+                $('#requester').val(name);
+                $('#requester_id').val(id);
+                $('#requester_list').fadeOut();
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#requester, #requester_list').length) {
+                    $('#requester_list').fadeOut();
+                }
+            });
+        });
+    </script>
+
 
 
     </body>
