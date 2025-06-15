@@ -263,7 +263,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     </div>
                                                     <div class="modal-footer justify-content-between">
                                                         <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a-->
-                                                        <button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button>
+                                                        <!--button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
                                                         <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">ปิด
                                                         </button> <!-- ปุ่มปิดล่าง -->
@@ -578,48 +578,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         }
     </script>
 
-    <!--script>
-        $(document).ready(function () {
-            $('#printButton').on('click', function (event) {
-                event.preventDefault();
-
-                // ดึงค่าจากฟอร์ม
-                const formData = $('#recordForm').serializeArray();
-
-                // สร้างฟอร์มชั่วคราวสำหรับ POST
-                const tempForm = $('<form>', {
-                    method: 'POST',
-                    action: 'print_pdf.php',
-                    target: '_blank' // เปิดในแท็บใหม่
-                });
-
-                // เพิ่มข้อมูลเข้าไปในฟอร์ม
-                formData.forEach(function (item) {
-                    tempForm.append($('<input>', {
-                        type: 'hidden',
-                        name: item.name,
-                        value: item.value
-                    }));
-                });
-
-                // เพิ่มฟอร์มชั่วคราวเข้าไปใน DOM และส่งฟอร์ม
-                $('body').append(tempForm);
-                tempForm.submit();
-
-                // ลบฟอร์มชั่วคราวหลังจากส่ง
-                tempForm.remove();
-            });
-        });
-    </script-->
-
-    <!--script>
-        $("#TableRecordList").on('click', '.print', function () {
-            let id = $(this).attr("id");
-            let url = "print_pdf.php?id=" + encodeURIComponent(id);
-            window.open(url, "_blank"); // เปิดหน้าใหม่
-        });
-    </script-->
-
     <script>
         $("#TableRecordList").on('click', '.print', function () {
             let account_type = $('#account_type').val();
@@ -702,7 +660,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         });
 
     </script>
-
 
     </body>
     </html>
