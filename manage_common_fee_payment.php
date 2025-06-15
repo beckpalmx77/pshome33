@@ -262,8 +262,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                              class="img-fluid rounded shadow-sm">
                                                     </div>
                                                     <div class="modal-footer justify-content-between">
-                                                        <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a>
-                                                        <button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
+                                                        <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a-->
+                                                        <button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button>
                                                         <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">ปิด
                                                         </button> <!-- ปุ่มปิดล่าง -->
