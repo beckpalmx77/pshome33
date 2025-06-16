@@ -185,12 +185,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-6">
                                                                         <label for="amount"
-                                                                               class="control-label">จำนวนเงินโอน</label>
+                                                                               class="control-label">จำนวนเงิน</label>
                                                                         <input type="text" class="form-control"
                                                                                id="amount"
                                                                                name="amount"
                                                                                required="required"
-                                                                               readonly="true"
                                                                                placeholder="">
                                                                     </div>
                                                                     <div class="col-sm-6">
