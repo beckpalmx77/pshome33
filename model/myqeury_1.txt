@@ -1,7 +1,0 @@
-line id = U25551be5071d3714676307707942ab88
-line user name = cattareeya
-phone = 
-user type = user
-f_name = แคทรียา
-l_name = แพทย์มล
- pic = https://profile.line-scdn.net/0h7Ki2iPXwaGRES3YY12MWWjQbaw5nOjF2YH8gAXRNMgd_KCs2PCwkByFJZVIpfHsxOH8kViVLZV1mL05NLnE7WiYlYBMJflBzHX1jBi4efjQNC3tUEE1TXQUbSCQ9Z1hnD1ojWyk1TFQcGSZwa39vWjVLY1YFCCxmKxwEMkF5BucrSR8xaSwhAHdKNlH5
