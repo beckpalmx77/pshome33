@@ -56,6 +56,12 @@ if ($_POST["action"] === 'UPDATE') {
         $id = $_POST["id"];
         $payment_status = ($_POST["payment_status"] === "Y") ? "Y" : "N";
 
+        $period_month_start = $_POST["period_month_start"];
+        $period_month_to = $_POST["period_month_to"];
+        $period_year = $_POST["period_year"];
+
+        $amount = $_POST["amount"];
+
         $approve_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
 
         $sql_find = "SELECT COUNT(*) FROM ims_house_payment WHERE id = :id";
@@ -66,11 +72,16 @@ if ($_POST["action"] === 'UPDATE') {
 
         if ($nRows > 0) {
             $sql_update = "UPDATE ims_house_payment SET payment_status = :payment_status 
-            , approve_by = :approve_by
+            ,approve_by = :approve_by , period_month_start = :period_month_start , period_month_to = :period_month_to
+            ,period_year = :period_year , amount = :amount
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':payment_status', $payment_status, PDO::PARAM_STR);
             $query->bindParam(':approve_by', $approve_by, PDO::PARAM_STR);
+            $query->bindParam(':period_month_start', $period_month_start, PDO::PARAM_STR);
+            $query->bindParam(':period_month_to', $period_month_to, PDO::PARAM_STR);
+            $query->bindParam(':period_year', $period_year, PDO::PARAM_STR);
+            $query->bindParam(':amount', $amount, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
             echo $save_success;
