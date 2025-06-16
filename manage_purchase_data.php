@@ -76,9 +76,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-md-5 position-relative">
                                     <div class="form-group">
                                         <label for="requester" class="control-label">ผู้ขอเบิก</label>
-                                        <input type="text" id="requester" name="requester" class="form-control" autocomplete="off" required>
+                                        <input type="text" id="requester" name="requester" class="form-control"
+                                               autocomplete="off" required>
                                         <input type="hidden" id="requester_id" name="requester_id">
-                                        <div id="requester_list" class="list-group position-absolute" style="z-index: 1000;"></div>
+                                        <div id="requester_list" class="list-group position-absolute"
+                                             style="z-index: 1000;"></div>
                                     </div>
                                 </div>
 
@@ -88,9 +90,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="supplier_name" class="control-label">ชื่อผู้ขาย</label>
-                                        <input type="text" class="form-control" id="supplier_name" name="supplier_name" autocomplete="off" required placeholder="">
+                                        <input type="text" class="form-control" id="supplier_name" name="supplier_name"
+                                               autocomplete="off" required placeholder="">
                                         <input type="hidden" id="supplier_id" name="supplier_id">
-                                        <div id="supplier_list" class="list-group position-absolute" style="z-index:1000;"></div>
+                                        <div id="supplier_list" class="list-group position-absolute"
+                                             style="z-index:1000;"></div>
                                     </div>
                                 </div>
 
@@ -264,7 +268,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
     <!-- ใส่ใน <head> -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
     <!-- ใส่ก่อน </body> -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -650,7 +654,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     $.ajax({
                         url: 'model/get_suppliers.php',
                         method: 'POST',
-                        data: { query: query },
+                        data: {query: query},
                         success: function (data) {
                             $('#supplier_list').fadeIn().html(data);
                         }
@@ -688,7 +692,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     $.ajax({
                         url: 'model/get_requester.php',
                         method: 'POST',
-                        data: { query: query },
+                        data: {query: query},
                         success: function (data) {
                             $('#requester_list').fadeIn().html(data);
                         }
@@ -713,7 +717,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         });
     </script>
-
 
 
     </body>
