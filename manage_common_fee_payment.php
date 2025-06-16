@@ -444,14 +444,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'house_number', width: '100px'},
                     {data: 'alley', width: '100px'},
                     {data: 'detail', width: '200px'},
-                    {
-                        data: 'line_picture_profile',
-                        width: '60px',
-                        render: function (data, type, row) {
-                            let imageUrl = data ? data : 'img/icon/none_img.png';
-                            return '<img src="' + imageUrl + '" alt="image" style="width: 50px; height: auto;">';
-                        }
-                    },
+                    {data: 'line_picture_profile', width: '200px'},
                     {data: 'month_name_period', width: '120px'},
                     {data: 'period_year', width: '100px'},
                     {data: 'common_fee', className: 'dt-body-right', width: '120px'},
