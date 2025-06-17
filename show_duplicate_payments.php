@@ -1,7 +1,6 @@
-
 <?php
-include('config/connect_db.php');
 include('includes/Header.php');
+include('config/connect_db.php');
 
 $sql = "
     SELECT 
@@ -26,154 +25,250 @@ $sql = "
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <title>รายการข้อมูลซ้ำ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css" rel="stylesheet">
-</head>
-<body class="bg-dark text-white">
-    <div class="container py-4">
-        <h3 class="mb-4">📋 รายการข้อมูลซ้ำ (บ้าน + ปี + เดือนเริ่ม)</h3>
+<body id="page-top">
+<div id="wrapper">
+    <?php
+    include('includes/Side-Bar.php');
+    ?>
 
-        <table id="duplicateTable" class="table table-bordered table-hover table-striped table-dark">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>บ้านเลขที่</th>
-                    <th>ปี</th>
-                    <th>เดือนเริ่ม</th>
-                    <th>เดือนถึง</th>
-                    <th>รูปภาพ</th>
-                    <th>สถานะการชำระ</th>
-                    <th>รายการซ้ำ</th>
-                    <th>จัดการ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($results as $row): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['id']) ?></td>
-                        <td><?= htmlspecialchars($row['house_number']) ?></td>
-                        <td><?= htmlspecialchars($row['period_year']) ?></td>
-                        <td><?= htmlspecialchars($row['period_month_start']) ?></td>
-                        <td><?= htmlspecialchars($row['period_month_to']) ?></td>
-                        <td>
-                            <?php if (!empty($row['picture_payment'])): ?>
-                                <a href="#" class="view-picture text-info" data-bs-toggle="modal" data-bs-target="#imageModal"
-                                   data-image="<?= !empty($row['picture_payment']) ? 'uploads/slips/' . htmlspecialchars($row['picture_payment']) : '' ?>">
-                                    ดูรูป
-                                </a>
-                            <?php else: ?>
-                                <span class="text-muted">ไม่มีรูปภาพ</span>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= htmlspecialchars($row['payment_status']) ?></td>
-                        <td><?= $row['dup_count'] ?></td>
-                        <td>
-                            <button class="btn btn-danger btn-sm delete-duplicate" data-house="<?= $row['house_number'] ?>"
-                                    data-year="<?= $row['period_year'] ?>" data-month="<?= $row['period_month_start'] ?>">
-                                ลบซ้ำ
-                            </button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <?php
+            include('includes/Top-Bar.php');
+            ?>
+            <!-- Container Fluid-->
+            <div class="container-fluid" id="container-wrapper">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                        </li>
+                        <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                        <li class="breadcrumb-item active"
+                            aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                    </ol>
+                </div>
 
-        <!-- Modal สำหรับแสดงรูปภาพ -->
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content bg-dark text-white">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="imageModalLabel">รูปภาพแนบการชำระ</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img id="modalImage" src="" class="img-fluid rounded" style="max-height: 70vh;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card mb-12">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            </div>
+                            <div class="card-body">
+                                <section class="container-fluid">
+
+                                    <div class="col-md-12 col-md-offset-2">
+                                        <label for="item_name"
+                                               class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
+
+                                        <button type='button' name='btnAdd' id='btnAdd'
+                                                class='btn btn-primary btn-xs'>Add
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-md-12 col-md-offset-2">
+                                        <table id='TableRecordList' class='display dataTable'>
+                                            <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>บ้านเลขที่</th>
+                                                <th>ปี</th>
+                                                <th>เดือนเริ่ม</th>
+                                                <th>เดือนถึง</th>
+                                                <th>รูปภาพ</th>
+                                                <th>สถานะการชำระ</th>
+                                                <th>รายการซ้ำ</th>
+                                                <th>จัดการ</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php foreach ($results as $row): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($row['id']) ?></td>
+                                                    <td><?= htmlspecialchars($row['house_number']) ?></td>
+                                                    <td><?= htmlspecialchars($row['period_year']) ?></td>
+                                                    <td><?= htmlspecialchars($row['period_month_start']) ?></td>
+                                                    <td><?= htmlspecialchars($row['period_month_to']) ?></td>
+                                                    <td>
+                                                        <?php if (!empty($row['picture_payment'])): ?>
+                                                            <a href="#" class="view-picture text-info"
+                                                               data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                               data-image="<?= !empty($row['picture_payment']) ? 'uploads/slips/' . htmlspecialchars($row['picture_payment']) : '' ?>">
+                                                                ดูรูป
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">ไม่มีรูปภาพ</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td><?= htmlspecialchars($row['payment_status']) ?></td>
+                                                    <td><?= $row['dup_count'] ?></td>
+                                                    <td>
+                                                        <button class="btn btn-danger btn-sm delete-duplicate"
+                                                                data-house="<?= $row['house_number'] ?>"
+                                                                data-year="<?= $row['period_year'] ?>"
+                                                                data-month="<?= $row['period_month_start'] ?>">
+                                                            ลบซ้ำ
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+
+                                        <div id="result"></div>
+
+                                    </div>
+
+
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Modal แสดงรูปภาพ -->
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content bg-dark text-white">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="imageModalLabel">รูปภาพแนบการชำระ</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img id="modalImage" src="" class="img-fluid rounded" alt="แนบสลิป" style="max-height: 70vh;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </div>
-
-
     </div>
+</div>
+
+<?php
+include('includes/Modal-Logout.php');
+include('includes/Footer.php');
+?>
 
 
+<!-- Scroll to top -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <!-- Bootstrap 5 Bundle JS (รวม Popper แล้ว) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="js/myadmin.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            $('#duplicateTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        text: 'Export Excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        text: 'Export PDF',
-                        className: 'btn btn-danger'
-                    }
-                ],
-                language: {
-                    search: 'ค้นหา:',
-                    lengthMenu: 'แสดง _MENU_ รายการ',
-                    zeroRecords: 'ไม่พบข้อมูลซ้ำ',
-                    info: 'แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ',
-                    infoEmpty: 'ไม่มีข้อมูล',
-                    infoFiltered: '(กรองจากทั้งหมด _MAX_ รายการ)',
-                    paginate: {
-                        first: 'หน้าแรก',
-                        last: 'หน้าสุดท้าย',
-                        next: 'ถัดไป',
-                        previous: 'ก่อนหน้า'
-                    }
+<script src="js/modal/show_brand_modal.js"></script>
+<script src="js/modal/show_m_category_modal.js"></script>
+
+<!-- Page level plugins -->
+
+<!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
+
+<script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+
+<script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
+<script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
+<!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
+<link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
+<script src="vendor/datatables/v11/bootbox.min.js"></script>
+<script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
+<style>
+
+    .icon-input-btn {
+        display: inline-block;
+        position: relative;
+    }
+
+    .icon-input-btn input[type="submit"] {
+        padding-left: 2em;
+    }
+
+    .icon-input-btn .fa {
+        display: inline-block;
+        position: absolute;
+        left: 0.65em;
+        top: 30%;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#duplicateTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export Excel',
+                    className: 'btn btn-success'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'Export PDF',
+                    className: 'btn btn-danger'
                 }
-            });
-
-            $(document).on('click', '.delete-duplicate', function () {
-                const house = $(this).data('house');
-                const year = $(this).data('year');
-                const month = $(this).data('month');
-
-                if (confirm(`ลบรายการซ้ำของ ${house} เดือน ${month}/${year} ใช่หรือไม่?`)) {
-                    $.post('delete_duplicates.php', {
-                        house_number: house,
-                        period_year: year,
-                        period_month_start: month
-                    }, function (response) {
-                        alert(response.message);
-                        location.reload();
-                    }, 'json');
+            ],
+            language: {
+                search: 'ค้นหา:',
+                lengthMenu: 'แสดง _MENU_ รายการ',
+                zeroRecords: 'ไม่พบข้อมูลซ้ำ',
+                info: 'แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ',
+                infoEmpty: 'ไม่มีข้อมูล',
+                infoFiltered: '(กรองจากทั้งหมด _MAX_ รายการ)',
+                paginate: {
+                    first: 'หน้าแรก',
+                    last: 'หน้าสุดท้าย',
+                    next: 'ถัดไป',
+                    previous: 'ก่อนหน้า'
                 }
-            });
+            }
         });
-    </script>
 
-    <script>
-        $(document).on('click', '.view-picture', function () {
-            const imageUrl = $(this).data('image');
-            $('#modalImage').attr('src', imageUrl);
+        $(document).on('click', '.delete-duplicate', function () {
+            const house = $(this).data('house');
+            const year = $(this).data('year');
+            const month = $(this).data('month');
+
+            if (confirm(`ลบรายการซ้ำของ ${house} เดือน ${month}/${year} ใช่หรือไม่?`)) {
+                $.post('delete_duplicates.php', {
+                    house_number: house,
+                    period_year: year,
+                    period_month_start: month
+                }, function (response) {
+                    alert(response.message);
+                    location.reload();
+                }, 'json');
+            }
         });
-    </script>
+    });
+</script>
+
+<script>
+    $(document).on('click', '.view-picture', function () {
+        const imageUrl = $(this).data('image');
+        $('#modalImage').attr('src', imageUrl);
+    });
+</script>
+
 
 </body>
 </html>
+
