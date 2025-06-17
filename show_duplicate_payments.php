@@ -1,274 +1,350 @@
 <?php
+session_start();
+error_reporting(0);
 include('includes/Header.php');
 include('config/connect_db.php');
+$curr_date = date("d-m-Y");
 
-$sql = "
-    SELECT 
-        id,
-        house_number,
-        period_year,
-        period_month_start,
-        period_month_to,
-        payment_status,
-        picture_payment,
-        COUNT(*) OVER (PARTITION BY house_number, period_year, period_month_start) AS dup_count
-    FROM ims_house_payment
-    WHERE (house_number, period_year, period_month_start) IN (
-        SELECT house_number, period_year, period_month_start
-        FROM ims_house_payment
-        GROUP BY house_number, period_year, period_month_start
-        HAVING COUNT(*) > 1
-    )
-    ORDER BY house_number, period_year, period_month_start, id
-";
-
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-?>
-
-<!DOCTYPE html>
-<html lang="th">
-<body id="page-top">
-<div id="wrapper">
-    <?php
-    include('includes/Side-Bar.php');
+if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == "") {
+    header("Location: index.php");
+} else {
     ?>
 
-    <div id="content-wrapper" class="d-flex flex-column">
-        <div id="content">
-            <?php
-            include('includes/Top-Bar.php');
-            ?>
-            <!-- Container Fluid-->
-            <div class="container-fluid" id="container-wrapper">
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
-                        </li>
-                        <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
-                        <li class="breadcrumb-item active"
-                            aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
-                    </ol>
-                </div>
+    <!DOCTYPE html>
+    <html lang="th">
+    <body id="page-top">
+    <div id="wrapper">
+        <?php
+        include('includes/Side-Bar.php');
+        ?>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card mb-12">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            </div>
-                            <div class="card-body">
-                                <section class="container-fluid">
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <?php
+                include('includes/Top-Bar.php');
+                ?>
+                <!-- Container Fluid-->
+                <div class="container-fluid" id="container-wrapper">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <input type="hidden" id="account_type" name="account_type"
+                               value="<?php echo $_SESSION['account_type']; ?>">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
+                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                        </ol>
+                    </div>
 
-                                    <div class="col-md-12 col-md-offset-2">
-                                        <label for="item_name"
-                                               class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card mb-12">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                </div>
+                                <div class="card-body">
+                                    <section class="container-fluid">
 
-                                        <button type='button' name='btnAdd' id='btnAdd'
-                                                class='btn btn-primary btn-xs'>Add
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                        <!--div class="col-md-12 col-md-offset-2">
+                                            <label for="name_t"
+                                                   class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
+                                            <button type='button' name='btnAdd' id='btnAdd'
+                                                    class='btn btn-primary btn-xs'>Add
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div-->
 
-                                    <div class="col-md-12 col-md-offset-2">
-                                        <table id='TableRecordList' class='display dataTable'>
-                                            <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>บ้านเลขที่</th>
-                                                <th>ปี</th>
-                                                <th>เดือนเริ่ม</th>
-                                                <th>เดือนถึง</th>
-                                                <th>รูปภาพ</th>
-                                                <th>สถานะการชำระ</th>
-                                                <th>รายการซ้ำ</th>
-                                                <th>จัดการ</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php foreach ($results as $row): ?>
+                                        <div class="col-md-12 col-md-offset-2">
+                                            <table id="TableRecordList" class="display nowrap" style="width:100%;">
+                                                <thead>
                                                 <tr>
-                                                    <td><?= htmlspecialchars($row['id']) ?></td>
-                                                    <td><?= htmlspecialchars($row['house_number']) ?></td>
-                                                    <td><?= htmlspecialchars($row['period_year']) ?></td>
-                                                    <td><?= htmlspecialchars($row['period_month_start']) ?></td>
-                                                    <td><?= htmlspecialchars($row['period_month_to']) ?></td>
-                                                    <td>
-                                                        <?php if (!empty($row['picture_payment'])): ?>
-                                                            <a href="#" class="view-picture text-info"
-                                                               data-bs-toggle="modal" data-bs-target="#imageModal"
-                                                               data-image="<?= !empty($row['picture_payment']) ? 'uploads/slips/' . htmlspecialchars($row['picture_payment']) : '' ?>">
-                                                                ดูรูป
-                                                            </a>
-                                                        <?php else: ?>
-                                                            <span class="text-muted">ไม่มีรูปภาพ</span>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td><?= htmlspecialchars($row['payment_status']) ?></td>
-                                                    <td><?= $row['dup_count'] ?></td>
-                                                    <td>
-                                                        <button class="btn btn-danger btn-sm delete-duplicate"
-                                                                data-house="<?= $row['house_number'] ?>"
-                                                                data-year="<?= $row['period_year'] ?>"
-                                                                data-month="<?= $row['period_month_start'] ?>">
-                                                            ลบซ้ำ
-                                                        </button>
-                                                    </td>
+                                                    <th>id</th>
+                                                    <th>บ้านเลขที่</th>
+                                                    <th>งวดเดือน</th>
+                                                    <th>งวดเดือน</th>
+                                                    <th>ปี</th>
+                                                    <th>จำนวนเงิน</th>
+                                                    <th>Slip</th>
+                                                    <th>สถานะ</th>
+                                                    <th>ลบข้อมูล</th>
                                                 </tr>
-                                            <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                            </table>
 
-                                        <div id="result"></div>
+                                            <div id="result"></div>
 
-                                    </div>
+                                        </div>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="slipModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="slipModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content text-center">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="slipModalLabel">
+                                                            หลักฐานการโอนเงิน</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                            <!-- ปุ่มปิดมุมขวาบน -->
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img id="slipImage" src="" alt="Slip Image"
+                                                             class="img-fluid rounded shadow-sm">
+                                                    </div>
+                                                    <div class="modal-footer justify-content-between">
+                                                        <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a-->
+                                                        <!--button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">ปิด
+                                                        </button> <!-- ปุ่มปิดล่าง -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
 
+                                        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+                                             aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
+                                                        <button type="button" class="close text-white"
+                                                                data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">ยกเลิก
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger"
+                                                                id="confirmDeleteBtn">ลบข้อมูล
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
-
-                <!-- Modal แสดงรูปภาพ -->
-                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content bg-dark text-white">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="imageModalLabel">รูปภาพแนบการชำระ</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                <img id="modalImage" src="" class="img-fluid rounded" alt="แนบสลิป" style="max-height: 70vh;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
             </div>
         </div>
     </div>
-</div>
 
-<?php
-include('includes/Modal-Logout.php');
-include('includes/Footer.php');
-?>
-
-
-<!-- Scroll to top -->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
+    <?php
+    include('includes/Modal-Logout.php');
+    include('includes/Footer.php');
+    ?>
 
 
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="js/myadmin.min.js"></script>
+    <!-- Scroll to top -->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-<script src="js/modal/show_brand_modal.js"></script>
-<script src="js/modal/show_m_category_modal.js"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
 
-<!-- Page level plugins -->
+    <script src="js/util/calculate_datetime.js"></script>
 
-<!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
+    <!-- Page level plugins -->
 
-<script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
 
-<script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
-<script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-<!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
-<link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
-<script src="vendor/datatables/v11/bootbox.min.js"></script>
-<script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
-<link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+    <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
+    <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
+    <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-<style>
+    <script src="vendor/datatables/v11/bootbox.min.js"></script>
+    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-    .icon-input-btn {
-        display: inline-block;
-        position: relative;
-    }
 
-    .icon-input-btn input[type="submit"] {
-        padding-left: 2em;
-    }
+    <style>
 
-    .icon-input-btn .fa {
-        display: inline-block;
-        position: absolute;
-        left: 0.65em;
-        top: 30%;
-    }
-</style>
+        .icon-input-btn {
+            display: inline-block;
+            position: relative;
+        }
 
-<script>
-    $(document).ready(function () {
-        $('#duplicateTable').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'excelHtml5',
-                    text: 'Export Excel',
-                    className: 'btn btn-success'
+        .icon-input-btn input[type="submit"] {
+            padding-left: 2em;
+        }
+
+        .icon-input-btn .fa {
+            display: inline-block;
+            position: absolute;
+            left: 0.65em;
+            top: 30%;
+        }
+    </style>
+
+    <style>
+        .dataTables_wrapper {
+            overflow-x: auto;
+        }
+    </style>
+
+    <style>
+        .zoom-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block; /* เพื่อควบคุมขนาดของพื้นที่ */
+        }
+
+        .zoom-container img {
+            transition: transform 0.3s ease; /* ให้ภาพขยายแบบนุ่มนวล */
+        }
+
+        .zoom-container:hover img {
+            transform: scale(1.5); /* กำหนดระดับการ Zoom */
+            cursor: zoom-out; /* เปลี่ยน cursor */
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $(".icon-input-btn").each(function () {
+                let btnFont = $(this).find(".btn").css("font-size");
+                let btnColor = $(this).find(".btn").css("color");
+                $(this).find(".fa").css({'font-size': btnFont, 'color': btnColor});
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            let dataRecords = $('#TableRecordList').DataTable({
+                'lengthMenu': [[10, 20, 50, 100], [10, 20, 50, 100]],
+                'language': {
+                    search: 'ค้นหา บ้านเลขที่', lengthMenu: 'แสดง _MENU_ รายการ',
+                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+                    infoEmpty: 'ไม่มีข้อมูล',
+                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+                    paginate: {
+                        previous: 'ก่อนหน้า',
+                        last: 'สุดท้าย',
+                        next: 'ต่อไป'
+                    }
                 },
-                {
-                    extend: 'pdfHtml5',
-                    text: 'Export PDF',
-                    className: 'btn btn-danger'
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'scrollX': true,
+                'ajax': {
+                    'url': 'model/manage_common_fee_payment_dup_process.php',
+                    'type': 'POST',
+                    'data': function (d) {
+                        d.action = 'GET_COMMON_FEE';
+                        d.sub_action = 'GET_MASTER';
+                        d.page_manage = 'ADMIN';
+                        return d;
+                    }
+                },
+                'columns': [
+                    {data: 'id'},
+                    {data: 'house_number'},
+                    {data: 'month_name_start'},
+                    {data: 'month_name_to'},
+                    {data: 'period_year'},
+                    {data: 'amount', className: 'dt-body-right', width: '120px'},
+                    {data: 'slip'},
+                    {data: 'payment_status_desc'},
+                    {data: 'delete'},
+                ],
+                'autoWidth': false // ปิด autowidth เพื่อให้ width ที่กำหนดมีผลจริง
+            });
+        });
+    </script>
+
+    <script>
+        // ฟังก์ชันเปิดรูปในหน้าต่างใหม่
+        function openImageInNewWindow(imageSrc) {
+            if (imageSrc && imageSrc !== "#") {
+                window.open(imageSrc, '_blank');
+            } else {
+                alert('ไม่มีรูปภาพที่จะแสดง');
+            }
+        }
+    </script>
+
+    <script>
+        $("#TableRecordList").on('click', '.slip', function () {
+            let id = $(this).attr("id");
+
+            $.ajax({
+                url: "display_slip.php",
+                type: "GET",
+                data: {id: id},
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === 1) {
+                        $("#slipImage").attr("src", response.image_url);
+                        $("#downloadSlip").attr("href", response.image_url);
+                        $("#slipModal").modal('show');
+                    } else {
+                        alert("ไม่พบรูปภาพ");
+                    }
+                },
+                error: function () {
+                    alert("เกิดข้อผิดพลาดในการโหลดรูปภาพ");
                 }
-            ],
-            language: {
-                search: 'ค้นหา:',
-                lengthMenu: 'แสดง _MENU_ รายการ',
-                zeroRecords: 'ไม่พบข้อมูลซ้ำ',
-                info: 'แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ',
-                infoEmpty: 'ไม่มีข้อมูล',
-                infoFiltered: '(กรองจากทั้งหมด _MAX_ รายการ)',
-                paginate: {
-                    first: 'หน้าแรก',
-                    last: 'หน้าสุดท้าย',
-                    next: 'ถัดไป',
-                    previous: 'ก่อนหน้า'
-                }
+            });
+        });
+
+    </script>
+
+    <script>
+        let deleteId = null;
+
+        $("#TableRecordList").on('click', '.delete', function () {
+            deleteId = $(this).attr("id");
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        $("#confirmDeleteBtn").on("click", function () {
+            if (deleteId) {
+                $.ajax({
+                    url: "model/manage_common_fee_payment_dup_process.php",
+                    method: "POST",
+                    data: {id: deleteId, action: "DELETE"},
+                    success: function (response) {
+                        $("#confirmDeleteModal").modal("hide");
+                        $('#TableRecordList').DataTable().ajax.reload();
+                        alertify.success("ลบข้อมูลเรียบร้อยแล้ว");
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการลบข้อมูล");
+                    }
+                });
             }
         });
 
-        $(document).on('click', '.delete-duplicate', function () {
-            const house = $(this).data('house');
-            const year = $(this).data('year');
-            const month = $(this).data('month');
+    </script>
 
-            if (confirm(`ลบรายการซ้ำของ ${house} เดือน ${month}/${year} ใช่หรือไม่?`)) {
-                $.post('delete_duplicates.php', {
-                    house_number: house,
-                    period_year: year,
-                    period_month_start: month
-                }, function (response) {
-                    alert(response.message);
-                    location.reload();
-                }, 'json');
-            }
-        });
-    });
-</script>
+    </body>
+    </html>
 
-<script>
-    $(document).on('click', '.view-picture', function () {
-        const imageUrl = $(this).data('image');
-        $('#modalImage').attr('src', imageUrl);
-    });
-</script>
-
-
-</body>
-</html>
-
+<?php } ?>
