@@ -338,15 +338,41 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                 if (queryString["picture_doc"]) {
                     let filenames = queryString["picture_doc"].split(',');
-                    let imagePreviewContainer = $('#imagePreview'); // สมมุติว่าคุณมี div นี้ไว้แสดงรูป
-                    imagePreviewContainer.html(''); // ล้างก่อน
+                    let imagePreviewContainer = $('#imagePreview');
+                    imagePreviewContainer.html('');
+
                     filenames.forEach(file => {
+                        file = file.trim();
+                        if (!file) return;
+
+                        let imageBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
+
                         let img = $('<img>')
-                            .attr('src', 'uploads/files/' + file.trim()) // แก้ path ตามจริง
-                            .css({ width: '120px', margin: '5px', border: '1px solid #ccc' });
-                        imagePreviewContainer.append(img);
+                            .attr('src', 'uploads/files/' + file)
+                            .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
+
+                        let deleteBtn = $('<button>')
+                            .addClass('btn btn-danger btn-sm position-absolute top-0 end-0')
+                            .html('&times;')
+                            .css({zIndex: 2, padding: '2px 6px', borderRadius: '50%'})
+                            .on('click', function () {
+                                // ลบภาพออกจากหน้าจอ
+                                imageBox.remove();
+
+                                // เพิ่มชื่อไฟล์ลงใน deleted_images
+                                let deleted = $('#deleted_images').val();
+                                let deletedArray = deleted ? deleted.split(',') : [];
+                                if (!deletedArray.includes(file)) {
+                                    deletedArray.push(file);
+                                    $('#deleted_images').val(deletedArray.join(','));
+                                }
+                            });
+
+                        imageBox.append(img).append(deleteBtn);
+                        imagePreviewContainer.append(imageBox);
                     });
                 }
+
 
             }
         });
