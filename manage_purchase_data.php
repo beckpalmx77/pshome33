@@ -85,7 +85,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="supplier_name" class="control-label">ชื่อผู้ขาย <b>(ถ้าไม่พบในระบบ สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b></label>
+                                        <label for="supplier_name" class="control-label">ชื่อผู้ขาย <b>(ถ้าไม่พบในระบบ
+                                                สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b></label>
                                         <input type="text" class="form-control" id="supplier_name" name="supplier_name"
                                                autocomplete="off" required placeholder="">
                                         <input type="hidden" id="supplier_id" name="supplier_id">
@@ -138,7 +139,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                             <input type="file" id="pictures" multiple accept="image/*">
                             <input type="hidden" id="picture_doc" name="picture_doc">
-                            <input type="hidden" id="deleted_images" name="deleted_images" value=""> <div id="preview-area" class="row mt-2"></div>
+                            <input type="hidden" id="deleted_images" name="deleted_images" value="">
+                            <div id="preview-area" class="row mt-2"></div>
                             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
 
                             <div class="modal-footer">
@@ -821,7 +823,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 e.target.parentElement.remove(); // Remove the image box from DOM
 
                 // Re-index remaining new images if necessary (optional, but good practice if you rely on data-file-index strictly)
-                $('#preview-area .remove-new-img').each(function(i) {
+                $('#preview-area .remove-new-img').each(function (i) {
                     $(this).attr('data-file-index', i);
                 });
             }
