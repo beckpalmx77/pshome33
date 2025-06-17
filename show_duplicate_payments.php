@@ -11,6 +11,7 @@ $sql = "
         period_month_start,
         period_month_to,
         payment_status,
+        picture_payment,
         COUNT(*) OVER (PARTITION BY house_number, period_year, period_month_start) AS dup_count
     FROM ims_house_payment
     WHERE (house_number, period_year, period_month_start) IN (
@@ -48,6 +49,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <th>ปี</th>
                     <th>เดือนเริ่ม</th>
                     <th>เดือนถึง</th>
+                    <th>รูปภาพ</th>
                     <th>สถานะการชำระ</th>
                     <th>รายการซ้ำ</th>
                     <th>จัดการ</th>
@@ -61,6 +63,16 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($row['period_year']) ?></td>
                         <td><?= htmlspecialchars($row['period_month_start']) ?></td>
                         <td><?= htmlspecialchars($row['period_month_to']) ?></td>
+                        <td>
+                            <?php if (!empty($row['picture_payment'])): ?>
+                                <a href="#" class="view-picture text-info" data-bs-toggle="modal" data-bs-target="#imageModal"
+                                   data-image="<?= !empty($row['picture_payment']) ? 'uploads/slips/' . htmlspecialchars($row['picture_payment']) : '' ?>">
+                                    ดูรูป
+                                </a>
+                            <?php else: ?>
+                                <span class="text-muted">ไม่มีรูปภาพ</span>
+                            <?php endif; ?>
+                        </td>
                         <td><?= htmlspecialchars($row['payment_status']) ?></td>
                         <td><?= $row['dup_count'] ?></td>
                         <td>
@@ -73,9 +85,31 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php endforeach; ?>
             </tbody>
         </table>
+
+        <!-- Modal สำหรับแสดงรูปภาพ -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageModalLabel">รูปภาพแนบการชำระ</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="modalImage" src="" class="img-fluid rounded" style="max-height: 70vh;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
+
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Bootstrap 5 Bundle JS (รวม Popper แล้ว) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -133,5 +167,13 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         });
     </script>
+
+    <script>
+        $(document).on('click', '.view-picture', function () {
+            const imageUrl = $(this).data('image');
+            $('#modalImage').attr('src', imageUrl);
+        });
+    </script>
+
 </body>
 </html>
