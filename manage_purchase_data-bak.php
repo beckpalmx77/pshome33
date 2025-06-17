@@ -1,479 +1,440 @@
 <?php
 include('includes/Header.php');
-if (strlen($_SESSION['alogin']) == "") {
+if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
     header("Location: index.php");
+    exit();
 } else {
-
+    $curr_date = date("d-m-Y");
     ?>
 
     <!DOCTYPE html>
     <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <title>ฟอร์มขอเบิกพัสดุ</title>
+        <!-- Bootstrap Datepicker CSS -->
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
-    <style>
-
-        .feedback {
-            background-color: #31B0D5;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            border-color: #46b8da;
-        }
-
-
-        #menu_fix_button {
-            position: fixed;
-            bottom: 4px;
-            right: 80px;
-        }
-
-    </style>
-
+    </head>
     <body id="page-top">
     <div id="wrapper">
-
+        <!--?php include('includes/Side-Bar.php'); ?-->
 
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <!-- Container Fluid-->
+                <!--?php include('includes/Top-Bar.php'); ?-->
+
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><span id="title"></span></h1>
+                        <h1 class="h3 mb-0 text-gray-800"><span id="sub_menu"></span></h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
-                            <li class="breadcrumb-item"><span id="main_menu"></li>
-                            <li class="breadcrumb-item active"
-                                aria-current="page"><span id="sub_menu"></li>
+                            <li class="breadcrumb-item"><span id="main_menu"></span></li>
                         </ol>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>เลขที่เอกสาร</label>
+                                        <input type="text" id="doc_no" class="form-control" readonly="true">
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <section class="container-fluid">
 
-                                        <form method="post" id="MainrecordForm">
-                                            <input type="hidden" class="form-control" id="KeyAddData" name="KeyAddData"
-                                                   value="">
-                                            <div class="modal-body">
-                                                <div class="modal-body">
-                                                    <div class="form-group row">
-                                                        <div class="col-sm-2">
-                                                            <label for="doc_no"
-                                                                   class="control-label">เลขที่เอกสาร</label>
-                                                            <input type="text" class="form-control"
-                                                                   id="doc_no" name="doc_no"
-                                                                   readonly="true"
-                                                                   placeholder="เลขที่เอกสาร">
-                                                        </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>วันที่</label>
+                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="doc_date" name="doc_date"
+                                               required="required" value="<?php echo $curr_date ?>" readonly="true"
+                                               placeholder="">
+                                    </div>
+                                </div>
 
-                                                        <div class="col-sm-2">
-                                                            <label for="doc_date"
-                                                                   class="control-label">วันที่</label>
-                                                            <input type="text" class="form-control"
-                                                                   id="doc_date"
-                                                                   name="doc_date"
-                                                                   required="required"
-                                                                   readonly="true"
-                                                                   placeholder="วันที่">
-                                                            <div class="input-group-addon">
-                                                                <span class="glyphicon glyphicon-th"></span>
-                                                            </div>
-                                                        </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>วัตถุประสงค์</label>
+                                        <input type="text" id="purpose" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
 
-                                                        <input type="hidden" class="form-control"
-                                                               id="supplier_id"
-                                                               name="supplier_id">
-                                                        <div class="col-sm-6">
-                                                            <label for="supplier_name"
-                                                                   class="control-label">ชื่อผู้ขาย</label>
-                                                            <input type="text" class="form-control"
-                                                                   id="supplier_name"
-                                                                   name="supplier_name"
-                                                                   required="required"
-                                                                   placeholder="ชื่อผู้ขาย">
-                                                        </div>
-                                                        <div class="col-sm-2">
-                                                            <label for="CusModal"
-                                                                   class="control-label"> เลือกชื่อผู้ขาย </label>
-                                                            <a data-toggle="modal" href="#SearchSupModal"
-                                                               class="btn btn-primary">
-                                                                Click <i class="fa fa-search"
-                                                                         aria-hidden="true"></i>
-                                                            </a>
+                            <!-- บรรทัดใหม่สำหรับผู้ขอเบิก และผู้ขาย -->
+                            <div class="row mt-2">
+                                <div class="col-md-4 position-relative">
+                                    <div class="form-group">
+                                        <label for="requester" class="control-label">ผู้ขอเบิก</label>
+                                        <input type="text" id="requester" name="requester" class="form-control"
+                                               autocomplete="off" required>
+                                        <input type="hidden" id="requester_id" name="requester_id">
+                                        <div id="requester_list" class="list-group position-absolute"
+                                             style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
 
-                                                        </div>
-                                                    </div>
-
-                                                    <button type='button' name='btnAdd' id='btnAdd'
-                                                            class='btn btn-primary btn-xs'>Add เพิ่มรายการสินค้า
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
-
-                                                    <table cellpadding="0" cellspacing="0" border="0"
-                                                           class="display"
-                                                           id="TablePurchaseDetailList"
-                                                           width="100%">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>สินค้า</th>
-                                                            <th>จำนวน</th>
-                                                            <th>หน่วยนับ</th>
-                                                            <th>ราคา/หน่วย</th>
-                                                            <th>รวมราคา</th>
-                                                            <th>Action</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                    </table>
-
-                                                    <div class="form-group">
-                                                        <label for="status"
-                                                               class="control-label">Status</label>
-                                                        <select id="status" name="status"
-                                                                class="form-control"
-                                                                data-live-search="true"
-                                                                title="Please select">
-                                                            <option>Active</option>
-                                                            <option>Inactive</option>
-                                                        </select>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <?php include("includes/stick_menu.php"); ?>
-
-                                            <div class="modal-footer">
-                                                <input type="hidden" name="id" id="id"/>
-                                                <input type="hidden" name="save_status" id="save_status"/>
-                                                <input type="hidden" name="action" id="action"
-                                                       value=""/>
-                                                <button type="button" class="btn btn-primary"
-                                                        id="btnSave">Save <i
-                                                            class="fa fa-check"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-danger"
-                                                        id="btnClose">Close <i
-                                                            class="fa fa-window-close"></i>
-                                                </button>
-                                            </div>
-                                        </form>
-
-                                        <div class="modal fade" id="recordModal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-                                                    <form method="post" id="recordForm">
-
-                                                        <div class="form-group row">
-                                                            <div class="col-sm-5">
-                                                                <input type="hidden" class="form-control"
-                                                                       id="KeyAddDetail"
-                                                                       name="KeyAddDetail" value="">
-                                                            </div>
-                                                            <div class="col-sm-5">
-                                                                <input type="hidden" class="form-control"
-                                                                       id="doc_no_detail"
-                                                                       name="doc_no_detail" value="">
-                                                            </div>
-                                                            <div class="col-sm-5">
-                                                                <input type="hidden" class="form-control"
-                                                                       id="doc_date_detail"
-                                                                       name="doc_date_detail" value="">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="modal-body">
-                                                            <div class="modal-body">
-
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-5">
-                                                                        <label for="product_id"
-                                                                               class="control-label">รหัสสินค้า/วัสดุ</label>
-                                                                        <input type="product_id"
-                                                                               class="form-control"
-                                                                               id="product_id" name="product_id"
-                                                                               required="required"
-                                                                               readonly="true"
-                                                                               placeholder="รหัสสินค้า/วัสดุ">
-                                                                    </div>
-
-                                                                    <div class="col-sm-5">
-                                                                        <label for="name_t"
-                                                                               class="control-label">ชื่อสินค้า/วัสดุ</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="name_t"
-                                                                               name="name_t"
-                                                                               required="required"
-                                                                               readonly="true"
-                                                                               placeholder="ชื่อสินค้า/วัสดุ">
-                                                                    </div>
-
-                                                                    <div class="col-sm-2">
-                                                                        <label for="quantity"
-                                                                               class="control-label">เลือก</label>
-
-                                                                        <a data-toggle="modal"
-                                                                           href="#SearchProductModal"
-                                                                           class="btn btn-primary">
-                                                                            Click <i class="fa fa-search"
-                                                                                     aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-5">
-                                                                        <label for="quantity"
-                                                                               class="control-label">จำนวน</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="quantity"
-                                                                               name="quantity"
-                                                                               required="required"
-                                                                               placeholder="จำนวน">
-                                                                    </div>
-                                                                    <input type="hidden" class="form-control"
-                                                                           id="unit_id"
-                                                                           name="unit_id">
-                                                                    <div class="col-sm-5">
-                                                                        <label for="unit_name"
-                                                                               class="control-label">หน่วยนับ</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="unit_name"
-                                                                               name="unit_name"
-                                                                               required="required"
-                                                                               readonly="true"
-                                                                               placeholder="หน่วยนับ">
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-5">
-                                                                        <label for="price"
-                                                                               class="control-label">ราคา/หน่วย</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="price"
-                                                                               name="price"
-                                                                               required="required"
-                                                                               placeholder="ราคา/หน่วย">
-                                                                    </div>
-                                                                    <div class="col-sm-5">
-                                                                        <label for="total_price"
-                                                                               class="control-label">ราคารวม</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="total_price"
-                                                                               name="total_price"
-                                                                               required="required"
-                                                                               placeholder="ราคารวม">
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="modal-footer">
-                                                            <input type="hidden" name="id" id="id"/>
-                                                            <input type="hidden" name="detail_id" id="detail_id"/>
-                                                            <input type="hidden" name="action_detail"
-                                                                   id="action_detail" value=""/>
-                                                            <span class="icon-input-btn">
-                                                                <i class="fa fa-check"></i>
-                                                            <input type="submit" name="save" id="save"
-                                                                   class="btn btn-primary" value="Save"/>
-                                                            </span>
-                                                            <button type="button" class="btn btn-danger"
-                                                                    data-dismiss="modal">Close <i
-                                                                        class="fa fa-window-close"></i>
-                                                            </button>
-                                                        </div>
-                                                    </form>
-
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <div class="form-group">
+                                        <label class="control-label" style="visibility:hidden;">เลือกผู้ขอเบิก</label>
+                                        <a data-toggle="modal" href="#SearchRequesterModal" class="btn btn-primary">
+                                            Click <i class="fa fa-search" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </div>
 
 
-                                        <div class="modal fade" id="SearchProductModal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-                                                        <div class="modal-body">
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TableProductList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัส</th>
-                                                                    <th>สินค้า</th>
-                                                                    <th>รหัสหน่วยนับ</th>
-                                                                    <th>หน่วยนับ</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัส</th>
-                                                                    <th>สินค้า</th>
-                                                                    <th>รหัสหน่วยนับ</th>
-                                                                    <th>หน่วยนับ</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <input type="hidden" class="form-control" id="supplier_id" name="supplier_id">
 
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="supplier_name" class="control-label">ชื่อผู้ขาย <b>(ถ้าไม่พบในระบบ สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b></label>
+                                        <input type="text" class="form-control" id="supplier_name" name="supplier_name"
+                                               autocomplete="off" required placeholder="">
+                                        <input type="hidden" id="supplier_id" name="supplier_id">
+                                        <div id="supplier_list" class="list-group position-absolute"
+                                             style="z-index:1000;"></div>
+                                    </div>
+                                </div>
 
-                                        <div class="modal fade" id="SearchSupModal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-
-                                                        <div class="modal-body">
-
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TableSupplierList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัสลูกค้า</th>
-                                                                    <th>ชื่อผู้ขาย</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัสลูกค้า</th>
-                                                                    <th>ชื่อผู้ขาย</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div id="result"></div>
-
-                                    </section>
-
-
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <div class="form-group">
+                                        <label class="control-label" style="visibility:hidden;">เลือกชื่อผู้ขาย</label>
+                                        <a data-toggle="modal" href="#SearchSupModal" class="btn btn-primary">
+                                            Click <i class="fa fa-search" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
                                 </div>
 
                             </div>
 
+
+                            <div class="d-flex align-items-center mt-4 mb-3">
+                                <h5 class="text-primary mb-0 mr-2">รายการพัสดุ</h5>
+                                <button class="btn btn-primary" id="addRow" type="button">+ เพิ่มรายการ</button>
+                            </div>
+
+                            <table class="table table-bordered" id="detailTable">
+                                <thead class="thead-primary">
+                                <tr>
+                                    <th style="width: 15%;">รหัส</th>
+                                    <th style="width: 20%;">ชื่อพัสดุ</th>
+                                    <th style="width: 11%;">จำนวน</th>
+                                    <th style="width: 12%;">ราคาต่อหน่วย</th>
+                                    <th style="width: 15%;">รวมเงิน</th>
+                                    <th style="width: 12%;">รหัสหน่วยนับ</th>
+                                    <th style="width: 20%;">หน่วยนับ</th>
+                                    <th>ลบ</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
+                                    <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
+                                    </td>
+                                    <td colspan="3"></td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                            <br>
+
+                            <input type="file" id="pictures" multiple accept="image/*">
+                            <input type="hidden" id="picture_doc" name="picture_doc">
+                            <div id="preview-area" class="row mt-2"></div>
+                            <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
+
+                            <div class="modal-footer">
+                                <input type="hidden" name="id" id="id"/>
+                                <input type="hidden" name="action" id="action" value=""/>
+
+                                <!-- ปุ่ม Save พร้อมไอคอนด้านขวา -->
+                                <button type="submit" name="save" id="save" class="btn btn-primary">
+                                    บันทึก <i class="fa fa-save"></i>
+                                </button>
+
+                                <!-- ปุ่ม Close พร้อมไอคอนด้านขวา -->
+                                <button type="button" class="btn btn-danger" onclick="closeAndReload()">
+                                    ปิด <i class="fa fa-window-close"></i>
+                                </button>
+                            </div>
                         </div>
-
                     </div>
-                    <!--Row-->
 
-                    <!-- Row -->
+                    <!-- Modal เลือกสินค้า -->
+                    <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">เลือกรายการพัสดุ</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered" id="productTable">
+                                        <thead>
+                                        <tr>
+                                            <th>รหัส</th>
+                                            <th>ชื่อพัสดุ</th>
+                                            <th>เลือก</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <!-- JS จะโหลดข้อมูลจาก get_products.php -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal สำหรับเลือกหน่วย -->
+                    <div class="modal fade" id="unitModal" tabindex="-1" role="dialog" aria-labelledby="unitModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">เลือกหน่วยนับ</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered" id="unitTable">
+                                        <thead>
+                                        <tr>
+                                            <th>รหัสหน่วย</th>
+                                            <th>ชื่อหน่วย</th>
+                                            <th>เลือก</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="SearchSupModal">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">เลือกผู้ขาย</h4>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×
+                                    </button>
+                                </div>
+
+                                <div class="container"></div>
+                                <div class="modal-body">
+
+                                    <div class="modal-body">
+
+                                        <table cellpadding="0" cellspacing="0" border="0"
+                                               class="display"
+                                               id="TableSupplierList"
+                                               width="100%">
+                                            <thead>
+                                            <tr>
+                                                <th>รหัสผู้ขาย</th>
+                                                <th>ชื่อผู้ขาย</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="SearchRequesterModal">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">เลือกผู้ขอเบิก</h4>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×
+                                    </button>
+                                </div>
+                                <div class="container"></div>
+                                <div class="modal-body">
+                                    <div class="modal-body">
+                                        <table id="TableRequesterList" class="display" width="100%">
+                                            <thead>
+                                            <tr>
+                                                <th>รหัสผู้เบิก</th>
+                                                <th>ชื่อผู้เบิก</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
 
-                <!---Container Fluid-->
-
             </div>
 
-            <?php
-            include('includes/Modal-Logout.php');
-            include('includes/Footer.php');
-            ?>
-
         </div>
+
     </div>
 
-    <!-- Scroll to top -->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <!-- Select2 -->
-    <script src="vendor/select2/dist/js/select2.min.js"></script>
-
-
-    <!-- Bootstrap Touchspin -->
-    <script src="vendor/bootstrap-touchspin/js/jquery.bootstrap-touchspin.js"></script>
-    <!-- ClockPicker -->
-
-    <!-- RuangAdmin Javascript -->
-    <script src="js/myadmin.min.js"></script>
-    <script src="js/util.js"></script>
-    <script src="js/Calculate.js"></script>
-    <!-- Javascript for this page -->
-
-    <script src="js/modal/show_supplier_modal.js"></script>
-    <script src="js/modal/show_product_modal.js"></script>
-    <script src="js/modal/show_unit_modal.js"></script>
-
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
+    <!-- Bootstrap 4 JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-    <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
-    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
-    <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    <!-- Bootstrap Datepicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
+    <!-- ใส่ใน <head> -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
-    <style>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="js/modal/show_supplier_modal.js"></script>
+    <script src="js/modal/show_requester_modal.js"></script>
 
-        .icon-input-btn {
-            display: inline-block;
-            position: relative;
+    <script>
+        $(document).ready(function () {
+            let queryString = {};
+            if (window.location.search.includes('?')) {
+                let params = window.location.search.split('?')[1].split('&');
+                for (let i = 0; i < params.length; i++) {
+                    let [key, value] = params[i].split('=');
+                    queryString[key] = decodeURIComponent(value || '');
+                }
+            }
+
+            $("#sub_menu").html(queryString["sub_menu"] || "");
+            $("#main_menu").html(queryString["main_menu"] || "");
+
+            // ✅ ต้องอยู่ภายใน $(document).ready)
+
+            $('#action').val(queryString["action"]);
+
+            if (queryString["action"] !== 'ADD' && queryString["doc_no"]) {
+                $('#doc_no').val(queryString["doc_no"]);
+                $('#doc_date').val(queryString["doc_date"]);
+                $('#requester').val(queryString["requester"]);
+                $('#supplier_id').val(queryString["supplier_id"]);
+                $('#supplier_name').val(queryString["supplier_name"]);
+                $('#purpose').val(queryString["purpose"]);
+                $('#picture_doc').val(queryString["picture_doc"]);
+                $('#totalAmount').val(queryString["total_amount"]);
+                loadDetailData(queryString["doc_no"]);
+
+                if (queryString["picture_doc"]) {
+                    let filenames = queryString["picture_doc"].split(',');
+                    let imagePreviewContainer = $('#imagePreview');
+                    imagePreviewContainer.html('');
+
+                    filenames.forEach(file => {
+                        file = file.trim();
+                        if (!file) return;
+
+                        let imageBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
+
+                        let img = $('<img>')
+                            .attr('src', 'uploads/files/' + file)
+                            .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
+
+                        let deleteBtn = $('<button>')
+                            .addClass('btn btn-danger btn-sm position-absolute top-0 end-0')
+                            .html('&times;')
+                            .css({zIndex: 2, padding: '2px 6px', borderRadius: '50%'})
+                            .on('click', function () {
+                                // ลบภาพออกจากหน้าจอ
+                                imageBox.remove();
+
+                                // เพิ่มชื่อไฟล์ลงใน deleted_images
+                                let deleted = $('#deleted_images').val();
+                                let deletedArray = deleted ? deleted.split(',') : [];
+                                if (!deletedArray.includes(file)) {
+                                    deletedArray.push(file);
+                                    $('#deleted_images').val(deletedArray.join(','));
+                                }
+                            });
+
+                        imageBox.append(img).append(deleteBtn);
+                        imagePreviewContainer.append(imageBox);
+                    });
+                }
+
+
+            }
+        });
+    </script>
+
+    <script>
+        function loadDetailData(docNo) {
+            $.ajax({
+                url: 'model/manage_purchase_process.php',
+                method: 'GET',
+                data: {
+                    action: 'GET_DATA_DETAIL',
+                    doc_no: docNo
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (Array.isArray(response)) {
+                        $('#detailTable tbody').empty(); // ล้างก่อนโหลดใหม่
+                        response.forEach(item => {
+                            $('#detailTable tbody').append(`
+<tr>
+    <td style="width: 15%;">
+        <div class="d-flex">
+            <input type="text" class="form-control product_id" value="${item.product_id}" readonly style="flex: 1;">
+            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-item" style="white-space: nowrap;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
+    </td>
+    <td style="width: 20%;"><input type="text" class="form-control product_name" value="${item.product_name}"></td>
+    <td style="width: 11%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
+    <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
+    <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
+    <td style="width: 12%;">
+        <div class="d-flex">
+            <input type="text" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
+            <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
+                <i class="fa fa-search"></i>
+            </a>
+        </div>
+    </td>
+    <td style="width: 20%;"><input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly></td>
+    <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
+</tr>
+                    `);
+                        });
+                    } else if (response.error) {
+                        alertify.error("Error: " + response.error);
+                    } else {
+                        alertify.error("ข้อมูลว่างเปล่า");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    alertify.error("โหลดข้อมูลไม่สำเร็จ");
+                }
+            });
         }
 
-        .icon-input-btn input[type="submit"] {
-            padding-left: 2em;
-        }
 
-        .icon-input-btn .fa {
-            display: inline-block;
-            position: absolute;
-            left: 0.65em;
-            top: 30%;
-        }
-    </style>
+    </script>
+
 
     <script>
         $(document).ready(function () {
@@ -488,349 +449,409 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script>
         $(document).ready(function () {
-            $(".icon-input-btn").each(function () {
-                let btnFont = $(this).find(".btn").css("font-size");
-                let btnColor = $(this).find(".btn").css("color");
-                $(this).find(".fa").css({'font-size': btnFont, 'color': btnColor});
+            $('#addRow').on('click', function () {
+                $('#detailTable tbody').append(`
+<tr>
+  <td style="width: 15%;">
+    <div class="d-flex">
+      <input type="text" class="form-control product_id" readonly style="flex: 1;">
+      <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-item" style="white-space: nowrap;">
+        <i class="fa fa-search"></i>
+      </a>
+    </div>
+  </td>
+  <td style="width: 20%;"><input type="text" class="form-control product_name" style="width: 100%;"></td>
+  <td style="width: 11%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
+  <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
+  <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
+  <td style="width: 12%;">
+    <div class="d-flex">
+      <input type="text" class="form-control item-unit-code" readonly style="flex: 1;">
+      <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
+        <i class="fa fa-search"></i>
+      </a>
+    </div>
+  </td>
+  <td style="width: 20%;"><input type="text" class="form-control item-unit-name" readonly style="width: 100%;"></td>
+  <td style="width: auto;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
+</tr>
+        `);
+            });
+
+            $(document).on('click', '.remove-row', function () {
+                $(this).closest('tr').remove();
             });
         });
     </script>
 
     <script>
         $(document).ready(function () {
-            $("#btnClose").click(function () {
-                if ($('#save_status').val() !== '') {
-                    window.opener = self;
-                    window.close();
-                } else {
-                    alertify.error("กรุณากด save อีกครั้ง");
-                }
+            let currentRow = null;
+
+            $(document).on('click', '.btn-select-item', function () {
+                currentRow = $(this).closest('tr');
+                loadProductTable();
+                $('#itemModal').modal('show');
             });
+
+            $(document).on('click', '.select-this', function () {
+                const code = $(this).data('code');
+                const name = $(this).data('name');
+
+                if (currentRow) {
+                    currentRow.find('.product_id').val(code);
+                    currentRow.find('.product_name').val(name);
+                }
+
+                $('#itemModal').modal('hide');
+            });
+
+            function loadProductTable() {
+                $.ajax({
+                    url: 'model/get_products.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        let html = '';
+                        data.forEach(item => {
+                            html += `
+<tr>
+    <td>${item.product_id}</td>
+    <td>${item.product_name}</td>
+    <td>
+        <button class="btn btn-sm btn-primary select-this"
+                data-code="${item.product_id}"
+                data-name="${item.product_name}">เลือก</button>
+    </td>
+</tr>`;
+                        });
+                        $('#productTable tbody').html(html);
+                    },
+                    error: function () {
+                        alert('โหลดข้อมูลสินค้าไม่สำเร็จ');
+                    }
+                });
+            }
         });
     </script>
 
-    <script type="text/javascript">
-        let queryString = new Array();
-        $(function () {
-            if (queryString.length == 0) {
-                if (window.location.search.split('?').length > 1) {
-                    let params = window.location.search.split('?')[1].split('&');
-                    for (let i = 0; i < params.length; i++) {
-                        let key = params[i].split('=')[0];
-                        let value = decodeURIComponent(params[i].split('=')[1]);
-                        queryString[key] = value;
-                    }
+
+    <script>
+        $(document).ready(function () {
+            let currentRow = null;
+
+            // เมื่อคลิกปุ่มเลือกหน่วยนับ
+            $(document).on('click', '.btn-select-unit', function () {
+                currentRow = $(this).closest('tr');
+                loadUnitTable(); // โหลดข้อมูลหน่วยนับ
+                $('#unitModal').modal('show');
+            });
+
+            // เมื่อเลือกหน่วยนับจาก modal
+            $(document).on('click', '.select-this-unit', function () {
+                const code = $(this).data('code');
+                const name = $(this).data('name');
+
+                if (currentRow) {
+                    currentRow.find('.item-unit-code').val(code);
+                    currentRow.find('.item-unit-name').val(name);
                 }
-            }
 
-            let data = "<b>" + queryString["title"] + "</b>";
-            $("#title").html(data);
-            $("#main_menu").html(queryString["main_menu"]);
-            $("#sub_menu").html(queryString["sub_menu"]);
-            $('#action').val(queryString["action"]);
+                $('#unitModal').modal('hide');
+            });
 
-            $('#save_status').val("before");
-
-            if (queryString["action"] === 'ADD') {
-                let KeyData = generate_token(15);
-                $('#KeyAddData').val(KeyData + ":" + Date.now());
-                $('#save_status').val("add");
-            }
-
-            if (queryString["doc_no"] != null && queryString["supplier_name"] != null) {
-
-                $('#doc_no').val(queryString["doc_no"]);
-                $('#doc_date').val(queryString["doc_date"]);
-                $('#supplier_id').val(queryString["supplier_id"]);
-                $('#supplier_name').val(queryString["supplier_name"]);
-
-                Load_Data_Detail(queryString["doc_no"], "v_purchase_detail");
+            // โหลดข้อมูลจากฐานข้อมูล ims_unit
+            function loadUnitTable() {
+                $.ajax({
+                    url: 'model/get_unit.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        let html = '';
+                        data.forEach(unit => {
+                            html += `
+<tr>
+    <td>${unit.unit_id}</td>
+    <td>${unit.unit_name}</td>
+    <td>
+        <button class="btn btn-sm btn-primary select-this-unit"
+                data-code="${unit.unit_id}"
+                data-name="${unit.unit_name}">เลือก</button>
+    </td>
+</tr>`;
+                        });
+                        $('#unitTable tbody').html(html);
+                    },
+                    error: function () {
+                        alert('โหลดข้อมูลหน่วยนับไม่สำเร็จ');
+                    }
+                });
             }
         });
     </script>
 
     <script>
-        function Load_Data_Detail(doc_no, table_name) {
+        $(document).ready(function () {
+            // ฟังก์ชันคำนวณรวมเงิน
+            function calculateAmount(row) {
+                const quantity = parseFloat(row.find('.item-quantity').val()) || 0;
+                const price = parseFloat(row.find('.item-price').val()) || 0;
+                const amount = quantity * price;
+                row.find('.item-amount').val(amount.toFixed(2));
+            }
 
-            let formData = {
-                action: "GET_PURCHASE_DETAIL",
-                sub_action: "GET_MASTER",
-                doc_no: doc_no,
-                table_name: table_name
-            };
-            let dataRecords = $('#TablePurchaseDetailList').DataTable({
-                "paging": false,
-                "ordering": false,
-                'info': false,
-                "searching": false,
-                'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
-                'language': {
-                    search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
-                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
-                    infoEmpty: 'ไม่มีข้อมูล',
-                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
-                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
-                    paginate: {
-                        previous: 'ก่อนหน้า',
-                        last: 'สุดท้าย',
-                        next: 'ต่อไป'
-                    }
-                },
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url': 'model/manage_purchase_detail_process.php',
-                    'data': formData
-                },
-                'columns': [
-                    {data: 'line_no'},
-                    {data: 'product_name'},
-                    {data: 'quantity', className: "text-right"},
-                    {data: 'unit_name'},
-                    {data: 'price', className: "text-right"},
-                    {data: 'total_price', className: "text-right"},
-                    {data: 'update'},
-                    {data: 'delete'}
-                ]
+            // ตรวจจับเมื่อกรอกจำนวนหรือราคาต่อหน่วย
+            $(document).on('input', '.item-quantity, .item-price', function () {
+                const row = $(this).closest('tr');
+                calculateAmount(row);
             });
+
+            // หากมีการเพิ่มแถวใหม่ ก็จะใช้ listener เดิมได้เพราะใช้ .on()
+        });
+
+        function calculateTotalAmount() {
+            let total = 0;
+            $('#detailTable tbody tr').each(function () {
+                const amount = parseFloat($(this).find('.item-amount').val()) || 0;
+                total += amount;
+            });
+            $('#totalAmount').val(total.toFixed(2));
+        }
+
+        $(document).on('click', '.remove-row', function () {
+            $(this).closest('tr').remove();
+            calculateTotalAmount();
+        });
+
+        $(document).on('input', '.item-quantity, .item-price', function () {
+            const row = $(this).closest('tr');
+            const quantity = parseFloat(row.find('.item-quantity').val()) || 0;
+            const price = parseFloat(row.find('.item-price').val()) || 0;
+            const amount = quantity * price;
+            row.find('.item-amount').val(amount.toFixed(2));
+
+            calculateTotalAmount();
+        });
+
+
+    </script>
+
+    <script>
+        function closeAndReload() {
+            if (window.opener && !window.opener.closed) {
+                window.opener.$('#TableRecordList').DataTable().ajax.reload(null, false);
+            }
+            window.close();
         }
     </script>
 
     <script>
         $(document).ready(function () {
-            $("#btnAdd").click(function () {
-                if ($('#doc_date').val() == '' || $('#supplier_name').val() == '') {
-                    alertify.error("กรุณาป้อนวันที่ / ชื่อผู้ขาย ");
-                } else {
-                    $('#recordModal').modal('show');
-                    $('#KeyAddDetail').val($('#KeyAddData').val());
-                    $('#doc_no_detail').val($('#doc_no').val());
-                    $('#doc_date_detail').val($('#doc_date').val());
-                    $('#product_id').val("");
-                    $('#name_t').val("");
-                    $('#quantity').val("");
-                    $('#unit_id').val("");
-                    $('#unit_name').val("");
-                    $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
-                    $('#action_detail').val('ADD');
-                    $('#save').val('Save');
+            $('#save').on('click', async function (e) {
+                e.preventDefault();
+
+                // ตรวจสอบข้อมูลหลัก
+                if (!$('#doc_date').val() || !$('#requester').val()) {
+                    alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
+                    return;
                 }
-            });
-        });
-    </script>
 
-    <script>
+                // ตรวจสอบรายละเอียด
+                const details = [];
+                let valid = true;
 
-        $("#TablePurchaseDetailList").on('click', '.update', function () {
+                $('#detailTable tbody tr').each(function () {
+                    const product_id = $(this).find('.product_id').val();
+                    const product_name = $(this).find('.product_name').val();
+                    const quantity = parseFloat($(this).find('.item-quantity').val());
+                    const price = parseFloat($(this).find('.item-price').val());
+                    const unit_id = $(this).find('.item-unit-code').val();
+                    const unit_name = $(this).find('.item-unit-name').val();
 
-            let rec_id = $(this).attr("id");
-
-            if ($('#KeyAddData').val() !== '') {
-                doc_no = $('#KeyAddData').val();
-                table_name = "v_purchase_detail_temp";
-            } else {
-                doc_no = $('#doc_no').val();
-                table_name = "v_purchase_detail";
-            }
-
-            let formData = {action: "GET_DATA", id: rec_id, doc_no: doc_no, table_name: table_name};
-            $.ajax({
-                type: "POST",
-                url: 'model/manage_purchase_detail_process.php',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    let len = response.length;
-                    for (let i = 0; i < len; i++) {
-                        let product_id = response[i].product_id;
-                        let id = response[i].id;
-                        let name_t = response[i].name_t;
-                        let doc_date = response[i].doc_date;
-                        let quantity = response[i].quantity;
-                        let price = response[i].price;
-                        let total_price = response[i].total_price;
-                        let unit_id = response[i].unit_id;
-                        let unit_name = response[i].unit_name;
-
-                        $('#recordModal').modal('show');
-                        $('#id').val(id);
-                        $('#detail_id').val(rec_id);
-                        $('#doc_no_detail').val(doc_no);
-                        $('#doc_date_detail').val(doc_date);
-                        $('#product_id').val(product_id);
-                        $('#name_t').val(name_t);
-                        $('#quantity').val(quantity);
-                        $('#price').val(price);
-                        $('#total_price').val(total_price);
-                        $('#unit_id').val(unit_id);
-                        $('#unit_name').val(unit_name);
-                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
-                        $('#action_detail').val('UPDATE');
-                        $('#save').val('Save');
+                    if (!product_id || !product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
+                        valid = false;
+                        alertify.error("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
+                        return false;
                     }
-                },
-                error: function (response) {
-                    alertify.error("error : " + response);
-                }
-            });
-        });
 
-    </script>
+                    details.push({product_id, product_name, quantity, price, unit_id, unit_name});
+                });
 
-    <script>
+                if (!valid) return;
 
-        $("#TablePurchaseDetailList").on('click', '.delete', function () {
+                $('#save').prop('disabled', true);
 
-            let rec_id = $(this).attr("id");
+                try {
+                    const uploadedFilenames = await uploadImages();  // <-- upload แล้วรอผลลัพธ์
+                    const picture_doc = uploadedFilenames.join(',');
 
-            if ($('#KeyAddData').val() !== '') {
-                doc_no = $('#KeyAddData').val();
-                table_name = "v_purchase_detail_temp";
-            } else {
-                doc_no = $('#doc_no').val();
-                table_name = "v_purchase_detail";
-            }
+                    const payload = {
+                        action: $('#action').val(),
+                        doc_no: $('#doc_no').val(),
+                        date: $('#doc_date').val(),
+                        requester: $('#requester').val(),
+                        supplier_id: $('#supplier_id').val(),
+                        supplier_name: $('#supplier_name').val(),
+                        purpose: $('#purpose').val(),
+                        picture_doc: picture_doc,
+                        details: details
+                    };
 
-            let formData = {action: "GET_DATA", id: rec_id, doc_no: doc_no, table_name: table_name};
-            $.ajax({
-                type: "POST",
-                url: 'model/manage_purchase_detail_process.php',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    let len = response.length;
-                    for (let i = 0; i < len; i++) {
-                        let product_id = response[i].product_id;
-                        let id = response[i].id;
-                        let name_t = response[i].name_t;
-                        let quantity = response[i].quantity;
-                        let price = response[i].price;
-                        let total_price = response[i].total_price;
-                        let unit_id = response[i].unit_id;
-                        let unit_name = response[i].unit_name;
-
-                        $('#recordModal').modal('show');
-                        $('#id').val(id);
-                        $('#detail_id').val(rec_id);
-                        $('#doc_no_detail').val(doc_no);
-                        $('#product_id').val(product_id);
-                        $('#name_t').val(name_t);
-                        $('#quantity').val(quantity);
-                        $('#price').val(price);
-                        $('#total_price').val(total_price);
-                        $('#unit_id').val(unit_id);
-                        $('#unit_name').val(unit_name);
-                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
-                        $('#action_detail').val('DELETE');
-                        $('#save').val('Confirm Delete');
-                    }
-                },
-                error: function (response) {
-                    alertify.error("error : " + response);
-                }
-            });
-        });
-
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $("#btnSave").click(function () {
-                if ($('#doc_date').val() == '' || $('#supplier_name').val() == '') {
-                    alertify.error("กรุณาป้อนวันที่ / ชื่อผู้ขาย ");
-                } else {
-                    let formData = $('#MainrecordForm').serialize();
                     $.ajax({
-                        url: 'model/manage_purchase_process.php',
-                        method: "POST",
-                        data: formData,
-                        success: function (data) {
-
-                            if ($('#KeyAddData').val() !== '') {
-                                let KeyAddData = $('#KeyAddData').val();
-                                Save_Detail(KeyAddData);
+                        url: 'model/manage_purchase_data_detail_process.php',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function (res) {
+                            if (res.status === 'success') {
+                                alertify.success('บันทึกสำเร็จแล้ว');
+                                location.reload();
+                            } else {
+                                alert('เกิดข้อผิดพลาด: ' + res.message);
+                                $('#save').prop('disabled', false);
                             }
-
-                            alertify.success(data);
-                            window.opener.location.reload();
-                            $('#save_status').val("save");
-
+                        },
+                        error: function () {
+                            alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+                            $('#save').prop('disabled', false);
                         }
-                    })
-
+                    });
+                } catch (err) {
+                    alertify.error('อัปโหลดรูปภาพไม่สำเร็จ');
+                    $('#save').prop('disabled', false);
                 }
+            });
+        });
+    </script>
 
+
+    <script>
+        $(document).ready(function () {
+            $('#supplier_name').on('keyup', function () {
+                let query = $(this).val();
+
+                if (query.length >= 2) {
+                    $.ajax({
+                        url: 'model/get_suppliers.php',
+                        method: 'POST',
+                        data: {query: query},
+                        success: function (data) {
+                            $('#supplier_list').fadeIn().html(data);
+                        }
+                    });
+                } else {
+                    $('#supplier_list').fadeOut();
+                }
+            });
+
+            // เมื่อคลิกรายการ
+            $(document).on('click', '.supplier-item', function () {
+                let name = $(this).data('name');
+                let id = $(this).data('id');
+
+                $('#supplier_name').val(name);
+                $('#supplier_id').val(id);
+                $('#supplier_list').fadeOut();
+            });
+
+            // คลิกนอก list ให้หาย
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#supplier_name, #supplier_list').length) {
+                    $('#supplier_list').fadeOut();
+                }
             });
         });
     </script>
 
     <script>
-        function Save_Detail(KeyAddData) {
+        $(document).ready(function () {
+            $('#requester').on('keyup', function () {
+                let query = $(this).val();
 
-            let formData = {action: "SAVE_DETAIL", KeyAddData: KeyAddData};
-            $.ajax({
-                url: 'model/manage_purchase_detail_process.php',
-                method: "POST",
-                data: formData,
-                success: function (data) {
-                    //alertify.success(data);
+                if (query.length >= 2) {
+                    $.ajax({
+                        url: 'model/get_requester.php',
+                        method: 'POST',
+                        data: {query: query},
+                        success: function (data) {
+                            $('#requester_list').fadeIn().html(data);
+                        }
+                    });
+                } else {
+                    $('#requester_list').fadeOut();
                 }
-            })
+            });
 
+            $(document).on('click', '.requester-item', function () {
+                const name = $(this).data('name');
+                const id = $(this).data('id');
+                $('#requester').val(name);
+                $('#requester_id').val(id);
+                $('#requester_list').fadeOut();
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#requester, #requester_list').length) {
+                    $('#requester_list').fadeOut();
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        let uploadedImages = [];  // สำหรับ preview
+        let uploadedFileNames = []; // สำหรับเก็บชื่อไฟล์ที่ upload แล้วบน server
+
+        document.getElementById('pictures').addEventListener('change', function (e) {
+            const files = Array.from(e.target.files);
+            const previewArea = document.getElementById('preview-area');
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.classList.add('col-md-2', 'position-relative');
+
+                    imgDiv.innerHTML = `
+                    <img src="${e.target.result}" class="img-thumbnail mb-2" style="width:100%; height:120px; object-fit:cover;">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 remove-img" data-index="${uploadedImages.length}">&times;</button>
+                `;
+                    previewArea.appendChild(imgDiv);
+                    uploadedImages.push(file);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // ลบรูปออกจาก preview
+        document.getElementById('preview-area').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-img')) {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                uploadedImages.splice(index, 1);
+                uploadedFileNames.splice(index, 1);
+                e.target.parentElement.remove();
+            }
+        });
+
+        // ฟังก์ชัน upload รูปภาพทั้งหมดก่อน submit
+        async function uploadImages() {
+            const formData = new FormData();
+            uploadedImages.forEach(file => formData.append('images[]', file));
+
+            const response = await fetch('upload_img_doc.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            return result.filenames;  // ควรเป็น array ของชื่อไฟล์ที่ upload สำเร็จ
         }
     </script>
 
-    <script>
-
-        $("#recordModal").on('submit', '#recordForm', function (event) {
-            event.preventDefault();
-            let KeyAddData = $('#KeyAddData').val();
-            if (KeyAddData !== '') {
-                $('#KeyAddDetail').val(KeyAddData);
-            }
-            let doc_no_detail = $('#doc_no_detail').val();
-            let formData = $(this).serialize();
-
-            $.ajax({
-                url: 'model/manage_purchase_detail_process.php',
-                method: "POST",
-                data: formData,
-                success: function (data) {
-                    //alertify.success(data);
-                    $('#recordForm')[0].reset();
-                    $('#recordModal').modal('hide');
-
-                    $('#TablePurchaseDetailList').DataTable().clear().destroy();
-
-                    if (KeyAddData !== '') {
-                        Load_Data_Detail(KeyAddData, "v_purchase_detail_temp");
-                    } else {
-                        Load_Data_Detail(doc_no_detail, "v_purchase_detail");
-                    }
-                }
-            })
-
-        });
-
-    </script>
-
-    <script>
-
-        $('#quantity,#price,#total_price').blur(function () {
-
-            let total_price = new Calculate($('#quantity').val(), $('#price').val());
-            $('#total_price').val(total_price.Multiple().toFixed(2));
-
-        });
-
-    </script>
 
     </body>
-
     </html>
 
-<?php } ?>
-
-
-
+    <?php
+} // end else session check
+?>
