@@ -42,7 +42,7 @@ if ($_POST["action"] === 'GET_REQUESTER') {
 
 ## Fetch records
 
-    $stmt = $conn->prepare("SELECT * FROM memployee WHERE status <> 'R' " . $searchQuery
+    $stmt = $conn->prepare("SELECT * FROM memployee WHERE status not in ('R') " . $searchQuery
         . " ORDER BY id DESC LIMIT :limit,:offset");
 
 // Bind values

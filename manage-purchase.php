@@ -197,7 +197,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'doc_date'},
                     {data: 'supplier_name'},
                     {data: 'total_amount'},
-                    {data: 'status'},
+                    {data: 'approve_status_desc'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]
