@@ -201,6 +201,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo number_format($count_67); ?> หลัง จาก  <?php echo number_format($count_67_house_master); ?> หลัง
+                                                        <?php $percent_master = ($count_67 / $count_67_house_master) * 100; ?>
+                                                        <?php echo "คิดเป็น <strong>" . number_format($percent_master, 2) . "%</strong> ของบ้านทั้งหมด"; ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
@@ -220,6 +222,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo number_format($count_68); ?> หลัง จาก  <?php echo number_format($count_68_house_master); ?> หลัง
+                                                        <?php $percent_master = ($count_68 / $count_68_house_master) * 100; ?>
+                                                        <?php echo "คิดเป็น <strong>" . number_format($percent_master, 2) . "%</strong> ของบ้านทั้งหมด"; ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
