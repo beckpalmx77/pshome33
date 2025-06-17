@@ -313,7 +313,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 }
             });
         });
-
     </script>
 
     <script>

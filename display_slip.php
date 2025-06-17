@@ -6,12 +6,9 @@ header('Content-Type: application/json');
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-/*
-    $myfile = fopen("myqeury_1.txt", "w") or die("Unable to open file!");
-    fwrite($myfile, $id);
-    fclose($myfile);
-*/
-    $stmt = $conn->prepare("SELECT picture_payment FROM ims_house_payment WHERE id = :id");
+    $sql_load = "SELECT picture_payment FROM ims_house_payment WHERE id = :id";
+
+    $stmt = $conn->prepare($sql_load);
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
