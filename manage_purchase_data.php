@@ -12,13 +12,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <head>
         <meta charset="UTF-8">
         <title>ฟอร์มขอเบิกพัสดุ</title>
-
-        <!-- Bootstrap 4 CSS -->
-        <!--link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"-->
-
-        <!-- FontAwesome -->
-        <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"-->
-
         <!-- Bootstrap Datepicker CSS -->
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
@@ -98,7 +91,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
-
                                 <div class="col-md-1 d-flex align-items-end">
                                     <div class="form-group">
                                         <label class="control-label" style="visibility:hidden;">เลือกชื่อผู้ขาย</label>
@@ -140,6 +132,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </tfoot>
                             </table>
                             <br>
+
+                            <div class="form-group">
+                                <label for="pictures">อัปโหลดรูปภาพ</label>
+                                <input type="file" id="pictures" name="pictures[]" class="form-control" multiple
+                                       accept="image/*">
+                            </div>
+
+                            <div class="row" id="preview-area" style="gap:10px;"></div>
+                            <input type="hidden" id="picture_doc" name="picture_doc">
+
+
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
                                 <input type="hidden" name="action" id="action" value=""/>
@@ -714,6 +717,48 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 }
             });
         });
+    </script>
+
+    <script>
+        let uploadedImages = [];
+
+        document.getElementById('pictures').addEventListener('change', function (e) {
+            const files = Array.from(e.target.files);
+            const previewArea = document.getElementById('preview-area');
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.classList.add('col-md-2', 'position-relative');
+
+                    imgDiv.innerHTML = `
+                <img src="${e.target.result}" class="img-thumbnail mb-2" style="width:100%; height:120px; object-fit:cover;">
+                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 remove-img" data-index="${uploadedImages.length}">&times;</button>
+            `;
+                    previewArea.appendChild(imgDiv);
+                    uploadedImages.push(file);
+                    updateHiddenField();
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // ลบรูปภาพจาก preview และ array
+        document.getElementById('preview-area').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-img')) {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                uploadedImages.splice(index, 1);
+                e.target.parentElement.remove();
+                updateHiddenField();
+            }
+        });
+
+        function updateHiddenField() {
+            // สมมติว่าใช้ชื่อไฟล์แบบ file1.jpg,file2.jpg,...
+            const filenames = uploadedImages.map(file => file.name);
+            document.getElementById('picture_doc').value = filenames.join(',');
+        }
     </script>
 
 
