@@ -592,13 +592,13 @@ if (strlen($_SESSION['alogin']) == "") {
         // *** FOR SUBMIT FORM ***
         $("#recordModal").on('submit', '#recordForm', function (event) {
             event.preventDefault();
-            $('#save').attr('disabled', 'disabled');
+            //$('#save').attr('disabled', 'disabled');
 
             // ตรวจสอบ category_id ว่ามีการเลือกหรือยัง
             let categoryId = $('#category_id').val();
             if (!categoryId || categoryId === '0') {
                 alertify.error("กรุณาเลือกหมวดหมู่ค่าใช้จ่าย (Category)");
-                $('#save').attr('disabled', false);
+                //$('#save').attr('disabled', false);
                 return; // ยกเลิกการ submit
             }
 
@@ -644,7 +644,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 },
                 error: function (xhr, status, error) {
                     alertify.error("Error: " + error);
-                    $('#save').attr('disabled', false);
+                    //$('#save').attr('disabled', false);
                 }
             });
         });
@@ -1064,8 +1064,6 @@ if (strlen($_SESSION['alogin']) == "") {
         // ตั้งค่าตามค่า payment_method
         $('input[name="payment_method_radio"][value="' + payment_method + '"]').prop('checked', true);
     </script>
-
-
 
     </body>
     </html>

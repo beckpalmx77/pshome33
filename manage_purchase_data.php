@@ -91,7 +91,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="supplier_name" class="control-label">ชื่อผู้ขาย</label>
+                                        <label for="supplier_name" class="control-label">ชื่อผู้ขาย <b>(ถ้าไม่พบในระบบ สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b></label>
                                         <input type="text" class="form-control" id="supplier_name" name="supplier_name"
                                                autocomplete="off" required placeholder="">
                                         <input type="hidden" id="supplier_id" name="supplier_id">
