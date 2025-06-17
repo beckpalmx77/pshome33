@@ -639,7 +639,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     alertify.success(data);
                     $('#recordForm')[0].reset();
                     $('#recordModal').modal('hide');
-                    $('#save').attr('disabled', false);
+                    //$('#save').attr('disabled', false);
                     $('#TableRecordList').DataTable().ajax.reload();
                 },
                 error: function (xhr, status, error) {
