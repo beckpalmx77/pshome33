@@ -66,7 +66,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                             <!-- บรรทัดใหม่สำหรับผู้ขอเบิก และผู้ขาย -->
                             <div class="row mt-2">
-                                <div class="col-md-5 position-relative">
+                                <div class="col-md-4 position-relative">
                                     <div class="form-group">
                                         <label for="requester" class="control-label">ผู้ขอเบิก</label>
                                         <input type="text" id="requester" name="requester" class="form-control"
@@ -74,6 +74,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         <input type="hidden" id="requester_id" name="requester_id">
                                         <div id="requester_list" class="list-group position-absolute"
                                              style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <div class="form-group">
+                                        <label class="control-label" style="visibility:hidden;">เลือกผู้ขอเบิก</label>
+                                        <a data-toggle="modal" href="#SearchRequesterModal" class="btn btn-primary">
+                                            Click <i class="fa fa-search" aria-hidden="true"></i>
+                                        </a>
                                     </div>
                                 </div>
 
@@ -133,15 +142,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             </table>
                             <br>
 
-                            <div class="form-group">
-                                <label for="pictures">อัปโหลดรูปภาพ</label>
-                                <input type="file" id="pictures" name="pictures[]" class="form-control" multiple
-                                       accept="image/*">
-                            </div>
-
-                            <div class="row" id="preview-area" style="gap:10px;"></div>
+                            <input type="file" id="pictures" multiple accept="image/*">
                             <input type="hidden" id="picture_doc" name="picture_doc">
-
+                            <div id="preview-area" class="row mt-2"></div>
+                            <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
 
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
@@ -250,6 +254,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         </div>
                     </div>
 
+                    <div class="modal fade" id="SearchRequesterModal">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">เลือกผู้ขอเบิก</h4>
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×
+                                    </button>
+                                </div>
+                                <div class="container"></div>
+                                <div class="modal-body">
+                                    <div class="modal-body">
+                                        <table id="TableRequesterList" class="display" width="100%">
+                                            <thead>
+                                            <tr>
+                                                <th>รหัสผู้เบิก</th>
+                                                <th>ชื่อผู้เบิก</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
 
@@ -275,6 +305,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="js/modal/show_supplier_modal.js"></script>
+    <script src="js/modal/show_requester_modal.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -301,8 +332,22 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#supplier_id').val(queryString["supplier_id"]);
                 $('#supplier_name').val(queryString["supplier_name"]);
                 $('#purpose').val(queryString["purpose"]);
+                $('#picture_doc').val(queryString["picture_doc"]);
                 $('#totalAmount').val(queryString["total_amount"]);
                 loadDetailData(queryString["doc_no"]);
+
+                if (queryString["picture_doc"]) {
+                    let filenames = queryString["picture_doc"].split(',');
+                    let imagePreviewContainer = $('#imagePreview'); // สมมุติว่าคุณมี div นี้ไว้แสดงรูป
+                    imagePreviewContainer.html(''); // ล้างก่อน
+                    filenames.forEach(file => {
+                        let img = $('<img>')
+                            .attr('src', 'uploads/files/' + file.trim()) // แก้ path ตามจริง
+                            .css({ width: '120px', margin: '5px', border: '1px solid #ccc' });
+                        imagePreviewContainer.append(img);
+                    });
+                }
+
             }
         });
     </script>
@@ -576,16 +621,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).ready(function () {
-            $('#save').on('click', function (e) {
+            $('#save').on('click', async function (e) {
                 e.preventDefault();
 
-                const details = [];
-                let valid = true;
-
+                // ตรวจสอบข้อมูลหลัก
                 if (!$('#doc_date').val() || !$('#requester').val()) {
                     alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
                     return;
                 }
+
+                // ตรวจสอบรายละเอียด
+                const details = [];
+                let valid = true;
 
                 $('#detailTable tbody tr').each(function () {
                     const product_id = $(this).find('.product_id').val();
@@ -595,12 +642,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     const unit_id = $(this).find('.item-unit-code').val();
                     const unit_name = $(this).find('.item-unit-name').val();
 
-                    //alert(product_id + " | " + product_name );
-
                     if (!product_id || !product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
                         valid = false;
                         alertify.error("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
-                        return false; // break loop
+                        return false;
                     }
 
                     details.push({product_id, product_name, quantity, price, unit_id, unit_name});
@@ -608,43 +653,51 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                 if (!valid) return;
 
-                const payload = {
-                    action: $('#action').val(),
-                    doc_no: $('#doc_no').val(),
-                    date: $('#doc_date').val(),
-                    requester: $('#requester').val(),
-                    supplier_id: $('#supplier_id').val(),
-                    supplier_name: $('#supplier_name').val(),
-                    purpose: $('#purpose').val(),
-                    details: details
-                };
+                $('#save').prop('disabled', true);
 
-                // ปิดปุ่ม submit เพื่อป้องกันกดซ้ำ
-                $('#submit').prop('disabled', true);
+                try {
+                    const uploadedFilenames = await uploadImages();  // <-- upload แล้วรอผลลัพธ์
+                    const picture_doc = uploadedFilenames.join(',');
 
-                $.ajax({
-                    url: 'model/manage_purchase_data_detail_process.php',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    success: function (res) {
-                        if (res.status === 'success') {
-                            alertify.success('บันทึกสำเร็จแล้ว');
-                            location.reload();
-                        } else {
-                            alert('เกิดข้อผิดพลาด: ' + res.message);
-                            $('#submit').prop('disabled', false);
+                    const payload = {
+                        action: $('#action').val(),
+                        doc_no: $('#doc_no').val(),
+                        date: $('#doc_date').val(),
+                        requester: $('#requester').val(),
+                        supplier_id: $('#supplier_id').val(),
+                        supplier_name: $('#supplier_name').val(),
+                        purpose: $('#purpose').val(),
+                        picture_doc: picture_doc,
+                        details: details
+                    };
+
+                    $.ajax({
+                        url: 'model/manage_purchase_data_detail_process.php',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function (res) {
+                            if (res.status === 'success') {
+                                alertify.success('บันทึกสำเร็จแล้ว');
+                                location.reload();
+                            } else {
+                                alert('เกิดข้อผิดพลาด: ' + res.message);
+                                $('#save').prop('disabled', false);
+                            }
+                        },
+                        error: function () {
+                            alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+                            $('#save').prop('disabled', false);
                         }
-                    },
-                    error: function () {
-                        alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
-                        $('#submit').prop('disabled', false);
-                    }
-                });
+                    });
+                } catch (err) {
+                    alertify.error('อัปโหลดรูปภาพไม่สำเร็จ');
+                    $('#save').prop('disabled', false);
+                }
             });
         });
-
     </script>
+
 
     <script>
         $(document).ready(function () {
@@ -719,8 +772,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         });
     </script>
 
+
     <script>
-        let uploadedImages = [];
+        let uploadedImages = [];  // สำหรับ preview
+        let uploadedFileNames = []; // สำหรับเก็บชื่อไฟล์ที่ upload แล้วบน server
 
         document.getElementById('pictures').addEventListener('change', function (e) {
             const files = Array.from(e.target.files);
@@ -733,31 +788,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     imgDiv.classList.add('col-md-2', 'position-relative');
 
                     imgDiv.innerHTML = `
-                <img src="${e.target.result}" class="img-thumbnail mb-2" style="width:100%; height:120px; object-fit:cover;">
-                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 remove-img" data-index="${uploadedImages.length}">&times;</button>
-            `;
+                    <img src="${e.target.result}" class="img-thumbnail mb-2" style="width:100%; height:120px; object-fit:cover;">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 remove-img" data-index="${uploadedImages.length}">&times;</button>
+                `;
                     previewArea.appendChild(imgDiv);
                     uploadedImages.push(file);
-                    updateHiddenField();
                 };
                 reader.readAsDataURL(file);
             });
         });
 
-        // ลบรูปภาพจาก preview และ array
+        // ลบรูปออกจาก preview
         document.getElementById('preview-area').addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-img')) {
                 const index = parseInt(e.target.getAttribute('data-index'));
                 uploadedImages.splice(index, 1);
+                uploadedFileNames.splice(index, 1);
                 e.target.parentElement.remove();
-                updateHiddenField();
             }
         });
 
-        function updateHiddenField() {
-            // สมมติว่าใช้ชื่อไฟล์แบบ file1.jpg,file2.jpg,...
-            const filenames = uploadedImages.map(file => file.name);
-            document.getElementById('picture_doc').value = filenames.join(',');
+        // ฟังก์ชัน upload รูปภาพทั้งหมดก่อน submit
+        async function uploadImages() {
+            const formData = new FormData();
+            uploadedImages.forEach(file => formData.append('images[]', file));
+
+            const response = await fetch('upload_img_doc.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            return result.filenames;  // ควรเป็น array ของชื่อไฟล์ที่ upload สำเร็จ
         }
     </script>
 

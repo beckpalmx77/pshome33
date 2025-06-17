@@ -31,6 +31,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "supplier_name" => $result['supplier_name'],
             "purpose" => $result['purpose'],
             "total_amount" => $result['total_amount'],
+            "picture_doc" => $result['picture_doc'],
             "status" => $result['status']
         );
     }
