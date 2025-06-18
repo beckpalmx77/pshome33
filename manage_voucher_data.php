@@ -131,7 +131,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <thead class="thead-primary">
                                 <tr>
                                     <th style="width: 15%;">รหัส</th>
-                                    <th style="width: 20%;">รายการจ่าย (ถ้าไม่มีในตัวเลือกให้พิมพ์เพิ่ม)</th>
+                                    <th style="width: 20%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th>
                                     <th style="width: 11%;">จำนวน</th>
                                     <th style="width: 12%;">ราคาต่อหน่วย</th>
                                     <th style="width: 15%;">รวมเงิน</th>
