@@ -86,35 +86,20 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
     // Removed signature image logic
     $signature_placeholder = '_________________________'; // Placeholder for signature line
 
-    // กำหนดค่าสำหรับ Checkbox
-    $payment_method_value = $voucher_header['payment_method'];
-
-    $is_cash_checked = ($payment_method_value === 'เงินสด') ? 'checked="checked"' : '';
-    $is_transfer_checked = ($payment_method_value === 'โอนเงิน') ? 'checked="checked"' : '';
-    $is_other_checked = '';
-    $other_payment_method_display = '';
-
-    // ถ้าไม่ใช่เงินสดและไม่ใช่โอนเงิน ถือเป็นอื่นๆ
-    if ($payment_method_value !== 'เงินสด' && $payment_method_value !== 'โอนเงิน') {
-        $is_other_checked = 'checked="checked"';
-        $other_payment_method_display = ' (' . htmlspecialchars($payment_method_value) . ')';
-    }
-
-
     $html = '
     <table border="0" cellspacing="0" cellpadding="0" width="100%" style="font-size:12pt;">
         <tr>
             <td width="30%" align="left" valign="top">
-                <img src="img/logo/ps33-rec-logo.png" height="20">
+                <img src="img/logo/ps33-rec-logo.png" height="30">
             </td>
             <td width="70%" align="left" valign="top">
-                <b>' . htmlspecialchars($company['company_name']) . '</b>
+                <b>' . htmlspecialchars($company['company_name']) . '</b><br>
                 ' . htmlspecialchars($company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code']) . '
             </td>
         </tr>
     </table>
 
-    <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:5px; margin-top:5px; text-align:center;">
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:10px; margin-top:10px; text-align:center;">
         <tr>
             <td>
                 <h2 style="margin-bottom: 5px;">ใบสำคัญจ่าย ' . $title_note . '</h2>
@@ -132,12 +117,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
             <td width="50%"><b>จ่ายเพื่อ:</b> ' . htmlspecialchars($voucher_header['purpose']) . '</td>
         </tr>
         <tr>
-            <td width="50%">
-                <b>วิธีการชำระเงิน:</b>
-                <input type="checkbox" name="payment_cash" value="เงินสด" ' . $is_cash_checked . '> เงินสด
-                <input type="checkbox" name="payment_transfer" value="โอนเงิน" ' . $is_transfer_checked . '> โอนเงิน
-                <input type="checkbox" name="payment_other" value="อื่นๆ" ' . $is_other_checked . '> อื่นๆ' . $other_payment_method_display . '
-            </td>
+            <td width="50%"><b>วิธีการชำระเงิน:</b> ' . htmlspecialchars($voucher_header['payment_method']) . '</td>
             <td width="50%"><b>หมายเลขบัญชีธนาคาร:</b> ' . htmlspecialchars($voucher_header['bank_no'] ?? ' - ') . '</td>
         </tr>
     </table>';
@@ -170,7 +150,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
     }
 
     $html .= '<tr>
-        <td colspan="3" align="left"></td>
+        <td colspan="3" align="left"><b>วิธีการชำระเงิน : ' . htmlspecialchars($voucher_header['payment_method']) . '</b></td>
         <td colspan="1" align="right"><b>รวมทั้งสิ้น:</b></td>
         <td align="right"><b>' . number_format($total, 2) . '</b></td>
     </tr>';
@@ -208,7 +188,6 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
     </table>';
 
     // Keep the print date and printed by info as a separate line
-/*
     $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="font-size:10pt;">
         <tr>
             <td align="left">
@@ -219,7 +198,6 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
             </td>
         </tr>
     </table>';
-*/
 
     return $html;
 }
