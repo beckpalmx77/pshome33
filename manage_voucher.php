@@ -66,6 +66,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -199,6 +200,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'total_amount'},
                     {data: 'approve_status_desc'},
                     {data: 'update'},
+                    {data: 'print'},
                     {data: 'delete'}
                 ]
             });
@@ -219,11 +221,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
     </script>
 
     <script>
-
         $("#TableRecordList").on('click', '.update', function () {
             let id = $(this).attr("id");
-            //alert(id);
             let formData = {action: "GET_DATA", id: id};
+
             $.ajax({
                 type: "POST",
                 url: 'model/manage_voucher_process.php',
@@ -231,51 +232,64 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                 data: formData,
                 success: function (response) {
                     let len = response.length;
-                    for (let i = 0; i < len; i++) {
-                        let id = response[i].id;
-                        let doc_no = response[i].doc_no;
-                        let doc_date = response[i].doc_date;
-                        let requester = response[i].requester;
-                        let supplier_id = response[i].supplier_id;
-                        let supplier_name = response[i].supplier_name;
-                        let purpose = response[i].purpose;
-                        let total_amount = response[i].total_amount;
-                        let picture_doc = response[i].picture_doc;
+                    if (len > 0) { // ตรวจสอบว่ามีข้อมูลส่งกลับมาหรือไม่
+                        for (let i = 0; i < len; i++) {
+                            let id = response[i].id;
+                            let doc_no = response[i].doc_no;
+                            let doc_date = response[i].doc_date;
+                            let requester = response[i].requester;
+                            let supplier_id = response[i].supplier_id;
+                            let supplier_name = response[i].supplier_name;
+                            let purpose = response[i].purpose;
+                            let total_amount = response[i].total_amount;
+                            let picture_doc = response[i].picture_doc;
 
-                        let create_name = response[i].create_name;
-                        let checker_name = response[i].checker_name;
-                        let approve_name = response[i].approve_name;
-                        let receipt_name = response[i].receipt_name;
-                        let payment_method = response[i].payment_method;
+                            let create_name = response[i].create_name;
+                            let checker_name = response[i].checker_name;
+                            let approve_name = response[i].approve_name;
+                            let receipt_name = response[i].receipt_name;
+                            let payment_method = response[i].payment_method;
 
-                        let main_menu = document.getElementById("main_menu").value;
-                        let sub_menu = document.getElementById("sub_menu").value;
-                        let url = "manage_voucher_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
-                            + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
-                            + '&id=' + id
-                            + '&doc_no=' + doc_no
-                            + '&doc_date=' + doc_date
-                            + '&picture_doc=' + picture_doc
-                            + '&purpose=' + purpose
-                            + '&requester=' + requester
-                            + '&supplier_id=' + supplier_id
-                            + '&supplier_name=' + supplier_name
-                            + '&total_amount=' + total_amount
-                            + '&create_name=' + create_name
-                            + '&checker_name=' + checker_name
-                            + '&approve_name=' + approve_name
-                            + '&receipt_name=' + receipt_name
-                            + '&payment_method=' + payment_method
-                            + '&action=UPDATE';
-                        window.open(url, '_blank');
+                            let bank_no = response[i].bank_no;
+                            let approve_status = response[i].approve_status;
+                            let status = response[i].status;
+
+                            let main_menu = document.getElementById("main_menu").value;
+                            let sub_menu = document.getElementById("sub_menu").value;
+                            let url = "manage_voucher_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
+                                + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
+                                + '&id=' + id
+                                + '&doc_no=' + doc_no
+                                + '&doc_date=' + doc_date
+                                + '&picture_doc=' + picture_doc
+                                + '&purpose=' + purpose
+                                + '&requester=' + requester
+                                + '&supplier_id=' + supplier_id
+                                + '&supplier_name=' + supplier_name
+                                + '&total_amount=' + total_amount
+                                + '&create_name=' + create_name
+                                + '&checker_name=' + checker_name
+                                + '&approve_name=' + approve_name
+                                + '&receipt_name=' + receipt_name
+                                + '&payment_method=' + payment_method
+                                + '&bank_no=' + bank_no
+                                + '&approve_status=' + approve_status
+                                + '&status=' + status
+                                + '&action=UPDATE';
+
+                            console.log("Generated URL for update:", url); // แสดง URL ใน Console เพื่อตรวจสอบ
+                            window.open(url, '_blank');
+                        }
+                    } else {
+                        alertify.error("ไม่พบข้อมูลสำหรับการอัปเดต โปรดตรวจสอบอีกครั้ง."); // แจ้งผู้ใช้หากไม่พบข้อมูล
                     }
                 },
-                error: function (response) {
-                    alertify.error("error : " + response);
+                error: function (xhr, status, error) { // ใช้พารามิเตอร์ข้อผิดพลาดเพิ่มเติมเพื่อการ Debug ที่ดีขึ้น
+                    console.error("AJAX Error:", status, error, xhr.responseText); // แสดงข้อผิดพลาดใน Console
+                    alertify.error("เกิดข้อผิดพลาดในการดึงข้อมูล: " + error);
                 }
             });
         });
-
     </script>
 
     <script>
@@ -306,6 +320,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
     </script>
 
+    <script>
+        $("#TableRecordList").on('click', '.print', function () {
+            let account_type = $('#account_type').val();
+            let id = $(this).attr("id");
+            let url = "print_payment_voucher_pdf?id=";
+            window.open(url + encodeURIComponent(id), "_blank");
+        });
+    </script>
 
     </body>
     </html>

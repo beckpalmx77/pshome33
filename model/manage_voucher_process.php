@@ -12,7 +12,7 @@ header('Content-Type: application/json');
 // -----------------------------
 // GET MASTER RECORD BY ID
 // -----------------------------
-if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
+if ($_POST["action"] === 'GET_DATA') {
 
     $id = $_POST["id"] ?? 0;
 
@@ -21,6 +21,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $return_arr = [];
+
     foreach ($results as $result) {
         $return_arr[] = array(
             "id" => $result['id'],
@@ -43,6 +44,10 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
         );
     }
 
+// 🔽 เพิ่มส่วนนี้เพื่อ push ลงไฟล์ JSON
+    // file_put_contents('voucher_data_log.json', json_encode($return_arr, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+// 🔁 ส่งกลับให้ AJAX
     echo json_encode($return_arr);
     exit;
 }
@@ -136,6 +141,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
 
     $data = [];
 
+    $isUser = $_SESSION['account_type'] !== "user";
+
     $statusMeta = [
         'Y' => ['desc' => "อนุมัติ", 'color' => 'green', 'can_print' => true],
         'N' => ['desc' => "รอการอนุมัติ", 'color' => 'gray', 'can_print' => false],
@@ -158,6 +165,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
                     ? "<div class='text-success'>{$row['status']}</div>"
                     : "<div class='text-muted'>{$row['status']}</div>",
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print'>Print</button>",
                 "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
             );
         }
