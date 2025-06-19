@@ -52,6 +52,7 @@ if ($_POST["action"] === 'ADD') {
     // ตรวจสอบว่ามีการส่งค่า product_name มาหรือไม่
     if (!empty($_POST["product_name"])) {
         $product_name = $_POST["product_name"];
+        $pgroup_id = $_POST["pgroup_id"];
         $unit_id = $_POST["unit_id"];
         $status = $_POST["status"];
 
@@ -112,6 +113,7 @@ if ($_POST["action"] === 'UPDATE') {
         $id = $_POST["id"];
         $position_id = $_POST["product_id"];
         $product_name = $_POST["product_name"];
+        $pgroup_id = $_POST["pgroup_id"];
         $unit_id = $_POST["unit_id"];
         $status = $_POST["status"];
         $sql_find = "SELECT * FROM ims_products WHERE id = " . $id;
