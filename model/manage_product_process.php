@@ -74,7 +74,7 @@ if ($_POST["action"] === 'ADD') {
             if ($last_product_id) {
                 // ถ้ามีรหัสสินค้าเดิมอยู่ ให้ดึงตัวเลขจากรหัสล่าสุดมาเพิ่ม
                 // เช่น P00005 จะได้ 5
-                $last_number = (int) substr($last_product_id, 1);
+                $last_number = (int)substr($last_product_id, 1);
                 $newProductNumber = $last_number + 1;
             }
 
