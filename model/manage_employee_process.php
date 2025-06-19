@@ -339,6 +339,7 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
                 "work_time_id" => $row['work_time_id'],
                 "work_time_detail" => $row['work_time_detail'],
                 "start_work_date" => $row['start_work_date'],
+                "picture" => $row['picture'],
                 "detail" => "<button type='button' name='detail' emp_id='" . $row['emp_id'] . "' class='btn btn-info btn-xs detail' data-toggle='tooltip' title='Detail'>Detail</button>",
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "status" => $row['status'] === 'Y' ? "<div class='text-success'>" . "ทำงานปกติ" . "</div>" : "<div class='text-muted'> " . "ลาออก" . "</div>",
