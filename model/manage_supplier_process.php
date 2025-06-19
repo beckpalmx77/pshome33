@@ -40,38 +40,69 @@ if ($_POST["action"] === 'SEARCH') {
 }
 
 if ($_POST["action"] === 'ADD') {
-    if ($_POST["supplier_name"] !== '') {
-        $supplier_id = "S-" . sprintf('%04s', LAST_ID($conn, "ims_supplier", 'id'));
-        $supplier_name = $_POST["supplier_name"];
+    // 1. ตรวจสอบว่ามีการส่งค่าที่จำเป็นสำหรับผู้จัดจำหน่ายมาหรือไม่
+    // ใช้ isset() สำหรับสถานะที่อาจจะเป็น 0
+    if (!empty($_POST["supplier_name"]) && !empty($_POST["address"]) && !empty($_POST["phone"]) && isset($_POST["status"])) {
+
+        $supplier_name = trim($_POST["supplier_name"]); // ใช้ trim เพื่อลบช่องว่างหัวท้าย
         $address = $_POST["address"];
         $phone = $_POST["phone"];
         $status = $_POST["status"];
-        $sql_find = "SELECT * FROM ims_supplier WHERE supplier_name = '" . $supplier_name . "'";
 
-        $nRows = $conn->query($sql_find)->fetchColumn();
-        if ($nRows > 0) {
-            echo $dup;
-        } else {
-            $sql = "INSERT INTO ims_supplier(supplier_id,supplier_name,address,phone,status) 
-            VALUES (:supplier_id,:supplier_name,:address,:phone,:status)";
-            $query = $conn->prepare($sql);
-            $query->bindParam(':supplier_id', $supplier_id, PDO::PARAM_STR);
-            $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
-            $query->bindParam(':address', $address, PDO::PARAM_STR);
-            $query->bindParam(':phone', $phone, PDO::PARAM_STR);
-            $query->bindParam(':status', $status, PDO::PARAM_STR);
-            $query->execute();
-            $lastInsertId = $conn->lastInsertId();
+        try {
+            // 2. ตรวจสอบว่า supplier_name ซ้ำกันหรือไม่
+            $stmtCheckSupplier = $conn->prepare("SELECT supplier_id FROM ims_supplier WHERE supplier_name = :supplier_name");
+            $stmtCheckSupplier->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
+            $stmtCheckSupplier->execute();
+            $existing_supplier_id = $stmtCheckSupplier->fetchColumn();
 
-            if ($lastInsertId) {
-                echo $save_success;
+            if ($existing_supplier_id) {
+                // ถ้า supplier_name ซ้ำกัน ให้แจ้งว่ามีข้อมูลแล้ว
+                echo $dup;
             } else {
-                echo $error;
+                // 3. ถ้า supplier_name ไม่ซ้ำกัน ให้สร้าง supplier_id ใหม่
+                $stmtMaxID = $conn->prepare("SELECT supplier_id FROM ims_supplier WHERE supplier_id LIKE 'S%' ORDER BY supplier_id DESC LIMIT 1");
+                $stmtMaxID->execute();
+                $lastSupplierID = $stmtMaxID->fetchColumn();
+
+                // แปลงตัวเลขจาก 'S0000X' และเพิ่มค่า
+                $newNumber = $lastSupplierID ? ((int)substr($lastSupplierID, 1)) + 1 : 1;
+                $new_supplier_id = sprintf("S%05d", $newNumber);
+
+                // 4. ทำการ INSERT ข้อมูลผู้จัดจำหน่ายใหม่ทั้งหมด
+                $sql = "INSERT INTO ims_supplier (supplier_id, supplier_name, address, phone, status)
+                        VALUES (:supplier_id, :supplier_name, :address, :phone, :status)";
+                $query = $conn->prepare($sql);
+                $query->bindParam(':supplier_id', $new_supplier_id, PDO::PARAM_STR);
+                $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
+                $query->bindParam(':address', $address, PDO::PARAM_STR);
+                $query->bindParam(':phone', $phone, PDO::PARAM_STR);
+                $query->bindParam(':status', $status, PDO::PARAM_STR);
+                $query->execute();
+
+                // ตรวจสอบว่าการแทรกข้อมูลสำเร็จหรือไม่
+                if ($query->rowCount()) { // ใช้ rowCount() แทน lastInsertId() สำหรับ INSERT ปกติ
+                    echo $save_success;
+                } else {
+                    echo $error; // อาจจะเกิดข้อผิดพลาดในการ execute แต่ไม่มี Exception
+                }
             }
+
+        } catch (PDOException $e) {
+            // ดักจับข้อผิดพลาดที่เกิดจากการดำเนินการฐานข้อมูล
+            error_log("Error adding supplier: " . $e->getMessage()); // บันทึกใน log
+            echo $error; // แจ้งผู้ใช้ด้วยข้อความทั่วไป
+        } catch (Exception $e) {
+            // ดักจับข้อผิดพลาดทั่วไปอื่นๆ
+            error_log("General error adding supplier: " . $e->getMessage()); // บันทึกใน log
+            echo $error;
         }
+
+    } else {
+        // กรณีที่ข้อมูลที่จำเป็นไม่ครบถ้วน
+        echo $error; // หรือข้อความว่า "กรุณากรอกข้อมูลผู้จัดจำหน่ายให้ครบถ้วน"
     }
 }
-
 
 if ($_POST["action"] === 'UPDATE') {
     if ($_POST["supplier_id"] != '') {

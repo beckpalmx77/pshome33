@@ -21,6 +21,8 @@ if ($_POST["action"] === 'GET_DATA') {
         $return_arr[] = array("id" => $result['id'],
             "product_id" => $result['product_id'],
             "product_name" => $result['product_name'],
+            "pgroup_id" => $result['pgroup_id'],
+            "pgroup_name" => $result['pgroup_name'],
             "unit_id" => $result['unit_id'],
             "unit_name" => $result['unit_name'],
             "status" => $result['status']);
@@ -82,11 +84,12 @@ if ($_POST["action"] === 'ADD') {
             $product_id = sprintf("P%05d", $newProductNumber);
 
             // 3. ทำการเพิ่มข้อมูลสินค้าใหม่ลงในฐานข้อมูล
-            $sql = "INSERT INTO ims_products(product_id, product_name, unit_id, status)
-                    VALUES (:product_id, :product_name, :unit_id, :status)";
+            $sql = "INSERT INTO ims_products(product_id, product_name, pgroup_id, unit_id, status)
+                    VALUES (:product_id, :product_name, :pgroup_id, :unit_id, :status)";
             $query = $conn->prepare($sql);
             $query->bindParam(':product_id', $product_id, PDO::PARAM_STR);
             $query->bindParam(':product_name', $product_name, PDO::PARAM_STR);
+            $query->bindParam(':pgroup_id', $pgroup_id, PDO::PARAM_STR);
             $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
@@ -114,10 +117,11 @@ if ($_POST["action"] === 'UPDATE') {
         $sql_find = "SELECT * FROM ims_products WHERE id = " . $id;
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_products SET product_name=:product_name,unit_id=:unit_id,status=:status            
+            $sql_update = "UPDATE ims_products SET product_name=:product_name,pgroup_id=:pgroup_id,unit_id=:unit_id,status=:status            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':product_name', $product_name, PDO::PARAM_STR);
+            $query->bindParam(':pgroup_id', $pgroup_id, PDO::PARAM_STR);
             $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
@@ -203,6 +207,8 @@ if ($_POST["action"] === 'GET_PRODUCT') {
             $data[] = array(
                 "product_id" => $row['product_id'],
                 "product_name" => $row['product_name'],
+                "pgroup_id" => $row['pgroup_id'],
+                "pgroup_name" => $row['pgroup_name'],
                 "unit_id" => $row['unit_id'],
                 "unit_name" => $row['unit_name'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
