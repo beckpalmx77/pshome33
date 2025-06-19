@@ -417,6 +417,8 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#id').val("");
                 $('#product_id').val("");
                 $('#product_name').val("");
+                $('#pgroup_id').val("");
+                $('#pgroup_name').val("");
                 $('#unit_id').val("");
                 $('#unit_name').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
@@ -443,6 +445,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         let id = response[i].id;
                         let product_id = response[i].product_id;
                         let product_name = response[i].product_name;
+                        let pgroup_id = response[i].pgroup_id;
+                        let pgroup_name = response[i].pgroup_name;
                         let unit_id = response[i].unit_id;
                         let unit_name = response[i].unit_name;
                         let status = response[i].status;
@@ -451,6 +455,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#id').val(id);
                         $('#product_id').val(product_id);
                         $('#product_name').val(product_name);
+                        $('#pgroup_id').val(pgroup_id);
+                        $('#pgroup_name').val(pgroup_name);
                         $('#unit_id').val(unit_id);
                         $('#unit_name').val(unit_name);
                         $('#status').val(status);
@@ -483,6 +489,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         let id = response[i].id;
                         let product_id = response[i].product_id;
                         let product_name = response[i].product_name;
+                        let pgroup_id = response[i].pgroup_id;
+                        let pgroup_name = response[i].pgroup_name;
                         let unit_id = response[i].unit_id;
                         let unit_name = response[i].unit_name;
                         let status = response[i].status;
@@ -491,6 +499,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#id').val(id);
                         $('#product_id').val(product_id);
                         $('#product_name').val(product_name);
+                        $('#pgroup_id').val(pgroup_id);
+                        $('#pgroup_name').val(pgroup_name);
                         $('#unit_id').val(unit_id);
                         $('#unit_name').val(unit_name);
                         $('#status').val(status);
