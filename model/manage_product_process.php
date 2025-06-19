@@ -106,28 +106,63 @@ if ($_POST["action"] === 'ADD') {
 
 if ($_POST["action"] === 'UPDATE') {
 
-    if ($_POST["product_id"] != '') {
+    // ตรวจสอบว่ามีการส่งค่าที่จำเป็นมาครบถ้วนหรือไม่
+    // โดยเฉพาะอย่างยิ่ง id ซึ่งเป็น Primary Key สำหรับการอัปเดตข้อมูล
+    if (!empty($_POST["id"]) && !empty($_POST["product_id"]) && !empty($_POST["product_name"]) && !empty($_POST["unit_id"]) && isset($_POST["status"])) {
 
-        $id = $_POST["id"];
-        $product_id = $_POST["product_id"];
-        $product_name = $_POST["product_name"];
-        $unit_id = $_POST["unit_id"];
-        $status = $_POST["status"];
+        $id = $_POST["id"]; // Primary Key ที่ใช้อ้างอิงแถวที่จะอัปเดต
+        $product_id = $_POST["product_id"]; // รหัสสินค้า
+        $product_name = $_POST["product_name"]; // ชื่อสินค้า
+        $unit_id = $_POST["unit_id"]; // หน่วยสินค้า
+        $status = $_POST["status"]; // สถานะสินค้า
 
-        $sql_find = "SELECT * FROM ims_products WHERE product_id = '" . $product_id . "'";
-        $nRows = $conn->query($sql_find)->fetchColumn();
+        // การบันทึกข้อมูลลงไฟล์ (สำหรับการ Debug หรือ Logging)
+        // ควรพิจารณาว่าจะใช้งานส่วนนี้ใน Production Environment หรือไม่
+        // เพื่อประสิทธิภาพและความปลอดภัย
+        //$myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
+        //fwrite($myfile, "UPDATE | ID: " . $id . " | Product ID: " . $product_id . " | Product Name: " . $product_name . " | Unit ID: " . $unit_id . " | Status: " . $status);
+        //fclose($myfile);
+
+        // ตรวจสอบว่า product_id ที่ต้องการอัปเดตนั้นมีอยู่ในฐานข้อมูลจริงหรือไม่
+        // (จริงๆ แล้วถ้า id ถูกต้อง product_id ก็ควรจะอยู่แล้ว)
+        // แต่การตรวจสอบนี้จะช่วยยืนยันความถูกต้องอีกขั้นหนึ่ง
+        $sql_find = "SELECT COUNT(*) FROM ims_products WHERE product_id = :product_id AND id = :id";
+        $query_find = $conn->prepare($sql_find);
+        $query_find->bindParam(':product_id', $product_id, PDO::PARAM_STR);
+        $query_find->bindParam(':id', $id, PDO::PARAM_STR);
+        $query_find->execute();
+        $nRows = $query_find->fetchColumn();
+
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_products SET product_name=:product_name,unit_id=:unit_id,status=:status
-            WHERE id = :id";
+            // ถ้าพบข้อมูลที่ตรงกัน ให้ทำการอัปเดต
+            $sql_update = "UPDATE ims_products
+                           SET product_name = :product_name,
+                               unit_id = :unit_id,
+                               status = :status
+                           WHERE id = :id"; // อัปเดตโดยใช้ id เป็นเงื่อนไขหลัก
+
             $query = $conn->prepare($sql_update);
             $query->bindParam(':product_name', $product_name, PDO::PARAM_STR);
             $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
-            $query->bindParam(':id', $id, PDO::PARAM_STR);
+            $query->bindParam(':id', $id, PDO::PARAM_INT); // ใช้ PDO::PARAM_INT ถ้า id เป็น integer
             $query->execute();
-            echo $save_success;
-        }
 
+            // ตรวจสอบว่ามีแถวที่ได้รับผลกระทบจากการอัปเดตหรือไม่
+            if ($query->rowCount()) {
+                echo $save_success; // อัปเดตสำเร็จ
+            } else {
+                // ไม่มีแถวใดที่ถูกอัปเดต อาจจะเพราะข้อมูลที่ส่งมาเหมือนกับข้อมูลเดิม
+                // หรือเกิดข้อผิดพลาดบางอย่างที่ไม่มีการแจ้งเตือน
+                echo $error; // หรือข้อความว่า "ไม่มีการเปลี่ยนแปลงข้อมูล"
+            }
+        } else {
+            // ไม่พบข้อมูลที่ตรงกับ product_id และ id ที่ระบุ
+            echo $error; // เช่น "ไม่พบสินค้าที่ต้องการอัปเดต"
+        }
+    } else {
+        // กรณีที่ข้อมูลที่ส่งมาไม่ครบถ้วน
+        echo $error; // เช่น "กรุณากรอกข้อมูลให้ครบถ้วน"
     }
 }
 
@@ -142,7 +177,6 @@ if ($_POST["action"] === 'DELETE') {
             $sql = "DELETE FROM ims_products WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
-            Reorder_Record($conn, "ims_products");
             echo $del_success;
         } catch (Exception $e) {
             echo 'Message: ' . $e->getMessage();
@@ -189,7 +223,7 @@ if ($_POST["action"] === 'GET_PRODUCT') {
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-    $stmt = $conn->prepare("SELECT * FROM ims_products WHERE 1 " . $searchQuery
+    $stmt = $conn->prepare("SELECT * FROM v_ims_products WHERE 1 " . $searchQuery
         . " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset");
 
 // Bind values
