@@ -65,7 +65,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                 <input class="form-check-input me-1" type="radio"
                                                        name="payment_method_radio"
                                                        id="method_transfer" value="โอนเงิน">
-                                                <label class="form-check-label" for="method_transfer">💳 โอนเงิน</label>
+                                                <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
                                             </div>
 
                                             <!-- ช่องกรอกเลขบัญชี -->
