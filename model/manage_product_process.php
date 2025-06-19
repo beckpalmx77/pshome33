@@ -105,49 +105,27 @@ if ($_POST["action"] === 'ADD') {
 }
 
 if ($_POST["action"] === 'UPDATE') {
-
-    // ตรวจสอบค่าที่จำเป็น
-    $required = ["id", "product_id", "product_name", "unit_id", "status"];
-    foreach ($required as $field) {
-        if (empty($_POST[$field]) && $_POST[$field] !== '0') {
-            echo $error; // เช่น "ข้อมูลไม่ครบ"
-            exit;
+    if ($_POST["product_name"] != '') {
+        $id = $_POST["id"];
+        $position_id = $_POST["product_id"];
+        $product_name = $_POST["product_name"];
+        $unit_id = $_POST["unit_id"];
+        $status = $_POST["status"];
+        $sql_find = "SELECT * FROM ims_products WHERE id = " . $id;
+        $nRows = $conn->query($sql_find)->fetchColumn();
+        if ($nRows > 0) {
+            $sql_update = "UPDATE ims_products SET product_name=:product_name,unit_id=:unit_id,status=:status            
+            WHERE id = :id";
+            $query = $conn->prepare($sql_update);
+            $query->bindParam(':product_name', $product_name, PDO::PARAM_STR);
+            $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
+            $query->bindParam(':status', $status, PDO::PARAM_STR);
+            $query->bindParam(':id', $id, PDO::PARAM_STR);
+            $query->execute();
+            echo $save_success;
         }
     }
-
-    // ดึงค่า
-    $id = $_POST["id"];
-    $product_id = $_POST["product_id"];
-    $product_name = $_POST["product_name"];
-    $unit_id = $_POST["unit_id"];
-    $status = $_POST["status"];
-
-    // ตรวจสอบว่า record มีอยู่จริง
-    $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM ims_products WHERE product_id = :product_id");
-    $stmtCheck->execute([':product_id' => $product_id]);
-
-    if ($stmtCheck->fetchColumn() > 0) {
-        // ทำการอัปเดต
-        $stmtUpdate = $conn->prepare("
-            UPDATE ims_products
-            SET product_name = :product_name,
-                unit_id = :unit_id,
-                status = :status
-            WHERE id = :id
-        ");
-        $stmtUpdate->execute([
-            ':product_name' => $product_name,
-            ':unit_id' => $unit_id,
-            ':status' => $status,
-            ':id' => $id
-        ]);
-
-        echo $stmtUpdate->rowCount() ? $save_success : $error; // หรือ "ไม่มีการเปลี่ยนแปลง"
-    } else {
-        echo $error; // ไม่พบข้อมูล
-    }
 }
-
 
 if ($_POST["action"] === 'DELETE') {
 
