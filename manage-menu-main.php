@@ -23,7 +23,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page']?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
                             <li class="breadcrumb-item active"
                                 aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
@@ -112,7 +113,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-6">
-                                                                        <label for="link" class="control-label">Link</label>
+                                                                        <label for="link"
+                                                                               class="control-label">Link</label>
                                                                         <input type="link" class="form-control"
                                                                                id="link" name="link"
                                                                                placeholder="Link">
@@ -130,14 +132,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-6">
-                                                                        <label for="data_target" class="control-label">Data Target</label>
+                                                                        <label for="data_target" class="control-label">Data
+                                                                            Target</label>
                                                                         <input type="data_target" class="form-control"
                                                                                id="data_target" name="data_target"
                                                                                placeholder="Data Target">
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <label for="aria_controls"
-                                                                               class="control-label">Aria Controls</label>
+                                                                               class="control-label">Aria
+                                                                            Controls</label>
                                                                         <input type="text" class="form-control"
                                                                                id="aria_controls"
                                                                                name="aria_controls"
