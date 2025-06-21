@@ -63,7 +63,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                     <th>วันที่</th>
                                                     <th>ชื่อพนักงาน</th>
                                                     <th>เดือน</th>
-                                                    <th>ปี</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -189,15 +188,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                 'serverSide': true,
                 'serverMethod': 'post',
                 'ajax': {
-                    'url': 'model/manage_purchase_process.php',
+                    'url': 'model/manage_payroll_process.php',
                     'data': formData
                 },
                 'columns': [
                     {data: 'doc_no'},
                     {data: 'doc_date'},
-                    {data: 'supplier_name'},
+                    {data: 'employee_fullname'},
                     {data: 'total_amount'},
-                    {data: 'approve_status_desc'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]
