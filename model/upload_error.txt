@@ -1,0 +1,9 @@
+ไม่สามารถอัปโหลดรูปได้: Array
+(
+    [name] => ps33-card-ast-mgr.png
+    [full_path] => ps33-card-ast-mgr.png
+    [type] => image/png
+    [tmp_name] => D:\wamp64\tmp\php944F.tmp
+    [error] => 0
+    [size] => 159993
+)

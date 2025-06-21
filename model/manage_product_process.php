@@ -13,19 +13,16 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM vims_product WHERE id = " . $id;
+    $sql_get = "SELECT * FROM v_ims_products WHERE id = " . $id;
     $statement = $conn->query($sql_get);
     $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($results as $result) {
         $return_arr[] = array("id" => $result['id'],
             "product_id" => $result['product_id'],
-            "name_t" => $result['name_t'],
-            "quantity" => $result['quantity'],
+            "product_name" => $result['product_name'],
             "pgroup_id" => $result['pgroup_id'],
             "pgroup_name" => $result['pgroup_name'],
-            "brand_id" => $result['brand_id'],
-            "brand_name" => $result['brand_name'],
             "unit_id" => $result['unit_id'],
             "unit_name" => $result['unit_name'],
             "status" => $result['status']);
@@ -40,7 +37,7 @@ if ($_POST["action"] === 'SEARCH') {
     if ($_POST["product_id"] !== '') {
 
         $product_id = $_POST["product_id"];
-        $sql_find = "SELECT * FROM ims_product WHERE product_id = '" . $product_id . "'";
+        $sql_find = "SELECT * FROM ims_products WHERE product_id = '" . $product_id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
@@ -52,31 +49,49 @@ if ($_POST["action"] === 'SEARCH') {
 
 if ($_POST["action"] === 'ADD') {
 
-    if ($_POST["product_id"] != '') {
-
-        $product_id = $_POST["product_id"];
-        $name_t = $_POST["name_t"];
-        $quantity = $_POST["quantity"];
-        $status = $_POST["status"];
+    // ตรวจสอบว่ามีการส่งค่า product_name มาหรือไม่
+    if (!empty($_POST["product_name"])) {
+        $product_name = $_POST["product_name"];
         $pgroup_id = $_POST["pgroup_id"];
-        $brand_id = $_POST["brand_id"];
         $unit_id = $_POST["unit_id"];
-        $picture = "product-001.png";
-        $sql_find = "SELECT * FROM ims_product WHERE product_id = '" . $product_id . "'";
-        $nRows = $conn->query($sql_find)->fetchColumn();
-        if ($nRows > 0) {
-            echo $dup;
+        $status = $_POST["status"];
+
+        // 1. ตรวจสอบว่า product_name ซ้ำกันหรือไม่
+        $sql_find_name = "SELECT product_id FROM ims_products WHERE product_name = :product_name";
+        $query_find_name = $conn->prepare($sql_find_name);
+        $query_find_name->bindParam(':product_name', $product_name, PDO::PARAM_STR);
+        $query_find_name->execute();
+        $existing_product = $query_find_name->fetch(PDO::FETCH_ASSOC);
+
+        if ($existing_product) {
+            // ถ้า product_name ซ้ำกัน ให้แจ้งว่ามีข้อมูลแล้ว
+            echo $dup; // หรือข้อความอื่นๆ ที่คุณต้องการ เช่น "สินค้านี้มีอยู่แล้วในระบบ"
         } else {
-            $sql = "INSERT INTO ims_product(product_id,name_t,quantity,pgroup_id,brand_id,unit_id,picture,status)
-            VALUES (:product_id,:name_t,:quantity,:pgroup_id,:brand_id,:unit_id,:picture,:status)";
+            // ถ้า product_name ไม่ซ้ำกัน ให้สร้างรหัสสินค้าใหม่
+            // 2. ค้นหารหัสสินค้าล่าสุดที่มีอยู่ในฐานข้อมูล
+            $sql_last_id = "SELECT product_id FROM ims_products ORDER BY product_id DESC LIMIT 1";
+            $stmt_last_id = $conn->query($sql_last_id);
+            $last_product_id = $stmt_last_id->fetchColumn();
+
+            $newProductNumber = 1;
+            if ($last_product_id) {
+                // ถ้ามีรหัสสินค้าเดิมอยู่ ให้ดึงตัวเลขจากรหัสล่าสุดมาเพิ่ม
+                // เช่น P00005 จะได้ 5
+                $last_number = (int)substr($last_product_id, 1);
+                $newProductNumber = $last_number + 1;
+            }
+
+            // สร้างรหัสสินค้าใหม่ในรูปแบบ P00001
+            $product_id = sprintf("P%05d", $newProductNumber);
+
+            // 3. ทำการเพิ่มข้อมูลสินค้าใหม่ลงในฐานข้อมูล
+            $sql = "INSERT INTO ims_products(product_id, product_name, pgroup_id, unit_id, status)
+                    VALUES (:product_id, :product_name, :pgroup_id, :unit_id, :status)";
             $query = $conn->prepare($sql);
             $query->bindParam(':product_id', $product_id, PDO::PARAM_STR);
-            $query->bindParam(':name_t', $name_t, PDO::PARAM_STR);
-            $query->bindParam(':quantity', $quantity, PDO::PARAM_STR);
+            $query->bindParam(':product_name', $product_name, PDO::PARAM_STR);
             $query->bindParam(':pgroup_id', $pgroup_id, PDO::PARAM_STR);
-            $query->bindParam(':brand_id', $brand_id, PDO::PARAM_STR);
             $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
-            $query->bindParam(':picture', $picture, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
 
@@ -86,45 +101,35 @@ if ($_POST["action"] === 'ADD') {
             } else {
                 echo $error;
             }
-
         }
-
+    } else {
+        // กรณีที่ไม่ได้ส่งค่า product_name มา
+        echo $error; // หรือแจ้งเตือนให้กรอกข้อมูล product_name
     }
 }
 
-
 if ($_POST["action"] === 'UPDATE') {
-
-    if ($_POST["product_id"] != '') {
-
+    if ($_POST["product_name"] != '') {
         $id = $_POST["id"];
-        $product_id = $_POST["product_id"];
-        $name_t = $_POST["name_t"];
-        $quantity = $_POST["quantity"];
-        $status = $_POST["status"];
+        $position_id = $_POST["product_id"];
+        $product_name = $_POST["product_name"];
         $pgroup_id = $_POST["pgroup_id"];
-        $brand_id = $_POST["brand_id"];
         $unit_id = $_POST["unit_id"];
-        $picture = "product-001.png";
-        $sql_find = "SELECT * FROM ims_product WHERE product_id = '" . $product_id . "'";
+        $status = $_POST["status"];
+        $sql_find = "SELECT * FROM ims_products WHERE id = " . $id;
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_product SET name_t=:name_t,quantity=:quantity,status=:status
-            ,pgroup_id=:pgroup_id,brand_id=:brand_id,unit_id=:unit_id,picture=:picture
+            $sql_update = "UPDATE ims_products SET product_name=:product_name,pgroup_id=:pgroup_id,unit_id=:unit_id,status=:status            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
-            $query->bindParam(':name_t', $name_t, PDO::PARAM_STR);
-            $query->bindParam(':quantity', $quantity, PDO::PARAM_STR);
+            $query->bindParam(':product_name', $product_name, PDO::PARAM_STR);
             $query->bindParam(':pgroup_id', $pgroup_id, PDO::PARAM_STR);
-            $query->bindParam(':brand_id', $brand_id, PDO::PARAM_STR);
             $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
-            $query->bindParam(':picture', $picture, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;
         }
-
     }
 }
 
@@ -132,14 +137,13 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    $sql_find = "SELECT * FROM ims_product WHERE id = " . $id;
+    $sql_find = "SELECT * FROM ims_products WHERE id = " . $id;
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
-            $sql = "DELETE FROM ims_product WHERE id = " . $id;
+            $sql = "DELETE FROM ims_products WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
-            Reorder_Record($conn, "ims_product");
             echo $del_success;
         } catch (Exception $e) {
             echo 'Message: ' . $e->getMessage();
@@ -164,31 +168,29 @@ if ($_POST["action"] === 'GET_PRODUCT') {
     $searchQuery = " ";
     if ($searchValue != '') {
         $searchQuery = " AND (product_id LIKE :product_id or 
-        name_t LIKE :name_t OR
-        name_e LIKE :name_e OR         
+        product_name LIKE :product_name OR
         status LIKE :status ) ";
         $searchArray = array(
             'product_id' => "%$searchValue%",
-            'name_t' => "%$searchValue%",
-            'name_e' => "%$searchValue%",
+            'product_name' => "%$searchValue%",
             'status' => "%$searchValue%"
         );
     }
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_product ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_products ");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_product WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_products WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-    $stmt = $conn->prepare("SELECT * FROM vims_product WHERE 1 " . $searchQuery
+    $stmt = $conn->prepare("SELECT * FROM v_ims_products WHERE 1 " . $searchQuery
         . " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset");
 
 // Bind values
@@ -206,24 +208,24 @@ if ($_POST["action"] === 'GET_PRODUCT') {
         if ($_POST['sub_action'] === "GET_MASTER") {
             $data[] = array(
                 "product_id" => $row['product_id'],
-                "name_t" => $row['name_t'],
-                "name_e" => $row['name_e'],
-                "quantity" => $row['quantity'],
+                "product_name" => $row['product_name'],
+                "pgroup_id" => $row['pgroup_id'],
+                "pgroup_name" => $row['pgroup_name'],
                 "unit_id" => $row['unit_id'],
                 "unit_name" => $row['unit_name'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
-                "picture" => "<img src = '" . $row['picture'] . "'  width='32' height='32' title='" . $row['name_t'] . "'>",
+                //"picture" => "<img src = '" . $row['picture'] . "'  width='32' height='32' title='" . $row['product_name'] . "'>",
                 "status" => $row['status'] === 'Active' ? "<div class='text-success'>" . $row['status'] . "</div>" : "<div class='text-muted'> " . $row['status'] . "</div>"
             );
         } else {
             $data[] = array(
                 "id" => $row['id'],
                 "product_id" => $row['product_id'],
-                "name_t" => $row['name_t'],
+                "product_name" => $row['product_name'],
                 "unit_id" => $row['unit_id'],
                 "unit_name" => $row['unit_name'],
-                "select" => "<button type='button' name='select' id='" . $row['product_id'] . "@" . $row['name_t'] . "@" . $row['unit_id'] . "@" . $row['unit_name'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
+                "select" => "<button type='button' name='select' id='" . $row['product_id'] . "@" . $row['product_name'] . "@" . $row['unit_id'] . "@" . $row['unit_name'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
 </button>",
             );
         }

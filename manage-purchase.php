@@ -197,7 +197,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'doc_date'},
                     {data: 'supplier_name'},
                     {data: 'total_amount'},
-                    {data: 'status'},
+                    {data: 'approve_status_desc'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]
@@ -240,6 +240,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let supplier_name = response[i].supplier_name;
                         let purpose = response[i].purpose;
                         let total_amount = response[i].total_amount;
+                        let picture_doc = response[i].picture_doc;
                         let main_menu = document.getElementById("main_menu").value;
                         let sub_menu = document.getElementById("sub_menu").value;
                         let url = "manage_purchase_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
@@ -252,6 +253,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                             + '&supplier_id=' + supplier_id
                             + '&supplier_name=' + supplier_name
                             + '&total_amount=' + total_amount
+                            + '&picture_doc=' + picture_doc
                             + '&action=UPDATE';
                         window.open(url, '_blank');
                     }

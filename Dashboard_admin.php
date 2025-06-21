@@ -6,6 +6,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     include('config/connect_db.php');
 
+    $sql_house_master = "SELECT 
+            CASE 
+                WHEN house_number LIKE '67%' THEN '67xx'
+                WHEN house_number LIKE '68%' THEN '68xx'
+            END AS prefix,
+            COUNT(DISTINCT house_number) AS total
+        FROM ims_house_master
+        WHERE house_number LIKE '67%' OR house_number LIKE '68%'
+        GROUP BY prefix";
+
+    $query_house_master = $conn->prepare($sql_house_master);
+    $query_house_master->execute();
+    $results_house_master = $query_house_master->fetchAll(PDO::FETCH_OBJ);
+
+    // เตรียมตัวแปร
+    $count_67_house_master = 0;
+    $count_68_house_master = 0;
+
+    foreach ($results_house_master as $row) {
+        if ($row->prefix === '67xx') {
+            $count_67_house_master = $row->total;
+        } elseif ($row->prefix === '68xx') {
+            $count_68_house_master = $row->total;
+        }
+    }
+
     // SQL ดึงจำนวนบ้านไม่ซ้ำ แยกตาม prefix
     $sql = "SELECT 
             CASE 
@@ -175,6 +201,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo number_format($count_67); ?> หลัง
+                                                        จาก <?php echo number_format($count_67_house_master); ?> หลัง
+                                                        <?php $percent_master = ($count_67 / $count_67_house_master) * 100; ?>
+                                                        <?php echo "คิดเป็น <strong>" . number_format($percent_master, 2) . "%</strong> ของบ้านทั้งหมด"; ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
@@ -194,6 +223,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     </div>
                                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         <?php echo number_format($count_68); ?> หลัง
+                                                        จาก <?php echo number_format($count_68_house_master); ?> หลัง
+                                                        <?php $percent_master = ($count_68 / $count_68_house_master) * 100; ?>
+                                                        <?php echo "คิดเป็น <strong>" . number_format($percent_master, 2) . "%</strong> ของบ้านทั้งหมด"; ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">

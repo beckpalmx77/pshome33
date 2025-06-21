@@ -31,6 +31,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "supplier_name" => $result['supplier_name'],
             "purpose" => $result['purpose'],
             "total_amount" => $result['total_amount'],
+            "picture_doc" => $result['picture_doc'],
+            "approve_status" => $result['approve_status'],
             "status" => $result['status']
         );
     }
@@ -127,21 +129,33 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     $empRecords = $stmt->fetchAll();
 
     $data = [];
+
+    $statusMeta = [
+        'Y' => ['desc' => "อนุมัติ", 'color' => 'green', 'can_print' => true],
+        'N' => ['desc' => "รอการอนุมัติ", 'color' => 'gray', 'can_print' => false],
+    ];
+
     foreach ($empRecords as $row) {
         if ($_POST['sub_action'] === "GET_MASTER") {
+            $approve_status = $row['approve_status'] ?? 'N';
+            $meta = $statusMeta[$approve_status] ?? ['desc' => 'ไม่ทราบสถานะ', 'color' => 'gray', 'can_print' => false];
+
             $data[] = array(
                 "doc_no" => $row['doc_no'],
                 "supplier_id" => $row['supplier_id'],
                 "supplier_name" => $row['supplier_name'],
                 "doc_date" => $row['doc_date'],
                 "total_amount" => $row['total_amount'],
+                "approve_status" => $row['approve_status'],
+                "approve_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
                 "status" => $row['status'] === 'Active'
                     ? "<div class='text-success'>{$row['status']}</div>"
                     : "<div class='text-muted'>{$row['status']}</div>",
-                "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
-                "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>"
+                "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
             );
-        } else {
+        }
+        else {
             $data[] = array(
                 "id" => $row['id'],
                 "doc_no" => $row['doc_no'],

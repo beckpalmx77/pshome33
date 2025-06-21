@@ -152,7 +152,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <div class="form-group row">
                                                                 <div class="col-md-2">
                                                                     <label for="qty">จำนวน</label>
-                                                                    <input type="text" class="form-control text-right-input" id="qty"
+                                                                    <input type="text"
+                                                                           class="form-control text-right-input"
+                                                                           id="qty"
                                                                            name="qty" required>
                                                                 </div>
                                                                 <input type="hidden" id="unit_id" name="unit_id">
@@ -170,13 +172,16 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 </div>
                                                                 <div class="col-md-2">
                                                                     <label for="price_per_unit">ราคาต่อหน่วย</label>
-                                                                    <input type="text" class="form-control text-right-input"
+                                                                    <input type="text"
+                                                                           class="form-control text-right-input"
                                                                            id="price_per_unit" name="price_per_unit"
                                                                            required>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <label for="amount">จำนวนเงิน (บาท)</label>
-                                                                    <input type="text" class="form-control text-right-input" id="amount"
+                                                                    <input type="text"
+                                                                           class="form-control text-right-input"
+                                                                           id="amount"
                                                                            name="amount" required>
                                                                 </div>
                                                                 <div class="col-md-2">
@@ -200,27 +205,38 @@ if (strlen($_SESSION['alogin']) == "") {
 
                                                                 <!-- วิธีชำระเงิน -->
                                                                 <div class="col-md-4">
-                                                                    <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
+                                                                    <label for="payment_method"
+                                                                           class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
                                                                     <div class="d-flex align-items-center gap-3 flex-wrap">
                                                                         <!-- radio buttons -->
                                                                         <div class="d-flex gap-3 flex-shrink-0">
                                                                             <div class="form-check form-check-inline">
-                                                                                <input class="form-check-input" type="radio"
+                                                                                <input class="form-check-input"
+                                                                                       type="radio"
                                                                                        name="payment_method_radio"
-                                                                                       id="method_transfer" value="โอนเงิน">
-                                                                                <label class="form-check-label" for="method_transfer">💳 โอนเงิน</label>
+                                                                                       id="method_transfer"
+                                                                                       value="โอนเงิน">
+                                                                                <label class="form-check-label"
+                                                                                       for="method_transfer">💳
+                                                                                    โอนเงิน</label>
                                                                             </div>
                                                                             <div class="form-check form-check-inline">
-                                                                                <input class="form-check-input" type="radio"
+                                                                                <input class="form-check-input"
+                                                                                       type="radio"
                                                                                        name="payment_method_radio"
-                                                                                       id="method_cash" value="เงินสด" checked>
-                                                                                <label class="form-check-label" for="method_cash">💵 เงินสด</label>
+                                                                                       id="method_cash" value="เงินสด"
+                                                                                       checked>
+                                                                                <label class="form-check-label"
+                                                                                       for="method_cash">💵
+                                                                                    เงินสด</label>
                                                                             </div>
                                                                         </div>
                                                                         <!-- input field -->
-                                                                        <input type="text" class="form-control flex-grow-1"
+                                                                        <input type="text"
+                                                                               class="form-control flex-grow-1"
                                                                                name="payment_method" id="payment_method"
-                                                                               placeholder="ระบุวิธีการชำระเงิน" readonly>
+                                                                               placeholder="ระบุวิธีการชำระเงิน"
+                                                                               readonly>
                                                                     </div>
                                                                 </div>
 
@@ -592,13 +608,13 @@ if (strlen($_SESSION['alogin']) == "") {
         // *** FOR SUBMIT FORM ***
         $("#recordModal").on('submit', '#recordForm', function (event) {
             event.preventDefault();
-            $('#save').attr('disabled', 'disabled');
+            //$('#save').attr('disabled', 'disabled');
 
             // ตรวจสอบ category_id ว่ามีการเลือกหรือยัง
             let categoryId = $('#category_id').val();
             if (!categoryId || categoryId === '0') {
                 alertify.error("กรุณาเลือกหมวดหมู่ค่าใช้จ่าย (Category)");
-                $('#save').attr('disabled', false);
+                //$('#save').attr('disabled', false);
                 return; // ยกเลิกการ submit
             }
 
@@ -639,12 +655,12 @@ if (strlen($_SESSION['alogin']) == "") {
                     alertify.success(data);
                     $('#recordForm')[0].reset();
                     $('#recordModal').modal('hide');
-                    $('#save').attr('disabled', false);
+                    //$('#save').attr('disabled', false);
                     $('#TableRecordList').DataTable().ajax.reload();
                 },
                 error: function (xhr, status, error) {
                     alertify.error("Error: " + error);
-                    $('#save').attr('disabled', false);
+                    //$('#save').attr('disabled', false);
                 }
             });
         });
@@ -1064,8 +1080,6 @@ if (strlen($_SESSION['alogin']) == "") {
         // ตั้งค่าตามค่า payment_method
         $('input[name="payment_method_radio"][value="' + payment_method + '"]').prop('checked', true);
     </script>
-
-
 
     </body>
     </html>
