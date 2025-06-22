@@ -464,7 +464,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
         // Trigger load employee modal table when modal is shown
         $('#SearchEmployeeModal').on('show.bs.modal', function () {
-            loadEmployeeModalTable();
+            //loadEmployeeModalTable();
         });
 
 
