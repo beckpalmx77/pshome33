@@ -586,7 +586,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             };
 
             $.ajax({
-                url: 'api/payroll_api.php', // คุณจะต้องสร้างไฟล์นี้เพื่อจัดการข้อมูลเงินเดือน
+                url: 'model/manage_payroll_data_detail_process.php', // คุณจะต้องสร้างไฟล์นี้เพื่อจัดการข้อมูลเงินเดือน
                 method: 'POST',
                 contentType: 'application/json', // ส่งข้อมูลเป็น JSON
                 data: JSON.stringify(payload),
