@@ -47,6 +47,17 @@ try {
     }
 
     if ($action === 'ADD') {
+        // *** START: Added check for existing emp_id, payroll_month, payroll_year ***
+        $stmt_check_exist = $conn->prepare("SELECT COUNT(*) FROM ims_payroll WHERE emp_id = ? AND payroll_month = ? AND payroll_year = ?");
+        $stmt_check_exist->execute([$emp_id, $payroll_month, $payroll_year]);
+        $count = $stmt_check_exist->fetchColumn();
+
+        if ($count > 0) {
+            echo json_encode(['status' => 'error', 'message' => 'มีข้อมูลเงินเดือนของพนักงานรหัส ' . $emp_id . ' สำหรับเดือน ' . $payroll_month . ' ปี ' . $payroll_year . ' อยู่แล้วในระบบ']);
+            exit; // Exit if data already exists
+        }
+        // *** END: Added check ***
+
         // Generate new doc_no if adding
         $stmt_last_doc = $conn->prepare("SELECT MAX(doc_no) AS last_doc_no FROM ims_payroll WHERE doc_no LIKE ?");
         $prefix = "PAY" . date("Ym"); // Example: PAY202506
@@ -84,7 +95,7 @@ try {
     }
 
     // Insert payroll details
-    $stmtDetail = $conn->prepare("INSERT INTO ims_payroll_detail 
+    $stmtDetail = $conn->prepare("INSERT INTO ims_payroll_detail
         (doc_id, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Added doc_date, emp_id, payroll_month, payroll_year, icd_type_sign
     $line_no = 1; // ims_payroll_detail does not have line_no in the SQL, but if it did, it would be used here. Assuming it is not needed.

@@ -343,12 +343,26 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
             $('#payroll_year').html(yearOptions);
 
-
             // Parse URL parameters
             let urlParams = new URLSearchParams(window.location.search);
             $("#sub_menu").html(urlParams.get("sub_menu") || "");
             $("#main_menu").html(urlParams.get("main_menu") || "");
             $('#action').val(urlParams.get("action"));
+
+            $('#doc_no').val(urlParams.get("doc_no"));
+            $('#emp_id').val(urlParams.get("emp_id"));
+            $('#employee_fullname').val(urlParams.get("employee_fullname"))
+
+            $('#salary').val(urlParams.get("salary"));
+            $('#salary_type').val(urlParams.get("salary_type"));
+
+            if (urlParams.get("salary_type") === 'D') {
+                $('#salary_type').val('รายวัน');
+            } else if (salaryType === 'M') {
+                $('#salary_type').val('รายเดือน');
+            } else {
+                $('#salary_type').val('');
+            }
 
             // Check action from URL parameters
             const action = urlParams.get("action");
@@ -471,9 +485,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         // Function to load existing payroll data for editing
         function loadPayrollData(doc_no) {
             $.ajax({
-                url: 'api/payroll_api.php', // คุณจะต้องสร้างไฟล์นี้ หรือตรวจสอบว่ามีอยู่แล้ว
-                method: 'POST',
-                data: {action: 'get_single', doc_no: doc_no},
+                url: 'model/manage_payroll_process.php', // คุณจะต้องสร้างไฟล์นี้ หรือตรวจสอบว่ามีอยู่แล้ว
+                action: 'POST',
+                data: {action: 'GET_DATA', doc_no: doc_no},
                 dataType: 'json',
                 success: function (response) {
                     if (response.success && response.data) {
@@ -486,10 +500,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#employee_fullname').val(header.employee_fullname); // You might need to fetch this based on emp_id
                         $('#payroll_month').val(header.payroll_month);
                         $('#payroll_year').val(header.payroll_year);
-
-                        // If you handle salary_type and salary externally when loading for EDIT,
-                        // ensure those external parts are called here.
-                        // Example if you need to set them from loaded header data:
                         $('#salary_type').val(header.salary_type_desc); // Assuming header.salary_type_desc exists
                         $('#salary').val(parseFloat(header.salary).toFixed(2)); // Assuming header.salary exists
 

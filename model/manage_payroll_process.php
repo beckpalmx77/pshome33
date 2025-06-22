@@ -29,6 +29,10 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "emp_id" => $result['emp_id'],
             "f_name" => $result['f_name'],
             "l_name" => $result['l_name'],
+            "payroll_month" => $result['payroll_month'],
+            "payroll_year" => $result['payroll_year'],
+            "salary_type" => $result['salary_type'],
+            "salary" => $result['salary'],
             "employee_fullname" => $result['employee_fullname'],
             "total_amount" => $result['total_amount'],
             "status" => $result['status']
