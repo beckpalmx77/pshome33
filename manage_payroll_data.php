@@ -158,8 +158,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <tr>
                                     <th style="width: 25%;">รายการ (รายได้/รายการหักเงิน)</th>
                                     <th style="width: 15%;">ประเภท</th>
-                                    <th style="width: 20%;">จำนวนวัน/หน่วย</th>
-                                    <th style="width: 20%;">จำนวนเงิน (ต่อวัน/หน่วย)</th>
+                                    <th style="width: 20%;">จำนวน</th>
+                                    <th style="width: 20%;">จำนวนเงิน</th>
                                     <th style="width: 20%;">รวมเงิน</th>
                                     <th style="width: 10%;">ลบ</th>
                                 </tr>

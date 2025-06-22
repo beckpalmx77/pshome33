@@ -158,8 +158,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <tr>
                                     <th style="width: 25%;">รายการ (รายได้/รายการหักเงิน)</th>
                                     <th style="width: 15%;">ประเภท</th>
-                                    <th style="width: 20%;">จำนวนวัน/หน่วย</th>
-                                    <th style="width: 20%;">จำนวนเงิน (ต่อวัน/หน่วย)</th>
+                                    <th style="width: 20%;">จำนวน</th>
+                                    <th style="width: 20%;">จำนวนเงิน</th>
                                     <th style="width: 20%;">รวมเงิน</th>
                                     <th style="width: 10%;">ลบ</th>
                                 </tr>
@@ -275,58 +275,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         let detailItems = [];
         let currentRowForSelection = null; // To store the current row when selecting employee
 
-        $(document).ready(function () {
-            // Initialize Datepicker
-            $('.datepicker').datepicker({
-                format: "dd-mm-yyyy",
-                todayHighlight: true,
-                language: "th",
-                autoclose: true
-            });
-
-            // Populate Payroll Month Dropdown
-            // Note: This needs a 'model/get_month_names.php' file or similar to provide month names
-            const months = [
-                {value: 1, text: 'มกราคม'}, {value: 2, text: 'กุมภาพันธ์'}, {value: 3, text: 'มีนาคม'},
-                {value: 4, text: 'เมษายน'}, {value: 5, text: 'พฤษภาคม'}, {value: 6, text: 'มิถุนายน'},
-                {value: 7, text: 'กรกฎาคม'}, {value: 8, text: 'สิงหาคม'}, {value: 9, text: 'กันยายน'},
-                {value: 10, text: 'ตุลาคม'}, {value: 11, text: 'พฤศจิกายน'}, {value: 12, text: 'ธันวาคม'}
-            ];
-            const currentMonth = new Date().getMonth() + 1; // getMonth() is 0-indexed
-            let monthOptions = '<option value="">-- เลือกเดือน --</option>';
-            months.forEach(month => {
-                monthOptions += `<option value="${month.value}" ${month.value === currentMonth ? 'selected' : ''}>${month.text}</option>`;
-            });
-            $('#payroll_month').html(monthOptions);
-
-            // Populate Payroll Year Dropdown
-            const currentYear = new Date().getFullYear();
-            let yearOptions = '<option value="">-- เลือกปี --</option>';
-            for (let i = currentYear - 5; i <= currentYear + 5; i++) {
-                yearOptions += `<option value="${i}" ${i === currentYear ? 'selected' : ''}>${i}</option>`;
-            }
-            $('#payroll_year').html(yearOptions);
-
-
-            // Parse URL parameters
-            let urlParams = new URLSearchParams(window.location.search);
-            $("#sub_menu").html(urlParams.get("sub_menu") || "");
-            $("#main_menu").html(urlParams.get("main_menu") || "");
-            $('#action').val(urlParams.get("action"));
-
-            // Load data if in EDIT mode
-            if (urlParams.get("action") !== 'ADD' && urlParams.get("doc_no")) {
-                loadPayrollData(urlParams.get("doc_no"));
-            } else {
-                // For ADD mode, generate a temporary doc_no or leave blank
-                // Example: Generate a simple timestamp-based ID
-                // $('#doc_no').val('NEW-' + Date.now());
-                // Or fetch from server for proper numbering
-            }
-
-            // Add new row to detail table
-            $('#addRow').on('click', function () {
-                const newRow = `
+        // Function to add a new detail row to the table
+        function addNewDetailRow() {
+            const newRow = `
 <tr>
     <td>
     <div class="d-flex">
@@ -356,9 +307,63 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         </button>
     </td>
 </tr>
-                `;
-                $('#detailTable tbody').append(newRow);
-                calculateTotalAmount();
+            `;
+            $('#detailTable tbody').append(newRow);
+            calculateTotalAmount();
+        }
+
+        $(document).ready(function () {
+            // Initialize Datepicker
+            $('.datepicker').datepicker({
+                format: "dd-mm-yyyy",
+                todayHighlight: true,
+                language: "th",
+                autoclose: true
+            });
+
+            // Populate Payroll Month Dropdown
+            const months = [
+                {value: 1, text: 'มกราคม'}, {value: 2, text: 'กุมภาพันธ์'}, {value: 3, text: 'มีนาคม'},
+                {value: 4, text: 'เมษายน'}, {value: 5, text: 'พฤษภาคม'}, {value: 6, text: 'มิถุนายน'},
+                {value: 7, text: 'กรกฎาคม'}, {value: 8, text: 'สิงหาคม'}, {value: 9, text: 'กันยายน'},
+                {value: 10, text: 'ตุลาคม'}, {value: 11, text: 'พฤศจิกายน'}, {value: 12, text: 'ธันวาคม'}
+            ];
+            const currentMonth = new Date().getMonth() + 1; // getMonth() is 0-indexed
+            let monthOptions = '<option value="">-- เลือกเดือน --</option>';
+            months.forEach(month => {
+                monthOptions += `<option><option value="${month.value}" ${month.value === currentMonth ? 'selected' : ''}>${month.text}</option>`;
+            });
+            $('#payroll_month').html(monthOptions);
+
+            // Populate Payroll Year Dropdown
+            const currentYear = new Date().getFullYear();
+            let yearOptions = '<option value="">-- เลือกปี --</option>';
+            for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+                yearOptions += `<option value="${i}" ${i === currentYear ? 'selected' : ''}>${i}</option>`;
+            }
+            $('#payroll_year').html(yearOptions);
+
+
+            // Parse URL parameters
+            let urlParams = new URLSearchParams(window.location.search);
+            $("#sub_menu").html(urlParams.get("sub_menu") || "");
+            $("#main_menu").html(urlParams.get("main_menu") || "");
+            $('#action').val(urlParams.get("action"));
+
+            // Check action from URL parameters
+            const action = urlParams.get("action");
+            const docNo = urlParams.get("doc_no");
+
+            if (action === 'ADD') {
+                addNewDetailRow(); // เรียกฟังก์ชันโดยตรง
+            } else if (docNo) { // ถ้ามี docNo แสดงว่าเป็นโหมดแก้ไข
+                loadPayrollData(docNo);
+            }
+
+
+            // Add new row to detail table (button click handler)
+            $('#addRow').on('click', function () {
+                addNewDetailRow(); // ปุ่มก็เรียกฟังก์ชันนี้เช่นกัน
             });
 
             // Remove detail row
@@ -382,10 +387,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 const empId = $(this).data('id');
                 const empName = $(this).data('name');
                 const empCode = $(this).data('code');
+                const salaryType = $(this).data('salary-type');
+                const salary = $(this).data('salary');
 
                 $('#emp_id').val(empId);
                 $('#employee_fullname').val(`${empName} (${empCode})`);
-                $('#SearchEmployeeModal').modal('hide'); // Corrected modal ID
+
+                // Set salary_type and salary
+                if (salaryType === 'D') {
+                    $('#salary_type').val('รายวัน');
+                } else if (salaryType === 'M') {
+                    $('#salary_type').val('รายเดือน');
+                } else {
+                    $('#salary_type').val('');
+                }
+                $('#salary').val(parseFloat(salary).toFixed(2));
+
+                $('#SearchEmployeeModal').modal('hide');
             });
         });
 
@@ -406,10 +424,54 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#total_amount').val(total.toFixed(2));
         }
 
+        // Function to load employee data for the modal table
+        function loadEmployeeModalTable() {
+            $.ajax({
+                url: 'api/employees_api.php', // ตรวจสอบเส้นทางให้ถูกต้อง
+                method: 'POST',
+                data: {action: 'get_all'},
+                dataType: 'json',
+                success: function (response) {
+                    const tableBody = $('#TableEmployeeList tbody');
+                    tableBody.empty();
+                    if (response.success && response.data.length > 0) {
+                        response.data.forEach(emp => {
+                            tableBody.append(`
+                                <tr>
+                                    <td>${emp.employee_code}</td>
+                                    <td>${emp.first_name} ${emp.last_name}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary select-employee-btn"
+                                                data-id="${emp.employee_id}"
+                                                data-name="${emp.first_name} ${emp.last_name}"
+                                                data-code="${emp.employee_code}"
+                                                data-salary-type="${emp.salary_type}"
+                                                data-salary="${emp.salary}">เลือก</button>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        tableBody.append('<tr><td colspan="3" class="text-center">ไม่พบข้อมูลพนักงาน</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error loading employee modal data:", status, error);
+                    alertify.error('ไม่สามารถโหลดข้อมูลพนักงานได้');
+                }
+            });
+        }
+
+        // Trigger load employee modal table when modal is shown
+        $('#SearchEmployeeModal').on('show.bs.modal', function () {
+            //loadEmployeeModalTable();
+        });
+
+
         // Function to load existing payroll data for editing
         function loadPayrollData(doc_no) {
             $.ajax({
-                url: 'api/payroll_api.php', // คุณจะต้องสร้างไฟล์นี้
+                url: 'api/payroll_api.php', // คุณจะต้องสร้างไฟล์นี้ หรือตรวจสอบว่ามีอยู่แล้ว
                 method: 'POST',
                 data: {action: 'get_single', doc_no: doc_no},
                 dataType: 'json',
@@ -424,6 +486,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#employee_fullname').val(header.employee_fullname); // You might need to fetch this based on emp_id
                         $('#payroll_month').val(header.payroll_month);
                         $('#payroll_year').val(header.payroll_year);
+
+                        // If you handle salary_type and salary externally when loading for EDIT,
+                        // ensure those external parts are called here.
+                        // Example if you need to set them from loaded header data:
+                        $('#salary_type').val(header.salary_type_desc); // Assuming header.salary_type_desc exists
+                        $('#salary').val(parseFloat(header.salary).toFixed(2)); // Assuming header.salary exists
+
 
                         $('#detailTable tbody').empty();
                         details.forEach(item => {
@@ -462,7 +531,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         }
 
-        // Save Button Handler
+        // Save Button Handler+
         $('#save').on('click', function (e) {
             e.preventDefault();
 
@@ -568,7 +637,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             $(document).on('click', '.select-this', function () {
                 const code = $(this).data('code');
-                const desc = $(this).data('desc'); // Corrected attribute name from previous turn
+                const desc = $(this).data('desc');
                 const sign = $(this).data('sign');
                 const sign_desc = $(this).data('sign_desc');
 
@@ -615,9 +684,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
         });
     </script>
-
-
-
 
 
     </body>
