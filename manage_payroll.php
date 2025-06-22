@@ -171,7 +171,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
         $(document).ready(function () {
             let formData = {action: "GET_PAYROLL", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
-                'lengthMenu': [[7, 10, 20, 50, 100], [7, 10, 20, 50, 100]],
+                'lengthMenu': [[6, 12, 24, 48, 100], [6, 12, 24, 48, 100]],
                 'language': {
                     search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
@@ -208,7 +208,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
         $("#btnAdd").click(function () {
             let main_menu = document.getElementById("main_menu").value;
             let sub_menu = document.getElementById("sub_menu").value;
-            let url = "manage_purchase_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
+            let url = "manage_payroll_data?title=จัดทำเงินเดือน(Payroll Transaction)"
                 + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                 + '&action=ADD';
             window.open(url, '_blank');
@@ -224,7 +224,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_purchase_process.php',
+                url: 'model/manage_payroll_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -233,25 +233,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let id = response[i].id;
                         let doc_no = response[i].doc_no;
                         let doc_date = response[i].doc_date;
-                        let requester = response[i].requester;
-                        let supplier_id = response[i].supplier_id;
-                        let supplier_name = response[i].supplier_name;
-                        let purpose = response[i].purpose;
+                        let payroll_month = response[i].payroll_month;
+                        let payroll_year = response[i].payroll_year;
                         let total_amount = response[i].total_amount;
-                        let picture_doc = response[i].picture_doc;
+                        let emp_id = response[i].emp_id;
+                        let employee_fullname = response[i].employee_fullname;
                         let main_menu = document.getElementById("main_menu").value;
                         let sub_menu = document.getElementById("sub_menu").value;
-                        let url = "manage_purchase_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
+                        let url = "manage_payroll_data?title=จัดทำเงินเดือน(Payroll Transaction)"
                             + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                             + '&id=' + id
                             + '&doc_no=' + doc_no
                             + '&doc_date=' + doc_date
-                            + '&purpose=' + purpose
-                            + '&requester=' + requester
-                            + '&supplier_id=' + supplier_id
-                            + '&supplier_name=' + supplier_name
+                            + '&emp_id=' + emp_id
+                            + '&employee_fullname=' + employee_fullname
+                            + '&payroll_month=' + payroll_month
+                            + '&payroll_year=' + payroll_year
                             + '&total_amount=' + total_amount
-                            + '&picture_doc=' + picture_doc
                             + '&action=UPDATE';
                         window.open(url, '_blank');
                     }
@@ -275,7 +273,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
         $("#confirmDeleteBtn").on("click", function () {
             if (deleteId) {
                 $.ajax({
-                    url: "model/manage_purchase_detail_process.php",
+                    url: "model/manage_payroll_detail_process.php",
                     method: "POST",
                     data: {id: deleteId, action: "DELETE"},
                     success: function (response) {
