@@ -122,7 +122,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="salary_type" class="form-label">ประเภทพนักงาน</label>
-                                        <input type="text" id="salary_type" name="salary_type" class="form-control" readonly>
+                                        <input type="text" id="salary_type" name="salary_type" class="form-control"
+                                               readonly>
                                     </div>
                                 </div>
 
@@ -135,20 +136,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                             </div>
 
-
                             <div class="row mt-3">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group has-success">
-                                        <label>เดือนเงินเดือน</label>
-                                        <select id="payroll_month" name="payroll_month" class="form-select"
-                                                required></select>
+                                        <label for="payroll_month" class="control-label">เดือน</label>
+                                        <select id="payroll_month" name="payroll_month"
+                                                class="form-control"
+                                                data-live-search="true" required>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group has-success">
-                                        <label>ปีเงินเดือน</label>
-                                        <select id="payroll_year" name="payroll_year" class="form-select"
-                                                required></select>
+                                        <label for="payroll_year" class="control-label">ปี</label>
+                                        <select id="payroll_year" name="payroll_year"
+                                                class="form-control"
+                                                data-live-search="true" required>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +181,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <tfoot>
                                     <tr>
                                         <td colspan="4" class="text-right"><strong>รวมเงิน :</strong></td>
-                                        <td><input type="text" class="form-control text-right" id="total_amount" readonly>
+                                        <td><input type="text" class="form-control text-right" id="total_amount"
+                                                   readonly>
                                         </td>
                                         <td></td>
                                     </tr>
@@ -267,20 +272,34 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     include('includes/Footer.php');
     ?>
 
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
 
+    <script src="js/modal/show_position_modal.js"></script>
+    <script src="js/modal/show_worktime_modal.js"></script>
+
+    <script src="js/util/calculate_datetime.js"></script>
+
+    <!-- Page level plugins -->
+
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
+
+    <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+
+    <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
+    <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
+    <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.th.min.js"></script>
-
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
     <script src="js/modal/show_employee_payroll_modal.js"></script>
 
@@ -449,10 +468,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             "dataSrc": "" // Assuming your PHP returns a direct array of objects
                         },
                         "columns": [
-                            { "data": "icd_type_id" },
-                            { "data": "icd_type_desc" },
-                            { "data": "icd_type_sign" },
-                            { "data": "icd_type_sign_desc" },
+                            {"data": "icd_type_id"},
+                            {"data": "icd_type_desc"},
+                            {"data": "icd_type_sign"},
+                            {"data": "icd_type_sign_desc"},
                             {
                                 "data": null,
                                 "defaultContent": '<button class="btn btn-sm btn-primary select-this">เลือก</button>',
