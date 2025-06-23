@@ -49,7 +49,7 @@ $("#TableEmployeeList").on('click', '.select', function () {
     $('#salary_type').val(salary_type_display);
     $('#salary').val(salary_raw); // ใส่ค่าดิบไปก่อน เพื่อดูว่ามีค่าอะไรอยู่
 
-    alertify.success(salary_type_display + " " + salary_raw);
+    //alertify.success(salary_type_display + " " + salary_raw);
     $('#SearchEmployeeModal').modal('hide');
 });
 
