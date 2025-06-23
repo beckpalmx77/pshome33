@@ -86,226 +86,205 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                         </div>
 
                                         <div class="modal fade" id="recordModal">
-                                            <div class="modal-dialog modal-lg">
+                                            <div class="modal-dialog modal-xl">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
+                                                        <h4 class="modal-title">รายละเอียดพนักงาน</h4>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                                 aria-hidden="true">×
                                                         </button>
                                                     </div>
                                                     <form method="post" id="recordForm" enctype="multipart/form-data">
                                                         <div class="modal-body">
-                                                            <div class="modal-body">
-
-                                                                <div class="form-group">
-                                                                    <label for="text"
-                                                                           class="control-label">รหัสพนักงาน</label>
-                                                                    <input type="emp_id" class="form-control"
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-3">
+                                                                    <label for="emp_id" class="control-label">รหัสพนักงาน</label>
+                                                                    <input type="text" class="form-control"
                                                                            id="emp_id" name="emp_id" readonly="true"
                                                                            placeholder="รหัสพนักงาน">
                                                                 </div>
 
-                                                                <div class="form-group">
+                                                                <div class="col-sm-3">
                                                                     <label>รูปภาพ</label>
                                                                     <input type="file" name="image" id="image"
                                                                            class="form-control" accept="image/*">
-                                                                    <input type="hidden" name="old_image" id="old_image">
+                                                                    <input type="hidden" name="old_image"
+                                                                           id="old_image">
                                                                     <br>
                                                                     <img id="preview-image" src="#"
-                                                                         style="max-width:150px; display:none;"
+                                                                         style="max-width:100px; display:none;"
                                                                          class="img-thumbnail"/>
                                                                 </div>
 
-                                                                <div class="form-row">
-                                                                    <div class="form-group col-md-6">
-                                                                        <label for="prefix" class="control-label">คำนำหน้าชื่อ</label>
-                                                                        <select id="prefix" name="prefix"
-                                                                                class="form-control"
-                                                                                data-live-search="true"
-                                                                                title="Please select">
-                                                                            <option value="นาย">นาย</option>
-                                                                            <option value="นาง">นาง</option>
-                                                                            <option value="นางสาว">นางสาว</option>
-                                                                        </select>
-                                                                    </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="prefix" class="control-label">คำนำหน้าชื่อ</label>
+                                                                    <select id="prefix" name="prefix"
+                                                                            class="form-control"
+                                                                            data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option value="นาย">นาย</option>
+                                                                        <option value="นาง">นาง</option>
+                                                                        <option value="นางสาว">นางสาว</option>
+                                                                    </select>
+                                                                </div>
 
-                                                                    <div class="form-group col-md-6">
-                                                                        <label for="sex"
-                                                                               class="control-label">เพศ</label>
-                                                                        <select id="sex" name="sex"
-                                                                                class="form-control"
-                                                                                data-live-search="true"
-                                                                                title="Please select">
-                                                                            <option value="-">ไม่ระบุ</option>
-                                                                            <option value="M">ชาย</option>
-                                                                            <option value="F">หญิง</option>
-                                                                        </select>
+                                                                <div class="col-sm-3">
+                                                                    <label for="sex" class="control-label">เพศ</label>
+                                                                    <select id="sex" name="sex"
+                                                                            class="form-control"
+                                                                            data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option value="-">ไม่ระบุ</option>
+                                                                        <option value="M">ชาย</option>
+                                                                        <option value="F">หญิง</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-3">
+                                                                    <label for="f_name"
+                                                                           class="control-label">ชื่อ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="f_name" name="f_name" required="required"
+                                                                           placeholder="ชื่อ">
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="l_name"
+                                                                           class="control-label">นามสกุล</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="l_name" name="l_name" required="required"
+                                                                           placeholder="นามสกุล">
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="nick_name" class="control-label">ชื่อเล่น</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="nick_name" name="nick_name"
+                                                                           required="required"
+                                                                           placeholder="ชื่อเล่น">
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="start_work_date" class="control-label">วันทีเริ่มงาน</label>
+                                                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                                    <input type="text" class="form-control"
+                                                                           id="start_work_date" name="start_work_date"
+                                                                           required="required" value="" readonly="true"
+                                                                           placeholder="วันทีเริ่มงาน">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-3">
+                                                                    <label for="work_age"
+                                                                           class="control-label">อายุงาน</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="work_age" name="work_age" value=""
+                                                                           readonly="true"
+                                                                           placeholder="อายุงาน">
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="status" class="control-label">สถานะการทำงาน</label>
+                                                                    <select id="status" name="status"
+                                                                            class="form-control" data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option value="Y" selected>ทำงานปกติ</option>
+                                                                        <option value="N">ลาออก</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="week_holiday" class="control-label">วันหยุดประจำสัปดาห์</label>
+                                                                    <select id="week_holiday" name="week_holiday"
+                                                                            class="form-control" data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option value="0">ไม่ระบุ</option>
+                                                                        <option value="1">วันจันทร์</option>
+                                                                        <option value="2">วันอังคาร</option>
+                                                                        <option value="3">วันพุธ</option>
+                                                                        <option value="4">วันพฤหัสบดี</option>
+                                                                        <option value="5">วันศุกร์</option>
+                                                                        <option value="6">วันเสาร์</option>
+                                                                        <option value="7">วันอาทิตย์</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="phone"
+                                                                           class="control-label">โทรศัพท์</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="phone" name="phone" placeholder="">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm2">
+                                                                    <label for="salary_type" class="control-label">ประเภทพนักงาน</label>
+                                                                    <select id="salary_type" name="salary_type"
+                                                                            class="form-control" data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option value="M">รายเดือน</option>
+                                                                        <option value="D">รายวัน</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-sm-2">
+                                                                    <label for="salary"
+                                                                           class="control-label">เงินเดือน/ค่าจ้าง</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="salary" name="salary" placeholder="">
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <input type="hidden" id="position_id"
+                                                                           name="position_id">
+                                                                    <label for="position_desc" class="control-label">ตำแหน่ง</label>
+                                                                    <div class="input-group">
+                                                                        <input type="text" class="form-control"
+                                                                               id="position_desc" name="position_desc"
+                                                                               readonly="true" placeholder="">
+                                                                        <div class="input-group-append">
+                                                                            <a data-toggle="modal"
+                                                                               href="#SearchPositionModal"
+                                                                               class="btn btn-primary">
+                                                                                เลือก <i class="fa fa-search"
+                                                                                         aria-hidden="true"></i>
+                                                                            </a>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
-
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-4">
-                                                                        <label for="f_name"
-                                                                               class="control-label">ชื่อ</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="f_name"
-                                                                               name="f_name"
-                                                                               required="required"
-                                                                               placeholder="ชื่อ">
-                                                                    </div>
-                                                                    <div class="col-sm-4">
-                                                                        <label for="l_name"
-                                                                               class="control-label">นามสกุล</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="l_name"
-                                                                               name="l_name"
-                                                                               required="required"
-                                                                               placeholder="นามสกุล">
-                                                                    </div>
-                                                                    <div class="col-sm-4">
-                                                                        <label for="nick_name"
-                                                                               class="control-label">ชื่อเล่น</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="nick_name"
-                                                                               name="nick_name"
-                                                                               required="required"
-                                                                               placeholder="ชื่อเล่น">
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-4">
-                                                                        <label for="start_work_date"
-                                                                               class="control-label">วันทีเริ่มงาน</label>
-                                                                        <i class="fa fa-calendar"
-                                                                           aria-hidden="true"></i>
-                                                                        <input type="text" class="form-control"
-                                                                               id="start_work_date"
-                                                                               name="start_work_date"
-                                                                               required="required"
-                                                                               value=""
-                                                                               readonly="true"
-                                                                               placeholder="วันทีเริ่มงาน">
-                                                                    </div>
-                                                                    <div class="col-sm-4">
-                                                                        <label for="work_age"
-                                                                               class="control-label">อายุงาน</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="work_age"
-                                                                               name="work_age"
-                                                                               value=""
-                                                                               readonly="true"
-                                                                               placeholder="อายุงาน">
-                                                                    </div>
-                                                                    <div class="col-sm-4">
-                                                                        <label for="status" class="control-label">สถานะการทำงาน</label>
-                                                                        <select id="status" name="status"
-                                                                                class="form-control"
-                                                                                data-live-search="true"
-                                                                                title="Please select">
-                                                                            <option value="Y" selected>ทำงานปกติ
-                                                                            </option>
-                                                                            <option value="N">ลาออก</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-8">
-                                                                        <input type="hidden" id="position_id"
-                                                                               name="position_id">
-                                                                        <label for="position_desc"
-                                                                               class="control-label">ตำแหน่ง</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="position_desc"
-                                                                               name="position_desc"
-                                                                               readonly="true"
-                                                                               placeholder="">
-                                                                    </div>
-
-                                                                    <div class="col-sm-2">
-                                                                        <label for="position"
-                                                                               class="control-label">เลือก</label>
-                                                                        <a data-toggle="modal"
-                                                                           href="#SearchPositionModal"
-                                                                           class="btn btn-primary">
-                                                                            Click <i class="fa fa-search"
-                                                                                     aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="form-group row">
-                                                                    <!-- บรรทัดที่ 1: วันหยุด + โทรศัพท์ -->
-                                                                    <div class="col-sm-6">
-                                                                        <label for="week_holiday" class="control-label">วันหยุดประจำสัปดาห์</label>
-                                                                        <select id="week_holiday" name="week_holiday"
-                                                                                class="form-control"
-                                                                                data-live-search="true"
-                                                                                title="Please select">
-                                                                            <option value="0">ไม่ระบุ</option>
-                                                                            <option value="1">วันจันทร์</option>
-                                                                            <option value="2">วันอังคาร</option>
-                                                                            <option value="3">วันพุธ</option>
-                                                                            <option value="4">วันพฤหัสบดี</option>
-                                                                            <option value="5">วันศุกร์</option>
-                                                                            <option value="6">วันเสาร์</option>
-                                                                            <option value="7">วันอาทิตย์</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                    <div class="col-sm-6">
-                                                                        <label for="phone" class="control-label">โทรศัพท์</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="phone" name="phone" placeholder="">
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- บรรทัดที่ 2: ตารางเวลาทำงาน -->
-                                                                <div class="form-group row">
-                                                                    <!-- hidden id -->
+                                                                <div class="col-sm-4">
                                                                     <input type="hidden" class="form-control"
                                                                            id="work_time_id" name="work_time_id">
-
-                                                                    <div class="col-sm-10">
-                                                                        <label for="work_time_detail"
-                                                                               class="control-label">ตารางเวลาทำงาน</label>
+                                                                    <label for="work_time_detail" class="control-label">ตารางเวลาทำงาน</label>
+                                                                    <div class="input-group">
                                                                         <input type="text" class="form-control"
                                                                                id="work_time_detail"
-                                                                               name="work_time_detail" readonly
-                                                                               placeholder="ตารางเวลาทำงาน">
-                                                                    </div>
-
-                                                                    <div class="col-sm-2">
-                                                                        <label for="work_time" class="control-label">เลือก</label>
-                                                                        <a data-toggle="modal"
-                                                                           href="#SearchWorkTimeModal"
-                                                                           class="btn btn-primary form-control mt-1">
-                                                                            Click <i class="fa fa-search"
-                                                                                     aria-hidden="true"></i>
-                                                                        </a>
+                                                                               name="work_time_detail"
+                                                                               readonly placeholder="ตารางเวลาทำงาน">
+                                                                        <div class="input-group-append">
+                                                                            <a data-toggle="modal"
+                                                                               href="#SearchWorkTimeModal"
+                                                                               class="btn btn-primary">
+                                                                                เลือก <i class="fa fa-search"
+                                                                                         aria-hidden="true"></i>
+                                                                            </a>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
 
+                                                        </div>
 
-                                                                <div class="modal-footer">
-                                                                    <input type="hidden" name="id" id="id"/>
-                                                                    <input type="hidden" name="action" id="action"
-                                                                           value=""/>
-                                                                    <span class="icon-input-btn">
-                                                                <i class="fa fa-check"></i>
+                                                        <div class="modal-footer">
+                                                            <input type="hidden" name="id" id="id"/>
+                                                            <input type="hidden" name="action" id="action" value=""/>
+                                                            <span class="icon-input-btn">
+                                                            <i class="fa fa-check"></i>
                                                             <input type="submit" name="save" id="save"
-                                                                   class="btn btn-primary" value="Save"/>
+                                                                   class="btn btn-primary" value="บันทึก"/>
                                                             </span>
-                                                                    <button type="button" class="btn btn-danger"
-                                                                            data-dismiss="modal">Close <i
-                                                                                class="fa fa-times"></i>
-                                                                    </button>
-                                                                </div>
+                                                            <button type="button" class="btn btn-danger"
+                                                                    data-dismiss="modal">ปิด <i class="fa fa-times"></i>
+                                                            </button>
+                                                        </div>
                                                     </form>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -609,6 +588,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         let work_time_id = response[i].work_time_id;
                         let work_time_detail = response[i].work_time_detail;
                         let remark = response[i].remark;
+                        let salary_type = response[i].salary_type;
+                        let salary = response[i].salary;
                         let week_holiday = response[i].week_holiday;
                         let work_age = 0;
                         let start_w_date = start_work_date.substr(3, 2) + "/" + start_work_date.substr(0, 2) + "/" + start_work_date.substr(6, 10);
@@ -630,6 +611,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         $('#work_time_id').val(work_time_id);
                         $('#work_time_detail').val(work_time_detail);
                         $('#remark').val(remark);
+                        $('#salary_type').val(salary_type);
+                        $('#salary').val(salary);
                         $('#week_holiday').val(week_holiday);
                         $('#work_age').val(work_age);
 

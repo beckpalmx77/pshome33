@@ -1,9 +1,9 @@
 <?php
-include 'includes/Header.php';
 // manage_payroll_data.php - สำหรับจัดการข้อมูลเงินเดือนพนักงานรายวัน
 session_start();
 error_reporting(0); // ปิดการแสดง error ใน Production environment
-include('includes/Header.php');
+include('includes/Header.php'); // Only include it once
+
 // include('config/connect_db.php'); // ไม่ได้ใช้ PDO ตรงๆ ในหน้านี้ แต่จะเรียกใช้ใน process file
 
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
@@ -58,6 +58,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 filter: invert(1);
             }
 
+            /* Fix for DataTables search input width */
+            div.dataTables_wrapper div.dataTables_filter input {
+                width: auto;
+                margin-left: 0.5em;
+            }
         </style>
     </head>
     <body id="page-top">
@@ -95,11 +100,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
-                                <div class="col-md-2"> <div class="form-group">
+                                <div class="col-md-2">
+                                    <div class="form-group">
                                         <label for="employee_fullname" class="control-label">พนักงาน</label>
                                         <input type="text" id="employee_fullname" name="employee_fullname"
                                                class="form-control"
-                                               autocomplete="off" required readonly> <input type="hidden" id="emp_id" name="emp_id">
+                                               autocomplete="off" required readonly>
+                                        <input type="hidden" id="emp_id" name="emp_id">
                                     </div>
                                 </div>
 
@@ -129,7 +136,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             </div>
 
 
-                            <div class="row mt-8">
+                            <div class="row mt-3">
                                 <div class="col-md-3">
                                     <div class="form-group has-success">
                                         <label>เดือนเงินเดือน</label>
@@ -153,31 +160,33 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <button class="btn btn-primary" id="addRow" type="button">+ เพิ่มรายการ</button>
                             </div>
 
-                            <table id='detailTable' class='display dataTable'>
-                                <thead>
-                                <tr>
-                                    <th style="width: 25%;">รายการ (รายได้/รายการหักเงิน)</th>
-                                    <th style="width: 15%;">ประเภท</th>
-                                    <th style="width: 20%;">จำนวน</th>
-                                    <th style="width: 20%;">จำนวนเงิน</th>
-                                    <th style="width: 20%;">รวมเงิน</th>
-                                    <th style="width: 10%;">ลบ</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                                <tfoot>
-                                <tr>
-                                    <td colspan="4" class="text-right"><strong>รวมเงิน :</strong></td>
-                                    <td><input type="text" class="form-control text-right" id="total_amount" readonly>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                </tfoot>
-                            </table>
+                            <div class="table-responsive">
+                                <table id='detailTable' class='display dataTable table table-bordered'>
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 25%;">รายการ (รายได้/รายการหักเงิน)</th>
+                                        <th style="width: 15%;">ประเภท</th>
+                                        <th style="width: 20%;">จำนวน</th>
+                                        <th style="width: 20%;">จำนวนเงิน</th>
+                                        <th style="width: 20%;">รวมเงิน</th>
+                                        <th style="width: 10%;">ลบ</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td colspan="4" class="text-right"><strong>รวมเงิน :</strong></td>
+                                        <td><input type="text" class="form-control text-right" id="total_amount" readonly>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                             <br>
 
-                            <div class="modal-footer justify-content-right">
+                            <div class="modal-footer justify-content-end">
                                 <input type="hidden" name="action" id="action" value=""/>
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
                                     บันทึก <i class="fa fa-save"></i>
@@ -198,10 +207,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             aria-hidden="true">×
                                     </button>
                                 </div>
-                                <div class="container"></div>
                                 <div class="modal-body">
-                                    <div class="modal-body">
-                                        <table id="TableEmployeeList" class="display" width="100%">
+                                    <div class="table-responsive">
+                                        <table id="TableEmployeeList" class="display table table-bordered" width="100%">
                                             <thead>
                                             <tr>
                                                 <th>รหัสพนักงาน</th>
@@ -209,6 +217,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
+                                            <tbody>
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -227,19 +237,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-bordered" id="incomedeductTable">
-                                        <thead>
-                                        <tr>
-                                            <th>รหัส</th>
-                                            <th>รายละเอียด</th>
-                                            <th>+/-</th>
-                                            <th>ประเภท</th>
-                                            <th>เลือก</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered display" id="incomedeductTable" width="100%">
+                                            <thead>
+                                            <tr>
+                                                <th>รหัส</th>
+                                                <th>รายละเอียด</th>
+                                                <th>+/-</th>
+                                                <th>ประเภท</th>
+                                                <th>เลือก</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -251,11 +263,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     </div>
 
     <?php
-    include('includes/Modal-Logout.php'); // ถ้ามี Modal Logout
-    include('includes/Footer.php');    // ถ้ามี Footer
+    include('includes/Modal-Logout.php');
+    include('includes/Footer.php');
     ?>
 
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
@@ -270,43 +284,47 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script src="js/modal/show_employee_payroll_modal.js"></script>
 
+
     <script>
         // Global variable to keep track of added detail items
         let detailItems = [];
-        let currentRowForSelection = null; // To store the current row when selecting employee
+        let currentRowForSelection = null; // To store the current row when selecting an income/deduction item
 
         // Function to add a new detail row to the table
         function addNewDetailRow() {
+            // Check if it's the very first row being added
+            const isFirstRow = $('#detailTable tbody tr').length === 0;
+
             const newRow = `
-<tr>
-    <td>
-    <div class="d-flex">
-      <input type="text" class="form-control icd_type_desc" value="" readonly style="flex: 1;">
-      <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;">
-        <i class="fa fa-search"></i>
-      </a>
-    </div>
-    </td>
-    <td>
-        <input type="hidden" class="form-control icd_type_id" value="" readonly>
-        <input type="hidden" class="form-control icd_type_sign" value="" readonly>
-        <input type="text" class="form-control icd_type_sign_desc" value="" readonly style="flex: 1;">
-    </td>
-    <td>
-        <input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="0" required>
-    </td>
-    <td>
-        <input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="0" required>
-    </td>
-    <td>
-        <input type="number" class="form-control text-right item-total-amount" value="0.00" readonly tabindex="-1">
-    </td>
-    <td class="text-center">
-        <button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-    </td>
-</tr>
+                <tr>
+                    <td>
+                        <div class="d-flex">
+                            <input type="text" class="form-control icd_type_desc" value="${isFirstRow ? 'เงินรายได้' : ''}" readonly style="flex: 1;">
+                            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;" title="เลือกรายการ">
+                                <i class="fa fa-search"></i>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="hidden" class="form-control icd_type_id" value="${isFirstRow ? 'IC-0001' : ''}" readonly>
+                        <input type="hidden" class="form-control icd_type_sign" value="${isFirstRow ? '+' : ''}" readonly>
+                        <input type="text" class="form-control icd_type_sign_desc" value="${isFirstRow ? 'รายรับ' : ''}" readonly style="flex: 1;">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="0" required>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="0" required>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control text-right item-total-amount" value="0.00" readonly tabindex="-1">
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
             `;
             $('#detailTable tbody').append(newRow);
             calculateTotalAmount();
@@ -314,7 +332,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
         $(document).ready(function () {
             // Initialize Datepicker
-            $('.datepicker').datepicker({
+            $('#doc_date').datepicker({ // Corrected ID
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
                 language: "th",
@@ -331,7 +349,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             const currentMonth = new Date().getMonth() + 1; // getMonth() is 0-indexed
             let monthOptions = '<option value="">-- เลือกเดือน --</option>';
             months.forEach(month => {
-                monthOptions += `<option><option value="${month.value}" ${month.value === currentMonth ? 'selected' : ''}>${month.text}</option>`;
+                monthOptions += `<option value="${month.value}" ${month.value === currentMonth ? 'selected' : ''}>${month.text}</option>`;
             });
             $('#payroll_month').html(monthOptions);
 
@@ -351,25 +369,30 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             $('#doc_no').val(urlParams.get("doc_no"));
             $('#emp_id').val(urlParams.get("emp_id"));
-            $('#employee_fullname').val(urlParams.get("employee_fullname"))
+            $('#employee_fullname').val(urlParams.get("employee_fullname"));
 
-            $('#salary').val(urlParams.get("salary"));
-            $('#salary_type').val(urlParams.get("salary_type"));
+            // Set salary_type and salary from URL params
+            const salaryTypeUrl = urlParams.get("salary_type");
+            const salaryValue = urlParams.get("salary");
 
-            if (urlParams.get("salary_type") === 'D') {
+            if (salaryTypeUrl === 'D') {
                 $('#salary_type').val('รายวัน');
-            } else if (salaryType === 'M') {
+            } else if (salaryTypeUrl === 'M') {
                 $('#salary_type').val('รายเดือน');
             } else {
                 $('#salary_type').val('');
             }
+            if (salaryValue) {
+                $('#salary').val(parseFloat(salaryValue).toFixed(2));
+            }
+
 
             // Check action from URL parameters
             const action = urlParams.get("action");
             const docNo = urlParams.get("doc_no");
 
             if (action === 'ADD') {
-                addNewDetailRow(); // เรียกฟังก์ชันโดยตรง
+                addNewDetailRow();
             } else if (docNo) { // ถ้ามี docNo แสดงว่าเป็นโหมดแก้ไข
                 loadPayrollData(docNo);
             }
@@ -377,7 +400,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             // Add new row to detail table (button click handler)
             $('#addRow').on('click', function () {
-                addNewDetailRow(); // ปุ่มก็เรียกฟังก์ชันนี้เช่นกัน
+                addNewDetailRow();
             });
 
             // Remove detail row
@@ -397,29 +420,61 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
 
             // Handle selection from Employee Modal
-            $(document).on('click', '.select-employee-btn', function () {
-                const empId = $(this).data('id');
-                const empName = $(this).data('name');
-                const empCode = $(this).data('code');
-                const salaryType = $(this).data('salary-type');
-                const salary = $(this).data('salary');
+            // This part is handled by show_employee_payroll_modal.js,
+            // so we only need to listen for the event it triggers.
+            // The show_employee_payroll_modal.js file already updates #emp_id, #employee_fullname, #salary_type, #salary
+            // upon selection, and hides the modal.
 
-                $('#emp_id').val(empId);
-                $('#employee_fullname').val(`${empName} (${empCode})`);
+            // Initialize DataTables for modals
+            let employeeDataTable; // This will now be managed by show_employee_payroll_modal.js
+            let incomeDeductDataTable;
 
-                // Set salary_type and salary
-                if (salaryType === 'D') {
-                    $('#salary_type').val('รายวัน');
-                } else if (salaryType === 'M') {
-                    $('#salary_type').val('รายเดือน');
-                } else {
-                    $('#salary_type').val('');
-                }
-                $('#salary').val(parseFloat(salary).toFixed(2));
-
-                $('#SearchEmployeeModal').modal('hide');
+            // Initialize Employee DataTable when modal is shown (This part is primarily for reference,
+            // the actual DataTable logic for employees is in show_employee_payroll_modal.js)
+            $('#SearchEmployeeModal').on('shown.bs.modal', function () {
+                // The DataTable for employees is initialized and managed by show_employee_payroll_modal.js
+                // We don't need to re-initialize or reload it here, as show_employee_payroll_modal.js handles it.
+                // However, ensure the script is loaded and functions correctly.
             });
-        });
+
+            // Initialize Income/Deduct DataTable when modal is shown
+            $('#itemModal').on('shown.bs.modal', function () {
+                if (!incomeDeductDataTable) {
+                    incomeDeductDataTable = $('#incomedeductTable').DataTable({
+                        "processing": true,
+                        "serverSide": false, // Usually, income/deduct types are not that many, so client-side is fine
+                        "ajax": {
+                            "url": "model/get_income_deduct.php", // Your API to fetch income/deduct data
+                            "type": "GET",
+                            "dataSrc": "" // Assuming your PHP returns a direct array of objects
+                        },
+                        "columns": [
+                            { "data": "icd_type_id" },
+                            { "data": "icd_type_desc" },
+                            { "data": "icd_type_sign" },
+                            { "data": "icd_type_sign_desc" },
+                            {
+                                "data": null,
+                                "defaultContent": '<button class="btn btn-sm btn-primary select-this">เลือก</button>',
+                                "orderable": false
+                            }
+                        ],
+                        "createdRow": function (row, data, dataIndex) {
+                            // Add data attributes to the select button for easy retrieval
+                            $(row).find('.select-this').attr({
+                                'data-code': data.icd_type_id,
+                                'data-desc': data.icd_type_desc,
+                                'data-sign': data.icd_type_sign,
+                                'data-sign_desc': data.icd_type_sign_desc
+                            });
+                        }
+                    });
+                } else {
+                    incomeDeductDataTable.ajax.reload(null, false); // Reload data if already initialized
+                }
+            });
+
+        }); // End of document.ready
 
         // Function to calculate total amount
         function calculateTotalAmount() {
@@ -433,60 +488,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 } else if (sign === '-') {
                     total -= amount; // Subtract for deduction
                 }
-                // If sign is neither '+' nor '-', it will not affect the total.
             });
             $('#total_amount').val(total.toFixed(2));
         }
 
-        // Function to load employee data for the modal table
-        function loadEmployeeModalTable() {
-            $.ajax({
-                url: 'api/employees_api.php', // ตรวจสอบเส้นทางให้ถูกต้อง
-                method: 'POST',
-                data: {action: 'get_all'},
-                dataType: 'json',
-                success: function (response) {
-                    const tableBody = $('#TableEmployeeList tbody');
-                    tableBody.empty();
-                    if (response.success && response.data.length > 0) {
-                        response.data.forEach(emp => {
-                            tableBody.append(`
-                                <tr>
-                                    <td>${emp.employee_code}</td>
-                                    <td>${emp.first_name} ${emp.last_name}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary select-employee-btn"
-                                                data-id="${emp.employee_id}"
-                                                data-name="${emp.first_name} ${emp.last_name}"
-                                                data-code="${emp.employee_code}"
-                                                data-salary-type="${emp.salary_type}"
-                                                data-salary="${emp.salary}">เลือก</button>
-                                    </td>
-                                </tr>
-                            `);
-                        });
-                    } else {
-                        tableBody.append('<tr><td colspan="3" class="text-center">ไม่พบข้อมูลพนักงาน</td></tr>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("AJAX Error loading employee modal data:", status, error);
-                    alertify.error('ไม่สามารถโหลดข้อมูลพนักงานได้');
-                }
-            });
-        }
-
-        // Trigger load employee modal table when modal is shown
-        $('#SearchEmployeeModal').on('show.bs.modal', function () {
-            //loadEmployeeModalTable();
-        });
-
-
         // Function to load existing payroll data for editing
         function loadPayrollData(doc_no) {
             $.ajax({
-                url: 'model/manage_payroll_process.php', // คุณจะต้องสร้างไฟล์นี้ หรือตรวจสอบว่ามีอยู่แล้ว
-                action: 'POST',
+                url: 'model/manage_payroll_process.php',
+                method: 'POST', // Use POST for data retrieval
                 data: {action: 'GET_DATA', doc_no: doc_no},
                 dataType: 'json',
                 success: function (response) {
@@ -495,13 +505,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         const details = response.data.details;
 
                         $('#doc_no').val(header.doc_no);
-                        $('#doc_date').val(header.doc_date); // Assuming format DD-MM-YYYY
+                        // Ensure doc_date is correctly formatted if needed, currently assumes DD-MM-YYYY
+                        $('#doc_date').val(header.doc_date);
                         $('#emp_id').val(header.emp_id);
-                        $('#employee_fullname').val(header.employee_fullname); // You might need to fetch this based on emp_id
+                        $('#employee_fullname').val(header.employee_fullname);
                         $('#payroll_month').val(header.payroll_month);
                         $('#payroll_year').val(header.payroll_year);
-                        $('#salary_type').val(header.salary_type_desc); // Assuming header.salary_type_desc exists
-                        $('#salary').val(parseFloat(header.salary).toFixed(2)); // Assuming header.salary exists
+
+                        // Translate salary_type for display
+                        let displaySalaryType = '';
+                        if (header.salary_type === 'D') {
+                            displaySalaryType = 'รายวัน';
+                        } else if (header.salary_type === 'M') {
+                            displaySalaryType = 'รายเดือน';
+                        } else {
+                            displaySalaryType = '';
+                        }
+                        $('#salary_type').val(displaySalaryType);
+                        $('#salary').val(parseFloat(header.salary).toFixed(2));
 
 
                         $('#detailTable tbody').empty();
@@ -510,20 +531,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <tr>
                                     <td>
                                         <div class="d-flex">
-                                            <input type="text" class="form-control icd_type_desc" value="${item.icd_type_desc}" readonly style="flex: 1;">
-                                            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;">
+                                            <input type="text" class="form-control icd_type_desc" value="${item.icd_type_desc || ''}" readonly style="flex: 1;">
+                                            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;" title="เลือกรายการ">
                                                 <i class="fa fa-search"></i>
                                             </a>
                                         </div>
                                     </td>
                                     <td>
-                                        <input type="hidden" class="form-control icd_type_id" value="${item.icd_type_id}" readonly>
-                                        <input type="hidden" class="form-control icd_type_sign" value="${item.icd_type_sign}" readonly>
-                                        <input type="text" class="form-control icd_type_sign_desc" value="${item.icd_type_sign_desc}" readonly style="flex: 1;">
+                                        <input type="hidden" class="form-control icd_type_id" value="${item.icd_type_id || ''}" readonly>
+                                        <input type="hidden" class="form-control icd_type_sign" value="${item.icd_type_sign || ''}" readonly>
+                                        <input type="text" class="form-control icd_type_sign_desc" value="${item.icd_type_sign_desc || ''}" readonly style="flex: 1;">
                                     </td>
-                                    <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity}" required></td>
-                                    <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit}" required></td>
-                                    <td><input type="number" class="form-control text-right item-total-amount" value="${item.amount}" readonly></td>
+                                    <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity || 0}" required></td>
+                                    <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit || 0}" required></td>
+                                    <td><input type="number" class="form-control text-right item-total-amount" value="${(item.amount || 0).toFixed(2)}" readonly></td>
                                     <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
                                 </tr>
                             `;
@@ -541,7 +562,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         }
 
-        // Save Button Handler+
+        // Save Button Handler
         $('#save').on('click', function (e) {
             e.preventDefault();
 
@@ -596,9 +617,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             };
 
             $.ajax({
-                url: 'model/manage_payroll_data_detail_process.php', // คุณจะต้องสร้างไฟล์นี้เพื่อจัดการข้อมูลเงินเดือน
+                url: 'model/manage_payroll_data_detail_process.php',
                 method: 'POST',
-                contentType: 'application/json', // ส่งข้อมูลเป็น JSON
+                contentType: 'application/json', // Send data as JSON
                 data: JSON.stringify(payload),
                 dataType: 'json',
                 success: function (response) {
@@ -637,12 +658,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).ready(function () {
-            let currentRow = null;
+            // currentRowForSelection is already global
 
             $(document).on('click', '.btn-select-icd_type', function () {
-                currentRow = $(this).closest('tr');
-                loadIncomeDeductTable();
-                $('#itemModal').modal('show');
+                currentRowForSelection = $(this).closest('tr');
+                $('#itemModal').modal('show'); // DataTable will be initialized/reloaded on 'shown.bs.modal'
             });
 
             $(document).on('click', '.select-this', function () {
@@ -651,47 +671,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 const sign = $(this).data('sign');
                 const sign_desc = $(this).data('sign_desc');
 
-                if (currentRow) {
-                    currentRow.find('.icd_type_id').val(code);
-                    currentRow.find('.icd_type_desc').val(desc);
-                    currentRow.find('.icd_type_sign').val(sign);
-                    currentRow.find('.icd_type_sign_desc').val(sign_desc);
+                if (currentRowForSelection) {
+                    currentRowForSelection.find('.icd_type_id').val(code);
+                    currentRowForSelection.find('.icd_type_desc').val(desc);
+                    currentRowForSelection.find('.icd_type_sign').val(sign);
+                    currentRowForSelection.find('.icd_type_sign_desc').val(sign_desc);
+                    // Re-calculate row total if quantity/amount per unit were already entered
+                    const quantity = parseFloat(currentRowForSelection.find('.item-quantity').val()) || 0;
+                    const amountPerUnit = parseFloat(currentRowForSelection.find('.item-amount-per-unit').val()) || 0;
+                    const totalAmount = quantity * amountPerUnit;
+                    currentRowForSelection.find('.item-total-amount').val(totalAmount.toFixed(2));
+                    calculateTotalAmount(); // Update grand total
                 }
 
                 $('#itemModal').modal('hide');
             });
 
-            function loadIncomeDeductTable() {
-                $.ajax({
-                    url: 'model/get_income_deduct.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        let html = '';
-                        data.forEach(item => {
-                            html += `
-<tr>
-    <td>${item.icd_type_id}</td>
-    <td>${item.icd_type_desc}</td>
-    <td>${item.icd_type_sign}</td>
-    <td>${item.icd_type_sign_desc}</td>
-    <td>
-        <button class="btn btn-sm btn-primary select-this"
-                data-code="${item.icd_type_id}"
-                data-desc="${item.icd_type_desc}"
-                data-sign="${item.icd_type_sign}"
-                data-sign_desc="${item.icd_type_sign_desc}">เลือก</button>
-    </td>
-</tr>`;
-                        });
-                        $('#incomedeductTable tbody').html(html);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("AJAX Error loading income/deduct data:", status, error);
-                        alert('โหลดข้อมูลไม่สำเร็จ');
-                    }
-                });
-            }
+            // The loadIncomeDeductTable function is now replaced by DataTables AJAX in document.ready
+            // function loadIncomeDeductTable() { ... }
         });
     </script>
 

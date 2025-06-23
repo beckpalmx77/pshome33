@@ -38,6 +38,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "work_time_id" => $result['work_time_id'],
             "work_time_detail" => $result['work_time_detail'],
             "remark" => $result['remark'],
+            "salary_type" => $result['salary_type'],
+            "salary" => $result['salary'],
             "image" => $result['image'],
             "status" => $result['status']);
     }
@@ -74,6 +76,8 @@ if ($_POST["action"] === 'ADD') {
             $week_holiday = $_POST["week_holiday"];
             $work_time_id = $_POST["work_time_id"];
             $remark = $_POST["remark"];
+            $salary_type = $_POST["salary_type"];
+            $salary = $_POST["salary"];
             $sex = $_POST["sex"];
             $prefix = $_POST["prefix"];
             $nick_name = $_POST["nick_name"];
@@ -109,8 +113,8 @@ if ($_POST["action"] === 'ADD') {
                 //file_put_contents("emp_duplicate.log", $log_message, FILE_APPEND);
                 echo $dup;
             } else {
-                $sql = "INSERT INTO memployee (emp_id, f_name, l_name, week_holiday, work_time_id, position_id, remark, sex, prefix, nick_name, start_work_date, status, phone, year, image)
-                VALUES (:emp_id, :f_name, :l_name, :week_holiday, :work_time_id, :position_id, :remark, :sex, :prefix, :nick_name, :start_work_date, :status, :phone, :year, :image)";
+                $sql = "INSERT INTO memployee (emp_id, f_name, l_name, week_holiday, work_time_id, position_id, remark, sex, prefix, nick_name, start_work_date, status, phone, year, image ,salary_type, salary)
+                VALUES (:emp_id, :f_name, :l_name, :week_holiday, :work_time_id, :position_id, :remark, :sex, :prefix, :nick_name, :start_work_date, :status, :phone, :year, :image ,:salary_type, :salary)";
                 $query = $conn->prepare($sql);
                 $query->bindParam(':emp_id', $emp_id);
                 $query->bindParam(':f_name', $f_name);
@@ -127,6 +131,8 @@ if ($_POST["action"] === 'ADD') {
                 $query->bindParam(':phone', $phone);
                 $query->bindParam(':year', $year);
                 $query->bindParam(':image', $image_filename);
+                $query->bindParam(':salary_type', $salary_type);
+                $query->bindParam(':salary', $salary);
 
                 if (!$query->execute()) {
                     $errorInfo = $query->errorInfo();
@@ -154,6 +160,8 @@ if ($_POST["action"] === 'UPDATE') {
         $week_holiday = $_POST["week_holiday"];
         $work_time_id = $_POST["work_time_id"];
         $remark = $_POST["remark"];
+        $salary_type = $_POST["salary_type"];
+        $salary = $_POST["salary"];
         $sex = $_POST["sex"];
         $prefix = $_POST["prefix"];
         $nick_name = $_POST["nick_name"];
@@ -181,7 +189,11 @@ if ($_POST["action"] === 'UPDATE') {
         if (!$success) {
             file_put_contents("upload_error.txt", "ไม่สามารถอัปโหลดรูปได้: " . print_r($_FILES['image'], true));
         }
-
+/*
+        $myfile = fopen("a-permission.txt", "w") or die("Unable to open file!");
+        fwrite($myfile, " Row file_name = " . $image_filename);
+        fclose($myfile);
+*/
         // ตรวจสอบว่ามี emp_id ซ้ำแต่ไม่ใช่ record ตัวเอง
         $sql_find = "SELECT COUNT(*) FROM memployee WHERE emp_id = :emp_id AND id != :id";
         $stmt_check = $conn->prepare($sql_find);
@@ -207,7 +219,9 @@ if ($_POST["action"] === 'UPDATE') {
                     start_work_date = :start_work_date,
                     status = :status,
                     phone = :phone,
-                    image = :image
+                    image = :image,
+                    salary_type = :salary_type,
+                    salary = :salary
                     WHERE id = :id";
 
             $query = $conn->prepare($sql);
@@ -225,6 +239,8 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':status', $status);
             $query->bindParam(':phone', $phone);
             $query->bindParam(':image', $image_filename);
+            $query->bindParam(':salary_type', $salary_type);
+            $query->bindParam(':salary', $salary);
             $query->bindParam(':id', $id);
 
             $query->execute();
