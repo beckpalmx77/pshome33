@@ -43,6 +43,12 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
     exit;
 }
 
+if ($_GET["action"] === 'DELETE') {
+
+
+
+}
+
 // -----------------------------
 // GET DETAIL RECORD BY DOC_NO
 // -----------------------------
@@ -62,7 +68,7 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
 
     try {
         $stmt = $conn->prepare("
-            SELECT product_id, product_name, quantity, price, unit_id, unit_name
+            SELECT *
             FROM ims_payroll_detail
             WHERE doc_no = ?
         ");

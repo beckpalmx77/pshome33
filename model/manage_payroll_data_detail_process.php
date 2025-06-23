@@ -12,11 +12,11 @@ if (!$data) {
 
 $action = $data['action'] ?? '';
 $doc_no = $data['doc_no'] ?? '';
-$doc_date = $data['doc_date'] ?? ''; // Changed from 'date' to 'doc_date' for payroll
-$emp_id = $data['emp_id'] ?? ''; // Changed from 'requester' to 'emp_id' for payroll
-$payroll_month = $data['payroll_month'] ?? 0; // Added for payroll
-$payroll_year = $data['payroll_year'] ?? 0; // Added for payroll
-$work_day_month = $data['work_day_month'] ?? 0.00; // Added for payroll
+$doc_date = $data['doc_date'] ?? '';
+$emp_id = $data['emp_id'] ?? '';
+$payroll_month = $data['payroll_month'] ?? 0;
+$payroll_year = $data['payroll_year'] ?? 0;
+$work_day_month = $data['work_day_month'] ?? 0.00;
 $details = $data['details'] ?? [];
 
 if (!in_array($action, ['ADD', 'UPDATE'])) {
@@ -36,8 +36,8 @@ try {
     // Calculate total_amount from details for server-side accuracy
     foreach ($details as $item) {
         $quantity = (float)($item['quantity'] ?? 0);
-        $amount_per_unit = (float)($item['amount_per_unit'] ?? 0); // Changed from 'price' to 'amount_per_unit'
-        $icd_type_sign = $item['icd_type_sign'] ?? ''; // Added for calculation
+        $amount_per_unit = (float)($item['amount_per_unit'] ?? 0);
+        $icd_type_sign = $item['icd_type_sign'] ?? '';
 
         if ($icd_type_sign === '+') {
             $total_amount += ($quantity * $amount_per_unit);
@@ -54,13 +54,15 @@ try {
 
         if ($count > 0) {
             echo json_encode(['status' => 'error', 'message' => 'มีข้อมูลเงินเดือนของพนักงานรหัส ' . $emp_id . ' สำหรับเดือน ' . $payroll_month . ' ปี ' . $payroll_year . ' อยู่แล้วในระบบ']);
-            exit; // Exit if data already exists
+            exit;
         }
         // *** END: Added check ***
 
         // Generate new doc_no if adding
         $stmt_last_doc = $conn->prepare("SELECT MAX(doc_no) AS last_doc_no FROM ims_payroll WHERE doc_no LIKE ?");
-        $prefix = "PAY" . date("Ym"); // Example: PAY202506
+        // *** START: MODIFIED HERE to use payroll_year and payroll_month ***
+        $prefix = "PAY" . $payroll_year . sprintf("%02d", $payroll_month); // Example: PAY202506
+        // *** END: MODIFIED HERE ***
         $stmt_last_doc->execute([$prefix . '%']);
         $last_doc_no = $stmt_last_doc->fetchColumn();
 
@@ -87,7 +89,7 @@ try {
         }
 
         // Delete existing details before inserting new ones for UPDATE
-        $stmtDelete = $conn->prepare("DELETE FROM ims_payroll_detail WHERE doc_id = ?"); // doc_id is the foreign key
+        $stmtDelete = $conn->prepare("DELETE FROM ims_payroll_detail WHERE doc_no = ?");
         if (!$stmtDelete->execute([$doc_no])) {
             $errorInfo = $stmtDelete->errorInfo();
             throw new Exception("Delete details failed: " . $errorInfo[2]);
@@ -96,9 +98,9 @@ try {
 
     // Insert payroll details
     $stmtDetail = $conn->prepare("INSERT INTO ims_payroll_detail
-        (doc_id, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Added doc_date, emp_id, payroll_month, payroll_year, icd_type_sign
-    $line_no = 1; // ims_payroll_detail does not have line_no in the SQL, but if it did, it would be used here. Assuming it is not needed.
+        (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $line_no = 1;
 
     foreach ($details as $item) {
         // Validation for detail items
@@ -108,14 +110,14 @@ try {
 
         if (!$stmtDetail->execute([
             $doc_no,
-            $doc_date, // Added
-            $emp_id, // Added
-            $payroll_month, // Added
-            $payroll_year, // Added
+            $doc_date,
+            $emp_id,
+            $payroll_month,
+            $payroll_year,
             $item['icd_type_id'],
             (float)$item['quantity'],
             (float)$item['amount_per_unit'],
-            $item['icd_type_sign'] // Added
+            $item['icd_type_sign']
         ])) {
             $errorInfo = $stmtDetail->errorInfo();
             throw new Exception("Insert payroll detail failed: " . $errorInfo[2]);
@@ -129,4 +131,3 @@ try {
     $conn->rollBack();
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
-?>

@@ -282,18 +282,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script src="js/util/calculate_datetime.js"></script>
 
-    <!-- Page level plugins -->
-
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
-
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
     <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
@@ -351,7 +343,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
         $(document).ready(function () {
             // Initialize Datepicker
-            $('#doc_date').datepicker({ // Corrected ID
+            $('#doc_date').datepicker({
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
                 language: "th",
@@ -375,7 +367,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             // Populate Payroll Year Dropdown
             const currentYear = new Date().getFullYear();
             let yearOptions = '<option value="">-- เลือกปี --</option>';
-            for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+            for (let i = currentYear - 1; i <= currentYear + 5; i++) {
                 yearOptions += `<option value="${i}" ${i === currentYear ? 'selected' : ''}>${i}</option>`;
             }
             $('#payroll_year').html(yearOptions);
@@ -404,6 +396,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             if (salaryValue) {
                 $('#salary').val(parseFloat(salaryValue).toFixed(2));
             }
+
+            // *** START OF MODIFICATION: Set payroll_month and payroll_year from URL params ***
+            const payrollMonthUrl = urlParams.get("payroll_month");
+            const payrollYearUrl = urlParams.get("payroll_year");
+
+            if (payrollMonthUrl) {
+                $('#payroll_month').val(payrollMonthUrl);
+            }
+            if (payrollYearUrl) {
+                $('#payroll_year').val(payrollYearUrl);
+            }
+            // *** END OF MODIFICATION ***
 
 
             // Check action from URL parameters
@@ -514,59 +518,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         // Function to load existing payroll data for editing
         function loadPayrollData(doc_no) {
             $.ajax({
-                url: 'model/manage_payroll_process.php',
-                method: 'POST', // Use POST for data retrieval
-                data: {action: 'GET_DATA', doc_no: doc_no},
+                url: 'model/manage_payroll_detail_process.php',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({action: 'GET_DETAIL_DATA', doc_no: doc_no}),
                 dataType: 'json',
                 success: function (response) {
                     if (response.success && response.data) {
-                        const header = response.data.header;
                         const details = response.data.details;
-
-                        $('#doc_no').val(header.doc_no);
-                        // Ensure doc_date is correctly formatted if needed, currently assumes DD-MM-YYYY
-                        $('#doc_date').val(header.doc_date);
-                        $('#emp_id').val(header.emp_id);
-                        $('#employee_fullname').val(header.employee_fullname);
-                        $('#payroll_month').val(header.payroll_month);
-                        $('#payroll_year').val(header.payroll_year);
-
-                        // Translate salary_type for display
-                        let displaySalaryType = '';
-                        if (header.salary_type === 'D') {
-                            displaySalaryType = 'รายวัน';
-                        } else if (header.salary_type === 'M') {
-                            displaySalaryType = 'รายเดือน';
-                        } else {
-                            displaySalaryType = '';
-                        }
-                        $('#salary_type').val(displaySalaryType);
-                        $('#salary').val(parseFloat(header.salary).toFixed(2));
-
-
                         $('#detailTable tbody').empty();
                         details.forEach(item => {
                             const newRow = `
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <input type="text" class="form-control icd_type_desc" value="${item.icd_type_desc || ''}" readonly style="flex: 1;">
-                                            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;" title="เลือกรายการ">
-                                                <i class="fa fa-search"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="hidden" class="form-control icd_type_id" value="${item.icd_type_id || ''}" readonly>
-                                        <input type="hidden" class="form-control icd_type_sign" value="${item.icd_type_sign || ''}" readonly>
-                                        <input type="text" class="form-control icd_type_sign_desc" value="${item.icd_type_sign_desc || ''}" readonly style="flex: 1;">
-                                    </td>
-                                    <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity || 0}" required></td>
-                                    <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit || 0}" required></td>
-                                    <td><input type="number" class="form-control text-right item-total-amount" value="${(item.amount || 0).toFixed(2)}" readonly></td>
-                                    <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
-                                </tr>
-                            `;
+                        <tr>
+                            <td>
+                                <div class="d-flex">
+                                    <input type="text" class="form-control icd_type_desc" value="${item.icd_type_desc || ''}" readonly style="flex: 1;">
+                                    <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;" title="เลือกรายการ">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="hidden" class="form-control icd_type_id" value="${item.icd_type_id || ''}" readonly>
+                                <input type="hidden" class="form-control icd_type_sign" value="${item.icd_type_sign || ''}" readonly>
+                                <input type="text" class="form-control icd_type_sign_desc" value="${item.icd_type_sign_desc || ''}" readonly style="flex: 1;">
+                            </td>
+                            <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity || 0}" required></td>
+                            <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit || 0}" required></td>
+                            <td><input type="number" class="form-control text-right item-total-amount" value="${(item.amount || 0).toFixed(2)}" readonly></td>
+                            <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
+                        </tr>
+                    `;
                             $('#detailTable tbody').append(newRow);
                         });
                         calculateTotalAmount();
@@ -642,7 +624,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 data: JSON.stringify(payload),
                 dataType: 'json',
                 success: function (response) {
-                    if (response.success) {
+                    if (response.status === 'success') {
                         alertify.success(response.message);
                         // Optional: update doc_no if it was newly generated on ADD
                         if (response.doc_no) {
@@ -655,62 +637,55 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     $('#save').prop('disabled', false); // Re-enable button
                 },
                 error: function (xhr, status, error) {
-                    console.error("AJAX Error:", status, error, xhr.responseText);
-                    alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ หรือเกิดข้อผิดพลาด');
+                    console.error("AJAX Error:", status, error);
+                    alertify.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error);
                     $('#save').prop('disabled', false); // Re-enable button
                 }
             });
         });
 
-        // Function to close current window and reload parent table (if applicable)
-        function closeAndReload() {
-            if (window.opener && !window.opener.closed) {
-                // Assuming parent window has a DataTable with ID 'TableRecordList'
-                if (window.opener.$('#TableRecordList').length) {
-                    window.opener.$('#TableRecordList').DataTable().ajax.reload(null, false);
-                }
-            }
-            window.close();
-        }
-    </script>
-
-
-    <script>
-        $(document).ready(function () {
-            // currentRowForSelection is already global
-
-            $(document).on('click', '.btn-select-icd_type', function () {
-                currentRowForSelection = $(this).closest('tr');
-                $('#itemModal').modal('show'); // DataTable will be initialized/reloaded on 'shown.bs.modal'
-            });
-
-            $(document).on('click', '.select-this', function () {
-                const code = $(this).data('code');
-                const desc = $(this).data('desc');
-                const sign = $(this).data('sign');
-                const sign_desc = $(this).data('sign_desc');
-
-                if (currentRowForSelection) {
-                    currentRowForSelection.find('.icd_type_id').val(code);
-                    currentRowForSelection.find('.icd_type_desc').val(desc);
-                    currentRowForSelection.find('.icd_type_sign').val(sign);
-                    currentRowForSelection.find('.icd_type_sign_desc').val(sign_desc);
-                    // Re-calculate row total if quantity/amount per unit were already entered
-                    const quantity = parseFloat(currentRowForSelection.find('.item-quantity').val()) || 0;
-                    const amountPerUnit = parseFloat(currentRowForSelection.find('.item-amount-per-unit').val()) || 0;
-                    const totalAmount = quantity * amountPerUnit;
-                    currentRowForSelection.find('.item-total-amount').val(totalAmount.toFixed(2));
-                    calculateTotalAmount(); // Update grand total
-                }
-
-                $('#itemModal').modal('hide');
-            });
-
-            // The loadIncomeDeductTable function is now replaced by DataTables AJAX in document.ready
-            // function loadIncomeDeductTable() { ... }
+        // Event listener for selecting item from modal
+        // Note: The event delegation is important for dynamically added rows
+        $(document).on('click', '.btn-select-icd_type', function () {
+            currentRowForSelection = $(this).closest('tr');
+            // The itemModal will be shown via data-toggle="modal"
+            // No need to call $('#itemModal').modal('show'); explicitly here.
         });
-    </script>
 
+
+        // Handle selection from Income/Deduct Modal
+        $(document).on('click', '#incomedeductTable .select-this', function () {
+            const code = $(this).data('code');
+            const desc = $(this).data('desc');
+            const sign = $(this).data('sign');
+            const sign_desc = $(this).data('sign_desc');
+
+            if (currentRowForSelection) {
+                currentRowForSelection.find('.icd_type_id').val(code);
+                currentRowForSelection.find('.icd_type_desc').val(desc);
+                currentRowForSelection.find('.icd_type_sign').val(sign);
+                currentRowForSelection.find('.icd_type_sign_desc').val(sign_desc);
+                // Re-calculate row total if quantity/amount per unit were already entered
+                const quantity = parseFloat(currentRowForSelection.find('.item-quantity').val()) || 0;
+                const amountPerUnit = parseFloat(currentRowForSelection.find('.item-amount-per-unit').val()) || 0;
+                const totalAmount = quantity * amountPerUnit;
+                currentRowForSelection.find('.item-total-amount').val(totalAmount.toFixed(2));
+                calculateTotalAmount(); // Update grand total
+            }
+
+            $('#itemModal').modal('hide');
+        });
+
+        // Function to close current page and reload previous page (assuming it's a list page)
+        function closeAndReload() {
+            // Check if opener exists and has reload function
+            if (window.opener && window.opener.location) {
+                window.opener.location.reload();
+            }
+            window.close(); // Close the current window
+        }
+
+    </script>
 
     </body>
     </html>
