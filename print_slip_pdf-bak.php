@@ -74,7 +74,7 @@ $pdf->SetMargins(10, 10, 10); // Left, Top, Right
 $pdf->SetAutoPageBreak(FALSE, 0); // Disable auto page break, we control layout manually
 
 // Set font
-$pdf->SetFont('THSarabunNew', '', 10); // Reduced font size to 10pt for better fit
+$pdf->SetFont('THSarabunNew', '', 16); // Slightly smaller font for compactness
 
 // Add a single page for both payslips
 $pdf->AddPage();
@@ -83,7 +83,8 @@ $pdf->AddPage();
 function generate_payslip_html($company, $payroll_master, $payroll_details, $thai_text_net_total, $copy_type = "")
 {
     // Retrieve user session info for "ผู้พิมพ์" if available
-    $user_name_printer = $_SESSION['user_name'] ?? 'ฝ่ายบัญชี/บุคคล';
+    $full_name_signer = isset($_SESSION['first_name']) && isset($_SESSION['last_name']) ? $_SESSION['first_name'] . " " . $_SESSION['last_name'] : 'ผู้จัดทำ';
+    $user_name_printer = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'ฝ่ายบัญชี/บุคคล';
 
     // Get salary type description
     $salary_type_desc = '';
@@ -98,36 +99,35 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
     <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:5px;">
         <tr>
             <td width="20%" style="text-align: left; vertical-align: top;">
-                <img src="img/logo/logo text-01.png" height="40">
+                <img src="img/logo/logo text-01.png" height="30">
             </td>
             <td width="80%" style="text-align: right; vertical-align: top; padding-left: 5mm;">
-                <h2 style="margin-bottom: 2px;">ใบแจ้งเงินเดือน ' . $copy_type . '</h2>
-                <p style="margin-top: 0; font-size: 10pt;">
-                    <b>' . ($company['company_name'] ?? '') . '</b><br>
-                    ' . ($company['address_1'] ?? '') . ' ' . ($company['address_2'] ?? '') . ' ' . ($company['state'] ?? '') . ' ' . ($company['zip_code'] ?? '') . '
+                <h3 style="margin-bottom: 2px;">ใบแจ้งเงินเดือน ' . $copy_type . '</h3>
+                <p style="margin-top: 0; font-size: 8pt;">
+                    <b>' . ($company['company_name'] ?? 'ชื่อบริษัทของคุณ') . '</b> &nbsp;&nbsp;
+                    ' . ($company['address_1'] ?? '') . ' ' . ($company['address_2'] ?? '') . ' ' . ($company['state'] ?? '') . ' ' . ($company['zip_code'] ?? '') . ' &nbsp;&nbsp;                    
                 </p>
             </td>
         </tr>
     </table>';
 
-    // Start of the section that was previously in template_payslip_section.php
     $html .= '
     <table border="0" cellspacing="0" cellpadding="1" width="100%" style="font-size:9pt; margin-top:5px;">
         <tr>
-            <td width="50%"><b>เลขที่เอกสาร:</b> ' . ($payroll_master['doc_no'] ?? '') . '</td>
-            <td width="50%" align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($payroll_master['doc_date'] ?? date('Y-m-d'))) . '</td>
+            <td width="50%"><b>เลขที่เอกสาร:</b> ' . $payroll_master['doc_no'] . '</td>
+            <td width="50%" align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($payroll_master['doc_date'])) . '</td>
         </tr>
         <tr>
-            <td width="50%"><b>รหัสพนักงาน:</b> ' . ($payroll_master['emp_id'] ?? '') . '</td>
-            <td width="50%" align="right"><b>ชื่อ-นามสกุล:</b> ' . ($payroll_master['emp_fullname'] ?? '') . '</td>
+            <td width="50%"><b>รหัสพนักงาน:</b> ' . $payroll_master['emp_id'] . '</td>
+            <td width="50%" align="right"><b>ชื่อ-นามสกุล:</b> ' . $payroll_master['emp_fullname'] . '</td>
         </tr>
         <tr>
             <td width="50%"><b>ประเภทพนักงาน:</b> ' . $salary_type_desc . '</td>
-            <td width="50%" align="right"><b>เงินเดือน/ค่าจ้าง:</b> ' . number_format($payroll_master['salary'] ?? 0, 2) . ' บาท</td>
+            <td width="50%" align="right"><b>เงินเดือน/ค่าจ้าง:</b> ' . number_format($payroll_master['salary'], 2) . ' บาท</td>
         </tr>
         <tr>
-            <td width="100%" colspan="2"><b>งวดเดือน:</b> ' . getThaiMonthName($payroll_master['payroll_month'] ?? '') . ' ' . ($payroll_master['payroll_year'] ?? '') . '</td>
-        </tr>
+            <td width="100%" colspan="2"><b>งวดเดือน:</b> ' . getThaiMonthName($payroll_master['payroll_month']) . ' ' . $payroll_master['payroll_year'] . '</td>
+            </tr>
     </table>
 
     <br>';
@@ -226,10 +226,10 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
                 <td colspan="3" style="vertical-align: top; padding-top: 2mm;">'; // colspan="3" to span income, spacer, and deduction columns
 
     $html .= '
-    <table border="0" cellspacing="0" cellpadding="0" width="100%" style="font-size:10pt;">
+    <table border="1" cellspacing="0" cellpadding="3" width="100%" style="font-size:10pt;">
         <tr>
             <td width="75%" align="right" style="background-color:#e6e6e6;"><b>เงินได้สุทธิ:</b></td>
-            <td width="25%" align="right" style="background-color:#e6e6e6;"><b>' . number_format($payroll_master['total_amount'] ?? 0, 2) . '</b></td>
+            <td width="25%" align="right" style="background-color:#e6e6e6;"><b>' . number_format($payroll_master['total_amount'], 2) . '</b></td>
         </tr>
         <tr>
             <td colspan="2" align="right"><i>( ' . $thai_text_net_total . ' )</i></td>
@@ -247,7 +247,7 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
             <td width="50%" align="center" style="vertical-align: top;">
                 <br><br>
                 ______________________________<br>
-                ( ' . ($payroll_master['emp_fullname'] ?? '') . ' )<br>
+                ( ' . $payroll_master['emp_fullname'] . ' )<br>
                 ผู้รับเงิน
             </td>
             <td width="50%" align="center" style="vertical-align: top;">
@@ -257,8 +257,6 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
             </td>
         </tr>
     </table>';
-    // End of the section that was previously in template_payslip_section.php
-
 
     $html .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:10px; font-size:7pt;">
         <tr>

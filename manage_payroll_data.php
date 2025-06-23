@@ -85,7 +85,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="doc_no" class="form-label">เลขที่เอกสาร (Doc ID)</label>
+                                        <label for="doc_no" class="form-label">เลขที่เอกสาร</label>
                                         <input type="text" id="doc_no" name="doc_no" class="form-control" readonly>
                                     </div>
                                 </div>
@@ -635,7 +635,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         if (response.doc_no) {
                             $('#doc_no').val(response.doc_no);
                         }
-                        closeAndReload();
+                        //closeAndReload();
                     } else {
                         alertify.error('ข้อผิดพลาด: ' + response.message);
                     }
