@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include('../config/connect_db.php');
+include('../config/connect_db.php'); // ตรวจสอบให้แน่ใจว่าไฟล์นี้ตั้งค่า PDO::ERRMODE_EXCEPTION ไว้ด้วย
 
 // รับข้อมูล JSON จาก POST
 $data = json_decode(file_get_contents('php://input'), true);
@@ -32,7 +32,7 @@ if (!$doc_date || !$emp_id || !$payroll_month || !$payroll_year) {
 $conn->beginTransaction();
 
 try {
-    $total_amount = 0.00;
+    $total_amount_header = 0.00; // เปลี่ยนชื่อตัวแปรเพื่อให้ชัดเจนว่าเป็น total ของ header
     // Calculate total_amount from details for server-side accuracy
     foreach ($details as $item) {
         $quantity = (float)($item['quantity'] ?? 0);
@@ -40,11 +40,13 @@ try {
         $icd_type_sign = $item['icd_type_sign'] ?? '';
 
         if ($icd_type_sign === '+') {
-            $total_amount += ($quantity * $amount_per_unit);
+            $total_amount_header += ($quantity * $amount_per_unit);
         } elseif ($icd_type_sign === '-') {
-            $total_amount -= ($quantity * $amount_per_unit);
+            $total_amount_header -= ($quantity * $amount_per_unit);
         }
     }
+
+    $success_message = ''; // กำหนดตัวแปรสำหรับข้อความสำเร็จ
 
     if ($action === 'ADD') {
         // *** START: Added check for existing emp_id, payroll_month, payroll_year ***
@@ -74,34 +76,40 @@ try {
         }
 
         $stmt = $conn->prepare("INSERT INTO ims_payroll (doc_no, doc_date, emp_id, payroll_month, payroll_year, work_day_month, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        if (!$stmt->execute([$doc_no, $doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount])) {
+        // หากต้องการให้ catch error ได้ดีขึ้น ควรตั้งค่า PDO::ERRMODE_EXCEPTION ใน connect_db.php
+        if (!$stmt->execute([$doc_no, $doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount_header])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Insert master failed: " . $errorInfo[2]);
         }
+        $success_message = "บันทึกข้อมูลเงินเดือนใหม่สำเร็จ."; // กำหนดข้อความสำหรับ ADD
     } else { // UPDATE
         if (empty($doc_no)) {
             throw new Exception("Document number (doc_no) is required for UPDATE action.");
         }
         $stmt = $conn->prepare("UPDATE ims_payroll SET doc_date = ?, emp_id = ?, payroll_month = ?, payroll_year = ?, work_day_month = ?, total_amount = ? WHERE doc_no = ?");
-        if (!$stmt->execute([$doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount, $doc_no])) {
+        // หากต้องการให้ catch error ได้ดีขึ้น ควรตั้งค่า PDO::ERRMODE_EXCEPTION ใน connect_db.php
+        if (!$stmt->execute([$doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount_header, $doc_no])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Update master failed: " . $errorInfo[2]);
         }
 
         // Delete existing details before inserting new ones for UPDATE
         $stmtDelete = $conn->prepare("DELETE FROM ims_payroll_detail WHERE doc_no = ?");
+        // หากต้องการให้ catch error ได้ดีขึ้น ควรตั้งค่า PDO::ERRMODE_EXCEPTION ใน connect_db.php
         if (!$stmtDelete->execute([$doc_no])) {
             $errorInfo = $stmtDelete->errorInfo();
             throw new Exception("Delete details failed: " . $errorInfo[2]);
         }
+        $success_message = "อัปเดตข้อมูลเงินเดือนสำเร็จ."; // กำหนดข้อความสำหรับ UPDATE
     }
 
     // Insert payroll details
     // *** MODIFIED: Added 'total_amount' column to the INSERT statement ***
+    // ตรวจสอบให้แน่ใจว่าโครงสร้างตาราง ims_payroll_detail รองรับคอลัมน์เหล่านี้
     $stmtDetail = $conn->prepare("INSERT INTO ims_payroll_detail
         (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign, total_amount)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $line_no = 1;
+    $line_no = 1; // ตัวแปรนี้ไม่ได้ถูกใช้ในปัจจุบัน สามารถลบออกได้
 
     foreach ($details as $item) {
         // Validation for detail items
@@ -112,6 +120,7 @@ try {
         // *** ADDED: Calculate total_amount for the current detail row ***
         $detail_total_amount = (float)$item['quantity'] * (float)$item['amount_per_unit'];
 
+        // หากต้องการให้ catch error ได้ดีขึ้น ควรตั้งค่า PDO::ERRMODE_EXCEPTION ใน connect_db.php
         if (!$stmtDetail->execute([
             $doc_no,
             $doc_date,
@@ -130,9 +139,11 @@ try {
     }
 
     $conn->commit();
-    echo json_encode(['status' => 'success', 'doc_no' => $doc_no]);
+    // เพิ่ม 'message' เข้าไปใน JSON response สำหรับกรณีสำเร็จ
+    echo json_encode(['status' => 'success', 'message' => $success_message, 'doc_no' => $doc_no]);
 
 } catch (Exception $e) {
     $conn->rollBack();
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
+?>

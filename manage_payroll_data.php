@@ -155,6 +155,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="work_day_month" class="control-label">จำนวนวันในเดือน</label>
+                                        <input type="text" id="work_day_month" name="work_day_month" class="form-control" readonly>
+                                    </div>
+                                </div>
                             </div>
 
                             <hr>
@@ -289,11 +295,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
     <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
-    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></link>
+        <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-    <script src="vendor/datatables/v11/bootbox.min.js"></script>
-    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+        <script src="vendor/datatables/v11/bootbox.min.js"></script>
+        <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
@@ -344,6 +350,27 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#detailTable tbody').append(newRow);
             calculateTotalAmount();
         }
+
+        // START: ฟังก์ชันใหม่สำหรับคำนวณและแสดงจำนวนวันในเดือน
+        function updateWorkDayMonth() {
+            const selectedMonth = parseInt($('#payroll_month').val());
+            const selectedYear = parseInt($('#payroll_year').val());
+
+            if (!isNaN(selectedMonth) && !isNaN(selectedYear) && selectedMonth > 0 && selectedYear > 0) {
+                // Month in Date object is 0-indexed (0-11), so use selectedMonth directly for new Date(year, month, 0)
+                // new Date(year, month, 0) gives the last day of the *previous* month if 'month' is 0-indexed.
+                // To get the last day of the *selected* month, use selectedMonth (1-indexed) directly with day 0.
+                // Example: new Date(2025, 6, 0) for July 2025 will return June 30.
+                // Correct way for 1-indexed month: new Date(year, month, 0).getDate()
+                // For example, for July (7), new Date(2025, 7, 0) will give the last day of July.
+                const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+                $('#work_day_month').val(daysInMonth);
+            } else {
+                $('#work_day_month').val(''); // Clear if month/year not selected or invalid
+            }
+        }
+        // END: ฟังก์ชันใหม่สำหรับคำนวณและแสดงจำนวนวันในเดือน
+
 
         $(document).ready(function () {
             // Initialize Datepicker
@@ -425,6 +452,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 loadPayrollData(docNo);
             }
 
+            // START: เรียกใช้ฟังก์ชันอัปเดตจำนวนวันในเดือนเมื่อโหลดหน้าเว็บ
+            updateWorkDayMonth();
+
+            // START: เพิ่ม event listener เมื่อมีการเปลี่ยนเดือนหรือปี
+            $('#payroll_month, #payroll_year').on('change', function () {
+                updateWorkDayMonth();
+            });
+            // END: เพิ่ม event listener
 
             // Add new row to detail table (button click handler)
             $('#addRow').on('click', function () {
@@ -557,6 +592,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             $('#detailTable tbody').append(newRow);
                         });
                         calculateTotalAmount();
+                        updateWorkDayMonth(); // อัปเดตจำนวนวันเมื่อโหลดข้อมูล
                     } else {
                         alertify.error("ไม่พบข้อมูลเงินเดือน: " + response.message);
                     }
@@ -619,6 +655,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 emp_id: $('#emp_id').val(),
                 payroll_month: $('#payroll_month').val(),
                 payroll_year: $('#payroll_year').val(),
+                work_day_month: $('#work_day_month').val(), // *** เพิ่มค่าจำนวนวันในเดือนที่นี่ ***
                 details: details
             };
 

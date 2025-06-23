@@ -63,6 +63,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                     <th>วันที่</th>
                                                     <th>ชื่อพนักงาน</th>
                                                     <th>เดือน</th>
+                                                    <th>ปี</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -195,7 +196,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'doc_no'},
                     {data: 'doc_date'},
                     {data: 'employee_fullname'},
-                    {data: 'total_amount'},
+                    {data: 'payroll_month'},
+                    {data: 'payroll_year'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]
