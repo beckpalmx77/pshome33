@@ -43,12 +43,6 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
     exit;
 }
 
-if ($_GET["action"] === 'DELETE') {
-
-
-
-}
-
 // -----------------------------
 // GET DETAIL RECORD BY DOC_NO
 // -----------------------------

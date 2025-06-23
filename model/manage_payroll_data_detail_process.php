@@ -97,9 +97,10 @@ try {
     }
 
     // Insert payroll details
+    // *** MODIFIED: Added 'total_amount' column to the INSERT statement ***
     $stmtDetail = $conn->prepare("INSERT INTO ims_payroll_detail
-        (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign, total_amount)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $line_no = 1;
 
     foreach ($details as $item) {
@@ -107,6 +108,9 @@ try {
         if (empty($item['icd_type_id']) || !isset($item['quantity']) || !is_numeric($item['quantity']) || !isset($item['amount_per_unit']) || !is_numeric($item['amount_per_unit']) || empty($item['icd_type_sign'])) {
             throw new Exception("Missing or invalid payroll detail fields for item: ICD Type ID, Quantity, Amount Per Unit, or ICD Type Sign.");
         }
+
+        // *** ADDED: Calculate total_amount for the current detail row ***
+        $detail_total_amount = (float)$item['quantity'] * (float)$item['amount_per_unit'];
 
         if (!$stmtDetail->execute([
             $doc_no,
@@ -117,7 +121,8 @@ try {
             $item['icd_type_id'],
             (float)$item['quantity'],
             (float)$item['amount_per_unit'],
-            $item['icd_type_sign']
+            $item['icd_type_sign'],
+            $detail_total_amount // *** ADDED: Pass the calculated total_amount ***
         ])) {
             $errorInfo = $stmtDetail->errorInfo();
             throw new Exception("Insert payroll detail failed: " . $errorInfo[2]);

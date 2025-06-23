@@ -196,10 +196,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
                                     บันทึก <i class="fa fa-save"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger" onclick="closeAndReload()">
+                                <button type="button" id="printSlipBtn" class="btn btn-info ml-2">
+                                    พิมพ์สลิป <i class="fa fa-print"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger ml-2" onclick="closeAndReload()">
                                     ปิด <i class="fa fa-window-close"></i>
                                 </button>
                             </div>
+
                         </div>
                     </div>
 
@@ -379,6 +383,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#action').val(urlParams.get("action"));
 
             $('#doc_no').val(urlParams.get("doc_no"));
+            $('#doc_date').val(urlParams.get("doc_date"));
             $('#emp_id').val(urlParams.get("emp_id"));
             $('#employee_fullname').val(urlParams.get("employee_fullname"));
 
@@ -685,6 +690,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             window.close(); // Close the current window
         }
 
+    </script>
+
+    <script>
+        $('#printSlipBtn').on('click', function () {
+            const doc_no = $('#doc_no').val();
+            let url = "print_slip_pdf?doc_no=";
+            window.open(url + encodeURIComponent(doc_no), "_blank");
+        });
     </script>
 
     </body>
