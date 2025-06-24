@@ -133,6 +133,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <th style="width: 15%;">รหัส</th>
                                     <th style="width: 20%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th>
                                     <th style="width: 11%;">จำนวน</th>
+                                    <th style="width: 12%;">ใบเสร็จ/inv</th>
                                     <th style="width: 12%;">ราคาต่อหน่วย</th>
                                     <th style="width: 15%;">รวมเงิน</th>
                                     <th style="width: 12%;">รหัสหน่วยนับ</th>
@@ -409,6 +410,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     </td>
     <td style="width: 20%;"><input type="text" class="form-control product_name" value="${item.product_name}"></td>
     <td style="width: 11%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
+    <td style="width: 12%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
     <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
     <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
     <td style="width: 12%;">
@@ -466,6 +468,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
   </td>
   <td style="width: 20%;"><input type="text" class="form-control product_name" style="width: 100%;"></td>
   <td style="width: 11%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
+  <td style="width: 11%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
   <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
   <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
   <td style="width: 12%;">
@@ -659,6 +662,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     const product_id = $(this).find('.product_id').val();
                     const product_name = $(this).find('.product_name').val();
                     const quantity = parseFloat($(this).find('.item-quantity').val());
+                    const inv = $(this).find('.item-inv').val();
                     const price = parseFloat($(this).find('.item-price').val());
                     const unit_id = $(this).find('.item-unit-code').val();
                     const unit_name = $(this).find('.item-unit-name').val();
@@ -669,7 +673,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         return false;
                     }
 
-                    details.push({product_id, product_name, quantity, price, unit_id, unit_name});
+                    details.push({product_id, product_name, quantity, inv, price, unit_id, unit_name});
                 });
 
                 if (!valid) return;

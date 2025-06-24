@@ -71,7 +71,7 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
 
     try {
         $stmt = $conn->prepare("
-            SELECT product_id, product_name, quantity, price, unit_id, unit_name
+            SELECT product_id, product_name, quantity, inv, price, unit_id, unit_name
             FROM ims_payment_voucher_items
             WHERE doc_no = ?
         ");

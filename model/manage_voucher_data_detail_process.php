@@ -132,8 +132,8 @@ try {
         }
 
         $stmtDetail = $conn->prepare("INSERT INTO ims_payment_voucher_items
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            (doc_no, line_no, product_id, product_name, quantity, inv, price, unit_id, unit_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
             $current_product_id = $item['product_id'] ?? '';
@@ -177,6 +177,7 @@ try {
                 $current_product_id,
                 $current_product_name,
                 (float)$item['quantity'],
+                $item['inv'] ?? null,
                 (float)$item['price'],
                 $item['unit_id'] ?? null,
                 $item['unit_name'] ?? null,
@@ -208,8 +209,8 @@ try {
         }
 
         $stmtDetail = $conn->prepare("INSERT INTO ims_payment_voucher_items
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            (doc_no, line_no, product_id, product_name, quantity, inv, price, unit_id, unit_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
             $current_product_id = $item['product_id'] ?? '';
@@ -253,6 +254,7 @@ try {
                 $current_product_id,
                 $current_product_name,
                 (float)$item['quantity'],
+                $item['inv'] ?? null,
                 (float)$item['price'],
                 $item['unit_id'] ?? null,
                 $item['unit_name'] ?? null,
