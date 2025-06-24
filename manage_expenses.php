@@ -40,7 +40,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                 <div class="card-body">
                                     <section class="container-fluid">
 
-                                        <div class="col-md-12 col-md-offset-2">
+                                        <!--div class="col-md-12 col-md-offset-2">
                                             <label for="description"
                                                    class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
 
@@ -48,7 +48,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
-                                        </div>
+                                        </div-->
 
                                         <div class="col-md-12 col-md-offset-2">
                                             <table id='TableRecordList' class='display dataTable'>

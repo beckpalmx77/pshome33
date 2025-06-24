@@ -6,39 +6,33 @@ include('../util/number_to_thai_text.php'); // ฟังก์ชันแปล
 
 date_default_timezone_set('Asia/Bangkok');
 
-// รับค่าจาก POST
-$year = isset($_POST["year"]) ? trim($_POST["year"]) : '';
-$months = isset($_POST["months"]) ? $_POST["months"] : [];
+// รับค่าจาก POST (เปลี่ยนจาก months และ year เป็น start_date และ end_date)
+$start_date_str = isset($_POST["start_date"]) ? trim($_POST["start_date"]) : '';
+$end_date_str = isset($_POST["end_date"]) ? trim($_POST["end_date"]) : '';
 
-// ตรวจสอบข้อมูลปี
-if ($year == '') {
-    die("กรุณาเลือกปีให้ถูกต้อง");
+// ตรวจสอบข้อมูลวันที่
+if ($start_date_str == '' || $end_date_str == '') {
+    die("กรุณาเลือก 'เริ่มต้นวันที่' และ 'ถึงวันที่' ให้ถูกต้อง");
 }
 
-// ตรวจสอบว่า $months เป็น array และไม่ว่าง
-$monthList = [];
-if (is_array($months) && count($months) > 0) {
-    $monthList = array_filter($months); // ลบค่าว่างออก
-}
+// แปลงรูปแบบวันที่จาก DD-MM-YYYY (ที่ส่งมาจาก Frontend)
+// และตั้งชื่อไฟล์ให้สอดคล้องกับช่วงวันที่
+$start_date_for_filename = DateTime::createFromFormat('d-m-Y', $start_date_str)->format('Y-m-d');
+$end_date_for_filename = DateTime::createFromFormat('d-m-Y', $end_date_str)->format('Y-m-d');
+$filename_prefix = "expenses-report-" . $start_date_for_filename . "_to_" . $end_date_for_filename;
+
 
 // สร้าง SQL Query สำหรับดึงข้อมูล
-$sql = "SELECT * FROM v_ims_expenses WHERE exp_year = :year";
+// ใช้ STR_TO_DATE เพื่อแปลง expense_date จาก 'DD-MM-YYYY' ใน DB ให้เป็น DATE type สำหรับการเปรียบเทียบ
+// และแปลง :start_date, :end_date ที่ส่งมา (ในรูปแบบ 'DD-MM-YYYY') ให้เป็น DATE type เช่นกัน
+$sql = "SELECT * FROM v_ims_expenses 
+        WHERE STR_TO_DATE(expense_date, '%d-%m-%Y') BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
+        ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC, id ASC"; // เรียงตามวันที่และ ID เพื่อความสม่ำเสมอ
 
-$params = [':year' => $year];
-
-// เพิ่มเงื่อนไขเดือน (ถ้ามี)
-if (count($monthList) > 0) {
-    $placeholders = [];
-    foreach ($monthList as $index => $month) {
-        $ph = ':month' . $index;
-        $placeholders[] = $ph;
-        $params[$ph] = $month;
-    }
-    $sql .= " AND exp_month IN (" . implode(',', $placeholders) . ")";
-}
-
-// *** เพิ่มการเรียงลำดับตาม expense_date ที่ถูกแปลงเป็น DATE เพื่อให้เรียงตามวันที่จริง ไม่ใช่เรียงตาม String ***
-$sql .= " ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC, id ASC";
+$params = [
+    ':start_date' => $start_date_str, // ส่งวันที่ในรูปแบบ DD-MM-YYYY
+    ':end_date' => $end_date_str    // ส่งวันที่ในรูปแบบ DD-MM-YYYY
+];
 
 // เตรียมและประมวลผล Query
 try {
@@ -60,7 +54,7 @@ $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
 // กำหนดข้อมูลเอกสาร
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor('Your Company Name');
-$pdf->SetTitle('รายงานค่าใช้จ่าย ปี ' . $year . (count($monthList) > 0 ? ' เดือน ' . implode(', ', $monthList) : ''));
+$pdf->SetTitle('รายงานค่าใช้จ่าย วันที่ ' . $start_date_str . ' ถึง ' . $end_date_str);
 $pdf->SetSubject('รายงานค่าใช้จ่าย');
 
 // กำหนดฟอนต์ Monospaced เริ่มต้น
@@ -82,21 +76,7 @@ $html = '';
 // ส่วนหัวรายงาน
 $html .= '<h2 style="text-align: center; margin-bottom: 5px;">รายงานค่าใช้จ่าย</h2>';
 $html .= '<p style="text-align: center; font-size: 11pt; margin-top: 0;">';
-$html .= '<b>ปี:</b> ' . $year;
-if (count($monthList) > 0) {
-    // Helper function to get Thai month name
-    function getThaiMonthName($monthNum) {
-        $months = [
-            1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม',
-            4 => 'เมษายน', 5 => 'พฤษภาคม', 6 => 'มิถุนายน',
-            7 => 'กรกฎาคม', 8 => 'สิงหาคม', 9 => 'กันยายน',
-            10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
-        ];
-        return $months[(int)$monthNum] ?? '';
-    }
-    $thai_months = array_map('getThaiMonthName', $monthList);
-    $html .= ' &nbsp;&nbsp;<b>เดือน:</b> ' . implode(', ', $thai_months);
-}
+$html .= '<b>เริ่มต้นวันที่:</b> ' . $start_date_str . ' &nbsp;&nbsp;<b>ถึงวันที่:</b> ' . $end_date_str;
 $html .= '</p>';
 $html .= '<p style="text-align: right; font-size: 9pt;"><b>วันที่พิมพ์:</b> ' . date('d/m/Y H:i:s') . '</p>';
 
@@ -126,20 +106,20 @@ $pdf_headers = [
 // A4 แนวนอน (297mm) - margin (10*2=20mm) = 277mm พื้นที่ใช้งาน
 // สามารถปรับ % ตามความเหมาะสม
 $col_widths = [
-    '8%',  // [0] จ่ายให้ (ผู้ขาย-ผู้รับเหมา)
-    '7%',  // [1] วันที่ใช้จ่าย
-    '4%',  // [2] เดือน
-    '4%',  // [3] ปี
-    '8%',  // [4] เลขที่ใบแจ้งหนี้ (INV.)
-    '8%',  // [5] หมวดหมู่
-    '15%', // [6] รายละเอียด
-    '5%',  // [7] จำนวน
-    '5%',  // [8] หน่วย
-    '7%',  // [9] จำนวนเงิน  <-- คอลัมน์เป้าหมาย
-    '10%', // [10] หมายเหตุ
-    '7%',  // [11] สถานะอนุมัติ
-    '7%',  // [12] วันที่บันทึก
-    '5%'   // [13] วิธีชำระเงิน
+    '8%',  // จ่ายให้ (ผู้ขาย-ผู้รับเหมา)            [0]
+    '7%',  // วันที่ใช้จ่าย                      [1]
+    '4%',  // เดือน                             [2]
+    '4%',  // ปี                                [3]
+    '8%',  // เลขที่ใบแจ้งหนี้ (INV.)           [4]
+    '8%',  // หมวดหมู่                          [5]
+    '15%', // รายละเอียด                        [6]
+    '5%',  // จำนวน                             [7]
+    '5%',  // หน่วย                             [8]
+    '7%',  // จำนวนเงิน                         [9] <-- คอลัมน์เป้าหมาย
+    '10%', // หมายเหตุ                          [10]
+    '7%',  // สถานะอนุมัติ                       [11]
+    '7%',  // วันที่บันทึก                       [12]
+    '5%'   // วิธีชำระเงิน                      [13]
 ];
 
 
@@ -192,10 +172,6 @@ if (count($expenses_data) > 0) {
 }
 
 // --- แก้ไขแถวรวมยอดทั้งหมดที่นี่ ---
-// "จำนวนเงิน" คือคอลัมน์ที่ 10 (index 9)
-// จำนวนคอลัมน์ทั้งหมดคือ 14
-// ดังนั้น colspan สำหรับข้อความ "รวมยอดค่าใช้จ่ายทั้งสิ้น:" จะเป็น 9 คอลัมน์ (0-8)
-// และเซลล์ว่างด้านขวาจะเป็น 4 คอลัมน์ (10-13)
 $html .= '<tr>
     <td colspan="9" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
     <td width="' . $col_widths[9] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
@@ -208,8 +184,7 @@ $html .= '</table>';
 $pdf->writeHTML($html, true, false, true, false, '');
 
 // สร้างชื่อไฟล์สำหรับดาวน์โหลด
-$monthText = count($monthList) > 0 ? implode('-', $monthList) : 'all-months';
-$filename = "expenses-report-" . $monthText . "-" . $year . "_" . date('Ymd_His') . ".pdf";
+$filename = $filename_prefix . "_" . date('Ymd_His') . ".pdf";
 
 // Output PDF ไปยังเบราว์เซอร์
 $pdf->Output($filename, 'I'); // 'I' สำหรับแสดงในเบราว์เซอร์, 'D' สำหรับดาวน์โหลด

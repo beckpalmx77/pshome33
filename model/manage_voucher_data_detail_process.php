@@ -23,7 +23,10 @@ $picture_doc = $data['picture_doc'] ?? ''; // NOT NULL in ims_expenses, ensure i
 $payment_method = $data['payment_method'] ?? ''; // NOT NULL in ims_expenses, has default '-'
 $create_name = $data['create_name'] ?? '';
 $checker_name = $data['checker_name'] ?? '';
-$receipt_name = $data['receipt_name'] ?? ''; // NOT NULL in ims_expenses, has default '-'
+
+//$receipt_name = $data['receipt_name'] ?? ''; // NOT NULL in ims_expenses, has default '-'
+$receipt_name = ($supplier_name === null || $supplier_name === '') ? '-' : $supplier_name;
+
 $approve_name = $data['approve_name'] ?? '';
 $approve_status = $data['approve_status'] ?? 'N'; // New: Get approve_status from data, default to 'N'
 
@@ -58,7 +61,7 @@ try {
         $stmt_pv_runno->execute([date('Y', strtotime($doc_date))]); // Use doc_date year for consistency
         $last_pv_runno = $stmt_pv_runno->fetchColumn();
         $next_pv_runno = ($last_pv_runno ? $last_pv_runno : 0) + 1;
-        $doc_no = "PV" . date('Y', strtotime($doc_date)) . sprintf('%05d', $next_pv_runno); // Use doc_date year
+        $doc_no = "PV-" . date('Y', strtotime($doc_date)). date('m', strtotime($doc_date)) . "-" . sprintf('%04d', $next_pv_runno); // Use doc_date year
     }
 
     // Prepare header statement for ims_payment_voucher
@@ -250,7 +253,8 @@ try {
         }
 
         // --- Handle ims_expenses (UPDATE/INSERT logic) ---
-        $expense_date_formatted = date('Y-m-d', strtotime($doc_date));
+        //$expense_date_formatted = date('Y-m-d', strtotime($doc_date));
+        $expense_date_formatted = date('d-m-Y', strtotime($doc_date));
         $exp_month = date('m', strtotime($doc_date));
         $exp_year = date('Y', strtotime($doc_date));
         $expense_description = $current_product_name;
