@@ -46,57 +46,52 @@ class MYPDF extends TCPDF {
             $this->Image($this->logo_path, $logo_x, $logo_y, $logo_width, $logo_height, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         } else {
             // Fallback if logo not found
-            $this->SetFont('THSarabunNew', 'B', 10);
+            $this->SetFont('Prompt', 'B', 9);
             $this->SetXY($logo_x, $logo_y + ($logo_height / 4));
             $this->Cell($logo_width, $logo_height / 2, 'No Logo', 0, 0, 'C');
         }
 
         // --- 2. Report Title & Date Range (Centered, aligned with logo) ---
-        $text_y_center_aligned_with_logo = $logo_y + ($logo_height / 2) - 5; // -5 to shift first line up
+        // ตอนนี้เหลือแค่ 2 บรรทัดหลัก (ชื่อรายงานรวมกับ payment method) และ (ช่วงวันที่)
+        // ถ้าแต่ละบรรทัดสูง 10mm รวม 20mm. กึ่งกลางคือ 10mm จากบนสุดของ block
+        // โลโก้เริ่ม Y=10, สูง 10, จบ Y=20. กึ่งกลาง Y=15.
+        // ดังนั้น Y ของ block ข้อความควรจะเริ่มที่ Y = 15 - 10 = 5.
+        // แต่ Header เริ่มที่ Y=10. ดังนั้น 5 + 10 (header_start_y) = 15
+        $text_y_start = $logo_y + ($logo_height / 2) - 5; // Y ของโลโก้ (10) + ครึ่งความสูง (5) - ครึ่ง Cell (5) = 10
 
-        $this->SetFont('THSarabunNew', 'B', 16);
-        $title_line1 = $this->report_header_text;
-        $title_line2 = '(' . $this->report_payment_method . ')';
+        $this->SetFont('Prompt', 'B', 15);
+        // --- FIX START: รวม payment method เข้าไปใน title_line1 ---
+        $title_line1 = $this->report_header_text . ' (' . $this->report_payment_method . ')';
+        // --- FIX END ---
         $date_range_line = 'ช่วงวันที่ ' . $this->report_start_date . ' ถึง ' . $this->report_end_date;
 
         // Get approximate widths to calculate max width for centering
         $width_line1 = $this->GetStringWidth($title_line1);
-        $width_line2 = $this->GetStringWidth($title_line2);
         $width_date_range = $this->GetStringWidth($date_range_line);
-        $max_text_width = max($width_line1, $width_line2, $width_date_range);
+        $max_text_width = max($width_line1, $width_date_range); // คำนวณจากแค่ 2 บรรทัดนี้
 
-        // Calculate X position for centering, considering left margin
-        $center_x = ($page_width / 2) - ($max_text_width / 2);
-        // Ensure it doesn't overlap with the logo
-        if ($center_x < ($logo_x + $logo_width + 5)) {
-            $center_x = $logo_x + $logo_width + 5; // Move right 5mm from logo's right edge
-        }
+        // Calculate X position for absolute centering
+        $this->SetX($margin_left); // Set X to the left margin
 
         // Print first line of title
-        $this->SetXY($center_x, $text_y_center_aligned_with_logo);
-        $this->Cell(0, 10, $title_line1, 0, 1, 'L', 0, '', 0, false, 'M', 'M'); // `1` for new line
-
-        // Print second line of title
-        $this->SetX($center_x); // Reset X to align with the first line
-        $this->Cell(0, 10, $title_line2, 0, 1, 'L', 0, '', 0, false, 'M', 'M'); // `1` for new line
+        $this->SetY($text_y_start); // Set Y for the first line of the text block
+        $this->Cell(0, 10, $title_line1, 0, 1, 'C', 0, '', 0, false, 'M', 'M'); // 'C' for center
 
         // Print date range
-        $this->SetX($center_x); // Reset X to align
-        $this->SetFont('THSarabunNew', '', 11); // Slightly smaller font for date range
-        $this->Cell(0, 10, $date_range_line, 0, 1, 'L', 0, '', 0, false, 'M', 'M'); // `1` for new line
+        $this->SetX($margin_left); // Reset X to left margin
+        $this->SetFont('Prompt', '', 11); // Slightly smaller font for date range
+        $this->Cell(0, 10, $date_range_line, 0, 1, 'C', 0, '', 0, false, 'M', 'M'); // 'C' for center
 
         // --- 3. Set Y for main content (table) ---
         // Get current Y position after printing all header elements
         $final_header_y = $this->GetY();
-        // --- FIX START: ลดระยะห่างตรงนี้ ---
-        $this->SetY($final_header_y + 2); // ลดจาก 5mm เป็น 2mm (หรือค่าอื่นตามต้องการ)
-        // --- FIX END ---
+        $this->SetY($final_header_y + 2); // Add 2mm space before the table begins
     }
 
     // Page Footer
     public function Footer() {
         $this->SetY(-15); // Move to 15 mm from bottom
-        $this->SetFont('THSarabunNew', '', 9); // Slightly smaller font for compactness
+        $this->SetFont('Prompt', '', 8); // Slightly smaller font for compactness
 
         // Timestamp (bottom left)
         $timestamp = date('d/m/Y H:i:s');
@@ -137,28 +132,24 @@ $pdf->SetTitle('รายงานรายการรายรับค่า�
 // Set report information for the custom Header
 $pdf->setReportInfo($header_text, $payment_method_display, $start_date, $end_date);
 
-$pdf->setFooterFont(['THSarabunNew', '', 9]); // Set Footer font to match Footer() method
+$pdf->setFooterFont(['Prompt', '', 9]); // Set Footer font to match Footer() method
 
 // Calculate Top Margin for the main content (table)
 // Header starts at $header_start_y (10mm).
 // Logo is 10mm high.
-// Title + Payment Method are two lines, approx 20mm high combined (2 * 10mm cell height).
-// Date range is one line, approx 10mm high.
-// Total header content height is approx 10 (logo) + 3 * 10 (text lines) = 40mm from top edge.
-// If we want 2mm padding after header, total top margin = approx 40 + 2 = 42mm.
-// However, TCPDF's SetMargins sets the *fixed* margin for all pages.
-// We are setting Y dynamically in Header(). So this value for SetMargins()
-// should be set to allow enough room for the header to draw.
-// The previous 45mm was already allowing more than enough room.
-// We can set it to the actual calculated final Y from Header() plus a bit more
-// to be safe for auto page breaks. Let's keep it around 40-45 to be safe.
-$calculated_top_margin = 30; // Adjusted to be closer, based on new padding of 2mm
+// Now there are 2 lines of text (Title+Payment Method, Date Range), each 10mm high = 20mm.
+// Max bottom of header element (date range) is at around 10 (header_start_y) + 10 (logo height) + 10 (first line text) + 10 (second line text) = 40mm
+// Oh wait, `text_y_start` is calculated to be `10` relative to `header_start_y`.
+// So actual vertical space used by text is $text_y_start + 2*10mm cells = 10+20 = 30mm.
+// The actual end of header content is max(logo_y+logo_height, text_y_start+20mm) = max(10+10, 10+20) = max(20, 30) = 30mm from top edge.
+// Add 2mm padding after header, total top margin = approx 30 + 2 = 32mm.
+$calculated_top_margin = 32; // Adjusted for 2 lines of text + padding
 
 $pdf->SetMargins(10, $calculated_top_margin, 10); // Left, Top, Right (Adjust Top Margin here)
 $pdf->SetFooterMargin(10);
 $pdf->SetAutoPageBreak(TRUE, 15); // Auto page break enabled with 15mm margin at bottom
 
-$pdf->SetFont('THSarabunNew', '', 12); // Main font for content
+$pdf->SetFont('Prompt', '', 12); // Main font for content
 $pdf->AddPage(); // Add the first page
 
 // ===== 5. Fetch data from database =====
