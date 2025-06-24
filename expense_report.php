@@ -20,7 +20,8 @@ if (strlen($_SESSION['alogin']) == "") {
     $stmt_month->execute();
     $MonthRecords = $stmt_month->fetchAll();
 
-    $sql_year = "SELECT DISTINCT(period_year) AS period_year FROM ims_house_payment WHERE period_year >= 2024 ORDER BY period_year DESC";
+    // สมมติว่า v_ims_expenses มีคอลัมน์ exp_year
+    $sql_year = "SELECT DISTINCT(exp_year) AS period_year FROM v_ims_expenses WHERE exp_year >= 2024 ORDER BY exp_year DESC";
     $stmt_year = $conn->prepare($sql_year);
     $stmt_year->execute();
     $YearRecords = $stmt_year->fetchAll();
@@ -29,7 +30,7 @@ if (strlen($_SESSION['alogin']) == "") {
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <title>Export รายงานรับชำระ</title>
+        <title>Export รายงานค่าใช้จ่าย</title>
         <style>
             /* เพิ่มเล็กน้อยสำหรับ checkbox ให้ชิดกันสวยงาม */
             .month-checkbox {
@@ -52,12 +53,12 @@ if (strlen($_SESSION['alogin']) == "") {
 
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s'] ?? 'รายงานค่าใช้จ่าย') ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?? '#' ?>">Home</a>
                             </li>
-                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
-                            <li class="breadcrumb-item active"><?php echo urldecode($_GET['s']) ?></li>
+                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m'] ?? 'รายงาน') ?></li>
+                            <li class="breadcrumb-item active"><?php echo urldecode($_GET['s'] ?? 'ค่าใช้จ่าย') ?></li>
                         </ol>
                     </div>
 
@@ -66,13 +67,14 @@ if (strlen($_SESSION['alogin']) == "") {
                             <div class="card mb-12">
                                 <div class="card-body">
                                     <form id="form_data" method="post"
-                                          action="export_process/export_expense_report_process.php"
+                                          action=""
+                                          data-excel-action="export_process/export_expense_report_process.php"
+                                          data-pdf-action="export_process/expense_report_pdf.php"
                                           enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <label>เลือกเดือน :</label><br>
                                                 <div>
-                                                    <!-- checkbox เลือกทุกเดือน -->
                                                     <label class="month-checkbox">
                                                         <input type="checkbox" name="months[]" value="all"
                                                                id="check_all">
@@ -80,7 +82,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     </label>
                                                     <?php foreach ($MonthRecords as $row) {
                                                         // กำหนดให้เดือนปัจจุบันถูกติ๊กไว้โดย default
-                                                        $checked = ($row["month_id"] == $month_num) ? 'checked' : '';
+                                                        $checked = ((int)$row["month_id"] == (int)$month_num) ? 'checked' : '';
                                                         ?>
                                                         <label class="month-checkbox">
                                                             <input type="checkbox" name="months[]"
@@ -103,8 +105,11 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <br>
                                                 <div class="row">
                                                     <div class="col-sm-12">
-                                                        <button type="submit" class="btn btn-success" id="btnExport">
-                                                            Export <i class="fa fa-check"></i>
+                                                        <button type="button" class="btn btn-success" id="btnExportExcel">
+                                                            Export Excel <i class="fa fa-file-excel"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" id="btnPrintPdf">
+                                                            Print PDF <i class="fa fa-file-pdf"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -126,7 +131,6 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
-    <!-- JS Scripts -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -169,26 +173,43 @@ if (strlen($_SESSION['alogin']) == "") {
             // ตั้งค่าเริ่มต้น ถ้า checkbox เดือนทั้งหมดถูกติ๊ก ให้ติ๊ก "ทั้งหมด" ด้วย
             const allCheckedInit = Array.from(monthCheckboxes).every(cb => cb.checked);
             checkAll.checked = allCheckedInit;
-        });
-    </script>
 
-    <script>
-        // ตรวจสอบก่อน submit ว่ามีการเลือกเดือนอย่างน้อย 1 เดือน
-        document.getElementById('form_data').addEventListener('submit', function (e) {
-            const monthCheckboxes = document.querySelectorAll('.month-checkbox-item');
-            let isChecked = false;
-            monthCheckboxes.forEach(cb => {
-                if (cb.checked) {
-                    isChecked = true;
+
+            // --- ส่วนของ JavaScript สำหรับจัดการปุ่ม Export และ Print PDF ---
+            const form = document.getElementById('form_data');
+            const btnExportExcel = document.getElementById('btnExportExcel');
+            const btnPrintPdf = document.getElementById('btnPrintPdf');
+
+            function validateMonthsSelected() {
+                const selectedMonths = Array.from(monthCheckboxes).filter(cb => cb.checked && cb.value !== 'all');
+                if (selectedMonths.length === 0 && !checkAll.checked) {
+                    alert('กรุณาเลือกอย่างน้อย 1 เดือน หรือเลือก "ทั้งหมด"');
+                    return false;
+                }
+                return true;
+            }
+
+            // Event listener สำหรับปุ่ม Export Excel
+            btnExportExcel.addEventListener('click', function (e) {
+                e.preventDefault(); // ป้องกันการ submit form โดยตรง
+                if (validateMonthsSelected()) {
+                    form.action = form.dataset.excelAction; // กำหนด action เป็น URL สำหรับ Export Excel
+                    form.submit(); // Submit form
                 }
             });
 
-            if (!isChecked) {
-                e.preventDefault(); // ป้องกันการส่งฟอร์ม
-                alert('กรุณาเลือกอย่างน้อย 1 เดือน');
-            }
-        });
+            // Event listener สำหรับปุ่ม Print PDF
+            btnPrintPdf.addEventListener('click', function (e) {
+                e.preventDefault(); // ป้องกันการ submit form โดยตรง
+                if (validateMonthsSelected()) {
+                    form.action = form.dataset.pdfAction; // กำหนด action เป็น URL สำหรับ Print PDF
+                    form.target = "_blank"; // เปิดในแท็บใหม่สำหรับ PDF
+                    form.submit(); // Submit form
+                    form.target = ""; // รีเซ็ต target กลับเป็นค่าเริ่มต้น เพื่อไม่ให้กระทบกับการ submit ครั้งถัดไป
+                }
+            });
 
+        });
     </script>
 
     </body>
