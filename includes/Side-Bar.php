@@ -25,7 +25,7 @@ include('config/lang.php');
             <img src="img/logo/Logo-01.png" width="110" height="170">
         </div-->
         <div class="sidebar-brand-icon">
-            <img src="img/logo/Logo-01.png" class="img-responsive" alt="Logo">
+            <img src="img/logo/Pruksa_33Logo.png" class="img-responsive" alt="Logo">
         </div>
         <div class="sidebar-brand-text mx-3">
         </div>
