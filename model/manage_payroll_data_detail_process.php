@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include('../config/connect_db.php'); // ตรวจสอบให้แน่ใจว่าไฟล์นี้ตั้งค่า PDO::ERRMODE_EXCEPTION ไว้ด้วย
+include('../util/month_util.php');
 
 // รับข้อมูล JSON จาก POST
 $data = json_decode(file_get_contents('php://input'), true);
@@ -21,6 +22,7 @@ $payroll_year = $data['payroll_year'] ?? 0;
 $work_day_month = $data['work_day_month'] ?? 0.00;
 $details = $data['details'] ?? [];
 
+$bank_no = $data['bank_no'] ?? '';
 
 if (!in_array($action, ['ADD', 'UPDATE'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid or missing action']);
@@ -105,6 +107,19 @@ try {
         }
         $success_message = "อัปเดตข้อมูลเงินเดือนสำเร็จ."; // กำหนดข้อความสำหรับ UPDATE
     }
+
+
+    /* for insert / update expense */
+    $receipt_name = $data['employee_fullname'] ?? '';
+    $month_name = $month_arr[$payroll_month];
+    $expense_date = $doc_date;
+    $expense_doc_no = $doc_no;
+    $exp_month = date('m', strtotime($doc_date));
+    $exp_year = date('Y', strtotime($doc_date));
+    $description = "เงินเดือน/ค่าจ้าง ". $receipt_name . " เดือน " . $month_name . " " . ($payroll_year + 543);
+    $category_id = "P8";
+    $total_expense_amount = $total_amount_header;
+
 
     // Insert payroll details
     // *** MODIFIED: Added 'total_amount' column to the INSERT statement ***

@@ -701,6 +701,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 doc_no: $('#doc_no').val(),
                 doc_date: $('#doc_date').val(),
                 emp_id: $('#emp_id').val(),
+                employee_fullname: $('#employee_fullname').val(),
                 payroll_month: $('#payroll_month').val(),
                 payroll_year: $('#payroll_year').val(),
                 payment_method: $('#payment_method').val(),
