@@ -242,6 +242,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let employee_fullname = response[i].employee_fullname;
                         let salary_type = response[i].salary_type;
                         let salary = response[i].salary;
+                        let payment_method = response[i].payment_method;
+                        let bank_no = response[i].bank_no;
                         let main_menu = document.getElementById("main_menu").value;
                         let sub_menu = document.getElementById("sub_menu").value;
                         let url = "manage_payroll_data?title=จัดทำเงินเดือน(Payroll Transaction)"
@@ -255,6 +257,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                             + '&payroll_year=' + payroll_year
                             + '&salary_type=' + salary_type
                             + '&salary=' + salary
+                            + '&payment_method=' + payment_method
+                            + '&bank_no=' + bank_no
                             + '&total_amount=' + total_amount
                             + '&action=UPDATE';
                         window.open(url, '_blank');

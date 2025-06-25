@@ -161,7 +161,43 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         <input type="text" id="work_day_month" name="work_day_month" class="form-control" readonly>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="payment_method" class="form-label fw-semibold mb-2">
+                                        วิธีการรับเงิน
+                                    </label>
+                                    <div class="d-flex align-items-center flex-wrap">
+
+                                        <!-- 💳 โอนเงิน -->
+                                        <div class="form-check form-check-inline d-flex align-items-center me-2">
+                                            <input class="form-check-input me-1" type="radio"
+                                                   name="payment_method_radio"
+                                                   id="method_transfer" value="โอนเงิน">
+                                            <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
+                                        </div>
+
+                                        <!-- ช่องกรอกเลขบัญชี -->
+                                        <input type="text" class="form-control ms-2 me-2" name="bank_no"
+                                               id="bank_no"
+                                               placeholder="" style="width: 200px;">&nbsp;
+
+                                        <!-- 💵 เงินสด -->
+                                        <div class="form-check form-check-inline d-flex align-items-center">
+                                            <input class="form-check-input me-1" type="radio"
+                                                   name="payment_method_radio"
+                                                   id="method_cash" value="เงินสด" checked>
+                                            <label class="form-check-label" for="method_cash">💵 เงินสด</label>
+                                        </div>
+
+                                        <!-- ช่องแสดงค่าที่เลือก -->
+                                        <input type="text" class="form-control ms-2 me-2" name="payment_method"
+                                               id="payment_method"
+                                               placeholder="" style="width: 200px;">
+                                    </div>
+                                </div>
+
                             </div>
+
 
                             <hr>
 
@@ -414,6 +450,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#emp_id').val(urlParams.get("emp_id"));
             $('#employee_fullname').val(urlParams.get("employee_fullname"));
 
+            const paymentMethodFromDB = urlParams.get("payment_method");
+            $('#payment_method').val(paymentMethodFromDB); // Set hidden field
+
+            if (paymentMethodFromDB === 'โอนเงิน') {
+                $('#method_transfer').prop('checked', true); // Check 'โอนเงิน' radio
+            } else { // Default to 'เงินสด' if not 'โอนเงิน' or if value is 'เงินสด'
+                $('#method_cash').prop('checked', true); // Check 'เงินสด' radio
+            }
+
+            $('#bank_no').val(urlParams.get("bank_no"));
+
+
             // Set salary_type and salary from URL params
             const salaryTypeUrl = urlParams.get("salary_type");
             const salaryValue = urlParams.get("salary");
@@ -655,6 +703,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 emp_id: $('#emp_id').val(),
                 payroll_month: $('#payroll_month').val(),
                 payroll_year: $('#payroll_year').val(),
+                payment_method: $('#payment_method').val(),
+                bank_no: $('#bank_no').val(),
                 work_day_month: $('#work_day_month').val(), // *** เพิ่มค่าจำนวนวันในเดือนที่นี่ ***
                 details: details
             };
@@ -734,6 +784,36 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             const doc_no = $('#doc_no').val();
             let url = "print_slip_pdf?doc_no=";
             window.open(url + encodeURIComponent(doc_no), "_blank");
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const radioButtons = document.querySelectorAll('input[name="payment_method_radio"]');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            // Function to update the text input based on radio selection
+            function updatePaymentMethodInput() {
+                radioButtons.forEach(radio => {
+                    if (radio.checked) {
+                        paymentMethodInput.value = radio.value;
+                        if (radio.value === 'เงินสด' || radio.value === 'โอนเงิน') {
+                            paymentMethodInput.setAttribute('readonly', true);
+                        } else {
+                            paymentMethodInput.removeAttribute('readonly');
+                            paymentMethodInput.focus(); // Focus on the input if "Other" is selected
+                        }
+                    }
+                });
+            }
+
+            // Add event listeners to radio buttons
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', updatePaymentMethodInput);
+            });
+
+            // Initialize on page load (e.g., if "เงินสด" is checked by default)
+            updatePaymentMethodInput();
         });
     </script>
 

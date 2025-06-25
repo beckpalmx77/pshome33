@@ -14,11 +14,12 @@ $action = $data['action'] ?? '';
 $doc_no = $data['doc_no'] ?? '';
 $doc_date = $data['doc_date'] ?? '';
 $emp_id = $data['emp_id'] ?? '';
+$payment_method = $data['payment_method'] ?? '';
+$bank_no = $data['bank_no'] ?? '';
 $payroll_month = $data['payroll_month'] ?? 0;
 $payroll_year = $data['payroll_year'] ?? 0;
 $work_day_month = $data['work_day_month'] ?? 0.00;
 $details = $data['details'] ?? [];
-
 
 
 if (!in_array($action, ['ADD', 'UPDATE'])) {
@@ -77,9 +78,9 @@ try {
             $doc_no = $prefix . "0001";
         }
 
-        $stmt = $conn->prepare("INSERT INTO ims_payroll (doc_no, doc_date, emp_id, payroll_month, payroll_year, work_day_month, total_amount) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO ims_payroll (doc_no, doc_date, emp_id, payroll_month, payroll_year, work_day_month, total_amount, payment_method, bank_no) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?)");
         // หากต้องการให้ catch error ได้ดีขึ้น ควรตั้งค่า PDO::ERRMODE_EXCEPTION ใน connect_db.php
-        if (!$stmt->execute([$doc_no, $doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount_header])) {
+        if (!$stmt->execute([$doc_no, $doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount_header, $payment_method, $bank_no])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Insert master failed: " . $errorInfo[2]);
         }
@@ -88,9 +89,9 @@ try {
         if (empty($doc_no)) {
             throw new Exception("Document number (doc_no) is required for UPDATE action.");
         }
-        $stmt = $conn->prepare("UPDATE ims_payroll SET doc_date = ?, emp_id = ?, payroll_month = ?, payroll_year = ?, work_day_month = ?, total_amount = ? WHERE doc_no = ?");
+        $stmt = $conn->prepare("UPDATE ims_payroll SET doc_date = ?, emp_id = ?, payroll_month = ?, payroll_year = ?, work_day_month = ?, total_amount = ?, payment_method = ?, bank_no = ? WHERE doc_no = ?");
         // หากต้องการให้ catch error ได้ดีขึ้น ควรตั้งค่า PDO::ERRMODE_EXCEPTION ใน connect_db.php
-        if (!$stmt->execute([$doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount_header, $doc_no])) {
+        if (!$stmt->execute([$doc_date, $emp_id, $payroll_month, $payroll_year, $work_day_month, $total_amount_header, $payment_method, $bank_no, $doc_no])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Update master failed: " . $errorInfo[2]);
         }

@@ -33,6 +33,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "payroll_year" => $result['payroll_year'],
             "salary_type" => $result['salary_type'],
             "salary" => $result['salary'],
+            "payment_method" => $result['payment_method'],
+            "bank_no" => $result['bank_no'],
             "employee_fullname" => $result['employee_fullname'],
             "total_amount" => $result['total_amount'],
             "status" => $result['status']
@@ -149,6 +151,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PAYROLL') {
                 "doc_date" => $row['doc_date'],
                 "payroll_month" => $row['payroll_month'],
                 "payroll_year" => $row['payroll_year'],
+                "payment_method" => $row['payment_method'],
+                "bank_no" => $row['bank_no'],
                 "total_amount" => $row['total_amount'],
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
