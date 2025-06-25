@@ -289,6 +289,21 @@ $pdf->SetY(148.5 + 5);
 // Print Copy Payslip on the bottom half
 $pdf->writeHTML($html_copy, true, false, true, false, '');
 
+// อัปเดตสถานะการพิมพ์
+$print_slip_status = $payroll_master['print_slip_status']; // Corrected to use $payroll_master
+if ($print_slip_status !== 'Y') {
+    $stmt_items = $conn->prepare("UPDATE ims_payroll
+                                  SET print_slip_status = 'Y', print_slip_timestamp = NOW()
+                                  WHERE doc_no = :doc_no AND print_slip_status = 'N'");
+} else {
+    $stmt_items = $conn->prepare("UPDATE ims_payroll
+                                  SET print_slip_last_timestamp = NOW()
+                                  WHERE doc_no = :doc_no AND print_slip_status = 'Y'");
+}
+
+$stmt_items->bindParam(':doc_no', $payroll_master['doc_no'], PDO::PARAM_STR); // Corrected to PDO::PARAM_STR
+$stmt_items->execute();
+
 
 // Output the PDF to the browser
 $filename = 'payslip_' . $payroll_master['doc_no'] . '_' . date('Ymd_His') . '.pdf';
