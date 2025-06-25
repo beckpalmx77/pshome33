@@ -19,6 +19,8 @@ $payroll_year = $data['payroll_year'] ?? 0;
 $work_day_month = $data['work_day_month'] ?? 0.00;
 $details = $data['details'] ?? [];
 
+
+
 if (!in_array($action, ['ADD', 'UPDATE'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid or missing action']);
     exit;
