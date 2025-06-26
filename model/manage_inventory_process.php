@@ -106,27 +106,36 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INVENTORY') {
 
     $where_trans = "";
 
+
     if ($_POST["transaction_type"] === '+') {
-        $where_trans =   " AND  transaction_type = + ";
+        $where_trans =   " AND transaction_type = '+' ";
     } else {
-        $where_trans =   " AND  transaction_type = - ";
+        $where_trans =   " AND transaction_type = '-' ";
     }
 
+
     // Total records (no filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory = 1 ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory WHERE 1=1 " . $where_trans);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
     // Total records (with filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory WHERE 1=1 " . $where_trans . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
     // Fetch data
-    $sql = "SELECT * FROM v_ims_inventory WHERE 1 " . $searchQuery .
+    $sql = "SELECT * FROM v_ims_inventory WHERE 1=1 " . $where_trans . $searchQuery .
         " ORDER BY $columnName $columnSortOrder LIMIT :offset, :limit";
+
+/*
+    $myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
+    fwrite($myfile, " Row Record = " . $sql);
+    fclose($myfile);
+*/
+
     $stmt = $conn->prepare($sql);
 
     foreach ($searchArray as $key => $val) {

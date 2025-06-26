@@ -61,8 +61,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                 <tr>
                                                     <th>เลขที่เอกสาร</th>
                                                     <th>วันที่</th>
-                                                    <th>ผู้ขอเบิก</th>
-                                                    <th>จำนวนเงิน</th>
+                                                    <th>ผู้ขาย/supplier</th>
+                                                    <th>จำนวนรายการรับเข้า</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
@@ -192,7 +192,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'doc_no'},
                     {data: 'doc_date'},
                     {data: 'supplier_name'},
-                    {data: 'total_amount'},
                     {data: 'approve_status_desc'},
                     {data: 'update'},
                     {data: 'delete'}

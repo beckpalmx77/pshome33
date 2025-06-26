@@ -62,7 +62,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                     <th>เลขที่เอกสาร</th>
                                                     <th>วันที่</th>
                                                     <th>ผู้ขอเบิก</th>
-                                                    <th>จำนวนเงิน</th>
+                                                    <th>จำนวนรายการเบิก</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
