@@ -191,7 +191,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                 'columns': [
                     {data: 'doc_no'},
                     {data: 'doc_date'},
-                    {data: 'supplier_name'},
+                    {data: 'requester'},
                     {data: 'totalDetailRecords',className: 'dt-body-center'},
                     {data: 'approve_status_desc'},
                     {data: 'update'},

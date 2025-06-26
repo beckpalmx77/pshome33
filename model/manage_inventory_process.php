@@ -174,6 +174,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INVENTORY') {
                 "doc_no" => $row['doc_no'],
                 "supplier_id" => $row['supplier_id'],
                 "supplier_name" => $row['supplier_name'],
+                "requester" => $row['requester'],
                 "doc_date" => $row['doc_date'],
                 "total_amount" => $row['total_amount'],
                 "totalDetailRecords" => $totalDetailRecords,
