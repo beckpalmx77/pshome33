@@ -30,6 +30,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "supplier_id" => $result['supplier_id'],
             "supplier_name" => $result['supplier_name'],
             "purpose" => $result['purpose'],
+            "transaction_type" => $result['transaction_type'],
             "total_amount" => $result['total_amount'],
             "picture_doc" => $result['picture_doc'],
             "approve_status" => $result['approve_status'],
@@ -103,8 +104,16 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INVENTORY') {
         $searchArray = ['supplier_name' => "%$searchValue%"];
     }
 
+    $where_trans = "";
+
+    if ($_POST["transaction_type"] === '+') {
+        $where_trans =   " AND  transaction_type = + ";
+    } else {
+        $where_trans =   " AND  transaction_type = - ";
+    }
+
     // Total records (no filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory = 1 ");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];

@@ -166,7 +166,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
     <script>
         $(document).ready(function () {
-            let formData = {action: "GET_INVENTORY", sub_action: "GET_MASTER" , transaction_type: "+"};
+            let formData = {action: "GET_INVENTORY", sub_action: "GET_MASTER" , transaction_type: "-"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[7, 10, 20, 50, 100], [7, 10, 20, 50, 100]],
                 'language': {
