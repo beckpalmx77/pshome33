@@ -192,6 +192,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'doc_no'},
                     {data: 'doc_date'},
                     {data: 'supplier_name'},
+                    {data: 'totalDetailRecords',className: 'dt-body-center'},
                     {data: 'approve_status_desc'},
                     {data: 'update'},
                     {data: 'delete'}

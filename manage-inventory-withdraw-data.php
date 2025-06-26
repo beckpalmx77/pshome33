@@ -12,7 +12,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <title>รับเข้าพัสดุ/ครุภัณฑ์/สินค้า/</title>
+        <title>เบิกพัสดุ/ครุภัณฑ์/สินค้า/</title>
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
@@ -52,12 +52,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
-                                <input type="hidden" id="transaction_type" class="form-control" value="<?php echo $transaction_type;?>">
-                                <input type="hidden" id="purpose" class="form-control" value="<?php echo $transaction_type;?>">
-                                <input type="hidden" id="requester_id" name="requester_id" value="<?php echo $transaction_type;?>">
-                                <input type="hidden" id="requester" name="requester" value="<?php echo $transaction_type;?>">
+                                <input type="hidden" id="transaction_type" class="form-control"
+                                       value="<?php echo $transaction_type; ?>">
+                                <input type="hidden" id="purpose" class="form-control"
+                                       value="<?php echo $transaction_type; ?>">
+                                <input type="hidden" id="supplier_id" name="supplier_id"
+                                       value="<?php echo $transaction_type; ?>">
+                                <input type="hidden" id="supplier_name" name="supplier_name"
+                                       value="<?php echo $transaction_type; ?>">
 
-                                <div class="col-md-6">
+                                <!--div class="col-md-6">
                                     <div class="form-group">
                                         <label for="supplier_name" class="control-label">ชื่อผู้ขาย <b>(ถ้าไม่พบในระบบ
                                                 สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b></label>
@@ -73,6 +77,27 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label class="control-label" style="visibility:hidden;">เลือกชื่อผู้ขาย</label>
                                         <a data-toggle="modal" href="#SearchSupModal" class="btn btn-primary">
+                                            Click <i class="fa fa-search" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                </div-->
+
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="requester" class="control-label">ผู้ขอเบิก</label>
+                                        <input type="text" id="requester" name="requester" class="form-control"
+                                               autocomplete="off" required>
+                                        <input type="hidden" id="requester_id" name="requester_id">
+                                        <div id="requester_list" class="list-group position-absolute"
+                                             style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <div class="form-group">
+                                        <label class="control-label" style="visibility:hidden;">เลือกผู้ขอเบิก</label>
+                                        <a data-toggle="modal" href="#SearchRequesterModal" class="btn btn-primary">
                                             Click <i class="fa fa-search" aria-hidden="true"></i>
                                         </a>
                                     </div>
@@ -101,7 +126,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </thead>
                                 <tbody></tbody>
                                 <tfoot>
-                                <tr style="display: none;"> <td colspan="3" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
+                                <tr style="display: none;">
+                                    <td colspan="3" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
                                     <td style="display: none;"></td>
                                     <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
                                     </td>

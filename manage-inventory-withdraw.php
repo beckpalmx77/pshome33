@@ -192,7 +192,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'doc_no'},
                     {data: 'doc_date'},
                     {data: 'supplier_name'},
-                    {data: 'total_amount'},
+                    {data: 'totalDetailRecords',className: 'dt-body-center'},
                     {data: 'approve_status_desc'},
                     {data: 'update'},
                     {data: 'delete'}
@@ -206,7 +206,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
         $("#btnAdd").click(function () {
             let main_menu = document.getElementById("main_menu").value;
             let sub_menu = document.getElementById("sub_menu").value;
-            let url = "manage-inventory-reciept-data?title=เอกสารการเบิกพัสดุ"
+            let url = "manage-inventory-withdraw-data?title=เอกสารการเบิกพัสดุ"
                 + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                 + '&action=ADD';
             window.open(url, '_blank');
@@ -239,7 +239,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let picture_doc = response[i].picture_doc;
                         let main_menu = document.getElementById("main_menu").value;
                         let sub_menu = document.getElementById("sub_menu").value;
-                        let url = "manage-inventory-reciept-data?title=เอกสารการเบิกพัสดุ"
+                        let url = "manage-inventory-withdraw-data?title=เอกสารการเบิกพัสดุ"
                             + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                             + '&id=' + id
                             + '&doc_no=' + doc_no

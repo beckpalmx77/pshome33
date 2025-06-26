@@ -158,12 +158,25 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INVENTORY') {
             $approve_status = $row['approve_status'] ?? 'N';
             $meta = $statusMeta[$approve_status] ?? ['desc' => 'ไม่ทราบสถานะ', 'color' => 'gray', 'can_print' => false];
 
+            $sql_count = "SELECT COUNT(*) AS detail_count FROM ims_inventory_detail
+            WHERE doc_no = '" . $row['doc_no'] . "'";
+/*
+            $myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
+            fwrite($myfile, " Row Record = " . $sql_count);
+            fclose($myfile);
+*/
+            $stmt = $conn->prepare($sql_count);
+            $stmt->execute();
+            $count_records = $stmt->fetch();
+            $totalDetailRecords = $count_records['detail_count'];
+
             $data[] = array(
                 "doc_no" => $row['doc_no'],
                 "supplier_id" => $row['supplier_id'],
                 "supplier_name" => $row['supplier_name'],
                 "doc_date" => $row['doc_date'],
                 "total_amount" => $row['total_amount'],
+                "totalDetailRecords" => $totalDetailRecords,
                 "approve_status" => $row['approve_status'],
                 "approve_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
                 "status" => $row['status'] === 'Active'
