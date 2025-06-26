@@ -1,0 +1,111 @@
+2025-06-26 18:36:32 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:36:32 - Received raw input: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"+","transaction_type":"+","picture_doc":"img_685d30c0363bc0.47161138.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":0,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:36:32 - Decoded data: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":0,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:36:32 - Decoded data: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","transaction_type":"+","picture_doc":"img_685d30c0363bc0.47161138.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":0,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:36:32 - Action: UPDATE
+2025-06-26 18:36:32 - Action: UPDATE
+2025-06-26 18:36:32 - Doc No: RCP-06-2025-0001
+2025-06-26 18:36:32 - Doc No: RCP-06-2025-0001
+2025-06-26 18:36:32 - Picture Doc: img_685d30c0363e10.19552271.jpg
+2025-06-26 18:36:32 - Picture Doc: img_685d30c0363bc0.47161138.jpg
+2025-06-26 18:36:32 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:32 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:32 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:36:32 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:32 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:32 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:36:32 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:32 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:43 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:36:43 - Received raw input: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"+","transaction_type":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":0,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:36:43 - Decoded data: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","transaction_type":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":0,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:36:43 - Action: UPDATE
+2025-06-26 18:36:43 - Doc No: RCP-06-2025-0001
+2025-06-26 18:36:43 - Picture Doc: img_685d30c0363e10.19552271.jpg
+2025-06-26 18:36:43 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:43 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:43 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:36:43 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:43 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:36:43 - Received raw input: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":0,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:36:43 - Decoded data: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":0,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:36:43 - Action: UPDATE
+2025-06-26 18:36:43 - Doc No: RCP-06-2025-0001
+2025-06-26 18:36:43 - Picture Doc: img_685d30c0363e10.19552271.jpg
+2025-06-26 18:36:43 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:43 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:36:43 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:36:43 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:37:48 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:37:48 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:37:48 - Received raw input: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"+","transaction_type":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":0,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:37:48 - Decoded data: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":0,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:37:48 - Action: UPDATE
+2025-06-26 18:37:48 - Action: UPDATE
+2025-06-26 18:37:48 - Doc No: RCP-06-2025-0001
+2025-06-26 18:37:48 - Doc No: RCP-06-2025-0001
+2025-06-26 18:37:48 - Picture Doc: img_685d30c0363e10.19552271.jpg
+2025-06-26 18:37:48 - Picture Doc: img_685d30c0363e10.19552271.jpg
+2025-06-26 18:37:48 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:37:48 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:37:48 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:37:48 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:37:48 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:37:48 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:37:48 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:37:48 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:39:27 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:39:27 - Received raw input: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":0,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:39:27 - Decoded data: {"action":"UPDATE","doc_no":"RCP-06-2025-0001","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","picture_doc":"img_685d30c0363e10.19552271.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":0,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:39:27 - Action: UPDATE
+2025-06-26 18:39:27 - Doc No: RCP-06-2025-0001
+2025-06-26 18:39:27 - Picture Doc: img_685d30c0363e10.19552271.jpg
+2025-06-26 18:39:27 - Updated master record for doc_no: RCP-06-2025-0001
+2025-06-26 18:39:27 - Deleted existing detail records for doc_no: RCP-06-2025-0001
+2025-06-26 18:39:27 - Inserting detail line_no 1 for product_id: P00010
+2025-06-26 18:39:27 - Transaction committed successfully for doc_no: RCP-06-2025-0001
+2025-06-26 18:45:54 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:45:54 - Received raw input: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"+","picture_doc":"img_685d32f21b6de5.40370150.png","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":null,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:45:54 - Decoded data: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"+","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"+","picture_doc":"img_685d32f21b6de5.40370150.png","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":null,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:45:54 - Action: ADD
+2025-06-26 18:45:54 - Doc No: 
+2025-06-26 18:45:54 - Picture Doc: img_685d32f21b6de5.40370150.png
+2025-06-26 18:45:54 - Generated new doc_no: RE20250600001
+2025-06-26 18:45:54 - Inserted master record for doc_no: RE20250600001
+2025-06-26 18:45:54 - Transaction committed successfully for doc_no: RE20250600001
+2025-06-26 18:52:29 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:52:29 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:52:29 - Received raw input: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"-","picture_doc":"img_685d347d88bd69.39119618.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":null,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:52:29 - Received raw input: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"-","picture_doc":"img_685d347d88caa3.95808406.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":null,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:52:29 - Decoded data: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"-","picture_doc":"img_685d347d88bd69.39119618.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":null,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:52:29 - Decoded data: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"-","picture_doc":"img_685d347d88caa3.95808406.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":null,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:52:29 - Action: ADD
+2025-06-26 18:52:29 - Action: ADD
+2025-06-26 18:52:29 - Doc No: 
+2025-06-26 18:52:29 - Picture Doc: img_685d347d88bd69.39119618.jpg
+2025-06-26 18:52:29 - Picture Doc: img_685d347d88caa3.95808406.jpg
+2025-06-26 18:52:29 - Generated new doc_no: RE20250600001
+2025-06-26 18:52:29 - Generated new doc_no: RE20250600001
+2025-06-26 18:52:29 - Inserted master record for doc_no: RE20250600001
+2025-06-26 18:52:29 - Inserted master record for doc_no: RE20250600001
+2025-06-26 18:52:29 - Transaction committed successfully for doc_no: RE20250600001
+2025-06-26 18:52:29 - Transaction committed successfully for doc_no: RE20250600001
+2025-06-26 18:53:09 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:53:09 - Received raw input: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"-","picture_doc":"img_685d34a50e9c51.05492544.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":null,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:53:09 - Decoded data: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"-","picture_doc":"img_685d34a50e9c51.05492544.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":null,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:53:09 - Action: ADD
+2025-06-26 18:53:09 - Doc No: 
+2025-06-26 18:53:09 - Picture Doc: img_685d34a50e9c51.05492544.jpg
+2025-06-26 18:53:09 - Generated new doc_no: RE20250600001
+2025-06-26 18:53:09 - Inserted master record for doc_no: RE20250600001
+2025-06-26 18:53:09 - Transaction committed successfully for doc_no: RE20250600001
+2025-06-26 18:53:09 - --- Starting manage_inventory_data_detail_process.php ---
+2025-06-26 18:53:09 - Received raw input: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"บริษัท แอดไวซ์ ไอที อินฟินิท จำกัด มหาชน","purpose":"-","picture_doc":"img_685d34a50e4f89.39832657.jpg","details":[{"product_id":"P00010","product_name":"เครื่องคอมพิวเตอร์","quantity":1,"price":null,"unit_id":"U003","unit_name":"เครื่อง"}]}
+2025-06-26 18:53:09 - Decoded data: {"action":"ADD","doc_no":"","date":"26-06-2025","requester":"-","supplier_id":"S00001","supplier_name":"\u0e1a\u0e23\u0e34\u0e29\u0e31\u0e17 \u0e41\u0e2d\u0e14\u0e44\u0e27\u0e0b\u0e4c \u0e44\u0e2d\u0e17\u0e35 \u0e2d\u0e34\u0e19\u0e1f\u0e34\u0e19\u0e34\u0e17 \u0e08\u0e33\u0e01\u0e31\u0e14 \u0e21\u0e2b\u0e32\u0e0a\u0e19","purpose":"-","picture_doc":"img_685d34a50e4f89.39832657.jpg","details":[{"product_id":"P00010","product_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e04\u0e2d\u0e21\u0e1e\u0e34\u0e27\u0e40\u0e15\u0e2d\u0e23\u0e4c","quantity":1,"price":null,"unit_id":"U003","unit_name":"\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07"}]}
+2025-06-26 18:53:09 - Action: ADD
+2025-06-26 18:53:09 - Doc No: 
+2025-06-26 18:53:09 - Picture Doc: img_685d34a50e4f89.39832657.jpg
+2025-06-26 18:53:09 - Generated new doc_no: RE20250600002
+2025-06-26 18:53:09 - Inserted master record for doc_no: RE20250600002
+2025-06-26 18:53:09 - Transaction committed successfully for doc_no: RE20250600002

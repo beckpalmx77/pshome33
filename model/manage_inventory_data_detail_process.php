@@ -17,6 +17,7 @@ $requester = $data['requester'] ?? '';
 $supplier_id = $data['supplier_id'] ?? '';
 $supplier_name = $data['supplier_name'] ?? '';
 $purpose = $data['purpose'] ?? '';
+$transaction_type = $purpose;
 $details = $data['details'] ?? [];
 $picture_doc = $data['picture_doc'] ?? ''; // << เพิ่มรับชื่อไฟล์รูป
 
@@ -66,23 +67,29 @@ try {
         $month = substr($doc_date, 3, 2);
         $year = substr($doc_date, 6, 4);
 
-        $stmtRunNo = $conn->prepare("SELECT doc_no FROM ims_purchase WHERE doc_no LIKE ? ORDER BY doc_no DESC LIMIT 1");
-        $stmtRunNo->execute(["PR-$month-$year-%"]);
+        if ($transaction_type === '+') {
+            $prefix = "RCP";
+        } else if ($transaction_type === '-') {
+            $prefix = "WDR";
+        }
+
+        $stmtRunNo = $conn->prepare("SELECT doc_no FROM ims_inventory WHERE doc_no LIKE ? ORDER BY doc_no DESC LIMIT 1");
+        $stmtRunNo->execute([$prefix . "-$month-$year-%"]);
         $lastDocNo = $stmtRunNo->fetchColumn();
 
         $newRunNo = $lastDocNo ? intval(substr($lastDocNo, strrpos($lastDocNo, '-') + 1)) + 1 : 1;
-        $doc_no = sprintf("PR-%s-%s-%04d", $month, $year, $newRunNo);
+        $doc_no = sprintf($prefix . "-%s-%s-%04d", $month, $year, $newRunNo);
 
-        $stmt = $conn->prepare("INSERT INTO ims_purchase 
-            (doc_no, doc_date, requester, supplier_id, supplier_name, purpose, total_amount, picture_doc)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        if (!$stmt->execute([$doc_no, $doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc])) {
+        $stmt = $conn->prepare("INSERT INTO ims_inventory 
+            (doc_no, doc_date, requester, supplier_id, supplier_name, purpose, total_amount, picture_doc, transaction_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt->execute([$doc_no, $doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc, $transaction_type])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Insert master failed: " . $errorInfo[2]);
         }
 
-        $stmtDetail = $conn->prepare("INSERT INTO ims_purchase_detail 
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
+        $stmtDetail = $conn->prepare("INSERT INTO ims_inventory_detail 
+            (doc_no, line_no, product_id, product_name, quantity, unit_id, unit_name, transaction_type)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
@@ -92,9 +99,9 @@ try {
                 $item['product_id'],
                 $item['product_name'],
                 $item['quantity'],
-                $item['price'],
                 $item['unit_id'],
                 $item['unit_name'],
+                $transaction_type,
             ])) {
                 $errorInfo = $stmtDetail->errorInfo();
                 throw new Exception("Insert detail failed: " . $errorInfo[2]);
@@ -107,22 +114,22 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("UPDATE ims_purchase 
-            SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?, total_amount = ?, picture_doc = ?
+        $stmt = $conn->prepare("UPDATE ims_inventory 
+            SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ? , picture_doc = ?, transaction_type = ?
             WHERE doc_no = ?");
-        if (!$stmt->execute([$doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc, $doc_no])) {
+        if (!$stmt->execute([$doc_date, $requester, $supplier_id, $supplier_name, $purpose, $picture_doc, $transaction_type, $doc_no])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Update master failed: " . $errorInfo[2]);
         }
 
-        $stmtDelete = $conn->prepare("DELETE FROM ims_purchase_detail WHERE doc_no = ?");
+        $stmtDelete = $conn->prepare("DELETE FROM ims_inventory_detail WHERE doc_no = ?");
         if (!$stmtDelete->execute([$doc_no])) {
             $errorInfo = $stmtDelete->errorInfo();
             throw new Exception("Delete details failed: " . $errorInfo[2]);
         }
 
-        $stmtDetail = $conn->prepare("INSERT INTO ims_purchase_detail 
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
+        $stmtDetail = $conn->prepare("INSERT INTO ims_inventory_detail 
+            (doc_no, line_no, product_id, product_name, quantity, unit_id, unit_name, transaction_type)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
@@ -132,9 +139,9 @@ try {
                 $item['product_id'],
                 $item['product_name'],
                 $item['quantity'],
-                $item['price'],
                 $item['unit_id'],
                 $item['unit_name'],
+                $transaction_type,
             ])) {
                 $errorInfo = $stmtDetail->errorInfo();
                 throw new Exception("Insert detail failed: " . $errorInfo[2]);

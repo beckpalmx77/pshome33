@@ -5,13 +5,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     exit();
 } else {
     $curr_date = date("d-m-Y");
+    $transaction_type = "+";
     ?>
 
     <!DOCTYPE html>
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <title>ฟอร์มขอเบิกพัสดุ</title>
+        <title>รับเข้าพัสดุ/ครุภัณฑ์/สินค้า/</title>
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
@@ -51,41 +52,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>วัตถุประสงค์</label>
-                                        <input type="text" id="purpose" class="form-control" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-md-4 position-relative">
-                                    <div class="form-group">
-                                        <label for="requester" class="control-label">ผู้ขอเบิก</label>
-                                        <input type="text" id="requester" name="requester" class="form-control"
-                                               autocomplete="off" required>
-                                        <input type="hidden" id="requester_id" name="requester_id">
-                                        <div id="requester_list" class="list-group position-absolute"
-                                             style="z-index: 1000;"></div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-1 d-flex align-items-end">
-                                    <div class="form-group">
-                                        <label class="control-label" style="visibility:hidden;">เลือกผู้ขอเบิก</label>
-                                        <a data-toggle="modal" href="#SearchRequesterModal" class="btn btn-primary">
-                                            Click <i class="fa fa-search" aria-hidden="true"></i>
-                                        </a>
-                                    </div>
-                                </div>
+                                <input type="hidden" id="transaction_type" class="form-control" value="<?php echo $transaction_type;?>">
+                                <input type="hidden" id="purpose" class="form-control" value="<?php echo $transaction_type;?>">
+                                <input type="hidden" id="requester_id" name="requester_id" value="<?php echo $transaction_type;?>">
+                                <input type="hidden" id="requester" name="requester" value="<?php echo $transaction_type;?>">
 
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="supplier_name" class="control-label">ชื่อผู้ขาย <b>(ถ้าไม่พบในระบบ
                                                 สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b></label>
                                         <input type="text" class="form-control" id="supplier_name" name="supplier_name"
-                                               autocomplete="off" required placeholder="">
+                                               autocomplete="off" placeholder="">
                                         <input type="hidden" id="supplier_id" name="supplier_id">
                                         <div id="supplier_list" class="list-group position-absolute"
                                              style="z-index:1000;"></div>
@@ -115,8 +92,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <th style="width: 15%;">รหัส</th>
                                     <th style="width: 20%;">ชื่อพัสดุ</th>
                                     <th style="width: 11%;">จำนวน</th>
-                                    <th style="width: 12%;">ราคาต่อหน่วย</th>
-                                    <th style="width: 15%;">รวมเงิน</th>
+                                    <th style="width: 12%; display: none;">ราคาต่อหน่วย</th>
+                                    <th style="width: 15%; display: none;">รวมเงิน</th>
                                     <th style="width: 12%;">รหัสหน่วยนับ</th>
                                     <th style="width: 20%;">หน่วยนับ</th>
                                     <th>ลบ</th>
@@ -124,8 +101,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </thead>
                                 <tbody></tbody>
                                 <tfoot>
-                                <tr>
-                                    <td colspan="4" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
+                                <tr style="display: none;"> <td colspan="3" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
+                                    <td style="display: none;"></td>
                                     <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
                                     </td>
                                     <td colspan="3"></td>
@@ -315,6 +292,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#supplier_id').val(queryString["supplier_id"]);
                 $('#supplier_name').val(queryString["supplier_name"]);
                 $('#purpose').val(queryString["purpose"]);
+                $('#transaction_type').val(queryString["transaction_type"]);
                 $('#picture_doc').val(queryString["picture_doc"]);
                 $('#totalAmount').val(queryString["total_amount"]);
                 loadDetailData(queryString["doc_no"]);
@@ -331,7 +309,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         let imageBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
 
                         let img = $('<img>')
-                            .attr('src', 'uploads/files/' + file)
+                            .attr('src', 'uploads/inventory/' + file)
                             .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
 
                         let deleteBtn = $('<button>')
@@ -362,7 +340,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <script>
         function loadDetailData(docNo) {
             $.ajax({
-                url: 'model/manage_purchase_process.php',
+                url: 'model/manage_inventory_process.php',
                 method: 'GET',
                 data: {
                     action: 'GET_DATA_DETAIL',
@@ -385,8 +363,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     </td>
     <td style="width: 20%;"><input type="text" class="form-control product_name" value="${item.product_name}"></td>
     <td style="width: 11%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
-    <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
-    <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
+    <td style="width: 12%; display: none;"><input type="number" class="form-control item-price" value="0" min="0"></td>
+    <td style="width: 15%; display: none;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
     <td style="width: 12%;">
         <div class="d-flex">
             <input type="text" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
@@ -442,8 +420,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
   </td>
   <td style="width: 20%;"><input type="text" class="form-control product_name" style="width: 100%;"></td>
   <td style="width: 11%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
-  <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
-  <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
+  <td style="width: 12%; display: none;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
+  <td style="width: 15%; display: none;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
   <td style="width: 12%;">
     <div class="d-flex">
       <input type="text" class="form-control item-unit-code" readonly style="flex: 1;">
@@ -618,7 +596,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).ready(function () {
-            $('#save').on('click', async function (e) {
+            // Ensure the click event is attached only once
+            $('#save').off('click').on('click', async function (e) {
                 e.preventDefault();
 
                 // Check main data
@@ -639,7 +618,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     const unit_id = $(this).find('.item-unit-code').val();
                     const unit_name = $(this).find('.item-unit-name').val();
 
-                    if (!product_id || !product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
+                    if (!product_id || !product_name || isNaN(quantity) || !unit_id || quantity <= 0) {
                         valid = false;
                         alertify.error("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
                         return false;
@@ -677,18 +656,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         supplier_id: $('#supplier_id').val(),
                         supplier_name: $('#supplier_name').val(),
                         purpose: $('#purpose').val(),
+                        transaction_type: $('#transaction_type').val(),
                         picture_doc: finalPictureDoc, // Use the combined string here
                         details: details
                     };
 
                     $.ajax({
-                        url: 'model/manage_purchase_data_detail_process.php',
+                        url: 'model/manage_inventory_data_detail_process.php',
                         method: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify(payload),
                         success: function (res) {
                             if (res.status === 'success') {
-                                alertify.success('บันทึกสำเร็จแล้ว');
+                                alertify.success('บันทึกสำเร็จแล้ว'); // This should now only trigger once per successful save
                                 setTimeout(function () {
                                     closeAndReload(); // Close the window and reload parent table
                                 }, 1000); // 1000 milliseconds = 1 seconds
@@ -788,21 +768,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         let uploadedImages = [];  // For preview of newly selected files
-        // `uploadedFileNames` is no longer needed globally as `newlyUploadedFilenames`
-        // in the save function captures the result of `uploadImages()`
 
         document.getElementById('pictures').addEventListener('change', function (e) {
             const files = Array.from(e.target.files);
             const previewArea = document.getElementById('preview-area');
 
-            files.forEach((file) => { // Removed index as it's not needed for the `uploadedImages.length`
+            files.forEach((file) => {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const imgDiv = document.createElement('div');
                     imgDiv.classList.add('col-md-2', 'position-relative');
 
-                    // Store the file object in the uploadedImages array
-                    const fileIndex = uploadedImages.push(file) - 1; // Get the index of the newly added file
+                    const fileIndex = uploadedImages.push(file) - 1;
 
                     imgDiv.innerHTML = `
                     <img src="${e.target.result}" class="img-thumbnail mb-2" style="width:100%; height:120px; object-fit:cover;">
@@ -814,47 +791,156 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         });
 
-        // Delete newly added images from preview and uploadedImages array
         document.getElementById('preview-area').addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-new-img')) {
                 const fileIndex = parseInt(e.target.getAttribute('data-file-index'));
-                uploadedImages.splice(fileIndex, 1); // Remove the file from the array
-                e.target.parentElement.remove(); // Remove the image box from DOM
+                uploadedImages.splice(fileIndex, 1);
+                e.target.parentElement.remove();
 
-                // Re-index remaining new images if necessary (optional, but good practice if you rely on data-file-index strictly)
                 $('#preview-area .remove-new-img').each(function (i) {
                     $(this).attr('data-file-index', i);
                 });
             }
         });
 
-        // Function to upload all new images before submit
         async function uploadImages() {
             const formData = new FormData();
-            // Only append files that are actually in the uploadedImages array
             uploadedImages.forEach(file => formData.append('images[]', file));
 
             if (uploadedImages.length === 0) {
-                return Promise.resolve([]); // Return an empty array if no new images to upload
+                console.log('No new images to upload.');
+                return Promise.resolve([]);
             }
 
-            const response = await fetch('upload_img_doc.php', {
-                method: 'POST',
-                body: formData
-            });
+            console.log('Attempting to upload images...');
+            try {
+                const response = await fetch('upload_img_doc.php', {
+                    method: 'POST',
+                    body: formData
+                });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+                console.log('Response from upload_img_doc.php (raw):', response);
 
-            const result = await response.json();
-            if (result.status === 'success') {
-                return result.filenames;  // Array of successfully uploaded filenames
-            } else {
-                throw new Error(result.message || 'Image upload failed on server.');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('HTTP error from upload_img_doc.php:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                }
+
+                const result = await response.json();
+                console.log('Response from upload_img_doc.php (JSON):', result);
+
+                if (result.status === 'success') {
+                    return result.filenames;
+                } else {
+                    throw new Error(result.message || 'Image upload failed on server.');
+                }
+            } catch (err) {
+                console.error('Error during image upload:', err);
+                throw err; // Re-throw the error to be caught by the calling function
             }
         }
+
     </script>
+
+    <!--script>
+        $(document).ready(function () {
+            $('#save').on('click', async function (e) {
+                e.preventDefault();
+
+                if (!$('#doc_date').val() || !$('#requester').val()) {
+                    alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
+                    return;
+                }
+
+                const details = [];
+                let valid = true;
+
+                $('#detailTable tbody tr').each(function () {
+                    const product_id = $(this).find('.product_id').val();
+                    const product_name = $(this).find('.product_name').val();
+                    const quantity = parseFloat($(this).find('.item-quantity').val());
+                    const price = 0;
+                    const unit_id = $(this).find('.item-unit-code').val();
+                    const unit_name = $(this).find('.item-unit-name').val();
+
+                    if (!product_id || !product_name || isNaN(quantity) || !unit_id || quantity <= 0) {
+                        valid = false;
+                        alertify.error("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
+                        return false;
+                    }
+
+                    details.push({product_id, product_name, quantity, price, unit_id, unit_name});
+                });
+
+                if (!valid) return;
+
+                $('#save').prop('disabled', true);
+
+                try {
+                    const newlyUploadedFilenames = await uploadImages();
+                    console.log('Newly uploaded filenames:', newlyUploadedFilenames);
+
+                    let existingPictureDoc = $('#picture_doc').val();
+                    let existingFilenames = existingPictureDoc ? existingPictureDoc.split(',').map(name => name.trim()).filter(name => name) : [];
+                    console.log('Existing picture_doc from hidden field:', existingPictureDoc);
+                    console.log('Parsed existing filenames:', existingFilenames);
+
+                    let deletedFilenames = $('#deleted_images').val();
+                    let deletedArray = deletedFilenames ? deletedFilenames.split(',').map(name => name.trim()).filter(name => name) : [];
+                    console.log('Deleted filenames:', deletedArray);
+
+                    let currentFilenames = existingFilenames.filter(filename => !deletedArray.includes(filename));
+                    console.log('Current (non-deleted existing) filenames:', currentFilenames);
+
+                    const finalPictureDoc = currentFilenames.concat(newlyUploadedFilenames).join(',');
+                    console.log('Final picture_doc string to be saved:', finalPictureDoc);
+
+
+                    const payload = {
+                        action: $('#action').val(),
+                        doc_no: $('#doc_no').val(),
+                        date: $('#doc_date').val(),
+                        requester: $('#requester').val(),
+                        supplier_id: $('#supplier_id').val(),
+                        supplier_name: $('#supplier_name').val(),
+                        purpose: $('#purpose').val(),
+                        picture_doc: finalPictureDoc,
+                        details: details
+                    };
+
+                    console.log('Payload sent to manage_inventory_data_detail_process.php:', payload);
+
+                    $.ajax({
+                        url: 'model/manage_inventory_data_detail_process.php',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(payload),
+                        success: function (res) {
+                            console.log('Response from manage_inventory_data_detail_process.php:', res);
+                            if (res.status === 'success') {
+                                alertify.success('บันทึกสำเร็จแล้ว');
+                                setTimeout(function () {
+                                    closeAndReload();
+                                }, 1000);
+                            } else {
+                                alert('เกิดข้อผิดพลาด: ' + res.message);
+                                $('#save').prop('disabled', false);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Error for manage_inventory_data_detail_process.php:", status, error, xhr.responseText);
+                            alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+                            $('#save').prop('disabled', false);
+                        }
+                    });
+                } catch (err) {
+                    alertify.error('อัปโหลดรูปภาพไม่สำเร็จ: ' + err.message);
+                    $('#save').prop('disabled', false);
+                }
+            });
+        });
+    </script-->
 
 
     </body>

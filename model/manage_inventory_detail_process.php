@@ -13,7 +13,7 @@ if ($_POST["action"] === 'DELETE') {
     $id = $_POST["id"];
 
     // ค้นหา doc_no จาก id ก่อน
-    $sql_find = "SELECT doc_no FROM ims_purchase WHERE id = :id";
+    $sql_find = "SELECT doc_no FROM ims_inventory WHERE id = :id";
     $stmt = $conn->prepare($sql_find);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -21,14 +21,14 @@ if ($_POST["action"] === 'DELETE') {
 
     if ($doc_no) {
         try {
-            // ลบจาก ims_purchase
-            $sql = "DELETE FROM ims_purchase WHERE doc_no = :doc_no";
+            // ลบจาก ims_inventory
+            $sql = "DELETE FROM ims_inventory WHERE doc_no = :doc_no";
             $query = $conn->prepare($sql);
             $query->bindParam(':doc_no', $doc_no, PDO::PARAM_STR);
             $query->execute();
 
-            // ลบจาก ims_purchase_detail
-            $sql = "DELETE FROM ims_purchase_detail WHERE doc_no = :doc_no";
+            // ลบจาก ims_inventory_detail
+            $sql = "DELETE FROM ims_inventory_detail WHERE doc_no = :doc_no";
             $query = $conn->prepare($sql);
             $query->bindParam(':doc_no', $doc_no, PDO::PARAM_STR);
             $query->execute();

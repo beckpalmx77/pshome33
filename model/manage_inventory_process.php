@@ -16,7 +16,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
 
     $id = $_POST["id"] ?? 0;
 
-    $stmt = $conn->prepare("SELECT * FROM ims_purchase WHERE id = ?");
+    $stmt = $conn->prepare("SELECT * FROM ims_inventory WHERE id = ?");
     $stmt->execute([$id]);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -61,7 +61,7 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
     try {
         $stmt = $conn->prepare("
             SELECT product_id, product_name, quantity, price, unit_id, unit_name
-            FROM ims_purchase_detail
+            FROM ims_inventory_detail
             WHERE doc_no = ?
         ");
         $stmt->execute([$doc_no]);
@@ -86,7 +86,7 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
 // -----------------------------
 // DATATABLE SERVER-SIDE LOAD
 // -----------------------------
-if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
+if (isset($_POST["action"]) && $_POST["action"] === 'GET_INVENTORY') {
 
     $draw = $_POST['draw'] ?? 1;
     $row = $_POST['start'] ?? 0;
@@ -104,19 +104,19 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     }
 
     // Total records (no filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_purchase");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
     // Total records (with filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_purchase WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_inventory WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
     // Fetch data
-    $sql = "SELECT * FROM v_ims_purchase WHERE 1 " . $searchQuery .
+    $sql = "SELECT * FROM v_ims_inventory WHERE 1 " . $searchQuery .
         " ORDER BY $columnName $columnSortOrder LIMIT :offset, :limit";
     $stmt = $conn->prepare($sql);
 
