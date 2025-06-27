@@ -1,94 +1,123 @@
 <?php
-// api/get_house_payments.php
+// กำหนด Content-Type เป็น JSON
+header('Content-Type: application/json');
 
-// เรียกไฟล์เชื่อมต่อฐานข้อมูล
-require_once '../config/connect_db.php'; // ตรวจสอบ path ให้ถูกต้องหากไฟล์ db_connect.php ไม่อยู่ในโฟลเดอร์เดียวกัน
+// ตั้งค่าการแสดงผลข้อผิดพลาด (สำหรับ Development เท่านั้น)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// รับค่าจาก DataTables (สำหรับ Server-side processing)
-$draw = $_POST['draw'];
-$row = $_POST['start'];
-$rowperpage = $_POST['length']; // จำนวนแถวต่อหน้า
-$columnIndex = $_POST['order'][0]['column']; // Index ของคอลัมน์ที่ต้องการเรียง
-$columnName = $_POST['columns'][$columnIndex]['data']; // ชื่อคอลัมน์ที่ต้องการเรียง
-$columnSortOrder = $_POST['order'][0]['dir']; // asc หรือ desc
-$searchValue = $_POST['search']['value']; // ค่าที่ใช้ค้นหาทั่วโลก
+// *** ส่วนที่แก้ไข: นำเข้าไฟล์ connect_db.php ที่มี $conn อยู่แล้ว ***
+// ตรวจสอบ Path ของไฟล์ connect_db.php ให้ถูกต้อง
+include('../config/connect_db.php');
 
-## Search
-$searchQuery = "";
-$searchParams = [];
-if($searchValue != ''){
-    $searchQuery = " AND (
-        ims_house_payment.runno LIKE :searchValue OR 
-        ims_house_payment.doc_id LIKE :searchValue OR 
-        ims_house_payment.house_number LIKE :searchValue OR 
-        ims_house_payment.detail LIKE :searchValue OR 
-        ims_house.alley LIKE :searchValue OR 
-        v_ims_user.line_user_name LIKE :searchValue OR 
-        (CASE WHEN (ims_house_payment.payment_status = 'Y') THEN 'ชำระเรียบร้อยแล้ว' WHEN (ims_house_payment.payment_status = 'N') THEN 'ยังไม่ยืนยันการชำระ' ELSE 'ไม่ทราบสถานะ' END) LIKE :searchValue
-    )";
-    $searchParams[':searchValue'] = '%' . $searchValue . '%';
+// ในกรณีที่คุณต้องการให้ PDO ทำงานในโหมดที่เหมาะสมกับการดึงข้อมูลและการเตรียมคำสั่ง
+// และคุณแน่ใจว่า connect_db.php ยังไม่ได้ตั้งค่าเหล่านี้
+// คุณอาจเพิ่มโค้ดนี้หลัง include connect_db.php
+// แต่โดยทั่วไปแล้ว ควรตั้งค่าเหล่านี้ใน connect_db.php โดยตรง
+if (isset($conn)) {
+    // ตัวอย่างการตั้งค่าเพิ่มเติม (ถ้ายังไม่ได้ตั้งค่าใน connect_db.php)
+    // $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    // $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+} else {
+    // กรณีที่ connect_db.php ไม่ได้สร้าง $conn ขึ้นมา หรือมีปัญหา
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database connection error: $conn object not found after including connect_db.php'
+    ]);
+    exit();
 }
+// *** สิ้นสุดส่วนที่แก้ไข ***
 
-## Total number of records without filtering
-$stmt = $pdo->prepare("SELECT COUNT(*) AS allcount FROM ims_house_payment");
-$stmt->execute();
-$records = $stmt->fetch();
-$totalRecords = $records['allcount'];
+// ตัวแปรสำหรับรับค่าจาก Frontend
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20; // จำนวนรายการต่อหน้า
+$searchHouseNo = isset($_GET['searchHouseNo']) ? trim($_GET['searchHouseNo']) : '';
+$paymentStatus = isset($_GET['paymentStatus']) ? trim($_GET['paymentStatus']) : '';
+$sortColumn = isset($_GET['sortColumn']) ? $_GET['sortColumn'] : 'created_at';
+$sortOrder = isset($_GET['sortOrder']) ? strtoupper($_GET['sortOrder']) : 'DESC';
 
-## Total number of records with filtering
-$sqlFilter = "SELECT COUNT(*) AS allcount 
-              FROM v_ims_house_payment 
-              WHERE 1 ".$searchQuery;
+// ตรวจสอบค่าที่ไม่ถูกต้อง
+if ($page < 1) $page = 1;
+if ($limit < 1 || $limit > 100) $limit = 20; // จำกัดไม่ให้ดึงข้อมูลมากเกินไป เพื่อป้องกันการโหลดที่หนักเกินไป
+if (!in_array($sortOrder, ['ASC', 'DESC'])) $sortOrder = 'DESC';
 
-$stmt = $pdo->prepare($sqlFilter);
-$stmt->execute($searchParams);
-$records = $stmt->fetch();
-$totalRecordwithFilter = $records['allcount'];
-
-## Fetch records
+// White-list สำหรับคอลัมน์ที่สามารถเรียงลำดับได้ เพื่อป้องกัน SQL Injection
 $allowedSortColumns = [
-    'id', 'runno', 'doc_id', 'payment_date', 'house_number', 'detail',
-    'period_month_start', 'period_month_to', 'period_year', 'amount',
-    'remark', 'payment_type', 'payment_status', 'payment_status_desc',
-    'created_at', 'updated_at', 'print_first_date', 'print_last_date',
-    'print_status', 'month_name_start', 'month_name_to', 'alley',
-    'line_user_id', 'line_user_name', 'area_size', 'garbage_collection_fee',
-    'common_fee', 'payment_method', 'create_by', 'approve_by'
+    'id', 'doc_id', 'payment_date', 'house_number', 'amount',
+    'payment_status', 'created_at', 'period_year' , 'common_fee' , 'alley' , 'payment_status_desc' , 'month_name_start', 'month_name_start'
 ];
-
-if (!in_array($columnName, $allowedSortColumns)) {
-    $columnName = 'id';
-}
-if (!in_array(strtolower($columnSortOrder), ['asc', 'desc'])) {
-    $columnSortOrder = 'asc';
+if (!in_array($sortColumn, $allowedSortColumns)) {
+    $sortColumn = 'created_at'; // Default sort column
 }
 
+$offset = ($page - 1) * $limit;
 
-$sql = "SELECT 
-    * FROM v_ims_
-WHERE 1 ".$searchQuery." 
-ORDER BY ".$columnName." ".$columnSortOrder." 
-LIMIT :row, :rowperpage";
+$data = [];
+$totalRecords = 0;
 
-$stmt = $pdo->prepare($sql);
+try {
+    // ใช้ $conn ที่เชื่อมต่อแล้วจากไฟล์ connect_db.php
+    // --- 1. ดึง Total Records สำหรับ Pagination ---
+    $countSql = "SELECT COUNT(id) FROM v_ims_house_payment WHERE 1=1";
+    $params = []; // Array สำหรับเก็บค่า Parameter ที่จะ bind
 
-$stmt->bindParam(':row', $row, PDO::PARAM_INT);
-$stmt->bindParam(':rowperpage', $rowperpage, PDO::PARAM_INT);
+    if (!empty($searchHouseNo)) {
+        $countSql .= " AND house_number LIKE ?";
+        $params[] = '%' . $searchHouseNo . '%';
+    }
+    if (!empty($paymentStatus)) {
+        $countSql .= " AND payment_status = ?";
+        $params[] = $paymentStatus;
+    }
 
-foreach ($searchParams as $key => $value) {
-    $stmt->bindValue($key, $value, PDO::PARAM_STR);
+    $stmt = $conn->prepare($countSql); // เปลี่ยนจาก $pdo->prepare เป็น $conn->prepare
+    $stmt->execute($params);
+    $totalRecords = $stmt->fetchColumn();
+
+    // --- 2. ดึงข้อมูลรายการ ---
+    $selectColumns = "id, doc_id, payment_date, house_number, amount, payment_status, picture_payment , created_at , area_size , common_fee , alley , payment_status_desc , month_name_start , month_name_to , period_year ,detail ";
+    $sql = "SELECT $selectColumns FROM v_ims_house_payment WHERE 1=1";
+
+    $dataParams = [];
+    if (!empty($searchHouseNo)) {
+        $sql .= " AND house_number LIKE ?";
+        $dataParams[] = '%' . $searchHouseNo . '%';
+    }
+    if (!empty($paymentStatus)) {
+        $sql .= " AND payment_status = ?";
+        $dataParams[] = $paymentStatus;
+    }
+
+    $sql .= " ORDER BY " . $sortColumn . " " . $sortOrder;
+    $sql .= " LIMIT ? OFFSET ?";
+
+    $stmt = $conn->prepare($sql); // เปลี่ยนจาก $pdo->prepare เป็น $conn->prepare
+
+    $paramIndex = 0;
+    foreach ($dataParams as $value) {
+        $stmt->bindValue(++$paramIndex, $value, PDO::PARAM_STR);
+    }
+    $stmt->bindValue(++$paramIndex, $limit, PDO::PARAM_INT);
+    $stmt->bindValue(++$paramIndex, $offset, PDO::PARAM_INT);
+
+    $stmt->execute();
+    $data = $stmt->fetchAll();
+
+    echo json_encode([
+        'success' => true,
+        'data' => $data,
+        'totalRecords' => $totalRecords,
+        'currentPage' => $page,
+        'totalPages' => ceil($totalRecords / $limit)
+    ]);
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Query error: ' . $e->getMessage()
+    ]);
 }
-
-$stmt->execute();
-$data = $stmt->fetchAll();
-
-## Response
-$response = array(
-    "draw" => intval($draw),
-    "iTotalRecords" => $totalRecords,
-    "iTotalDisplayRecords" => $totalRecordwithFilter,
-    "aaData" => $data
-);
-
-echo json_encode($response);
 ?>
