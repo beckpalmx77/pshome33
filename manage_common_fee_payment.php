@@ -425,8 +425,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         next: 'ต่อไป'
                     }
                 },
-                'processing': true,
-                'serverSide': true,
+                processing: true,
+                serverSide: true,
                 'serverMethod': 'post',
                 'scrollX': true,
                 'ajax': {
