@@ -428,7 +428,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 processing: true,
                 serverSide: true,
                 'serverMethod': 'post',
-                'scrollX': true,
+                'scrollX': true,e
                 'ajax': {
                     'url': 'model/manage_common_fee_payment_process.php',
                     'type': 'POST',
