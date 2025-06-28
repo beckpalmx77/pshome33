@@ -125,7 +125,7 @@ include('includes/Header.php');
 
                         <div class="mb-3">
                             <label>เข้าระบบผ่าน Web Browser ได้ที่:</label>
-                            <p class="form-control-plaintext">https://ps33.themediathai.com</p>
+                            <p class="form-control-plaintext">https://ps33home.com</p>
 
                             <label for="line_phone">ชื่อผู้ใช้:</label>
                             <input type="text" name="line_phone" id="line_phone" class="form-control" readonly>
