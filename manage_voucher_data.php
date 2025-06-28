@@ -722,7 +722,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         success: function (res) {
                             if (res.status === 'success') {
                                 alertify.success('บันทึกสำเร็จแล้ว');
-                                closeAndReload(); // Close the window and reload parent table
+                                //closeAndReload(); // Close the window and reload parent table
                             } else {
                                 alert('เกิดข้อผิดพลาด: ' + res.message);
                                 $('#save').prop('disabled', false);
