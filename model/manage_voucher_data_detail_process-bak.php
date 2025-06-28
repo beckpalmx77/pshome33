@@ -52,44 +52,6 @@ $payment_method = $payment_method === null ? '-' : $payment_method; // Ensure it
 try {
     $conn->beginTransaction();
 
-    // --- Start Supplier Handling ---
-    // Check if supplier_name exists in ims_supplier
-    $stmtCheckSupplier = $conn->prepare("SELECT supplier_id, supplier_name FROM ims_supplier WHERE supplier_name = ?");
-    $stmtCheckSupplier->execute([$supplier_name]);
-    $existingSupplier = $stmtCheckSupplier->fetch(PDO::FETCH_ASSOC);
-
-    if ($existingSupplier) {
-        // Supplier exists, use its supplier_id
-        $supplier_id = $existingSupplier['supplier_id'];
-    } else {
-        // Supplier does not exist, create a new supplier_id and insert
-        $stmtGetLastSupplierId = $conn->prepare("SELECT MAX(supplier_id) AS last_supplier_id FROM ims_supplier WHERE supplier_id LIKE 'S%'");
-        $stmtGetLastSupplierId->execute();
-        $last_supplier_id = $stmtGetLastSupplierId->fetchColumn();
-
-        $next_supplier_sequence = 1;
-        if ($last_supplier_id) {
-            // Extract the numeric part and increment
-            $numeric_part = (int)substr($last_supplier_id, 1);
-            $next_supplier_sequence = $numeric_part + 1;
-        }
-        $new_supplier_id = 'S' . sprintf('%05d', $next_supplier_sequence); // Format as S00001, S00002, etc.
-
-        // Insert new supplier into ims_supplier table
-        $stmtInsertSupplier = $conn->prepare("INSERT INTO ims_supplier (supplier_id, supplier_name, address, phone, status) VALUES (?, ?, ?, ?, 'Active')");
-        // For 'address' and 'phone', you might need to get them from the input $data or set a default.
-        // For now, setting them to empty string as per ims_supplier.sql schema 'NOT NULL'
-        $default_address = $data['supplier_address'] ?? '-';
-        $default_phone = $data['supplier_phone'] ?? '-';
-
-        if (!$stmtInsertSupplier->execute([$new_supplier_id, $supplier_name, $default_address, $default_phone])) {
-            $errorInfo = $stmtInsertSupplier->errorInfo();
-            throw new Exception("Insert new supplier failed: " . $errorInfo[2]);
-        }
-        $supplier_id = $new_supplier_id; // Use the newly generated supplier_id
-    }
-    // --- End Supplier Handling ---
-
     $total_amount_header = 0;
 
     // Fetch next runno for ADD action (for ims_payment_voucher)
@@ -396,7 +358,7 @@ try {
             date('Y', strtotime($doc_date)), // Use doc_date year for consistency
             $next_pv_runno,
             $requester,
-            $supplier_id, // Use the (potentially new) supplier_id
+            $supplier_id,
             $supplier_name,
             $purpose,
             $payment_method,
@@ -417,7 +379,7 @@ try {
         if (!$stmtHeader->execute([
             $doc_date,
             $requester,
-            $supplier_id, // Use the (potentially new) supplier_id
+            $supplier_id,
             $supplier_name,
             $purpose,
             $payment_method,
