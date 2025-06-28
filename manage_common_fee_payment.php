@@ -27,8 +27,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
-                        <input type="hidden" id="account_type" name="account_type"
-                               value="<?php echo $_SESSION['account_type']; ?>">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
@@ -96,6 +94,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <form method="post" id="recordForm">
                                                         <div class="modal-body">
                                                             <div class="modal-body">
+
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-6">
                                                                         <label for="doc_id"
@@ -145,7 +144,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 <div class="form-group row">
                                                                     <div class="col-md-4">
                                                                         <label for="period_month_start">เริ่มงวดเดือน</label>
-                                                                        <select name="period_month_start" id="period_month_start"
+                                                                        <select name="period_month_start"
+                                                                                id="period_month_start"
                                                                                 class="form-control" required>
                                                                             <option value="">เลือก</option>
                                                                             <?php
@@ -163,7 +163,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <label for="period_month_to">ถึงงวดเดือน</label>
-                                                                        <select name="period_month_to" id="period_month_to" class="form-control"
+                                                                        <select name="period_month_to"
+                                                                                id="period_month_to"
+                                                                                class="form-control"
                                                                                 required>
                                                                             <option value="">เลือก</option>
                                                                             <?php
@@ -176,7 +178,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <label for="period_year">งวดปี</label>
-                                                                        <input type="number" name="period_year" id="period_year"
+                                                                        <input type="number" name="period_year"
+                                                                               id="period_year"
                                                                                class="form-control" required
                                                                                value="<?php echo date('Y'); ?>">
                                                                     </div>
@@ -271,8 +274,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                              class="img-fluid rounded shadow-sm">
                                                     </div>
                                                     <div class="modal-footer justify-content-between">
-                                                        <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a-->
-                                                        <!--button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
+                                                        <!--a id="downloadSlip" href="#" download class="btn btn-success">ดาวน์โหลด</a>
+                                                        <button type="button" class="btn btn-primary" id="printSlip">พิมพ์</button-->
                                                         <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">ปิด
                                                         </button> <!-- ปุ่มปิดล่าง -->
@@ -425,10 +428,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         next: 'ต่อไป'
                     }
                 },
-                processing: true,
-                serverSide: true,
+                'processing': true,
+                'serverSide': true,
                 'serverMethod': 'post',
-                'scrollX': true,e
+                'scrollX': true,
                 'ajax': {
                     'url': 'model/manage_common_fee_payment_process.php',
                     'type': 'POST',
@@ -581,11 +584,44 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </script>
 
     <script>
+        $(document).ready(function () {
+            $('#printButton').on('click', function (event) {
+                event.preventDefault();
+
+                // ดึงค่าจากฟอร์ม
+                const formData = $('#recordForm').serializeArray();
+
+                // สร้างฟอร์มชั่วคราวสำหรับ POST
+                const tempForm = $('<form>', {
+                    method: 'POST',
+                    action: 'print_pdf.php',
+                    target: '_blank' // เปิดในแท็บใหม่
+                });
+
+                // เพิ่มข้อมูลเข้าไปในฟอร์ม
+                formData.forEach(function (item) {
+                    tempForm.append($('<input>', {
+                        type: 'hidden',
+                        name: item.name,
+                        value: item.value
+                    }));
+                });
+
+                // เพิ่มฟอร์มชั่วคราวเข้าไปใน DOM และส่งฟอร์ม
+                $('body').append(tempForm);
+                tempForm.submit();
+
+                // ลบฟอร์มชั่วคราวหลังจากส่ง
+                tempForm.remove();
+            });
+        });
+    </script>
+
+    <script>
         $("#TableRecordList").on('click', '.print', function () {
-            let account_type = $('#account_type').val();
             let id = $(this).attr("id");
-            let url = (account_type === 'user') ? "print_pdf_smart?id=" : "print_pdf?id=";
-            window.open(url + encodeURIComponent(id), "_blank");
+            let url = "print_pdf.php?id=" + encodeURIComponent(id);
+            window.open(url, "_blank"); // เปิดหน้าใหม่
         });
     </script>
 
@@ -662,6 +698,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         });
 
     </script>
+
 
     </body>
     </html>
