@@ -116,7 +116,6 @@ if ($_POST["action"] === 'DELETE') {
     exit;
 }
 
-
 if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     ## Read value
