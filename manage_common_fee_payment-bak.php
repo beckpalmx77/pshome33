@@ -13,6 +13,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <!DOCTYPE html>
     <html lang="th">
     <head>
+        <style>
             /* ซ่อนข้อความเริ่มต้น */
             .dataTables_wrapper .dataTables_processing {
                 visibility: hidden; /* ซ่อนข้อความ "Processing..." */
