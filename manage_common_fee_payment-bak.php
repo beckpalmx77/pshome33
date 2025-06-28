@@ -13,34 +13,47 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <!DOCTYPE html>
     <html lang="th">
     <head>
-        <style>
-            /* ซ่อนข้อความ 'Processing...' เริ่มต้นของ DataTables */
+            /* ซ่อนข้อความเริ่มต้น */
             .dataTables_wrapper .dataTables_processing {
-                visibility: hidden; /* ซ่อนข้อความ */
-                background-color: rgba(255, 255, 255, 0.7); /* เพิ่มพื้นหลังโปร่งแสง (ถ้าต้องการ) */
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 1000; /* ทำให้แสดงอยู่ด้านบนสุด */
-                display: flex; /* ใช้ flexbox ในการจัดกึ่งกลาง */
-                justify-content: center; /* จัดกึ่งกลางแนวนอน */
-                align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+                visibility: hidden; /* ซ่อนข้อความ "Processing..." */
+                /* หรือ display: none; ถ้าต้องการซ่อนทั้งหมดรวมถึงพื้นหลัง */
             }
 
-            /* เพิ่มรูปภาพ spinner.gif เป็นพื้นหลัง */
+            /* เพิ่ม Spinner ของคุณเอง */
             .dataTables_wrapper .dataTables_processing::after {
-                content: ''; /* จำเป็นสำหรับ pseudo-element */
+                content: ''; /* สร้าง pseudo-element */
                 display: block;
-                width: 50px; /* ปรับขนาดตามขนาดของ GIF ของคุณ */
-                height: 50px; /* ปรับขนาดตามขนาดของ GIF ของคุณ */
-                background-image: url('img/spin/spin_cir.gif'); /* **เปลี่ยน 'path/to/your/spinner.gif' เป็นพาธที่ถูกต้อง** */
-                background-size: contain; /* ปรับขนาดรูปภาพให้พอดี */
-                background-repeat: no-repeat;
-                background-position: center;
-                visibility: visible; /* ทำให้รูปภาพแสดง */
+                width: 40px;
+                height: 40px;
+                margin: 10px auto; /* จัดกึ่งกลาง */
+                border: 4px solid #f3f3f3; /* สีขอบวงแหวน */
+                border-top: 4px solid #3498db; /* สีของวงแหวนที่หมุน */
+                border-radius: 50%; /* ทำให้เป็นวงกลม */
+                animation: spin 1s linear infinite; /* แอนิเมชันการหมุน */
             }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* หรือใช้ Font Awesome Spinner */
+            /*
+            .dataTables_wrapper .dataTables_processing::after {
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900;
+                content: "\f110"; // โค้ดของ icon fa-spinner
+                display: block;
+                font-size: 3em;
+                color: #3498db;
+                margin: 10px auto;
+                animation: fa-spin 2s infinite linear;
+            }
+            */
         </style>
     </head>
     <body id="page-top">
@@ -457,10 +470,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         previous: 'ก่อนหน้า',
                         last: 'สุดท้าย',
                         next: 'ต่อไป'
-                    },
-                    processing: '<div class="custom-spinner"></div>' // กำหนด HTML ของ spinner ตรงนี้
+                    }
                 },
-                'processing': true, // ยังคงต้องเป็น true
+                'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
                 'scrollX': true,
@@ -493,20 +505,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'garbage_collection_fee', className: 'dt-body-right', width: '120px'},
                     {data: 'delete', width: '80px'},
                 ],
-                'autoWidth': false,
-                // เพิ่ม callback functions เพื่อควบคุม spinner
-                'preXhr': function (xhr, data) {
-                    // ซ่อน spinner เริ่มต้นของ DataTables ถ้าคุณจะใช้ของคุณเอง
-                    // หรือแสดง spinner ของคุณเองที่นี่
-                    // console.log("ก่อนส่ง AJAX request");
-                },
-                'xhr': function (data) {
-                    // ซ่อน spinner ของคุณเองหลังจาก AJAX request เสร็จสิ้น
-                    // console.log("AJAX request เสร็จสิ้น");
-                },
-                'initComplete': function (settings, json) {
-                    // เมื่อ DataTable ถูกสร้างเสร็จสมบูรณ์
-                }
+                'autoWidth': false // ปิด autowidth เพื่อให้ width ที่กำหนดมีผลจริง
             });
         });
     </script>
