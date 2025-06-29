@@ -110,7 +110,7 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
         }
 
         // เตรียม URL รูปภาพสำหรับส่งกลับ frontend (เต็ม URL)
-        $baseUrl = "https://ps33.themediathai.com/line_oa/house/uploads/";
+        $baseUrl = "https://ps33home.com/line_oa/house/uploads/";
         $imageUrls = [];
         foreach ($photoNames as $photo) {
             $imageUrls[] = $baseUrl . $photo;

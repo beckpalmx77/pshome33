@@ -110,7 +110,7 @@ header('Content-Type: text/html; charset=utf-8');
             e.preventDefault();
             let formData = new FormData(this);
 
-            fetch("https://ps33.themediathai.com/line_oa/checkin/register_with_line_api.php", {
+            fetch("https://ps33home.com/line_oa/checkin/register_with_line_api.php", {
                 method: "POST",
                 body: formData
             })

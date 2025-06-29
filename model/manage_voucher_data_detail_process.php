@@ -38,7 +38,7 @@ if (!in_array($action, ['ADD', 'UPDATE'])) {
     exit;
 }
 
-if (!$doc_date || !$requester || !$supplier_name || empty($details)) {
+if (!$doc_date || !$supplier_name || empty($details)) {
     echo json_encode(['status' => 'error', 'message' => 'Missing required header or detail fields']);
     exit;
 }
@@ -144,9 +144,12 @@ try {
         WHERE id = ?");
 
     // Prepare statements for ims_products and ims_category
-    $stmtCheckProduct = $conn->prepare("SELECT product_name, pgroup_id FROM ims_products WHERE product_id = ?");
+    $stmtCheckProductById = $conn->prepare("SELECT product_id, product_name, pgroup_id, unit_id FROM ims_products WHERE product_id = ?");
+    $stmtCheckProductByName = $conn->prepare("SELECT product_id, product_name, pgroup_id, unit_id FROM ims_products WHERE product_name = ?");
     $stmtInsertProduct = $conn->prepare("INSERT INTO ims_products (product_id, product_name, pgroup_id, unit_id, status) VALUES (?, ?, ?, ?, 'Active')");
     $stmtUpdateProduct = $conn->prepare("UPDATE ims_products SET product_name = ?, pgroup_id = ?, unit_id = ? WHERE product_id = ?");
+    $stmtGetLastProductId = $conn->prepare("SELECT MAX(product_id) AS last_product_id FROM ims_products WHERE product_id LIKE 'P%'");
+
 
     $stmtGetPgroupName = $conn->prepare("SELECT pgroup_name FROM ims_pgroup WHERE pgroup_id = ?");
     $stmtCheckCategory = $conn->prepare("SELECT category_name FROM ims_category WHERE category_id = ?");
@@ -201,20 +204,32 @@ try {
         $current_unit_name = $item['unit_name'] ?? null;
         $current_inv = $item['inv'] ?? '-'; // Default to '-' if null, per DB schema
 
-        if (empty($current_product_id) || empty($current_product_name) || !isset($item['quantity']) || !is_numeric($item['quantity']) || !isset($item['price']) || !is_numeric($item['price'])) {
-            throw new Exception("Missing or invalid product details for line " . $line_no);
+        if (empty($current_product_name) || !isset($item['quantity']) || !is_numeric($item['quantity']) || !isset($item['price']) || !is_numeric($item['price'])) {
+            throw new Exception("Missing or invalid product name, quantity, or price for line " . $line_no);
         }
 
         $item_total = (float)$item['quantity'] * (float)$item['price'];
         $total_amount_header += $item_total;
 
         // --- Handle ims_products table (Create/Update if necessary) ---
-        $stmtCheckProduct->execute([$current_product_id]);
-        $existingProduct = $stmtCheckProduct->fetch(PDO::FETCH_ASSOC);
+        $existingProduct = null;
+        if (!empty($current_product_id)) {
+            $stmtCheckProductById->execute([$current_product_id]);
+            $existingProduct = $stmtCheckProductById->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if (!$existingProduct && !empty($current_product_name)) {
+            $stmtCheckProductByName->execute([$current_product_name]);
+            $existingProduct = $stmtCheckProductByName->fetch(PDO::FETCH_ASSOC);
+            if ($existingProduct) {
+                $current_product_id = $existingProduct['product_id']; // Use existing product_id if found by name
+            }
+        }
 
         $pgroup_id_for_product = null;
 
         if ($existingProduct) {
+            $current_product_id = $existingProduct['product_id']; // Ensure we use the found product ID
             $pgroup_id_for_product = $existingProduct['pgroup_id'];
             // Update product name, pgroup_id, unit_id if different or missing
             if ($existingProduct['product_name'] !== $current_product_name || empty($existingProduct['pgroup_id']) || empty($current_unit_id)) {
@@ -228,6 +243,19 @@ try {
             }
         } else {
             // Product does not exist, insert new product
+            // Generate a new product_id if not provided or found
+            if (empty($current_product_id)) {
+                $stmtGetLastProductId->execute();
+                $last_product_id = $stmtGetLastProductId->fetchColumn();
+
+                $next_product_sequence = 1;
+                if ($last_product_id) {
+                    $numeric_part = (int)substr($last_product_id, 1);
+                    $next_product_sequence = $numeric_part + 1;
+                }
+                $current_product_id = 'P' . sprintf('%05d', $next_product_sequence); // Format as P00001, P00002, etc.
+            }
+
             $pgroup_id_for_product = 'DEFAULT_PGROUP'; // Default for new products
             if (isset($item['pgroup_id']) && !empty($item['pgroup_id'])) {
                 $pgroup_id_for_product = $item['pgroup_id'];

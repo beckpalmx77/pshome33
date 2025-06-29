@@ -57,7 +57,7 @@
                 <label class="form-label">ชื่อ:</label>
                 <input type="text" id="f_name" name="f_name" class="form-control" required>
             </div>
-
+w
             <div class="mb-3 text-start">
                 <label class="form-label">นามสกุล:</label>
                 <input type="text" id="l_name" name="l_name" class="form-control" required>
@@ -128,7 +128,7 @@
             e.preventDefault();
             let formData = new FormData(this);
 
-            fetch("https://ps33.themediathai.com/line_oa/house/register_house_with_line_api.php", {
+            fetch("https://ps33home.com/line_oa/house/register_house_with_line_api.php", {
                 method: "POST",
                 body: formData
             })
