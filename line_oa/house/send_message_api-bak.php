@@ -101,7 +101,7 @@ if (isset($_POST['user_id'], $_POST['remark'])) {
     $flexContents = [];
 
     foreach (array_slice($photoNames, 0, 10) as $photo) {
-        $imageUrl = "https://ps33.themediathai.com/line_oa/house/uploads/" . $photo;
+        $imageUrl = "https://ps33home.com/line_oa/house/uploads/" . $photo;
         $flexContents[] = [
             "type" => "bubble",
             "hero" => [
