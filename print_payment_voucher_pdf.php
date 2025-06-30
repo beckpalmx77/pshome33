@@ -208,18 +208,18 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
     </table>';
 
     // Keep the print date and printed by info as a separate line
-/*
-    $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="font-size:10pt;">
-        <tr>
-            <td align="left">
-                วันที่พิมพ์: ' . date('d/m/Y H:i') . '
-            </td>
-            <td align="right">
-                ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'เจ้าหน้าที่นิติฯ') . '
-            </td>
-        </tr>
-    </table>';
-*/
+    /*
+        $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="font-size:10pt;">
+            <tr>
+                <td align="left">
+                    วันที่พิมพ์: ' . date('d/m/Y H:i') . '
+                </td>
+                <td align="right">
+                    ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'เจ้าหน้าที่นิติฯ') . '
+                </td>
+            </tr>
+        </table>';
+    */
 
     return $html;
 }
@@ -230,6 +230,13 @@ $html = generate_receipt_html($company, $voucher_header, $items, $total, $thai_t
 $html .= '<hr style="border-top: dashed 1px; margin: 5px 0;">';
 $html .= '<div style="height: 20px;"></div>'; // เพิ่ม div เปล่าที่มีความสูง 20px
 $html .= generate_receipt_html($company, $voucher_header, $items, $total, $thai_text_total, "(สำเนา)");
+
+
+$stmt_approve = $conn->prepare("UPDATE ims_payment_voucher 
+                                  SET approve_status = 'Y' 
+                                  WHERE doc_no = :doc_no");
+$stmt_approve->bindParam(':doc_no', $doc_no, PDO::PARAM_STR);
+$stmt_approve->execute();
 
 // เขียนลง PDF
 $pdf->writeHTML($html, true, false, false, false, '');
