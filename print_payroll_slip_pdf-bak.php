@@ -24,9 +24,7 @@ $company = $stmt_company->fetch(PDO::FETCH_ASSOC);
 class CustomPDF extends TCPDF
 {
     // No default footer needed as HTML contains it.
-    public function Footer()
-    {
-    }
+    public function Footer() {}
 }
 
 // Create new PDF document
@@ -134,8 +132,7 @@ $pdf->Output($filename, 'I');
  * Helper function to convert month number to Thai month name.
  * You can put this in a separate util file or directly here.
  */
-function getThaiMonthName($monthNum)
-{
+function getThaiMonthName($monthNum) {
     $months = [
         1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม',
         4 => 'เมษายน', 5 => 'พฤษภาคม', 6 => 'มิถุนายน',
@@ -209,7 +206,8 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
     // --- Start Income Table HTML ---
     $html .= '<table border="1" cellspacing="0" cellpadding="3" width="100%" style="table-layout: fixed;">
                 <tr style="background-color:#f2f2f2;">
-                    <th width="75%" align="center"><b>รายการรายได้</b></th>
+                    <th width="50%" align="center"><b>รายการรายได้</b></th>
+                    <th width="25%" align="center"><b>จำนวน</b></th>
                     <th width="25%" align="center"><b>จำนวนเงิน</b></th>
                 </tr>';
 
@@ -223,21 +221,22 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
     }
 
     // Display only up to 3 income items
-    for ($i = 0; $i < max(count($income_items), 3); $i++) {
+    for($i = 0; $i < max(count($income_items), 3); $i++) {
         if (isset($income_items[$i])) {
             $item = $income_items[$i];
             $html .= '<tr>
                 <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' . (isset($item['remark']) && $item['remark'] != '' ? ' (<small style="font-size: 9pt;"><i>' . htmlspecialchars($item['remark']) . '</i></small>)' : '') . '
                 </td>
+                <td align="right">' . number_format($item['quantity'] ?? 0, 2) . '</td>
                 <td align="right">' . number_format($item['total_amount'] ?? 0, 2) . '</td>
             </tr>';
         } else {
-            $html .= '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>'; // Empty row for padding - Adjusted colspan
+            $html .= '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>'; // Empty row for padding
         }
     }
 
     $html .= '<tr>
-        <td align="right"><b>รวมรายได้ทั้งสิ้น:</b></td>
+        <td align="right" colspan="2"><b>รวมรายได้ทั้งสิ้น:</b></td>
         <td align="right"><b>' . number_format($total_income, 2) . '</b></td>
     </tr>
     </table>';
@@ -251,7 +250,8 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
     // --- Start Deduction Table HTML ---
     $html .= '<table border="1" cellspacing="0" cellpadding="3" width="100%" style="table-layout: fixed;">
                 <tr style="background-color:#f2f2f2;">
-                    <th width="75%" align="center"><b>รายการหัก</b></th>
+                    <th width="50%" align="center"><b>รายการหัก</b></th>
+                    <th width="25%" align="center"><b>จำนวน</b></th>
                     <th width="25%" align="center"><b>จำนวนเงิน</b></th>
                 </tr>';
 
@@ -265,21 +265,22 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
     }
 
     // Display only up to 3 deduction items
-    for ($i = 0; $i < max(count($deduction_items), 3); $i++) {
+    for($i = 0; $i < max(count($deduction_items), 3); $i++) {
         if (isset($deduction_items[$i])) {
             $item = $deduction_items[$i];
             $html .= '<tr>
                 <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' . (isset($item['remark']) && $item['remark'] != '' ? ' (<small style="font-size: 9pt;"><i>' . htmlspecialchars($item['remark']) . '</i></small>)' : '') . '
                 </td>
+                <td align="right">' . number_format($item['quantity'] ?? 0, 2) . '</td>
                 <td align="right">' . number_format($item['total_amount'] ?? 0, 2) . '</td>
             </tr>';
         } else {
-            $html .= '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>'; // Empty row for padding - Adjusted colspan
+            $html .= '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>'; // Empty row for padding
         }
     }
 
     $html .= '<tr>
-        <td align="right"><b>รวมรายหักทั้งสิ้น:</b></td>
+        <td align="right" colspan="2"><b>รวมรายหักทั้งสิ้น:</b></td>
         <td align="right"><b>' . number_format($total_deduction, 2) . '</b></td>
     </tr>
     </table>';
@@ -325,6 +326,7 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
         </tr>
     </table>';
     // End of the section that was previously in template_payslip_section.php
+
 
     $html .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:10px; font-size:9pt;">
         <tr>
