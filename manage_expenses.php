@@ -578,9 +578,6 @@ if (strlen($_SESSION['alogin']) == "") {
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                <?php  if ($_SESSION['deviceType'] !== 'computer') {
-                    echo "'scrollX': true,";
-                }?>
                 'ajax': {
                     'url': 'model/manage_expense_process.php',
                     'data': formDataObj
