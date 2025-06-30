@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $sql = "
 SELECT 
     m.house_number,
+    m.alley,    
     m.area_size,
     m.garbage_collection_fee,
     m.common_fee,
@@ -16,6 +17,7 @@ SELECT
     h.contact_name,
     h.phone_number,
     h.alley,
+    m.land_no,
     h.remark AS house_remark,
     h.house_status
 FROM 
@@ -37,6 +39,7 @@ $sheet = $spreadsheet->getActiveSheet();
 $sheet->fromArray(
     [
         'เลขที่บ้าน',
+        'ซอย',
         'ขนาดพื้นที่',
         'ค่าขยะ',
         'ค่าส่วนกลาง',
@@ -44,6 +47,7 @@ $sheet->fromArray(
         'ชื่อผู้ติดต่อ',
         'เบอร์โทร',
         'ซอย',
+        'หมายเลขโฉนด',
         'หมายเหตุ',
         'สถานะบ้าน'
     ],
@@ -55,15 +59,17 @@ $sheet->fromArray(
 $row = 2;
 foreach ($houses as $house) {
     $sheet->setCellValue("A$row", $house['house_number']);
-    $sheet->setCellValue("B$row", $house['area_size']);
-    $sheet->setCellValue("C$row", $house['garbage_collection_fee']);
-    $sheet->setCellValue("D$row", $house['common_fee']);
-    $sheet->setCellValue("E$row", $house['master_status']);
-    $sheet->setCellValue("F$row", $house['contact_name']);
-    $sheet->setCellValue("G$row", $house['phone_number']);
-    $sheet->setCellValue("H$row", $house['alley']);
-    $sheet->setCellValue("I$row", $house['house_remark']);
-    $sheet->setCellValue("J$row", $house['house_status'] === "O" ? "บ้านตนเอง-ครอบครัว" : ($house['house_status'] === "R" ? "บ้านเช่า" : "ไม่ระบุ"));
+    $sheet->setCellValue("B$row", $house['alley']);
+    $sheet->setCellValue("C$row", $house['area_size']);
+    $sheet->setCellValue("D$row", $house['garbage_collection_fee']);
+    $sheet->setCellValue("E$row", $house['common_fee']);
+    $sheet->setCellValue("F$row", $house['master_status']);
+    $sheet->setCellValue("G$row", $house['contact_name']);
+    $sheet->setCellValue("H$row", $house['phone_number']);
+    $sheet->setCellValue("I$row", $house['alley']);
+    $sheet->setCellValue("J$row", $house['land_no']);
+    $sheet->setCellValue("K$row", $house['house_remark']);
+    $sheet->setCellValue("L$row", $house['house_status'] === "O" ? "บ้านตนเอง-ครอบครัว" : ($house['house_status'] === "R" ? "บ้านเช่า" : "ไม่ระบุ"));
     $row++;
 }
 

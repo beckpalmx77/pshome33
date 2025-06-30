@@ -58,9 +58,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <thead>
                                                 <tr>
                                                     <th>เลขที่บ้าน</th>
+                                                    <th>ซอย</th>
                                                     <th>ขนาดพื้นที่บ้าน</th>
                                                     <th>ค่าเก็บขยะ</th>
                                                     <th>ค่าส่วนกลาง</th>
+                                                    <th>เลขที่โฉนด</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -68,9 +70,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tfoot>
                                                 <tr>
                                                     <th>เลขที่บ้าน</th>
+                                                    <th>ซอย</th>
                                                     <th>ขนาดพื้นที่บ้าน</th>
                                                     <th>ค่าเก็บขยะ</th>
                                                     <th>ค่าส่วนกลาง</th>
+                                                    <th>เลขที่โฉนด</th>
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -98,6 +102,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <label for="house_number" class="control-label">เลขที่บ้าน</label>
                                                                     <input type="house_number" class="form-control"
                                                                            id="house_number" name="house_number"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="alley"
+                                                                           class="control-label">ซอย</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="alley"
+                                                                           name="alley"
+                                                                           placeholder="">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="land_no"
+                                                                           class="control-label">เลขที่โฉนด</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="land_no"
+                                                                           name="land_no"
                                                                            placeholder="">
                                                                 </div>
 
@@ -264,9 +286,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 },
                 'columns': [
                     {data: 'house_number'},
+                    {data: 'alley'},
                     {data: 'area_size'},
                     {data: 'garbage_collection_fee'},
                     {data: 'common_fee'},
+                    {data: 'land_no'},
                     {data: 'status'},
                     {data: 'update'}
                 ]
@@ -304,6 +328,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#recordModal').modal('show');
                 $('#id').val("");
                 $('#house_number').val("");
+                $('#alley').val("");
+                $('#land_no').val("");
                 $('#area_size').val("");
                 $('#garbage_collection_fee').val("");
                 $('#common_fee').val("");
@@ -332,6 +358,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
                         let house_number = response[i].house_number;
+                        let land_no = response[i].land_no;
+                        let alley = response[i].alley;
                         let area_size = response[i].area_size;
                         let garbage_collection_fee = response[i].garbage_collection_fee;
                         let common_fee = response[i].common_fee;
@@ -341,6 +369,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#house_number').val(house_number);
+                        $('#land_no').val(land_no);
+                        $('#alley').val(alley);
                         $('#area_size').val(area_size);
                         $('#garbage_collection_fee').val(garbage_collection_fee);
                         $('#common_fee').val(common_fee);
@@ -375,6 +405,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
                         let house_number = response[i].house_number;
+                        let land_no = response[i].land_no;
+                        let alley = response[i].alley;
                         let area_size = response[i].area_size;
                         let garbage_collection_fee = response[i].garbage_collection_fee;
                         let common_fee = response[i].common_fee;
@@ -384,6 +416,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#house_number').val(house_number);
+                        $('#land_no').val(land_no);
+                        $('#alley').val(alley);
                         $('#area_size').val(area_size);
                         $('#garbage_collection_fee').val(garbage_collection_fee);
                         $('#common_fee').val(common_fee);

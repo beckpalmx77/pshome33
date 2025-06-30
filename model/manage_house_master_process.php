@@ -26,6 +26,8 @@ if ($_POST["action"] === 'GET_DATA') {
     foreach ($results as $result) {
         $return_arr[] = array("id" => $result['id'],
             "house_number" => $result['house_number'],
+            "alley" => $result['alley'],
+            "land_no" => $result['land_no'],
             "area_size" => $result['area_size'],
             "garbage_collection_fee" => $result['garbage_collection_fee'],
             "common_fee" => $result['common_fee'],
@@ -57,6 +59,8 @@ if ($_POST["action"] === 'ADD') {
 
 
         $house_number = $_POST["house_number"];
+        $alley = $_POST["alley"];
+        $land_no = $_POST["land_no"];
         $area_size = $_POST["area_size"];
         $garbage_collection_fee = $_POST["garbage_collection_fee"];
         $common_fee = $_POST["common_fee"];
@@ -69,14 +73,16 @@ if ($_POST["action"] === 'ADD') {
         if ($nRows > 0) {
             echo $dup;
         } else {
-            $sql = "INSERT INTO ims_house_master(house_number,area_size,garbage_collection_fee,common_fee,remark,status) 
-                    VALUES (:house_number,:area_size,:garbage_collection_fee,:common_fee,:remark,:status)";
+            $sql = "INSERT INTO ims_house_master(house_number,alley,area_size,garbage_collection_fee,common_fee,remark,land_no,status) 
+                    VALUES (:house_number,:alley,:area_size,:garbage_collection_fee,:common_fee,:remark,:land_no,:status)";
             $query = $conn->prepare($sql);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+            $query->bindParam(':alley', $alley, PDO::PARAM_STR);
             $query->bindParam(':area_size', $area_size, PDO::PARAM_STR);
             $query->bindParam(':garbage_collection_fee', $garbage_collection_fee, PDO::PARAM_STR);
             $query->bindParam(':common_fee', $common_fee, PDO::PARAM_STR);
             $query->bindParam(':remark', $remark, PDO::PARAM_STR);
+            $query->bindParam(':land_no', $land_no, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
@@ -97,6 +103,8 @@ if ($_POST["action"] === 'UPDATE') {
         $id = $_POST["id"];
 
         $house_number = $_POST["house_number"];
+        $alley = $_POST["alley"];
+        $land_no = $_POST["land_no"];
         $area_size = $_POST["area_size"];
         $garbage_collection_fee = $_POST["garbage_collection_fee"];
         $common_fee = $_POST["common_fee"];
@@ -106,14 +114,16 @@ if ($_POST["action"] === 'UPDATE') {
         $sql_find = "SELECT * FROM ims_house_master WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_house_master SET house_number=:house_number,area_size=:area_size,garbage_collection_fee=:garbage_collection_fee
-            ,common_fee=:common_fee,status=:status            
+            $sql_update = "UPDATE ims_house_master SET house_number=:house_number,alley=:alley,area_size=:area_size,garbage_collection_fee=:garbage_collection_fee
+            ,common_fee=:common_fee,land_no=:land_no,status=:status            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+            $query->bindParam(':alley', $alley, PDO::PARAM_STR);
             $query->bindParam(':area_size', $area_size, PDO::PARAM_STR);
             $query->bindParam(':garbage_collection_fee', $garbage_collection_fee, PDO::PARAM_STR);
             $query->bindParam(':common_fee', $common_fee, PDO::PARAM_STR);
+            $query->bindParam(':land_no', $land_no, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
@@ -186,8 +196,7 @@ if ($_POST["action"] === 'GET_HOUSE_MASTER') {
 
 ## Fetch records
     $stmt = $conn->prepare("SELECT * FROM ims_house_master WHERE 1 " . $searchQuery
-        . " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset");
-
+        . " ORDER BY CAST(Alley AS UNSIGNED)  LIMIT :limit,:offset");
 /*
     $txt = $searchQuery . " | " . $columnName . " | " . $columnSortOrder;
     $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
@@ -213,6 +222,8 @@ if ($_POST["action"] === 'GET_HOUSE_MASTER') {
             $data[] = array(
                 "id" => $row['id'],
                 "house_number" => $row['house_number'],
+                "alley" => $row['alley'],
+                "land_no" => $row['land_no'],
                 "area_size" => $row['area_size'],
                 "garbage_collection_fee" => $row['garbage_collection_fee'],
                 "common_fee" => $row['common_fee'],
