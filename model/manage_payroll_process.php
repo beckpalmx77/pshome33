@@ -121,7 +121,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PAYROLL') {
 
     // Fetch data
     $sql = "SELECT * FROM v_ims_payroll WHERE 1 " . $searchQuery .
-        " ORDER BY $columnName $columnSortOrder LIMIT :offset, :limit";
+        " ORDER BY id desc LIMIT :offset, :limit";
     $stmt = $conn->prepare($sql);
 
     foreach ($searchArray as $key => $val) {
