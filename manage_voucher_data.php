@@ -409,8 +409,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         </div>
     </td>
     <td style="width: 20%;"><input type="text" class="form-control product_name" value="${item.product_name}"></td>
-    <td style="width: 11%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
-    <td style="width: 12%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
+    <td style="width: 7%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
+    <td style="width: 7%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
     <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
     <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
     <td style="width: 12%;">
@@ -421,7 +421,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             </a>
         </div>
     </td>
-    <td style="width: 20%;"><input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly></td>
+    <td style="width: 26%;"><input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly></td>
     <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
                     `);
@@ -467,8 +467,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     </div>
   </td>
   <td style="width: 20%;"><input type="text" class="form-control product_name" style="width: 100%;"></td>
-  <td style="width: 11%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
-  <td style="width: 11%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
+  <td style="width: 7%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
+  <td style="width: 7%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
   <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
   <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
   <td style="width: 12%;">
@@ -479,7 +479,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
       </a>
     </div>
   </td>
-  <td style="width: 20%;"><input type="text" class="form-control item-unit-name" readonly style="width: 100%;"></td>
+  <td style="width: 26%;"><input type="text" class="form-control item-unit-name" readonly style="width: 100%;"></td>
   <td style="width: auto;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
         `);
