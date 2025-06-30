@@ -136,8 +136,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <th style="width: 12%;">ใบเสร็จ/inv</th>
                                     <th style="width: 12%;">ราคาต่อหน่วย</th>
                                     <th style="width: 15%;">รวมเงิน</th>
-                                    <th style="width: 12%;">รหัสหน่วยนับ</th>
-                                    <th style="width: 20%;">หน่วยนับ</th>
+                                    <!-- Changed width for unit_name, unit_id is hidden -->
+                                    <th style="width: 32%;">หน่วยนับ</th>
                                     <th>ลบ</th>
                                 </tr>
                                 </thead>
@@ -147,7 +147,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <td colspan="4" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
                                     <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
                                     </td>
-                                    <td colspan="3"></td>
+                                    <td colspan="2"></td><!-- Adjusted colspan -->
                                 </tr>
                                 </tfoot>
                             </table>
@@ -203,7 +203,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                     <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel"
                          aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">เลือกรายการพัสดุ</h5>
@@ -230,7 +230,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                     <div class="modal fade" id="unitModal" tabindex="-1" role="dialog" aria-labelledby="unitModalLabel"
                          aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">เลือกหน่วยนับ</h5>
@@ -413,15 +413,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <td style="width: 7%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
     <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
     <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
-    <td style="width: 12%;">
+    <td style="width: 32%;">
         <div class="d-flex">
-            <input type="text" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
+            <input type="hidden" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
+            <input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly style="flex: 1;">
             <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
                 <i class="fa fa-search"></i>
             </a>
         </div>
     </td>
-    <td style="width: 26%;"><input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly></td>
     <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
                     `);
@@ -471,15 +471,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
   <td style="width: 7%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
   <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
   <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
-  <td style="width: 12%;">
+  <td style="width: 32%;">
     <div class="d-flex">
-      <input type="text" class="form-control item-unit-code" readonly style="flex: 1;">
+      <input type="hidden" class="form-control item-unit-code" readonly style="flex: 1;">
+      <input type="text" class="form-control item-unit-name" readonly style="flex: 1;">
       <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
         <i class="fa fa-search"></i>
       </a>
     </div>
   </td>
-  <td style="width: 26%;"><input type="text" class="form-control item-unit-name" readonly style="width: 100%;"></td>
   <td style="width: auto;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
         `);
