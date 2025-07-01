@@ -120,13 +120,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <table class="table table-bordered" id="detailTable">
                                 <thead class="thead-primary">
                                 <tr>
-                                    <th style="width: 25%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th> <th style="width: 11%;">จำนวน</th>
-                                    <th style="width: 12%;">ใบเสร็จ/inv</th>
-                                    <th style="width: 12%;">ราคาต่อหน่วย</th>
+                                    <th style="width: 25%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th>
+                                    <th style="width: 10%;">จำนวน</th>
+                                    <th style="width: 10%;">ใบเสร็จ/inv</th>
+                                    <th style="width: 10%;">ราคาต่อหน่วย</th>
                                     <th style="width: 15%;">รวมเงิน</th>
-                                    <th style="width: 32%;">หน่วยนับ</th>
-                                    <th>หมายเหตุ</th>
-                                    <th>ลบ</th>
+                                    <th style="width: 15%;">หน่วยนับ</th>
+                                    <th style="width: 10%;">หมายเหตุ</th>
+                                    <th style="width: 5%;">ลบ</th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -397,11 +398,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             </a>
         </div>
     </td>
-    <td style="width: 7%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
-    <td style="width: 7%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
-    <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
+    <td style="width: 10%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
+    <td style="width: 10%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
+    <td style="width: 10%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
     <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
-    <td style="width: 32%;">
+    <td style="width: 15%;">
         <div class="d-flex">
             <input type="hidden" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
             <input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly style="flex: 1;">
@@ -410,8 +411,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             </a>
         </div>
     </td>
-    <td><input type="text" class="form-control item-remark" value="${item.remark || ''}"></td>
-    <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
+    <td style="width: 10%;"><input type="text" class="form-control item-remark" value="${item.remark || ''}"></td>
+    <td style="width: 5%;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
                         `);
                         });
@@ -456,11 +457,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
       </a>
     </div>
   </td>
-  <td style="width: 7%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
-  <td style="width: 7%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
-  <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
+  <td style="width: 10%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
+  <td style="width: 10%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
+  <td style="width: 10%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
   <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
-  <td style="width: 32%;">
+  <td style="width: 15%;">
     <div class="d-flex">
       <input type="hidden" class="form-control item-unit-code" readonly style="flex: 1;">
       <input type="text" class="form-control item-unit-name" readonly style="flex: 1;">
@@ -469,8 +470,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
       </a>
     </div>
   </td>
-  <td><input type="text" class="form-control item-remark" style="width: 100%;"></td>
-  <td style="width: auto;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
+  <td style="width: 10%;"><input type="text" class="form-control item-remark" style="width: 100%;"></td>
+  <td style="width: 5%;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
         `);
             });

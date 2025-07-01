@@ -718,6 +718,7 @@ foreach ($BankCurr as $row_curr) {
             });
         });
     });
+
 </script>
 
 

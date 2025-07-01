@@ -71,7 +71,7 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
 
     try {
         $stmt = $conn->prepare("
-            SELECT product_id, product_name, quantity, inv, price, unit_id, unit_name
+            SELECT product_id, product_name, quantity, inv, price, unit_id, unit_name , remark
             FROM ims_payment_voucher_items
             WHERE doc_no = ?
         ");
@@ -128,7 +128,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
 
     // Fetch data
     $sql = "SELECT * FROM ims_payment_voucher WHERE 1 " . $searchQuery .
-        " ORDER BY $columnName $columnSortOrder LIMIT :offset, :limit";
+        " ORDER BY id DESC LIMIT :offset, :limit";
     $stmt = $conn->prepare($sql);
 
     foreach ($searchArray as $key => $val) {

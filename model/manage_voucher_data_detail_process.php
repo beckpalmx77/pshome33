@@ -127,8 +127,12 @@ try {
     }
 
     // Prepare detail statement for ims_payment_voucher_items (Re-added doc_date based on schema)
-    $stmtDetailPV = $conn->prepare("INSERT INTO ims_payment_voucher_items (doc_no, doc_date, line_no, product_id, product_name, inv, quantity, price, unit_id, unit_name)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // NOTE: If 'remark' is intended for this table, its column must exist in the database and be added here.
+    // Based on the provided 'manage_voucher_detail_process.php' snippet, 'ims_payment_voucher_items' does not seem to have a 'remark' column.
+    // === START MODIFICATION FOR REMARK FIELD ===
+    $stmtDetailPV = $conn->prepare("INSERT INTO ims_payment_voucher_items (doc_no, doc_date, line_no, product_id, product_name, inv, quantity, price, unit_id, unit_name, remark)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // === END MODIFICATION FOR REMARK FIELD ===
 
     // Prepare statements for ims_expenses (INSERT and UPDATE)
     // **สำคัญมาก:** 'doc_ref' ถูกเพิ่มเข้ามาใน schema ของ ims_expenses ตามคำขอ
@@ -302,6 +306,7 @@ try {
         }
 
         // Insert into ims_payment_voucher_items
+        // === START MODIFICATION FOR REMARK FIELD ===
         if (!$stmtDetailPV->execute([
             $doc_no, // This is the PV doc_no
             date('Y-m-d', strtotime($doc_date)), // Use doc_date from header for detail items
@@ -313,18 +318,19 @@ try {
             (float)$item['price'],
             $current_unit_id,
             $current_unit_name,
+            $item['remark'] ?? '', // Add remark here
         ])) {
+            // === END MODIFICATION FOR REMARK FIELD ===
             $errorInfo = $stmtDetailPV->errorInfo();
             throw new Exception("Insert detail into ims_payment_voucher_items failed: " . $errorInfo[2]);
         }
 
         // --- Handle ims_expenses (UPDATE/INSERT logic) ---
-        //$expense_date_formatted = date('Y-m-d', strtotime($doc_date));
-        $expense_date_formatted = date('d-m-Y', strtotime($doc_date));
+        $expense_date_formatted = date('Y-m-d', strtotime($doc_date)); // Changed to Y-m-d for database consistency
         $exp_month = date('m', strtotime($doc_date));
         $exp_year = date('Y', strtotime($doc_date));
         $expense_description = $current_product_name;
-        $expense_remark = $purpose;
+        $expense_remark = $item['remark'] ?? ''; // !!! Corrected: Use line item remark from $item array !!!
 
         $found_existing_expense_info = null; // Stores ['id' => ..., 'doc_id' => ...]
         $generated_expense_doc_id = null; // Variable to store the new EXP doc_id
@@ -352,7 +358,7 @@ try {
                 (float)$item['quantity'],
                 $current_unit_id,
                 $item_total,
-                $expense_remark,
+                $expense_remark, // ใช้ค่า remark ที่ถูกต้องจาก $item
                 'N', // Approve status for expense, usually starts as 'N'
                 $picture_doc,
                 $payment_method,
@@ -384,7 +390,7 @@ try {
                 (float)$item['quantity'],
                 $current_unit_id,
                 $item_total, // ยอดรวมสำหรับรายการ expense นี้
-                $expense_remark,
+                $expense_remark, // ใช้ค่า remark ที่ถูกต้องจาก $item
                 'N', // Default approve_status สำหรับ expense
                 $picture_doc, // File attach จาก header
                 $payment_method, // Payment method จาก header
