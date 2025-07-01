@@ -26,6 +26,7 @@ foreach ($BankCurr as $row_curr) {
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">ชำระค่าส่วนกลาง</h1>
                     <br>
+                    <!-- โปรไฟล์และข้อมูลผู้ใช้ -->
                     <div class="d-flex align-items-center gap-3">
                         <img id="profilePic"
                              src=""
@@ -42,6 +43,7 @@ foreach ($BankCurr as $row_curr) {
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card mb-12">
+                            <!--div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"></div-->
                             <div class="card-body">
                                 <form id="transfer_form" method="POST" enctype="multipart/form-data">
 
@@ -103,6 +105,7 @@ foreach ($BankCurr as $row_curr) {
                                         </div>
                                     </div>
 
+                                    <!-- งวดเดือนและงวดปี (แถวเดียว กระชับ) -->
                                     <div class="form-group row align-items-end">
                                         <div class="col-md-4">
                                             <label for="period_month_start">เริ่มงวดเดือน</label>
@@ -145,7 +148,9 @@ foreach ($BankCurr as $row_curr) {
 
                                     <div class="form-group has-success">
                                         <div class="row">
+                                            <!-- งวดปี -->
                                             <div class="col-md-6">
+                                                <!-- ชื่อผู้โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="detail" class="control-label">ชื่อผู้ชำระ</label>
                                                     <input type="text" name="detail" class="form-control" required
@@ -160,6 +165,7 @@ foreach ($BankCurr as $row_curr) {
                                             </div>
 
                                             <div class="col-md-6">
+                                                <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="common_fee"
                                                            class="control-label">ค่าส่วนกลางรายเดือน (บาท)</label>
@@ -170,6 +176,7 @@ foreach ($BankCurr as $row_curr) {
 
 
                                             <div class="col-md-6">
+                                                <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="amount"
                                                            class="control-label">จำนวนเงินที่ชำระ (บาท)</label>
@@ -181,6 +188,7 @@ foreach ($BankCurr as $row_curr) {
                                     </div>
 
 
+                                    <!-- หมายเหตุ -->
                                     <div class="form-group has-success">
                                         <label for="remark" class="control-label">หมายเหตุ</label>
                                         <input name="remark" class="form-control" id="remark" value="-">
@@ -205,6 +213,7 @@ foreach ($BankCurr as $row_curr) {
                                         </div>
                                     </div>
 
+                                    <!-- Loading Indicator -->
                                     <div id="loading"
                                          style="display: none; text-align: center; margin-top: 20px;">
                                         <img src="img/spin/spin_cir.gif" alt="Loading..." style="width: 50px;">
@@ -221,6 +230,8 @@ foreach ($BankCurr as $row_curr) {
                     </div>
                 </div>
             </div>
+            <!-- Container Fluid-->
+
         </div>
 
         <?php
@@ -231,6 +242,7 @@ foreach ($BankCurr as $row_curr) {
     </div>
 </div>
 
+<!-- Scroll to top -->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
@@ -656,18 +668,6 @@ foreach ($BankCurr as $row_curr) {
             formData.append('period_month_to', $("#period_month_to").val());
             formData.append('payment_type', $("#payment_type").val());
 
-            // ตรวจสอบค่า line_user_id ก่อนส่ง
-            let line_user_user_id = $("#line_user_id").val(); // ใช้ชื่อนี้เพื่อให้ตรงกับ backend
-            if (line_user_user_id) {
-                formData.append('line_user_user_id', line_user_user_id); // เปลี่ยนชื่อที่นี่
-            } else {
-                console.error("line_user_id ไม่พบค่า!");
-                alertify.error("เกิดข้อผิดพลาด: ไม่พบ Line User ID");
-                $("#submit_btn").prop("disabled", false);
-                $("#loading").hide();
-                return;
-            }
-
             $.ajax({
                 url: "model/manage_payment_transfer_smart.php",
                 type: "POST",
@@ -678,18 +678,30 @@ foreach ($BankCurr as $row_curr) {
                     $("#loading").hide();
 
                     if (response == 1) {
-                        alertify.success("บันทึกข้อมูลการชำระเงินสำเร็จ"); // ปรับข้อความยืนยัน
+                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
                         $("#transfer_form")[0].reset();
                         $("#preview_image").hide().attr("src", "");
                         $("#submit_btn").prop("disabled", true);
 
-                        // ปิดหน้าต่าง LIFF ทันทีหลังจากบันทึกสำเร็จ
                         if (liff.isInClient()) {
-                            setTimeout(() => {
-                                liff.closeWindow();
-                            }, 2000); // หน่วงเวลา 2 วินาทีก่อนปิดเพื่อให้ผู้ใช้เห็น alertify
+                            liff.getProfile().then(profile => {
+                                const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\nจำนวน ${amount} บาท\nบ้านเลขที่: ${house_number}
+                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} \nปี: ${period_year}
+                                \nวันที่ทำรายการ: ${date_time}\nโปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                liff.sendMessages([{type: "text", text: message}])
+                                    .then(() => {
+                                        setTimeout(() => {
+                                            liff.closeWindow();
+                                        }, 2000);
+                                    })
+                                    .catch(err => {
+                                        console.error("ส่งข้อความล้มเหลว:", err);
+                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
+                                        liff.closeWindow();
+                                    });
+                            });
                         } else {
-                            alertify.success("ไม่ได้เปิดใน LINE App (ข้อมูลถูกบันทึกแล้ว)");
+                            alertify.success("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
                         }
 
                     } else {

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $period_year = $_POST['period_year'];
     $amount = $_POST['amount'];
     $remark = $_POST['remark'];
-    $line_user_id = $_POST['line_user_id'];
+    $line_user_id = $_POST['line_user_user_id']; // แก้ไขตรงนี้ให้ตรงกับชื่อที่ส่งมาจาก Frontend
     $pictureUrl = $_POST['pictureUrl'];
     $displayName = $_POST['displayName'];
     $picture_payment = $_FILES['picture_payment'];
@@ -41,6 +41,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $runno = LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond);
     $doc_id = "P-" . $house_number . "-" . $period_year . "-" . sprintf('%03s', $runno);
 
+    // --- Start of Idempotency Check (คงไว้เพื่อป้องกันการบันทึกข้อมูลซ้ำ) ---
+    $stmt_check = $conn->prepare("SELECT COUNT(*) FROM ims_house_payment WHERE doc_id = :doc_id");
+    $stmt_check->bindParam(':doc_id', $doc_id);
+    $stmt_check->execute();
+    $doc_exists = $stmt_check->fetchColumn();
+
+    if ($doc_exists > 0) {
+        echo 1; // Indicate success as the record already exists
+        exit;
+    }
+    // --- End of Idempotency Check ---
+
+    // --- เพิ่ม Logic สำหรับชื่อเดือนและ Timestamp ---
+    $monthNames = [
+        1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน',
+        5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม',
+        9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
+    ];
+    $start_month_name = $monthNames[$period_month_start];
+    $to_month_name = $monthNames[$period_month_to];
+
+    // สร้าง timestamp วันที่เวลาปัจจุบัน
+    $current_datetime = date('d-m-Y H:i:s');
+    // --- สิ้นสุด Logic สำหรับชื่อเดือนและ Timestamp ---
+
+    // --- กำหนด Base URL สำหรับรูปภาพ (สำคัญมาก) ---
+    // *** คุณต้องเปลี่ยน 'https://yourdomain.com' ให้เป็นโดเมนจริงของคุณ ***
+    $base_url = 'https://yourdomain.com/'; // เปลี่ยนเป็นโดเมนของคุณ
+    $slip_base_path = $base_url . 'uploads/slips/';
+
     if ($picture_payment['error'] == 0) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (!in_array($picture_payment['type'], $allowed_types)) {
@@ -52,9 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $upload_dir = '../uploads/slips/';
         $file_name = time() . "_" . basename($picture_payment['name']);
         $file_path = $upload_dir . $file_name;
+        $image_url = $slip_base_path . $file_name; // URL ที่จะใช้ใน LINE API
 
         if (move_uploaded_file($picture_payment['tmp_name'], $file_path)) {
-            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show,create_by,payment_method) 
+            $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show,create_by,payment_method)
             VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type,:line_user_id,:line_picture_profile_show,:create_by,:payment_method)";
             $stmt = $conn->prepare($ins_str);
 
@@ -76,27 +107,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':payment_method', $payment_method);
 
             if ($stmt->execute()) {
-
-/*
-                $updateSql = "UPDATE ims_house SET contact_name = :contact_name , phone_number = :phone_number WHERE house_number = :house_number";
-                $updateStmt = $conn->prepare($updateSql);
-                $updateStmt->bindParam(':contact_name', $contact_name);
-                $updateStmt->bindParam(':phone_number', $line_phone);
-                $updateStmt->bindParam(':house_number', $house_number);
-                $updateStmt->execute();
-*/
-
-                // ======= ส่งเฉพาะข้อความไป LINE =======
+                // ======= Send LINE Message (มีการอัปโหลดรูปภาพ) =======
                 $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
+
+                $messages_to_send = [
+                    [
+                        'type' => 'text',
+                        'text' => "✅ ยอดเงินเข้าเรียบร้อย\n" .
+                            "เลขที่เอกสาร: $doc_id\n" .
+                            "บ้านเลขที่: $house_number\n" .
+                            "ชำระค่าส่วนกลางเดือน: $start_month_name - $to_month_name ปี $period_year\n" .
+                            "ยอดชำระ: $amount บาท\n" .
+                            "วันที่ทำรายการ: $current_datetime\n" .
+                            "ขอขอบคุณที่ชำระค่าส่วนกลาง"
+                    ],
+                    [
+                        'type' => 'image',
+                        'originalContentUrl' => $image_url,
+                        'previewImageUrl' => $image_url
+                    ]
+                ];
 
                 $messageData = [
                     'to' => $line_user_id,
-                    'messages' => [
-                        [
-                            'type' => 'text',
-                            'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
-                        ]
-                    ]
+                    'messages' => $messages_to_send
                 ];
 
                 $ch = curl_init('https://api.line.me/v2/bot/message/push');
@@ -109,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);
-                // ======= จบส่งเฉพาะข้อความ =======
+                // ======= End Send LINE Message =======
 
                 echo 1;
             } else {
@@ -120,8 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "FILE_UPLOAD_FAILED";
         }
     } else {
-        // ไม่มีการอัปโหลดรูป
-        $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno,line_user_id,line_picture_profile_show,create_by,payment_method) 
+        // ไม่มีการอัปโหลดรูป (ส่งแค่ข้อความ)
+        $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno,line_user_id,line_picture_profile_show,create_by,payment_method)
         VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno, :line_user_id,:line_picture_profile_show,:create_by,:payment_method)";
         $stmt = $conn->prepare($ins_str);
 
@@ -149,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $updateStmt->bindParam(':house_number', $house_number);
             $updateStmt->execute();
 
-            // ======= ส่งเฉพาะข้อความไป LINE =======
+            // ======= Send LINE Message (ไม่มีการอัปโหลดรูปภาพ - ส่งแค่ข้อความ) =======
             $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
 
             $messageData = [
@@ -157,7 +191,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'messages' => [
                     [
                         'type' => 'text',
-                        'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
+                        'text' => "✅ ยอดเงินเข้าเรียบร้อย\n" .
+                            "เลขที่เอกสาร: $doc_id\n" .
+                            "บ้านเลขที่: $house_number\n" .
+                            "ชำระค่าส่วนกลางเดือน: $start_month_name - $to_month_name ปี $period_year\n" .
+                            "ยอดชำระ: $amount บาท\n" .
+                            "วันที่ทำรายการ: $current_datetime\n" .
+                            "ขอขอบคุณที่ชำระค่าส่วนกลาง"
                     ]
                 ]
             ];
@@ -172,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $result = curl_exec($ch);
             curl_close($ch);
-            // ======= จบส่งเฉพาะข้อความ =======
+            // ======= End Send LINE Message =======
 
             echo 1;
         } else {
@@ -180,3 +220,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+?>
