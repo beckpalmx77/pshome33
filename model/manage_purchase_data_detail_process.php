@@ -82,8 +82,8 @@ try {
         }
 
         $stmtDetail = $conn->prepare("INSERT INTO ims_purchase_detail 
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name, remark)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
             if (!$stmtDetail->execute([
@@ -95,6 +95,7 @@ try {
                 $item['price'],
                 $item['unit_id'],
                 $item['unit_name'],
+                $item['remark'], // Add remark here
             ])) {
                 $errorInfo = $stmtDetail->errorInfo();
                 throw new Exception("Insert detail failed: " . $errorInfo[2]);
@@ -122,8 +123,8 @@ try {
         }
 
         $stmtDetail = $conn->prepare("INSERT INTO ims_purchase_detail 
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name, remark)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
             if (!$stmtDetail->execute([
@@ -135,6 +136,7 @@ try {
                 $item['price'],
                 $item['unit_id'],
                 $item['unit_name'],
+                $item['remark'], // Add remark here
             ])) {
                 $errorInfo = $stmtDetail->errorInfo();
                 throw new Exception("Insert detail failed: " . $errorInfo[2]);

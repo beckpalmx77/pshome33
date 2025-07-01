@@ -34,6 +34,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         <div class="card-body">
 
                             <div class="row">
+                                <!-- เลขที่เอกสาร -->
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>เลขที่เอกสาร (สร้างอัตโนมัติ)</label>
@@ -41,6 +42,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
+                                <!-- วันที่ -->
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label>วันที่ (Click เลือกวันที่)</label>
@@ -50,6 +52,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
+                                <!-- วิธีการชำระเงิน -->
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="payment_method" class="form-label fw-semibold mb-2">
@@ -57,6 +60,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         </label>
                                         <div class="d-flex align-items-center flex-wrap">
 
+                                            <!-- 💳 โอนเงิน -->
                                             <div class="form-check form-check-inline d-flex align-items-center me-2">
                                                 <input class="form-check-input me-1" type="radio"
                                                        name="payment_method_radio"
@@ -64,10 +68,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                 <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
                                             </div>
 
+                                            <!-- ช่องกรอกเลขบัญชี -->
                                             <input type="text" class="form-control ms-2 me-2" name="bank_no"
                                                    id="bank_no"
                                                    placeholder="" style="width: 200px;">&nbsp;
 
+                                            <!-- 💵 เงินสด -->
                                             <div class="form-check form-check-inline d-flex align-items-center">
                                                 <input class="form-check-input me-1" type="radio"
                                                        name="payment_method_radio"
@@ -75,6 +81,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                 <label class="form-check-label" for="method_cash">💵 เงินสด</label>
                                             </div>
 
+                                            <!-- ช่องแสดงค่าที่เลือก -->
                                             <input type="text" class="form-control ms-2 me-2" name="payment_method"
                                                    id="payment_method"
                                                    placeholder="" style="width: 200px;">
@@ -89,6 +96,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <input type="hidden" id="supplier_id" name="supplier_id">
 
                             <div class="row align-items-end gx-3 gy-2">
+                                <!-- ช่องจ่ายให้ (4 คอลัมน์) -->
                                 <div class="col-md-4 position-relative">
                                     <label for="supplier_name" class="control-label">
                                         จ่ายให้แก่ <b>(ถ้าไม่พบในระบบ สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b>
@@ -99,6 +107,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                          style="z-index: 1000;"></div>
                                 </div>
 
+                                <!-- ปุ่มค้นหา (2 คอลัมน์) -->
                                 <div class="col-md-1 d-flex flex-column justify-content-end">
                                     <label class="control-label" style="visibility: hidden;">เลือก</label>
                                     <a data-toggle="modal" href="#SearchSupModal" class="btn btn-primary w-100">
@@ -106,6 +115,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </a>
                                 </div>
 
+                                <!-- ช่องจ่ายเพื่อ (ที่เหลือ, 7 คอลัมน์) -->
                                 <div class="col-md-7">
                                     <label for="purpose" class="control-label">จ่ายเพื่อ</label>
                                     <input type="text" class="form-control" name="purpose" id="purpose" placeholder="">
@@ -120,22 +130,24 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <table class="table table-bordered" id="detailTable">
                                 <thead class="thead-primary">
                                 <tr>
-                                    <th style="width: 25%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th> <th style="width: 11%;">จำนวน</th>
+                                    <th style="width: 15%;">รหัส</th>
+                                    <th style="width: 20%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th>
+                                    <th style="width: 11%;">จำนวน</th>
                                     <th style="width: 12%;">ใบเสร็จ/inv</th>
                                     <th style="width: 12%;">ราคาต่อหน่วย</th>
                                     <th style="width: 15%;">รวมเงิน</th>
+                                    <!-- Changed width for unit_name, unit_id is hidden -->
                                     <th style="width: 32%;">หน่วยนับ</th>
-                                    <th>หมายเหตุ</th>
                                     <th>ลบ</th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>
                                 <tfoot>
                                 <tr>
-                                    <td colspan="3" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
+                                    <td colspan="4" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
                                     <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
                                     </td>
-                                    <td colspan="3"></td>
+                                    <td colspan="2"></td><!-- Adjusted colspan -->
                                 </tr>
                                 </tfoot>
                             </table>
@@ -388,15 +400,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         response.forEach(item => {
                             $('#detailTable tbody').append(`
 <tr>
-    <td style="width: 25%;">
-        <div class="d-flex align-items-center">
-            <input type="hidden" class="form-control product_id" value="${item.product_id}" readonly>
-            <input type="text" class="form-control product_name" value="${item.product_name}" style="flex: 1; margin-right: 5px;">
-            <a href="#itemModal" data-toggle="modal" class="btn btn-primary btn-select-item" style="white-space: nowrap;">
+    <td style="width: 15%;">
+        <div class="d-flex">
+            <input type="text" class="form-control product_id" value="${item.product_id}" readonly style="flex: 1;">
+            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-item" style="white-space: nowrap;">
                 <i class="fa fa-search"></i>
             </a>
         </div>
     </td>
+    <td style="width: 20%;"><input type="text" class="form-control product_name" value="${item.product_name}"></td>
     <td style="width: 7%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
     <td style="width: 7%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
     <td style="width: 12%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
@@ -410,10 +422,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             </a>
         </div>
     </td>
-    <td><input type="text" class="form-control item-remark" value="${item.remark || ''}"></td>
     <td><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
-                        `);
+                    `);
                         });
                         calculateTotalAmount(); // Recalculate total after loading details
                     } else if (response.error) {
@@ -447,15 +458,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#addRow').on('click', function () {
                 $('#detailTable tbody').append(`
 <tr>
-  <td style="width: 25%;">
-    <div class="d-flex align-items-center">
-      <input type="hidden" class="form-control product_id" readonly>
-      <input type="text" class="form-control product_name" style="flex: 1; margin-right: 5px;">
-      <a href="#itemModal" data-toggle="modal" class="btn btn-primary btn-select-item" style="white-space: nowrap;">
+  <td style="width: 15%;">
+    <div class="d-flex">
+      <input type="text" class="form-control product_id" readonly style="flex: 1;">
+      <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-item" style="white-space: nowrap;">
         <i class="fa fa-search"></i>
       </a>
     </div>
   </td>
+  <td style="width: 20%;"><input type="text" class="form-control product_name" style="width: 100%;"></td>
   <td style="width: 7%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
   <td style="width: 7%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
   <td style="width: 12%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
@@ -469,7 +480,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
       </a>
     </div>
   </td>
-  <td><input type="text" class="form-control item-remark" style="width: 100%;"></td>
   <td style="width: auto;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
 </tr>
         `);
@@ -538,12 +548,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         $(document).ready(function () {
             let currentRow = null;
 
+            // เมื่อคลิกปุ่มเลือกหน่วยนับ
             $(document).on('click', '.btn-select-unit', function () {
                 currentRow = $(this).closest('tr');
-                loadUnitTable();
+                loadUnitTable(); // โหลดข้อมูลหน่วยนับ
                 $('#unitModal').modal('show');
             });
 
+            // เมื่อเลือกหน่วยนับจาก modal
             $(document).on('click', '.select-this-unit', function () {
                 const code = $(this).data('code');
                 const name = $(this).data('name');
@@ -556,6 +568,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#unitModal').modal('hide');
             });
 
+            // โหลดข้อมูลจากฐานข้อมูล ims_unit
             function loadUnitTable() {
                 $.ajax({
                     url: 'model/get_unit.php',
@@ -587,6 +600,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).ready(function () {
+            // Function to calculate individual item amount
             function calculateAmount(row) {
                 const quantity = parseFloat(row.find('.item-quantity').val()) || 0;
                 const price = parseFloat(row.find('.item-price').val()) || 0;
@@ -594,12 +608,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 row.find('.item-amount').val(amount.toFixed(2));
             }
 
+            // Detect input changes for quantity or price
             $(document).on('input', '.item-quantity, .item-price', function () {
                 const row = $(this).closest('tr');
                 calculateAmount(row);
-                calculateTotalAmount();
+                calculateTotalAmount(); // Recalculate total amount for the whole table
             });
 
+            // Initial calculation if any items are pre-loaded
             calculateTotalAmount();
         });
 
@@ -632,11 +648,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#save').on('click', async function (e) {
                 e.preventDefault();
 
+                // Check main data
                 if (!$('#doc_date').val() || !$('#supplier_name').val()) {
                     alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
                     return;
                 }
 
+                // Check detail data
                 const details = [];
                 let valid = true;
 
@@ -648,7 +666,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     const price = parseFloat($(this).find('.item-price').val());
                     const unit_id = $(this).find('.item-unit-code').val();
                     const unit_name = $(this).find('.item-unit-name').val();
-                    const remark = $(this).find('.item-remark').val();
 
                     if (!product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
                         valid = false;
@@ -656,7 +673,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         return false;
                     }
 
-                    details.push({product_id, product_name, quantity, inv, price, unit_id, unit_name, remark});
+                    details.push({product_id, product_name, quantity, inv, price, unit_id, unit_name});
                 });
 
                 if (!valid) return;
@@ -664,16 +681,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#save').prop('disabled', true);
 
                 try {
-                    const newlyUploadedFilenames = await uploadImages();
+                    const newlyUploadedFilenames = await uploadImages(); // Filenames of newly uploaded images
 
+                    // Get existing image filenames from the hidden input field (picture_doc)
                     let existingPictureDoc = $('#picture_doc').val();
                     let existingFilenames = existingPictureDoc ? existingPictureDoc.split(',').map(name => name.trim()).filter(name => name) : [];
 
+                    // Get filenames of images marked for deletion
                     let deletedFilenames = $('#deleted_images').val();
                     let deletedArray = deletedFilenames ? deletedFilenames.split(',').map(name => name.trim()).filter(name => name) : [];
 
+                    // Filter out deleted images from the existing ones
                     let currentFilenames = existingFilenames.filter(filename => !deletedArray.includes(filename));
 
+                    // Combine current (non-deleted existing) filenames with newly uploaded filenames
                     const finalPictureDoc = currentFilenames.concat(newlyUploadedFilenames).join(',');
 
                     const payload = {
@@ -689,7 +710,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         receipt_name: $('#receipt_name').val(),
                         payment_method: $('#payment_method').val(),
                         purpose: $('#purpose').val(),
-                        picture_doc: finalPictureDoc,
+                        picture_doc: finalPictureDoc, // Use the combined string here
                         details: details
                     };
 
@@ -701,7 +722,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         success: function (res) {
                             if (res.status === 'success') {
                                 alertify.success('บันทึกสำเร็จแล้ว');
-                                //closeAndReload();
+                                //closeAndReload(); // Close the window and reload parent table
                             } else {
                                 alert('เกิดข้อผิดพลาด: ' + res.message);
                                 $('#save').prop('disabled', false);
@@ -741,6 +762,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 }
             });
 
+            // When an item is clicked
             $(document).on('click', '.supplier-item', function () {
                 let name = $(this).data('name');
                 let id = $(this).data('id');
@@ -750,6 +772,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#supplier_list').fadeOut();
             });
 
+            // Click outside the list to hide it
             $(document).on('click', function (e) {
                 if (!$(e.target).closest('#supplier_name, #supplier_list').length) {
                     $('#supplier_list').fadeOut();
@@ -795,18 +818,22 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
 
     <script>
-        let uploadedImages = [];
+        let uploadedImages = [];  // For preview of newly selected files
+        // `uploadedFileNames` is no longer needed globally as `newlyUploadedFilenames`
+        // in the save function captures the result of `uploadImages()`
+
         document.getElementById('pictures').addEventListener('change', function (e) {
             const files = Array.from(e.target.files);
             const previewArea = document.getElementById('preview-area');
 
-            files.forEach((file) => {
+            files.forEach((file) => { // Removed index as it's not needed for the `uploadedImages.length`
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const imgDiv = document.createElement('div');
                     imgDiv.classList.add('col-md-2', 'position-relative');
 
-                    const fileIndex = uploadedImages.push(file) - 1;
+                    // Store the file object in the uploadedImages array
+                    const fileIndex = uploadedImages.push(file) - 1; // Get the index of the newly added file
 
                     imgDiv.innerHTML = `
                     <img src="${e.target.result}" class="img-thumbnail mb-2" style="width:100%; height:120px; object-fit:cover;">
@@ -818,24 +845,28 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         });
 
+        // Delete newly added images from preview and uploadedImages array
         document.getElementById('preview-area').addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-new-img')) {
                 const fileIndex = parseInt(e.target.getAttribute('data-file-index'));
-                uploadedImages.splice(fileIndex, 1);
-                e.target.parentElement.remove();
+                uploadedImages.splice(fileIndex, 1); // Remove the file from the array
+                e.target.parentElement.remove(); // Remove the image box from DOM
 
+                // Re-index remaining new images if necessary (optional, but good practice if you rely on data-file-index strictly)
                 $('#preview-area .remove-new-img').each(function (i) {
                     $(this).attr('data-file-index', i);
                 });
             }
         });
 
+        // Function to upload all new images before submit
         async function uploadImages() {
             const formData = new FormData();
+            // Only append files that are actually in the uploadedImages array
             uploadedImages.forEach(file => formData.append('images[]', file));
 
             if (uploadedImages.length === 0) {
-                return Promise.resolve([]);
+                return Promise.resolve([]); // Return an empty array if no new images to upload
             }
 
             const response = await fetch('upload_img_doc.php', {
@@ -849,7 +880,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             const result = await response.json();
             if (result.status === 'success') {
-                return result.filenames;
+                return result.filenames;  // Array of successfully uploaded filenames
             } else {
                 throw new Error(result.message || 'Image upload failed on server.');
             }
@@ -861,6 +892,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             const radioButtons = document.querySelectorAll('input[name="payment_method_radio"]');
             const paymentMethodInput = document.getElementById('payment_method');
 
+            // Function to update the text input based on radio selection
             function updatePaymentMethodInput() {
                 radioButtons.forEach(radio => {
                     if (radio.checked) {
@@ -869,16 +901,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             paymentMethodInput.setAttribute('readonly', true);
                         } else {
                             paymentMethodInput.removeAttribute('readonly');
-                            paymentMethodInput.focus();
+                            paymentMethodInput.focus(); // Focus on the input if "Other" is selected
                         }
                     }
                 });
             }
 
+            // Add event listeners to radio buttons
             radioButtons.forEach(radio => {
                 radio.addEventListener('change', updatePaymentMethodInput);
             });
 
+            // Initialize on page load (e.g., if "เงินสด" is checked by default)
             updatePaymentMethodInput();
         });
     </script>
@@ -888,5 +922,5 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     </html>
 
     <?php
-}
+} // end else session check
 ?>
