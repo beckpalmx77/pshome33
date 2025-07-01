@@ -685,10 +685,10 @@ foreach ($BankCurr as $row_curr) {
 
                         if (liff.isInClient()) {
                             liff.getProfile().then(profile => {
-                                const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n₿ จำนวน ${amount} บาท\n🏘️บ้านเลขที่: ${house_number}
+                                const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
                                 \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
                                 \n🕔 วันที่ทำรายการ: ${date_time}
-                                \n❤ ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
                                 liff.sendMessages([{type: "text", text: message}])
                                     .then(() => {
                                         setTimeout(() => {
