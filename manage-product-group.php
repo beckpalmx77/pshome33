@@ -39,7 +39,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <section class="container-fluid">
 
                                         <div class="col-md-12 col-md-offset-2">
-                                            <label for="product_name"
+                                            <label for="name_t"
                                                    class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
 
                                             <button type='button' name='btnAdd' id='btnAdd'
@@ -52,14 +52,22 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>รหัสสินค้า/วัสดุ/บริการ</th>
-                                                    <th>ชื่อสินค้า/วัสดุ/บริการ</th>
-                                                    <th>ประเภท</th>
-                                                    <th>หน่วยนับ</th>
+                                                    <th>รหัสกลุ่มสินค้า</th>
+                                                    <th>ชื่อกลุ่มสินค้า</th>
+                                                    <th>Status</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
+                                                <tfoot>
+                                                <tr>
+                                                    <th>รหัสกลุ่มสินค้า</th>
+                                                    <th>ชื่อกลุ่มสินค้า</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                </tfoot>
                                             </table>
 
                                             <div id="result"></div>
@@ -79,80 +87,25 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <div class="modal-body">
                                                             <div class="modal-body">
 
-                                                                <div class="form-group row">
-                                                                    <div class="col-sm-4">
-                                                                        <label for="product_id" class="control-label">รหัสสินค้า/วัสดุ</label>
-                                                                        <input type="product_id" class="form-control"
-                                                                               id="product_id" name="product_id"
-                                                                               placeholder="รหัสสินค้า/วัสดุ">
-                                                                    </div>
-
-                                                                    <div class="col-sm-8">
-                                                                        <label for="product_name"
-                                                                               class="control-label">ชื่อสินค้า/วัสดุ</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="product_name"
-                                                                               name="product_name"
-                                                                               required="required"
-                                                                               placeholder="ชื่อสินค้า/วัสดุ">
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group row">
-                                                                    <input type="hidden" class="form-control"
-                                                                           id="pgroup_id"
-                                                                           name="pgroup_id">
-                                                                    <div class="col-sm-10">
-                                                                        <label for="quantity"
-                                                                               class="control-label">กลุ่มสินค้า</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="pgroup_name"
-                                                                               name="pgroup_name"
-                                                                               required="required"
-                                                                               placeholder="กลุ่มสินค้า">
-                                                                    </div>
-
-                                                                    <div class="col-sm-2">
-                                                                        <label for="quantity"
-                                                                               class="control-label">เลือก</label>
-
-                                                                        <a data-toggle="modal" href="#Search-PG-Modal"
-                                                                           class="btn btn-primary">
-                                                                            Click <i class="fa fa-search"
-                                                                                     aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="form-group row">
-                                                                    <input type="hidden" class="form-control"
-                                                                           id="unit_id"
-                                                                           name="unit_id">
-                                                                    <div class="col-sm-5">
-                                                                        <label for="quantity"
-                                                                               class="control-label">หน่วยนับ</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="unit_name"
-                                                                               name="unit_name"
-                                                                               required="required"
-                                                                               placeholder="หน่วยนับ">
-                                                                    </div>
-
-                                                                    <div class="col-sm-2">
-                                                                        <label for="quantity"
-                                                                               class="control-label">เลือก</label>
-
-                                                                        <a data-toggle="modal" href="#SearchUnitModal"
-                                                                           class="btn btn-primary">
-                                                                            Click <i class="fa fa-search"
-                                                                                     aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </div>
+                                                                <div class="form-group">
+                                                                    <label for="pgroup_id" class="control-label">รหัสกลุ่มสินค้า</label>
+                                                                    <input type="pgroup_id" class="form-control"
+                                                                           id="pgroup_id" name="pgroup_id"
+                                                                           placeholder="รหัสกลุ่มสินค้า">
                                                                 </div>
 
                                                                 <div class="form-group">
-                                                                    <label for="status"
-                                                                           class="control-label">Status</label>
+                                                                    <label for="name_t"
+                                                                           class="control-label">ชื่อกลุ่มสินค้า</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="pgroup_name"
+                                                                           name="pgroup_name"
+                                                                           required="required"
+                                                                           placeholder="ชื่อกลุ่มสินค้า">
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="status" class="control-label"></label>
                                                                     <select id="status" name="status"
                                                                             class="form-control" data-live-search="true"
                                                                             title="Please select">
@@ -181,47 +134,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                             </div>
                                         </div>
 
-                                        <div class="modal fade" id="Search-PG-Modal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
 
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-
-                                                        <div class="modal-body">
-
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TablePGList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัส</th>
-                                                                    <th>กลุ่มสินค้า</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัส</th>
-                                                                    <th>กลุ่มสินค้า</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal fade" id="SearchUnitModal">
+                                        <div class="modal fade" id="SearchModal">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -243,14 +157,14 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <thead>
                                                                 <tr>
                                                                     <th>รหัส</th>
-                                                                    <th>หน่วยนับ</th>
+                                                                    <th>กลุ่มสินค้า</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tfoot>
                                                                 <tr>
                                                                     <th>รหัส</th>
-                                                                    <th>หน่วยนับ</th>
+                                                                    <th>กลุ่มสินค้า</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </tfoot>
@@ -281,15 +195,11 @@ if (strlen($_SESSION['alogin']) == "") {
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
-
-    <script src="js/modal/show_pgroup_modal.js"></script>
-    <script src="js/modal/show_unit_modal.js"></script>
 
     <!-- Page level plugins -->
 
@@ -321,7 +231,6 @@ if (strlen($_SESSION['alogin']) == "") {
             top: 30%;
         }
     </style>
-
     <script>
         $(document).ready(function () {
             $(".icon-input-btn").each(function () {
@@ -334,13 +243,14 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script>
 
-        $("#product_id").blur(function () {
+        $("#pgroup_name").blur(function () {
             let method = $('#action').val();
             if (method === "ADD") {
-                let product_id = $('#product_id').val();
-                let formData = {action: "SEARCH", product_id: product_id};
+                let pgroup_id = $('#pgroup_id').val();
+                let pgroup_name = $('#pgroup_name').val();
+                let formData = {action: "SEARCH", pgroup_id: pgroup_id, pgroup_name: pgroup_name};
                 $.ajax({
-                    url: 'model/manage_product_process.php',
+                    url: 'model/manage_pgroup_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -356,7 +266,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script>
         $(document).ready(function () {
-            let formData = {action: "GET_PRODUCT", sub_action: "GET_MASTER"};
+            let formData = {action: "GET_PRODUCT_GROUP", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
@@ -375,14 +285,13 @@ if (strlen($_SESSION['alogin']) == "") {
                 'serverSide': true,
                 'serverMethod': 'post',
                 'ajax': {
-                    'url': 'model/manage_product_process.php',
+                    'url': 'model/manage_pgroup_process.php',
                     'data': formData
                 },
                 'columns': [
-                    {data: 'product_id'},
-                    {data: 'product_name'},
+                    {data: 'pgroup_id'},
                     {data: 'pgroup_name'},
-                    {data: 'unit_name'},
+                    {data: 'status'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]
@@ -394,7 +303,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#save').attr('disabled', 'disabled');
                 let formData = $(this).serialize();
                 $.ajax({
-                    url: 'model/manage_product_process.php',
+                    url: 'model/manage_pgroup_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -415,12 +324,8 @@ if (strlen($_SESSION['alogin']) == "") {
             $("#btnAdd").click(function () {
                 $('#recordModal').modal('show');
                 $('#id').val("");
-                $('#product_id').val("");
-                $('#product_name').val("");
                 $('#pgroup_id').val("");
                 $('#pgroup_name').val("");
-                $('#unit_id').val("");
-                $('#unit_name').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -436,29 +341,21 @@ if (strlen($_SESSION['alogin']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_product_process.php',
+                url: 'model/manage_pgroup_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
                     let len = response.length;
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
-                        let product_id = response[i].product_id;
-                        let product_name = response[i].product_name;
                         let pgroup_id = response[i].pgroup_id;
                         let pgroup_name = response[i].pgroup_name;
-                        let unit_id = response[i].unit_id;
-                        let unit_name = response[i].unit_name;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
-                        $('#product_id').val(product_id);
-                        $('#product_name').val(product_name);
                         $('#pgroup_id').val(pgroup_id);
                         $('#pgroup_name').val(pgroup_name);
-                        $('#unit_id').val(unit_id);
-                        $('#unit_name').val(unit_name);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -480,29 +377,21 @@ if (strlen($_SESSION['alogin']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_product_process.php',
+                url: 'model/manage_pgroup_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
                     let len = response.length;
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
-                        let product_id = response[i].product_id;
-                        let product_name = response[i].product_name;
                         let pgroup_id = response[i].pgroup_id;
                         let pgroup_name = response[i].pgroup_name;
-                        let unit_id = response[i].unit_id;
-                        let unit_name = response[i].unit_name;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
-                        $('#product_id').val(product_id);
-                        $('#product_name').val(product_name);
                         $('#pgroup_id').val(pgroup_id);
                         $('#pgroup_name').val(pgroup_name);
-                        $('#unit_id').val(unit_id);
-                        $('#unit_name').val(unit_name);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');
@@ -516,7 +405,6 @@ if (strlen($_SESSION['alogin']) == "") {
         });
 
     </script>
-
 
     </body>
     </html>
