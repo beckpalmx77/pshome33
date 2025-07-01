@@ -124,7 +124,7 @@ include('includes/CheckDevice.php');
                                     <div>
                                         <img src="img/logo/logo text-01.png" class="img-fluid" alt="Logo" style="max-width: 100%; height: auto;">
                                     </div>
-                                    <h1 class="h4 text-gray-900 mb-4">ระบบข้อมูลบริหารงานหมู่บ้าน</h1>
+                                    <h1 class="h4 text-gray-900 mb-4">ระบบบริหารงานนิติบุคคลหมู่บ้าน พฤกษา 33</h1>
                                 </div>
                                 <div class="form-group">
                                     <label for="username">ชื่อผู้ใช้</label>

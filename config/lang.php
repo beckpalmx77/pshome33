@@ -2,7 +2,7 @@
 #return echo value
 $company = 'SAC';
 $system_name = "ระบบงาน My System";
-$system_name_1 = "ระบบบริหารนิติบุคคลหมู่บ้าน พฤกษา 33";
+$system_name_1 = "ระบบบริหารงานนิติบุคคลหมู่บ้าน พฤกษา 33";
 $system_name_2 = "ระบบงาน My System";
 $save_success = "Complete : บันทึกข้อมูลเรียบร้อยแล้ว";
 $del_success = "Complete : ลบข้อมูลเรียบร้อยแล้ว";
