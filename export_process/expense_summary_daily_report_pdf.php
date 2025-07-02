@@ -74,9 +74,7 @@ class MYPDF extends TCPDF {
         $margin_right = 10; // กำหนดค่า margin ขวา (ควรตรงกับ SetMargins)
         $usable_width = $page_width - $margin_left - $margin_right;
 
-        // <<< FIX START >>>
-        $page_right_edge = $page_width - $margin_right; // *** แก้ไข: ประกาศตัวแปรนี้ที่นี่ ***
-        // <<< FIX END >>>
+        $page_right_edge = $page_width - $margin_right;
 
         $header_start_y = 10; // เริ่มต้นการวาด Header ที่ 5mm จากขอบบนสุดของกระดาษ
 
@@ -94,11 +92,7 @@ class MYPDF extends TCPDF {
         }
 
         // --- 2. Report Title & Date Range (อยู่กลางหน้ากระดาษ ในระดับเดียวกับโลโก้) ---
-        // คำนวณ Y เพื่อให้ข้อความอยู่ตรงกลางความสูงของโลโก้
-        // โลโก้สูง 10mm, Cell ข้อความสูง 10mm. เราต้องการให้ตรงกลางของ Cell ข้อความอยู่ที่กึ่งกลางของโลโก้
-        // โลโก้เริ่ม Y=5, จบ Y=15. กึ่งกลาง Y=10.
-        // Cell ข้อความสูง 10mm, ถ้ากึ่งกลางอยู่ที่ Y=10, Cell จะเริ่มที่ Y=5 และจบที่ Y=15
-        $text_y_center_aligned_with_logo = $logo_y; // ตั้งให้ Y เท่ากับโลโก้เลย (Y=5)
+        $text_y_center_aligned_with_logo = $logo_y;
 
         $this->SetFont('THSarabunNew', 'B', 16);
         $title_text = 'รายงานค่าใช้จ่าย';
@@ -116,7 +110,6 @@ class MYPDF extends TCPDF {
         }
 
         $this->SetXY($center_x, $text_y_center_aligned_with_logo);
-        // Cell(width, height, text, border, ln=0, align, fill, link, stretch, ignore_min_height, valign, resource_cell_height)
         $this->Cell(0, $logo_height, $title_text . '   ' . $date_range_text, 0, 0, 'L', 0, '', 0, false, 'M', 'M');
 
 
@@ -131,11 +124,6 @@ class MYPDF extends TCPDF {
 
 
         // --- 4. กำหนด Y สำหรับเนื้อหาหลัก (ตาราง) ---
-        // หาตำแหน่ง Y ที่ต่ำที่สุดใน Header หลังจากวาดทุกองค์ประกอบแล้ว
-        // โลโก้เริ่มที่ Y=5, สูง 10 -> จบที่ Y=15
-        // Cell ข้อความเริ่มที่ Y=5, สูง 10 -> จบที่ Y=15
-        // ดังนั้น ส่วน Header ของเราจบที่ Y ประมาณ 15mm จากขอบกระดาษบน
-        // เราจะตั้งค่า Y เพิ่มขึ้นจากจุดนี้เพียงเล็กน้อย เพื่อให้ตารางอยู่ใกล้
         $final_header_y = $logo_y + $logo_height; // จุดที่ส่วนหัวสิ้นสุดลง
         $this->SetY($final_header_y + 3); // เพิ่มระยะห่าง 3mm (เล็กน้อย) จากส่วนหัว
     }
@@ -160,12 +148,8 @@ $pdf->SetSubject('รายงานสรุปค่าใช้จ่าย')
 
 $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
-// --- *** KEY FIX: Adjust Top Margin Here *** ---
-// คำนวณ Margin ด้านบนให้พอดีกับความสูงของ Header ที่มี โลโก้สูง 10mm + padding เล็กน้อย
-// โลโก้เริ่ม Y=5, สูง 10 -> จบ Y=15
-// ถ้าต้องการตารางห่างจากโลโก้ 3mm
-// Margin ที่เราควรตั้งคือ 15mm (โลโก้จบ) + 3mm (ระยะห่าง) = 18mm
-$top_margin_for_header = 22; // ปรับลดลงเพื่อให้ตารางอยู่ใกล้ขึ้น
+// --- KEY FIX: Adjust Top Margin Here ---
+$top_margin_for_header = 22;
 
 $pdf->SetMargins(10, $top_margin_for_header, 10); // (Left, Top, Right)
 
@@ -179,7 +163,6 @@ $pdf->SetFont('THSarabunNew', '', 10);
 $pdf->AddPage();
 
 // --- สร้าง HTML สำหรับทั้งตาราง (รวม <thead/> และ <tbody/>) ---
-// TCPDF จะเริ่มเขียน HTML content จาก Y position ที่กำหนดโดย Top Margin
 $html_table = '<table border="1" cellspacing="0" cellpadding="4" style="font-size:9pt; width: 100%;">
     <thead>
         <tr style="background-color:#f2f2f2;">';
@@ -197,8 +180,7 @@ foreach ($expenses_data as $row) {
     $grand_total_amount += (float)($row['amount'] ?? 0);
 
     $html_table .= '<tr>';
-    $html_table .= '<td width="' . $col_widths[0] . '">' . ($row['receipt_name'] ?? '') . '</td>';
-
+    // Column 1: วันที่ (expense_date)
     $expense_date_formatted = '';
     if (!empty($row['expense_date'])) {
         $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
@@ -206,17 +188,23 @@ foreach ($expenses_data as $row) {
             $expense_date_formatted = $date_obj->format('d/m/Y');
         }
     }
-    $html_table .= '<td width="' . $col_widths[1] . '" align="center">' . $expense_date_formatted . '</td>';
-    $html_table .= '<td width="' . $col_widths[2] . '">' . ($row['description'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[3] . '" align="right">' . number_format($row['amount'] ?? 0, 2) . '</td>';
-    $html_table .= '<td width="' . $col_widths[4] . '">' . ($row['remark'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[0] . '" align="center">' . $expense_date_formatted . '</td>';
+
+    // Column 2: รายการ (description)
+    $html_table .= '<td width="' . $col_widths[1] . '">' . ($row['description'] ?? '') . '</td>';
+
+    // Column 3: จำนวน (amount)
+    $html_table .= '<td width="' . $col_widths[2] . '" align="right">' . number_format($row['amount'] ?? 0, 2) . '</td>';
+
+    // Column 4: หมายเหตุ (remark)
+    $html_table .= '<td width="' . $col_widths[3] . '">' . ($row['remark'] ?? '') . '</td>';
     $html_table .= '</tr>';
 }
 
 $html_table .= '<tr>
-    <td colspan="9" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
-    <td width="' . $col_widths[9] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
-    <td colspan="4"></td>
+    <td colspan="2" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
+    <td width="' . $col_widths[2] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
+    <td width="' . $col_widths[3] . '"></td>
 </tr>';
 
 $html_table .= '</tbody></table>';

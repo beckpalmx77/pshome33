@@ -56,7 +56,6 @@ if (strlen($_SESSION['alogin']) == "") {
                                 <div class="card-body">
                                     <form id="form_data" method="post"
                                           action=""
-                                          data-excel-action=""
                                           data-pdf-action="export_process/expense_summary_daily_report_pdf.php"
                                           enctype="multipart/form-data">
                                         <div class="row">
@@ -143,7 +142,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
 
             const form = document.getElementById('form_data');
-            const btnExportExcel = document.getElementById('btnExportExcel');
+            //const btnExportExcel = document.getElementById('btnExportExcel');
             const btnPrintPdf = document.getElementById('btnPrintPdf');
             const startDateInput = document.getElementById('start_date'); // ยังคงใช้อ้างอิงสำหรับ validation
             const endDateInput = document.getElementById('end_date');     // ยังคงใช้อ้างอิงสำหรับ validation
@@ -182,7 +181,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 }
                 return true;
             }
-
+/*
             // Event listener สำหรับปุ่ม Export Excel
             btnExportExcel.addEventListener('click', function (e) {
                 e.preventDefault(); // ป้องกันการ submit form โดยตรง
@@ -191,6 +190,8 @@ if (strlen($_SESSION['alogin']) == "") {
                     form.submit(); // Submit form
                 }
             });
+
+ */
 
             // Event listener สำหรับปุ่ม Print PDF
             btnPrintPdf.addEventListener('click', function (e) {
