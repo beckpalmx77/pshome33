@@ -701,8 +701,10 @@ foreach ($BankCurr as $row_curr) {
                                         liff.closeWindow();
                                     });
                             });
+                        } else if (response == 2) {
+                            alertify.error("มีข้อมูลการชำระค่าส่วนกลางงวดนี้แล้ว ไม่สามารถบันทึกได้)");
                         } else {
-                            alertify.success("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
+                            alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
                         }
 
                     } else {
@@ -720,7 +722,6 @@ foreach ($BankCurr as $row_curr) {
     });
 
 </script>
-
 
 
 </body>

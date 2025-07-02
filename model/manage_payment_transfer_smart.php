@@ -23,6 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $payment_method = "โอนเงิน";
 
+    // --- ส่วนที่เพิ่มเข้ามาสำหรับการตรวจสอบข้อมูลซ้ำซ้อน ---
+    $check_stmt = $conn->prepare("SELECT COUNT(*) FROM ims_house_payment WHERE house_number = :house_number AND period_month_start = :period_month_start AND period_year = :period_year");
+    $check_stmt->bindParam(':house_number', $house_number);
+    $check_stmt->bindParam(':period_month_start', $period_month_start);
+    $check_stmt->bindParam(':period_year', $period_year);
+    $check_stmt->execute();
+    $count = $check_stmt->fetchColumn();
+
+    if ($count > 0) { // ถ้าพบข้อมูลซ้ำ
+        echo 2;
+        exit; // หยุดการทำงานของ script
+    }
+
     $result_save = 0;
 
     $stmt = $conn->prepare("SELECT * FROM ims_house_line_user WHERE line_user_id = :line_user_id");
