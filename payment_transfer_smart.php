@@ -730,12 +730,12 @@ foreach ($BankCurr as $row_curr) {
 
             let period_month_start = parseInt($("#period_month_start").val());
             let period_month_to = parseInt($("#period_month_to").val());
-            let period_year = parseInt($("#period_year").val());
+            let period_year = parseInt($("#period_year").val()); // ดึงค่า period_year มาใช้งาน
             let amount = parseFloat($("#amount").val()) || 0;
             let house_number = $("#house_number").val();
 
-            // Assuming 'monthNames' is defined elsewhere in your script, e.g.:
-            // const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            // ต้องมั่นใจว่า monthNames ถูกกำหนดไว้แล้ว ตัวอย่างเช่น:
+            const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             let period_month_start_name = monthNames[period_month_start];
             let period_month_to_name = monthNames[period_month_to];
 
@@ -800,12 +800,13 @@ foreach ($BankCurr as $row_curr) {
                                         liff.closeWindow();
                                     });
                             });
-                        } else { // ถ้าไม่ได้อยู่ใน LIFF client แต่ response เป็น 1
+                        } else {
                             alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
                         }
-                    } else if (response == 2) { // แก้ไขตำแหน่งของเงื่อนไขนี้
-                        alertify.error("มีข้อมูลการชำระค่าส่วนกลางงวดนี้แล้ว ไม่สามารถบันทึกได้)");
-                        $("#submit_btn").prop("disabled", false); // เปิดปุ่มกลับมา
+                    } else if (response == 2) {
+                        // ปรับข้อความแจ้งเตือนให้แสดงปีด้วย
+                        alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);
+                        $("#submit_btn").prop("disabled", false);
                     } else {
                         alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
                         $("#submit_btn").prop("disabled", false);
