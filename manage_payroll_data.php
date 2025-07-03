@@ -218,7 +218,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td colspan="5" class="text-right"><strong>รวมเงิน :</strong></td>
+                                        <td colspan="4" class="text-right"><strong>รวมเงิน :</strong></td>
                                         <td><input type="text" class="form-control text-right" id="total_amount"
                                                    readonly>
                                         </td>
