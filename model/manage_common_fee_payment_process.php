@@ -12,7 +12,8 @@ if ($_POST["action"] === 'GET_DATA') {
     $id = $_POST["id"];
     $return_arr = [];
 
-    $sql_get = "SELECT * FROM v_ims_house_payment WHERE id = :id";
+    // ดึงคอลัมน์ update_count มาด้วย
+    $sql_get = "SELECT *, update_count FROM v_ims_house_payment WHERE id = :id";
     $stmt = $conn->prepare($sql_get);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -41,7 +42,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "created_at" => $result['created_at'],
             "updated_at" => $result['updated_at'],
             "line_picture_profile_show" => $result['line_picture_profile_show'],
-            "alley" => $result['alley']
+            "alley" => $result['alley'],
+            "update_count" => $result['update_count'] // เพิ่มมา
         ];
     }
 
@@ -54,6 +56,7 @@ if ($_POST["action"] === 'UPDATE') {
 
     if (!empty($_POST["house_number"])) {
         $id = $_POST["id"];
+        // กำหนดค่า payment_status เป็น 'Y' หรือ 'N' จากข้อมูลที่ส่งมา
         $payment_status = ($_POST["payment_status"] === "Y") ? "Y" : "N";
 
         $period_month_start = $_POST["period_month_start"];
@@ -62,19 +65,42 @@ if ($_POST["action"] === 'UPDATE') {
 
         $amount = $_POST["amount"];
 
+        // กำหนดผู้ที่อนุมัติจาก session
         $approve_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
 
-        $sql_find = "SELECT COUNT(*) FROM ims_house_payment WHERE id = :id";
-        $stmt = $conn->prepare($sql_find);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $nRows = $stmt->fetchColumn();
+        // --- ขั้นตอนที่ 1: ดึงข้อมูล payment_status และ update_count ปัจจุบันจากฐานข้อมูล ---
+        $sql_find_current = "SELECT payment_status, update_count FROM ims_house_payment WHERE id = :id";
+        $stmt_find_current = $conn->prepare($sql_find_current);
+        $stmt_find_current->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt_find_current->execute();
+        $current_data = $stmt_find_current->fetch(PDO::FETCH_ASSOC);
+
+        // ตรวจสอบว่าพบข้อมูลหรือไม่
+        $nRows = $current_data ? 1 : 0;
 
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_house_payment SET payment_status = :payment_status 
-            ,approve_by = :approve_by , period_month_start = :period_month_start , period_month_to = :period_month_to
-            ,period_year = :period_year , amount = :amount
+            // ดึงค่า update_count ปัจจุบัน
+            $current_update_count = $current_data['update_count'];
+
+            // กำหนดค่า update_count ใหม่ เริ่มต้นด้วยค่าปัจจุบัน
+            $new_update_count = $current_update_count;
+
+            // เพิ่มค่า update_count เฉพาะเมื่อ payment_status ที่จะอัปเดตเป็น 'Y' เท่านั้น
+            if ($payment_status === 'Y') {
+                $new_update_count++;
+            }
+
+            // --- ขั้นตอนที่ 2: อัปเดตข้อมูลในฐานข้อมูล ---
+            $sql_update = "UPDATE ims_house_payment SET 
+                payment_status = :payment_status, 
+                approve_by = :approve_by, 
+                period_month_start = :period_month_start, 
+                period_month_to = :period_month_to,
+                period_year = :period_year, 
+                amount = :amount, 
+                update_count = :new_update_count 
             WHERE id = :id";
+
             $query = $conn->prepare($sql_update);
             $query->bindParam(':payment_status', $payment_status, PDO::PARAM_STR);
             $query->bindParam(':approve_by', $approve_by, PDO::PARAM_STR);
@@ -82,10 +108,93 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':period_month_to', $period_month_to, PDO::PARAM_STR);
             $query->bindParam(':period_year', $period_year, PDO::PARAM_STR);
             $query->bindParam(':amount', $amount, PDO::PARAM_STR);
+            $query->bindParam(':new_update_count', $new_update_count, PDO::PARAM_INT);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
+
             echo $save_success;
+
+            // --- ขั้นตอนที่ 3: ดำเนินการส่ง LINE Notification หากเงื่อนไขตรง ---
+            // เงื่อนไข: payment_status เป็น 'Y' และเป็นการอัปเดตครั้งแรก (update_count = 1)
+            if ($payment_status === 'Y' && $new_update_count === 1) {
+                // ดึง line_user_id จาก table ims_house_line_user
+                $house_number_to_notify = $_POST["house_number"];
+                $sql_get_line_users = "SELECT line_user_id FROM ims_house_line_user WHERE house_number = :house_number";
+                $stmt_line_users = $conn->prepare($sql_get_line_users);
+                $stmt_line_users->bindParam(':house_number', $house_number_to_notify, PDO::PARAM_STR);
+                $stmt_line_users->execute();
+                $line_users = $stmt_line_users->fetchAll(PDO::FETCH_ASSOC);
+
+                if (!empty($line_users)) {
+                    // กำหนด LINE Channel Access Token ของคุณ
+                    // คุณจะได้รับ Channel Access Token จาก LINE Developers Console -> Messaging API settings
+                    //$line_channel_access_token = "YOUR_LINE_CHANNEL_ACCESS_TOKEN"; // <<< แทนที่ด้วย LINE Channel Access Token ของคุณ
+
+                    $line_channel_access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
+
+                    $message_text = "ตรวจสอบและอนุมัติรายการชำระเรียบร้อยแล้ว บ้านเลขที่ " . $house_number_to_notify . " (ID: {$id}).";
+
+                    foreach ($line_users as $user) {
+                        $target_line_user_id = $user['line_user_id'];
+
+                        // LINE Messaging API Endpoint สำหรับ Push Message
+                        $line_api_url = "https://api.line.me/v2/bot/message/push";
+
+                        // สร้าง Headers สำหรับ LINE Messaging API
+                        $headers = array(
+                            'Content-Type: application/json',
+                            'Authorization: Bearer ' . $line_channel_access_token
+                        );
+
+                        // สร้าง Body ของ Request ในรูปแบบ JSON
+                        $post_data = json_encode([
+                            "to" => $target_line_user_id,
+                            "messages" => [
+                                [
+                                    "type" => "text",
+                                    "text" => $message_text
+                                ]
+                            ]
+                        ]);
+
+                        // ส่ง Request ด้วย cURL
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_URL, $line_api_url);
+                        curl_setopt($ch, CURLOPT_POST, 1);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        // สำหรับ production ควรตั้งค่า SSL verification ให้เหมาะสม
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // แนะนำให้เป็น 2 ใน Production
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1); // แนะนำให้เป็น 1 ใน Production
+
+                        $result = curl_exec($ch);
+                        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                        // ตรวจสอบข้อผิดพลาด cURL
+                        if (curl_errno($ch)) {
+                            error_log("cURL Error for LINE Push Message (ID: {$id}, User: {$target_line_user_id}): " . curl_error($ch));
+                        } else {
+                            $line_response = json_decode($result, true);
+                            if ($http_code !== 200) {
+                                error_log("LINE Push Message failed (HTTP Status: {$http_code}) for ID: {$id}, User: {$target_line_user_id}. Response: " . print_r($line_response, true));
+                            } else {
+                                // Log success if needed
+                                // error_log("LINE Push Message sent successfully to User: {$target_line_user_id} for ID: {$id}");
+                            }
+                        }
+                        curl_close($ch);
+                    }
+                } else {
+                    error_log("ไม่พบ Line User ID สำหรับบ้านเลขที่: " . $house_number_to_notify . " ใน ims_house_line_user");
+                }
+            }
+
+        } else {
+            echo "ไม่พบรายการที่ต้องการอัปเดต (ID: {$id})";
         }
+    } else {
+        echo "ข้อมูล House Number ไม่ครบถ้วน";
     }
 
     exit;
@@ -139,15 +248,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
             'house_number' => "%$searchValue%"
         );
 
-        // รวมข้อมูลทั้ง searchQuery และ searchArray
-/*
-        $txt = "Search Query:\n" . $searchQuery . "\n\nSearch Array:\n" . print_r($searchArray, true);
-        // เขียนลงไฟล์
-        $my_file = fopen("device_0.txt", "w") or die("Unable to open file!");
-        fwrite($my_file, $txt);
-        fclose($my_file);
-*/
-
     }
 
 
@@ -156,12 +256,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
     }
 
-/*
-    $txt = $where_house_number;
-    $my_file = fopen("device_1.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
 
 ## Total number of records without filtering
     $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $where_house_number;
@@ -170,12 +264,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
-/*
-    $txt = $sql_getdata;
-    $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
 
 ## Total number of records with filtering
 
@@ -186,12 +274,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
-/*
-    $txt = $sql_getdata;
-    $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
 
 ## Fetch records
     $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number
@@ -210,12 +292,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $empRecords = $stmt->fetchAll();
     $data = array();
 
-/*
-    $txt = $sql_getdata . "  " . $row . "," . $rowperpage;
-    $my_file = fopen("device_c.txt", "w") or die("Unable to open file!");
-    fwrite($my_file, $txt);
-    fclose($my_file);
-*/
 
     $isUser = $_SESSION['account_type'] === "user";
     $isMaster = $_POST['sub_action'] === "GET_MASTER";
@@ -251,7 +327,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "common_fee" => $row['common_fee'],
                 "amount" => $row['amount'],
                 "payment_status" => $row['payment_status'],
-                // "line_picture_profile" => $row['line_picture_profile_show'],
+                // "line_picture_profile" => $row['line_picture_profile_show"],
                 "line_picture_profile" => "<img src='" . ($row['line_picture_profile_show'] ?: 'img/icon/none_img.png') . "' alt='image' style='width: 50px; height: auto;'>",
                 "payment_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
                 "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
@@ -273,7 +349,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     }
 
 
-
 ## Response Return Value
     $response = array(
         "draw" => intval($draw),
@@ -285,4 +360,4 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     echo json_encode($response);
 
 }
-
+?>
