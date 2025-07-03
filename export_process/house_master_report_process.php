@@ -3,38 +3,34 @@
 include('../config/connect_db.php');
 date_default_timezone_set('Asia/Bangkok');
 
-// รับค่าจาก POST
-$start_date_str = isset($_POST["start_date"]) ? trim($_POST["start_date"]) : '';
-$end_date_str = isset($_POST["end_date"]) ? trim($_POST["end_date"]) : '';
+// รับค่าจาก POST สำหรับซอยเริ่มต้นและซอยสิ้นสุด
+$alley_start = isset($_POST["alley_start"]) ? trim($_POST["alley_start"]) : '';
+$alley_to = isset($_POST["alley_to"]) ? trim($_POST["alley_to"]) : '';
 
-// ตรวจสอบข้อมูลวันที่
-if ($start_date_str == '' || $end_date_str == '') {
-    exit("กรุณาเลือก 'เริ่มต้นวันที่' และ 'ถึงวันที่' ให้ถูกต้อง");
+// ตรวจสอบข้อมูลซอย
+if ($alley_start == '' || $alley_to == '') {
+    exit("กรุณาเลือก 'หมายเลขซอย เริ่มต้น' และ 'หมายเลขซอย ถึง' ให้ถูกต้อง");
 }
 
-// แปลงวันที่สำหรับชื่อไฟล์ (เพื่อให้ชื่อไฟล์อ่านง่าย)
-$start_date_for_filename = DateTime::createFromFormat('d-m-Y', $start_date_str)->format('Y-m-d');
-$end_date_for_filename = DateTime::createFromFormat('d-m-Y', $end_date_str)->format('Y-m-d');
-
 // ตั้งชื่อไฟล์
-$filename = "expenses-" . $start_date_for_filename . "_to_" . $end_date_for_filename . "_" . date('Ymd_His') . ".csv";
+$filename = "house_master-" . $alley_start . "_to_" . $alley_to . "_" . date('Ymd_His') . ".csv";
 
-// Header สำหรับดาวน์โหลด
+// Header สำหรับดาวน์โหลด (Content-Type ยังคงเป็น text/csv เพื่อให้เบราว์เซอร์รู้ว่าเป็นข้อมูลที่คั่นด้วยคอมมา)
 header('Content-Type: text/csv; charset=TIS-620');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Pragma: no-cache');
 header('Expires: 0');
 
 // สร้าง SQL
-// ใช้ STR_TO_DATE เพื่อแปลง expense_date จาก 'DD-MM-YYYY' ใน DB ให้เป็น DATE type สำหรับการเปรียบเทียบ
-// และแปลง :start_date, :end_date ที่ส่งมา (ในรูปแบบ 'DD-MM-YYYY') ให้เป็น DATE type เช่นกัน
-$sql = "SELECT * FROM v_ims_expenses 
-        WHERE STR_TO_DATE(expense_date, '%d-%m-%Y') BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
-        ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC"; // เรียงตามวันที่ที่ถูกต้อง
+// ใช้ CAST(alley AS UNSIGNED) เพื่อให้การเปรียบเทียบช่วงซอยทำงานอย่างถูกต้องสำหรับค่าที่เป็นตัวเลข
+$sql = "SELECT  *
+        FROM ims_house_master 
+        WHERE CAST(alley AS UNSIGNED) BETWEEN CAST(:alley_start AS UNSIGNED) AND CAST(:alley_to AS UNSIGNED)
+        ORDER BY CAST(alley AS UNSIGNED) ASC, house_number ASC";
 
 $params = [
-    ':start_date' => $start_date_str, // ส่งวันที่ในรูปแบบ DD-MM-YYYY
-    ':end_date' => $end_date_str    // ส่งวันที่ในรูปแบบ DD-MM-YYYY
+    ':alley_start' => $alley_start,
+    ':alley_to' => $alley_to
 ];
 
 // เตรียม query
@@ -44,22 +40,16 @@ foreach ($params as $key => $value) {
 }
 $query->execute();
 
-// หัวตาราง CSV
+// หัวตาราง Excel (อ้างอิงจากโครงสร้างตาราง ims_house_master)
 $header = [
-    "จ่ายให้ (ผู้ขาย-ผู้รับเหมา)",
-    "วันที่ใช้จ่าย",
-    "เดือน",
-    "ปี",
-    "เลขที่ใบแจ้งหนี้",
-    "หมวดหมู่",
-    "รายละเอียด",
-    "จำนวน",
-    "หน่วย",
-    "จำนวนเงิน",
+    "บ้านเลขที่",
+    "ซอย",
+    "ขนาดพื้นที่ (ตร.ว.)",
+    "ค่าเก็บขยะ",
+    "ค่าส่วนกลาง",
+    "หมายเลขโฉนด",
     "หมายเหตุ",
-    "สถานะอนุมัติ",
-    "วันที่บันทึก",
-    "วิธีชำระเงิน"
+    "สถานะ"
 ];
 
 // เขียน CSV
@@ -72,20 +62,14 @@ fputcsv($output, array_map(
 // เขียนข้อมูลแต่ละแถว
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
     $line = [
-        $row['receipt_name'],
-        $row['expense_date'], // ยังคงแสดงค่า expense_date เดิมที่อยู่ในรูปแบบ DD-MM-YYYY
-        $row['exp_month'],
-        $row['exp_year'],
-        $row['inv'],
-        $row['category_name'],
-        $row['description'],
-        $row['qty'],
-        $row['unit_name'],
-        $row['amount'],
+        $row['house_number'],
+        $row['alley'],
+        $row['area_size'],
+        $row['garbage_collection_fee'],
+        $row['common_fee'],
+        $row['land_no'],
         $row['remark'],
-        $row['approve_status'] === "Y" ? "อนุมัติแล้ว" : "รออนุมัติ",
-        $row['created_at'],
-        $row['payment_method']
+        ""
     ];
 
     fputcsv($output, array_map(

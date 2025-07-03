@@ -62,7 +62,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <form id="form_data" method="post"
                                           action=""
                                           data-excel-action="export_process/house_master_report_process.php"
-                                          enctype="multipart/form-data">
+                                          data-pdf-action="export_process/house_master_report_pdf.php" enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="form-group">
@@ -91,6 +91,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <div class="col-sm-12">
                                                         <button type="button" class="btn btn-success" id="btnExportExcel">
                                                             Export Excel <i class="fa fa-file-excel"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" id="btnPrintPdf">
+                                                            Print PDF <i class="fa fa-file-pdf"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -125,85 +128,37 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialise Datepickers
-            $('#start_date_group, #end_date_group').datepicker({
-                format: 'dd-mm-yyyy', // รูปแบบวันที่ที่แสดง
-                language: 'th',      // ใช้ภาษาไทย
-                todayHighlight: true, // เน้นวันที่ปัจจุบัน
-                autoclose: true      // ปิด Datepicker เมื่อเลือกวันที่
-            });
-
-            // ไม่จำเป็นต้อง set value ผ่าน JS อีก เพราะตั้งค่าใน PHP แล้ว
-            // const startDateInput = document.getElementById('start_date');
-            // const endDateInput = document.getElementById('end_date');
-            // const today = new Date();
-            // const day = String(today.getDate()).padStart(2, '0');
-            // const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-            // const year = today.getFullYear();
-            // const formattedDate = `${day}-${month}-${year}`;
-            // startDateInput.value = formattedDate;
-            // endDateInput.value = formattedDate;
-
+            // ลบการ Initialise Datepickers ที่ไม่เกี่ยวข้องกับฟอร์มนี้
+            // $('#start_date_group, #end_date_group').datepicker({
+            //     format: 'dd-mm-yyyy',
+            //     language: 'th',
+            //     todayHighlight: true,
+            //     autoclose: true
+            // });
 
             const form = document.getElementById('form_data');
             const btnExportExcel = document.getElementById('btnExportExcel');
             const btnPrintPdf = document.getElementById('btnPrintPdf');
-            const startDateInput = document.getElementById('start_date'); // ยังคงใช้อ้างอิงสำหรับ validation
-            const endDateInput = document.getElementById('end_date');     // ยังคงใช้อ้างอิงสำหรับ validation
 
-
-            function validateDatesSelected() {
-                if (!startDateInput.value || !endDateInput.value) {
-                    alert('กรุณาเลือก "เริ่มต้นวันที่" และ "ถึงวันที่"');
-                    return false;
-                }
-                // Optional: Add logic to ensure start_date <= end_date
-                // ตรวจสอบว่า `$.fn.datepicker.dates['th'].parse` ถูกโหลดมาแล้ว
-                if (typeof $.fn.datepicker.dates === 'undefined' || typeof $.fn.datepicker.dates['th'] === 'undefined' || typeof $.fn.datepicker.dates['th'].parse === 'undefined') {
-                    console.warn("datepicker locale 'th' parse function not available. Date validation might not be accurate.");
-                    // Fallback to simpler date parsing if locale parse is not available
-                    const parseDate = (dateStr) => {
-                        const parts = dateStr.split('-');
-                        return new Date(parts[2], parts[1] - 1, parts[0]);
-                    };
-                    const startDate = parseDate(startDateInput.value);
-                    const endDate = parseDate(endDateInput.value);
-
-                    if (startDate > endDate) {
-                        alert('วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด');
-                        return false;
-                    }
-
-                } else {
-                    const startDate = $.fn.datepicker.dates['th'].parse(startDateInput.value);
-                    const endDate = $.fn.datepicker.dates['th'].parse(endDateInput.value);
-
-                    if (startDate > endDate) {
-                        alert('วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด');
-                        return false;
-                    }
-                }
-                return true;
-            }
+            // ลบฟังก์ชัน validateDatesSelected() ที่ไม่เกี่ยวข้องกับฟอร์มนี้
+            // function validateDatesSelected() { ... }
 
             // Event listener สำหรับปุ่ม Export Excel
             btnExportExcel.addEventListener('click', function (e) {
                 e.preventDefault(); // ป้องกันการ submit form โดยตรง
-                if (validateDatesSelected()) {
-                    form.action = form.dataset.excelAction; // กำหนด action เป็น URL สำหรับ Export Excel
-                    form.submit(); // Submit form
-                }
+                // ไม่ต้องมีการ validate dates แล้ว ใช้ required attribute บน select แทน
+                form.action = form.dataset.excelAction; // กำหนด action เป็น URL สำหรับ Export Excel
+                form.submit(); // Submit form
             });
 
             // Event listener สำหรับปุ่ม Print PDF
             btnPrintPdf.addEventListener('click', function (e) {
                 e.preventDefault(); // ป้องกันการ submit form โดยตรง
-                if (validateDatesSelected()) {
-                    form.action = form.dataset.pdfAction; // กำหนด action เป็น URL สำหรับ Print PDF
-                    form.target = "_blank"; // เปิดในแท็บใหม่สำหรับ PDF
-                    form.submit(); // Submit form
-                    form.target = ""; // รีเซ็ต target กลับเป็นค่าเริ่มต้น เพื่อไม่ให้กระทบกับการ submit ครั้งถัดไป
-                }
+                // ไม่ต้องมีการ validate dates แล้ว ใช้ required attribute บน select แทน
+                form.action = form.dataset.pdfAction; // กำหนด action เป็น URL สำหรับ Print PDF
+                form.target = "_blank"; // เปิดในแท็บใหม่สำหรับ PDF
+                form.submit(); // Submit form
+                form.target = ""; // รีเซ็ต target กลับเป็นค่าเริ่มต้น เพื่อไม่ให้กระทบกับการ submit ครั้งถัดไป
             });
 
         });
