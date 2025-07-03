@@ -92,7 +92,7 @@ if ($_POST["action"] === 'UPDATE') {
             $month_name_start = $current_data['month_name_start'];
             $month_name_to = $current_data['month_name_to'];
 
-            $text_send  = "\n\r📅 งวดเดือน " .  $month_name_start . " - " . $month_name_to . " ปี " . $period_year . "\n\r" . "💵 ยอดชำระ : " . $amount . " บาท" ;
+            $text_send  = "📅 งวดเดือน " .  $month_name_start . " - " . $month_name_to . " ปี " . $period_year . "\n\r" . "💵 ยอดชำระ : " . $amount . " บาท" ;
 
             // กำหนดค่า update_count ใหม่ เริ่มต้นด้วยค่าปัจจุบัน
             $new_update_count = $current_update_count;
@@ -138,7 +138,7 @@ if ($_POST["action"] === 'UPDATE') {
                 $line_users = $stmt_line_users->fetchAll(PDO::FETCH_ASSOC);
 
                 if (!empty($line_users)) {
-                    $message_text = "✅✅✅ ตรวจสอบและอนุมัติรายการชำระเรียบร้อยแล้ว บ้านเลขที่ " . $house_number_to_notify . " (ID: {$id}) " . $text_send ;
+                    $message_text = "✅ ตรวจสอบและอนุมัติรายการชำระเรียบร้อยแล้ว (ID: {$id})" . "\n\r" . "🏠 บ้านเลขที่ " . $house_number_to_notify . "\n\r" . $text_send ;
 /*
                     $myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
                     fwrite($myfile, " Row Text = " . $message_text);
