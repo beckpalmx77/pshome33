@@ -159,7 +159,7 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
         if (isset($income_items[$i])) {
             $item = $income_items[$i];
             $html .= '<tr>
-                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . '</td>
+                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' .  '<small style="font-size: 9px !important;"><i>' . htmlspecialchars($item['remark']) . '</i></small>' . '</td>
                 <td align="right">' . number_format($item['quantity'] ?? 0, 2) . '</td>
                 <td align="right">' . number_format($item['total_amount'] ?? 0, 2) . '</td>
             </tr>';
@@ -201,8 +201,9 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
     for($i = 0; $i < max(count($deduction_items), 3); $i++) {
         if (isset($deduction_items[$i])) {
             $item = $deduction_items[$i];
+            // Corrected: htmlspecialchars added, font-size in px with !important, and cleaner parentheses
             $html .= '<tr>
-                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . '</td>
+                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' . '<small style="font-size: 9px !important;"><i>(' . htmlspecialchars($item['remark']) . ')</i></small>' . '</td>
                 <td align="right">' . number_format($item['quantity'] ?? 0, 2) . '</td>
                 <td align="right">' . number_format($item['total_amount'] ?? 0, 2) . '</td>
             </tr>';
@@ -280,7 +281,7 @@ $html_copy = generate_payslip_html($company, $payroll_master, $payroll_details, 
 $pdf->writeHTML($html_original, true, false, true, false, '');
 
 // Draw the dashed line in the middle of the A4 page (A4 height is 297mm, so middle is 148.5mm)
-// Parameters: x1, y1, x2, y2, style (dash = 'length,space')
+// Parameters: x1, y1, x2, y2, style (dash = '2,2')
 $pdf->Line(10, 148.5, 200, 148.5, array('dash' => '2,2'));
 
 // Set Y position for the copy, slightly below the middle line (148.5mm + 5mm buffer)
