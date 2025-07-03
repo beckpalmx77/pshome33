@@ -31,6 +31,7 @@ if ($action === 'GET_DETAIL_DATA') {
                 pd.amount_per_unit,
                 (pd.quantity * pd.amount_per_unit) AS amount,
                 pd.icd_type_sign,
+                pd.remark,
                 CASE pd.icd_type_sign
                     WHEN '+' THEN 'รายรับ'
                     WHEN '-' THEN 'รายหัก'

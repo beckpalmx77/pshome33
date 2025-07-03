@@ -181,8 +181,8 @@ try {
 
     // Insert payroll details
     $stmtDetail = $conn->prepare("INSERT INTO ims_payroll_detail
-        (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, quantity, amount_per_unit, icd_type_sign, total_amount)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, remark, quantity, amount_per_unit, icd_type_sign, total_amount)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     foreach ($details as $item) {
         if (empty($item['icd_type_id']) || !isset($item['quantity']) || !is_numeric($item['quantity']) || !isset($item['amount_per_unit']) || !is_numeric($item['amount_per_unit']) || empty($item['icd_type_sign'])) {
@@ -198,6 +198,7 @@ try {
             $payroll_month,
             $payroll_year,
             $item['icd_type_id'],
+            $item['remark'],
             (float)$item['quantity'],
             (float)$item['amount_per_unit'],
             $item['icd_type_sign'],

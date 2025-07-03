@@ -168,7 +168,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </label>
                                     <div class="d-flex align-items-center flex-wrap">
 
-                                        <!-- 💳 โอนเงิน -->
                                         <div class="form-check form-check-inline d-flex align-items-center me-2">
                                             <input class="form-check-input me-1" type="radio"
                                                    name="payment_method_radio"
@@ -176,12 +175,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
                                         </div>
 
-                                        <!-- ช่องกรอกเลขบัญชี -->
                                         <input type="text" class="form-control ms-2 me-2" name="bank_no"
                                                id="bank_no"
                                                placeholder="" style="width: 200px;">&nbsp;
 
-                                        <!-- 💵 เงินสด -->
                                         <div class="form-check form-check-inline d-flex align-items-center">
                                             <input class="form-check-input me-1" type="radio"
                                                    name="payment_method_radio"
@@ -189,7 +186,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             <label class="form-check-label" for="method_cash">💵 เงินสด</label>
                                         </div>
 
-                                        <!-- ช่องแสดงค่าที่เลือก -->
                                         <input type="text" class="form-control ms-2 me-2" name="payment_method"
                                                id="payment_method"
                                                placeholder="" style="width: 200px;">
@@ -210,19 +206,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <table id='detailTable' class='display dataTable table table-bordered'>
                                     <thead>
                                     <tr>
-                                        <th style="width: 25%;">รายการ (รายได้/รายการหักเงิน)</th>
-                                        <th style="width: 15%;">ประเภท</th>
-                                        <th style="width: 20%;">จำนวน</th>
-                                        <th style="width: 20%;">จำนวนเงิน</th>
-                                        <th style="width: 20%;">รวมเงิน</th>
-                                        <th style="width: 10%;">ลบ</th>
+                                        <th style="width: 20%;">รายการ (รายได้/รายการหักเงิน)</th>
+                                        <th style="width: 10%;">ประเภท</th>
+                                        <th style="width: 15%;">จำนวน</th>
+                                        <th style="width: 15%;">จำนวนเงิน</th>
+                                        <th style="width: 15%;">รวมเงิน</th>
+                                        <th style="width: 20%;">หมายเหตุ</th> <th style="width: 5%;">ลบ</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td colspan="4" class="text-right"><strong>รวมเงิน :</strong></td>
+                                        <td colspan="5" class="text-right"><strong>รวมเงิน :</strong></td>
                                         <td><input type="text" class="form-control text-right" id="total_amount"
                                                    readonly>
                                         </td>
@@ -376,6 +372,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     <td>
                         <input type="number" class="form-control text-right item-total-amount" value="0.00" readonly tabindex="-1">
                     </td>
+                    <td>
+                        <input type="text" class="form-control item-remark" placeholder="">
+                    </td>
                     <td class="text-center">
                         <button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้">
                             <i class="fas fa-trash-alt"></i>
@@ -396,8 +395,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 // Month in Date object is 0-indexed (0-11), so use selectedMonth directly for new Date(year, month, 0)
                 // new Date(year, month, 0) gives the last day of the *previous* month if 'month' is 0-indexed.
                 // To get the last day of the *selected* month, use selectedMonth (1-indexed) directly with day 0.
-                // Example: new Date(2025, 6, 0) for July 2025 will return June 30.
-                // Correct way for 1-indexed month: new Date(year, month, 0).getDate()
                 // For example, for July (7), new Date(2025, 7, 0) will give the last day of July.
                 const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
                 $('#work_day_month').val(daysInMonth);
@@ -634,7 +631,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity || 0}" required></td>
                             <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit || 0}" required></td>
                             <td><input type="number" class="form-control text-right item-total-amount" value="${(item.amount || 0).toFixed(2)}" readonly></td>
-                            <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
+                            <td><input type="text" class="form-control item-remark" value="${item.remark || ''}" placeholder=""></td> <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
                         </tr>
                     `;
                             $('#detailTable tbody').append(newRow);
@@ -672,6 +669,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 const quantity = parseFloat($(this).find('.item-quantity').val());
                 const amount_per_unit = parseFloat($(this).find('.item-amount-per-unit').val());
                 const total_amount = parseFloat($(this).find('.item-total-amount').val());
+                const remark = $(this).find('.item-remark').val(); // ดึงค่า remark
 
                 if (!icd_type_id || !icd_type_desc || isNaN(quantity) || quantity < 0 || isNaN(amount_per_unit) || amount_per_unit < 0 || isNaN(total_amount) || total_amount < 0) {
                     isValidDetails = false;
@@ -685,7 +683,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     icd_type_sign_desc: icd_type_sign_desc,
                     quantity: quantity,
                     amount_per_unit: amount_per_unit,
-                    amount: total_amount // Use total_amount as the final amount
+                    amount: total_amount, // Use total_amount as the final amount
+                    remark: remark // เพิ่ม remark ใน object ที่จะส่ง
                 });
             });
 
