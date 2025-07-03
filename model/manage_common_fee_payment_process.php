@@ -178,7 +178,7 @@ if ($_POST["action"] === 'UPDATE') {
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 
-                        //$result = curl_exec($ch);
+                        $result = curl_exec($ch);
                         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
                         // ตรวจสอบข้อผิดพลาด cURL
