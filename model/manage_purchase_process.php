@@ -104,13 +104,13 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     }
 
     // Total records (no filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_purchase");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_purchase");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
     // Total records (with filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_purchase WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_purchase WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
@@ -152,6 +152,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
                     ? "<div class='text-success'>{$row['status']}</div>"
                     : "<div class='text-muted'>{$row['status']}</div>",
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                "print" => "<button type='button' name='print' id='" . $row['doc_no'] . "' class='btn btn-outline-success btn-xs print' data-toggle='tooltip' title='Print'>Print</button>",
                 "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
             );
         }

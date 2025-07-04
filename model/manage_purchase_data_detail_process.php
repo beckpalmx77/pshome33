@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header('Content-Type: application/json');
 include('../config/connect_db.php');
 
@@ -20,6 +24,7 @@ $purpose = $data['purpose'] ?? '';
 $details = $data['details'] ?? [];
 $picture_doc = $data['picture_doc'] ?? ''; // << เพิ่มรับชื่อไฟล์รูป
 
+
 if (!in_array($action, ['ADD', 'UPDATE'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid or missing action']);
     exit;
@@ -40,10 +45,8 @@ if (!$db_supplier_id) {
     $stmtMaxID = $conn->prepare("SELECT supplier_id FROM ims_supplier WHERE supplier_id LIKE 'S%' ORDER BY supplier_id DESC LIMIT 1");
     $stmtMaxID->execute();
     $lastSupplierID = $stmtMaxID->fetchColumn();
-
     $newNumber = $lastSupplierID ? ((int)substr($lastSupplierID, 1)) + 1 : 1;
     $db_supplier_id = sprintf("S%05d", $newNumber);
-
     $stmtInsertSupplier = $conn->prepare("INSERT INTO ims_supplier (supplier_id, supplier_name) VALUES (?, ?)");
     if (!$stmtInsertSupplier->execute([$db_supplier_id, $supplier_name])) {
         $errorInfo = $stmtInsertSupplier->errorInfo();
@@ -71,7 +74,7 @@ try {
         $lastDocNo = $stmtRunNo->fetchColumn();
 
         $newRunNo = $lastDocNo ? intval(substr($lastDocNo, strrpos($lastDocNo, '-') + 1)) + 1 : 1;
-        $doc_no = sprintf("PR-%s-%s-%04d", $month, $year, $newRunNo);
+        $doc_no = sprintf("PCR-%s-%s-%04d", $month, $year, $newRunNo);
 
         $stmt = $conn->prepare("INSERT INTO ims_purchase 
             (doc_no, doc_date, requester, supplier_id, supplier_name, purpose, total_amount, picture_doc)
@@ -82,8 +85,8 @@ try {
         }
 
         $stmtDetail = $conn->prepare("INSERT INTO ims_purchase_detail 
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name, remark)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
             if (!$stmtDetail->execute([
@@ -95,7 +98,6 @@ try {
                 $item['price'],
                 $item['unit_id'],
                 $item['unit_name'],
-                $item['remark'], // Add remark here
             ])) {
                 $errorInfo = $stmtDetail->errorInfo();
                 throw new Exception("Insert detail failed: " . $errorInfo[2]);
@@ -123,8 +125,8 @@ try {
         }
 
         $stmtDetail = $conn->prepare("INSERT INTO ims_purchase_detail 
-            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name, remark)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (doc_no, line_no, product_id, product_name, quantity, price, unit_id, unit_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $line_no = 1;
         foreach ($details as $item) {
             if (!$stmtDetail->execute([
@@ -136,7 +138,6 @@ try {
                 $item['price'],
                 $item['unit_id'],
                 $item['unit_name'],
-                $item['remark'], // Add remark here
             ])) {
                 $errorInfo = $stmtDetail->errorInfo();
                 throw new Exception("Insert detail failed: " . $errorInfo[2]);

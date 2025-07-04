@@ -66,6 +66,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                     <th>สถานะ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -199,6 +200,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'total_amount'},
                     {data: 'approve_status_desc'},
                     {data: 'update'},
+                    {data: 'print'},
                     {data: 'delete'}
                 ]
             });
@@ -292,6 +294,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
             }
         });
 
+    </script>
+
+    <script>
+        $("#TableRecordList").on('click', '.print', function () {
+            let doc_no = $(this).attr("id");
+            let url = "export_process/export_purchase_request_pdf.php?doc_no=" + encodeURIComponent(doc_no);
+            window.open(url, "_blank"); // เปิดหน้าใหม่
+        });
     </script>
 
 

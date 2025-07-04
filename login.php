@@ -13,11 +13,9 @@ include('includes/CheckDevice.php');
 </style>
 
 <style type="text/css">
+    /* แก้ไขตรงนี้: ลบ float และ margin-top ออก เพื่อให้ position: absolute ทำงานได้อย่างถูกต้อง */
     .toggleeye {
-        float: right;
-        margin-right: 6px;
-        margin-top: -20px;
-        position: relative;
+        position: relative; /* ยังคงไว้เผื่อการใช้งานอื่นๆ แต่ไม่ส่งผลต่อการจัดตำแหน่งในที่นี้ */
         z-index: 2;
         color: darkgrey;
     }
@@ -111,7 +109,6 @@ include('includes/CheckDevice.php');
 </script>
 
 <body class="bg-gradient-login">
-<!-- Login Content -->
 <div class="container-login">
     <div class="row justify-content-center">
         <div class="col-xl-6 col-lg-12 col-md-9">
@@ -151,10 +148,10 @@ include('includes/CheckDevice.php');
                                             <input class="form-check-input" type="checkbox" value="on" id="remember"
                                                    name="remember">
                                             <label class="form-check-label" for="remember">
-                                                 <?php  if ($_SESSION['deviceType']=='computer') {?>
-                                                <p style="color:blue;">Remember Me 30 Days</p>
+                                                <?php  if ($_SESSION['deviceType']=='computer') {?>
+                                                    <p style="color:blue;">Remember Me 30 Days</p>
                                                 <?php } else { ?>
-                                                <p style="color:red;">Remember Me 30 Days</p>
+                                                    <p style="color:red;">Remember Me 30 Days</p>
                                                 <?php } ?>
                                             </label>
                                         </div>
@@ -178,5 +175,3 @@ include('includes/CheckDevice.php');
 
 </body>
 </html>
-
-
