@@ -15,6 +15,12 @@ $username = $_POST['username'];
 $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 $remember = $_POST['remember'];
 
+/*
+$myfile = fopen("login-a.txt", "w") or die("Unable to open file!");
+fwrite($myfile, $username . " | " . $password);
+fclose($myfile);
+*/
+
 $sql = "SELECT iu.*, ih.house_number, ih.contact_name, pm.dashboard_page, ihu.line_picture_profile
         FROM ims_user iu
         LEFT JOIN ims_permission pm ON pm.permission_id = iu.account_type

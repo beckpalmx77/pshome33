@@ -15,8 +15,8 @@ if (strlen($_SESSION['alogin']) === "") {
     $stmt_bank->execute();
     $BankCurr = $stmt_bank->fetchAll();
     foreach ($BankCurr as $row_curr) {
-        $bank_name = $row_curr["bank_name"];
-        $bank_account_name = $row_curr["bank_account_name"];
+        $bank_name = $row_curr["bank_name"] ;
+        $bank_account_name = $row_curr["bank_account_name"] ;
         $bank_account_no = $row_curr["bank_account_no"];
     }
 
@@ -30,8 +30,8 @@ if (strlen($_SESSION['alogin']) === "") {
         $stmt_house_master->execute();
         $hmCurr = $stmt_house_master->fetchAll();
         foreach ($hmCurr as $hm_curr) {
-            $area_size = $hm_curr["area_size"];
-            $common_fee = $hm_curr["common_fee"];
+            $area_size = $hm_curr["area_size"] ;
+            $common_fee = $hm_curr["common_fee"] ;
         }
 
     } else {
@@ -67,9 +67,7 @@ if (strlen($_SESSION['alogin']) === "") {
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ
-                                Slip/ใบโอนเงิน/ใบเสร็จ
-                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</li>
                         </ol>
                     </div>
 
@@ -139,11 +137,9 @@ if (strlen($_SESSION['alogin']) === "") {
 
                                         <div class="form-group row align-items-end">
                                             <div class="col-md-4">
-                                                <label for="period_month_start">เริ่มงวดเดือน
-                                                    (เลือกเดือนที่ชำระ)</label>
+                                                <label for="period_month_start">เริ่มงวดเดือน (เลือกเดือนที่ชำระ)</label>
                                                 <select name="period_month_start" id="period_month_start"
-                                                        class="form-control" style="background-color: #FFDAB9;"
-                                                        required>
+                                                        class="form-control" style="background-color: #FFDAB9;" required>
                                                     <option value="">เลือก</option>
                                                     <?php
                                                     $currentMonth = date('n'); // ดึงเลขเดือนปัจจุบัน (1-12)
@@ -178,11 +174,10 @@ if (strlen($_SESSION['alogin']) === "") {
 
                                             <div class="col-md-4">
                                                 <label for="period_year">งวดปี</label>
-                                                <select name="period_year" id="period_year" class="form-control"
-                                                        style="background-color: #0dcaf0" required>
+                                                <select name="period_year" id="period_year" class="form-control" style="background-color: #0dcaf0" required>
                                                     <?php
                                                     $currentYear = date('Y'); // ดึงปีปัจจุบัน
-                                                    $startYear = $currentYear - 1; // 5 ปีก่อนหน้า
+                                                    $startYear = $currentYear - 5; // 5 ปีก่อนหน้า
                                                     $endYear = $currentYear + 1;  // 1 ปีข้างหน้า
 
                                                     for ($year = $startYear; $year <= $endYear; $year++) {
@@ -199,11 +194,9 @@ if (strlen($_SESSION['alogin']) === "") {
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group has-success">
-                                                        <label for="detail"
-                                                               class="control-label">ชื่อผู้โอน/ผู้ชำระ</label>
+                                                        <label for="detail" class="control-label">ชื่อผู้โอน/ผู้ชำระ</label>
                                                         <input type="text" name="detail" class="form-control" required
-                                                               id="detail"
-                                                               value="<?php echo $f_name . " " . $l_name ?>">
+                                                               id="detail" value="<?php echo $f_name . " " . $l_name ?>">
                                                     </div>
                                                 </div>
 
@@ -211,9 +204,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <div class="form-group has-success">
                                                         <label for="area_size"
                                                                class="control-label">พื้นที่บ้าน ตรว</label>
-                                                        <input type="number" name="area_size" id="area_size"
-                                                               class="form-control" readonly="true"
-                                                               value="<?php echo $area_size ?>">
+                                                        <input type="number" name="area_size" id="area_size" class="form-control" readonly="true" value="<?php echo $area_size ?>">
                                                     </div>
                                                 </div>
 
@@ -221,9 +212,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <div class="form-group has-success">
                                                         <label for="common_fee"
                                                                class="control-label">ค่าส่วนกลาง</label>
-                                                        <input type="number" name="common_fee" id="common_fee"
-                                                               class="form-control" readonly="true"
-                                                               value="<?php echo $common_fee ?>">
+                                                        <input type="number" name="common_fee" id="common_fee" class="form-control" readonly="true" value="<?php echo $common_fee ?>">
                                                     </div>
                                                 </div>
 
@@ -231,8 +220,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     <div class="form-group has-success">
                                                         <label for="amount"
                                                                class="control-label">จำนวนเงินที่โอน</label>
-                                                        <input type="number" id="amount" name="amount"
-                                                               class="form-control"
+                                                        <input type="number" id = "amount" name="amount" class="form-control"
                                                                required id="amount">
                                                     </div>
                                                 </div>
@@ -253,15 +241,13 @@ if (strlen($_SESSION['alogin']) === "") {
                                                         <input class="form-check-input" type="radio"
                                                                name="payment_method_radio"
                                                                id="method_transfer" value="โอนเงิน">
-                                                        <label class="form-check-label" for="method_transfer">💳
-                                                            โอนเงิน</label>
+                                                        <label class="form-check-label" for="method_transfer">💳 โอนเงิน</label>
                                                     </div>
                                                     <div class="form-check form-check-inline custom-radio">
                                                         <input class="form-check-input" type="radio"
                                                                name="payment_method_radio"
                                                                id="method_cash" value="เงินสด" checked>
-                                                        <label class="form-check-label" for="method_cash">💵
-                                                            เงินสด</label>
+                                                        <label class="form-check-label" for="method_cash">💵 เงินสด</label>
                                                     </div>
                                                 </div>
 
@@ -277,16 +263,12 @@ if (strlen($_SESSION['alogin']) === "") {
                                         <div class="form-group has-success">
                                             <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
 
-                                            <input name="bank_name" class="form-control" id="bank_name"
-                                                   value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>"
-                                                   readonly="true">
+                                            <input name="bank_name" class="form-control" id="bank_name" value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>" readonly="true">
                                         </div>
 
                                         <div class="form-group has-success">
-                                            <label for="picture_payment" class="control-label">แนบ
-                                                Slip/ใบโอนเงิน/ใบเสร็จ</label>
-                                            <input type="file" name="picture_payment" id="picture_payment"
-                                                   class="form-control">
+                                            <label for="picture_payment" class="control-label">แนบ Slip/ใบโอนเงิน/ใบเสร็จ</label>
+                                            <input type="file" name="picture_payment" id="picture_payment" class="form-control">
                                             <img id="preview_image" src="#" alt="Preview Image"
                                                  style="display: none; margin-top: 10px; max-width: 300px;"/>
                                         </div>
@@ -297,8 +279,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                             <p>กำลังบันทึกข้อมูล...</p>
                                         </div>
 
-                                        <button type="submit" id="submit_btn" class="btn btn-primary btn-block">
-                                            บันทึกข้อมูล
+                                        <button type="submit" id="submit_btn" class="btn btn-primary btn-block">บันทึกข้อมูล
                                         </button>
                                     </form>
 
@@ -581,10 +562,10 @@ if (strlen($_SESSION['alogin']) === "") {
 
                     // Check for yearly discount condition:
                     // Payment in December of the year BEFORE the period year (e.g., Dec 2024 for period 2025)
-                    // OR Payment in January (1st-31st) of the period year (e.g., Jan 2025 for period 2025)
+                    // OR Payment up to October (month 10) of the period year (e.g., Jan-Oct 2025 for period 2025)
                     const applyDiscount = (
                         (currentYear === (periodYear - 1) && currentMonth === 12) ||
-                        (currentYear === periodYear && currentMonth === 1 && currentDay <= 31)
+                        (currentYear === periodYear && currentMonth <= 10)
                     );
 
                     if (applyDiscount) {

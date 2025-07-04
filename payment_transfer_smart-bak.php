@@ -70,6 +70,7 @@ foreach ($BankCurr as $row_curr) {
                                                            class="control-label">บ้านเลขที่</label>
                                                     <input type="text" name="house_number" class="form-control"
                                                            required
+                                                           readonly="true"
                                                            id="house_number"
                                                            value="<?php echo $house_number ?>">
                                                 </div>
@@ -108,31 +109,36 @@ foreach ($BankCurr as $row_curr) {
                                     <!-- งวดเดือนและงวดปี (แถวเดียว กระชับ) -->
                                     <div class="form-group row align-items-end">
                                         <div class="col-md-4">
-                                            <label for="period_month_start">เริ่มงวดเดือน</label>
+                                            <label for="period_month_start">เริ่มงวดเดือน (เลือกเดือนที่ชำระ)</label>
                                             <select name="period_month_start" id="period_month_start"
-                                                    class="form-control" required>
+                                                    class="form-control" style="background-color: #FFDAB9;" required>
                                                 <option value="">เลือก</option>
                                                 <?php
+                                                $currentMonth = date('n'); // ดึงเลขเดือนปัจจุบัน (1-12)
                                                 $months = [
                                                     1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน',
                                                     5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม',
                                                     9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
                                                 ];
                                                 foreach ($months as $val => $name) {
-                                                    echo "<option value='$val'>$name</option>";
+                                                    // กำหนดให้เดือนปัจจุบันถูกเลือกเป็นค่าเริ่มต้น
+                                                    $selected = ($val == $currentMonth) ? 'selected' : '';
+                                                    echo "<option value='$val' $selected>$name</option>";
                                                 }
                                                 ?>
                                             </select>
                                         </div>
 
                                         <div class="col-md-4">
-                                            <label for="period_month_to">ถึงงวดเดือน</label>
+                                            <label for="period_month_to">ถึงงวดเดือน (เลือกเดือนที่ชำระ)</label>
                                             <select name="period_month_to" id="period_month_to" class="form-control"
-                                                    required>
+                                                    style="background-color: #FFDAB9;" required>
                                                 <option value="">เลือก</option>
                                                 <?php
+                                                // กำหนดให้เดือนปัจจุบันถูกเลือกเป็นค่าเริ่มต้นเช่นกัน
                                                 foreach ($months as $val => $name) {
-                                                    echo "<option value='$val'>$name</option>";
+                                                    $selected = ($val == $currentMonth) ? 'selected' : '';
+                                                    echo "<option value='$val' $selected>$name</option>";
                                                 }
                                                 ?>
                                             </select>
@@ -140,9 +146,18 @@ foreach ($BankCurr as $row_curr) {
 
                                         <div class="col-md-4">
                                             <label for="period_year">งวดปี</label>
-                                            <input type="number" name="period_year" id="period_year"
-                                                   class="form-control" required
-                                                   value="<?php echo date('Y'); ?>">
+                                            <select name="period_year" id="period_year" class="form-control" style="background-color: #0dcaf0" required>
+                                                <?php
+                                                $currentYear = date('Y'); // ดึงปีปัจจุบัน
+                                                $startYear = $currentYear - 5; // 5 ปีก่อนหน้า
+                                                $endYear = $currentYear + 1;  // 1 ปีข้างหน้า
+
+                                                for ($year = $startYear; $year <= $endYear; $year++) {
+                                                    $selected = ($year == $currentYear) ? 'selected' : '';
+                                                    echo "<option value='$year' $selected>$year</option>";
+                                                }
+                                                ?>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -378,9 +393,11 @@ foreach ($BankCurr as $row_curr) {
 <script>
     $(document).ready(function () {
         function toggleFields() {
+            const currentMonth = new Date().getMonth() + 1; // ดึงเลขเดือนปัจจุบัน (1-12)
+
             if ($("#option_monthly").is(":checked")) {
-                $("#period_month_start").prop("disabled", false).val(1); // กำหนดเป็น มกราคม
-                $("#period_month_to").prop("disabled", false).val(1); // กำหนดเป็น มกราคม
+                $("#period_month_start").prop("disabled", false).val(currentMonth); // กำหนดเป็น เดือนปัจจุบัน
+                $("#period_month_to").prop("disabled", false).val(currentMonth);   // กำหนดเป็น เดือนปัจจุบัน
                 $("#period_year").prop("disabled", false);
                 $("#payment_type").prop("disabled", false);
                 $("#payment_type").val(1);
@@ -389,8 +406,9 @@ foreach ($BankCurr as $row_curr) {
                 $("#period_month_to").prop("disabled", true).val(12);   // กำหนดเป็น ธันวาคม
                 $("#period_year").prop("disabled", false);
                 $("#payment_type").prop("disabled", true);
-                $("#period_month_start").val(1); // กำหนดเป็น มกราคม
-                $("#period_month_to").val(12); // กำหนดเป็น ธันวาคม
+                // ไม่ต้องกำหนดค่าซ้ำตรงนี้ เพราะถูกกำหนดด้านบนไปแล้ว
+                // $("#period_month_start").val(1);
+                // $("#period_month_to").val(12);
                 $("#payment_type").val(12);
             }
         }
@@ -627,7 +645,7 @@ foreach ($BankCurr as $row_curr) {
     });
 </script>
 
-<script>
+<!--script>
     $(document).ready(function () {
         $("#transfer_form").on("submit", function (event) {
             event.preventDefault();
@@ -685,9 +703,10 @@ foreach ($BankCurr as $row_curr) {
 
                         if (liff.isInClient()) {
                             liff.getProfile().then(profile => {
-                                const message = `📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\nจำนวน ${amount} บาท\nบ้านเลขที่: ${house_number}
-                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} \nปี: ${period_year}
-                                \nวันที่ทำรายการ: ${date_time}\nโปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
+                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
+                                \n🕔 วันที่ทำรายการ: ${date_time}
+                                \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
                                 liff.sendMessages([{type: "text", text: message}])
                                     .then(() => {
                                         setTimeout(() => {
@@ -700,8 +719,10 @@ foreach ($BankCurr as $row_curr) {
                                         liff.closeWindow();
                                     });
                             });
+                        } else if (response == 2) {
+                            alertify.error("มีข้อมูลการชำระค่าส่วนกลางงวดนี้แล้ว ไม่สามารถบันทึกได้)");
                         } else {
-                            alertify.success("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
+                            alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
                         }
 
                     } else {
@@ -717,8 +738,108 @@ foreach ($BankCurr as $row_curr) {
             });
         });
     });
-</script>
 
+</script-->
+
+<script>
+    $(document).ready(function () {
+        $("#transfer_form").on("submit", function (event) {
+            event.preventDefault();
+
+            let period_month_start = parseInt($("#period_month_start").val());
+            let period_month_to = parseInt($("#period_month_to").val());
+            let period_year = parseInt($("#period_year").val()); // ดึงค่า period_year มาใช้งาน
+            let amount = parseFloat($("#amount").val()) || 0;
+            let house_number = $("#house_number").val();
+
+            // ต้องมั่นใจว่า monthNames ถูกกำหนดไว้แล้ว ตัวอย่างเช่น:
+            const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            let period_month_start_name = monthNames[period_month_start];
+            let period_month_to_name = monthNames[period_month_to];
+
+            function padZero(n) {
+                return n < 10 ? '0' + n : n;
+            }
+
+            let date = new Date();
+            let current_date = padZero(date.getDate()) + "-" + padZero(date.getMonth() + 1) + "-" + date.getFullYear();
+            let current_time = padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
+            let date_time = current_date + " " + current_time;
+
+            if (period_month_start > period_month_to) {
+                alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง");
+                return;
+            }
+
+            if (amount <= 0) {
+                alertify.error("จำนวนเงินต้องมากกว่า 0 บาท");
+                return;
+            }
+
+            // 🔒 ปิดปุ่ม + แสดงโหลด
+            $("#submit_btn").prop("disabled", true);
+            $("#loading").show();
+
+            let formData = new FormData(this);
+            formData.append('period_month_start', $("#period_month_start").val());
+            formData.append('period_month_to', $("#period_month_to").val());
+            formData.append('payment_type', $("#payment_type").val());
+
+            $.ajax({
+                url: "model/manage_payment_transfer_smart.php",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#loading").hide();
+
+                    if (response == 1) {
+                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
+                        $("#transfer_form")[0].reset();
+                        $("#preview_image").hide().attr("src", "");
+                        $("#submit_btn").prop("disabled", true);
+
+                        if (liff.isInClient()) {
+                            liff.getProfile().then(profile => {
+                                const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
+                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
+                                \n🕔 วันที่ทำรายการ: ${date_time}
+                                \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                liff.sendMessages([{type: "text", text: message}])
+                                    .then(() => {
+                                        setTimeout(() => {
+                                            liff.closeWindow();
+                                        }, 2000);
+                                    })
+                                    .catch(err => {
+                                        console.error("ส่งข้อความล้มเหลว:", err);
+                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
+                                        liff.closeWindow();
+                                    });
+                            });
+                        } else {
+                            alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
+                        }
+                    } else if (response == 2) {
+                        // ปรับข้อความแจ้งเตือนให้แสดงปีด้วย
+                        alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);
+                        $("#submit_btn").prop("disabled", false);
+                    } else {
+                        alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
+                        $("#submit_btn").prop("disabled", false);
+                    }
+                },
+                error: function () {
+                    $("#loading").hide();
+                    alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                    $("#submit_btn").prop("disabled", false);
+                }
+            });
+        });
+    });
+
+</script>
 
 
 </body>

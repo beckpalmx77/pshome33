@@ -26,7 +26,6 @@ foreach ($BankCurr as $row_curr) {
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">ชำระค่าส่วนกลาง</h1>
                     <br>
-                    <!-- โปรไฟล์และข้อมูลผู้ใช้ -->
                     <div class="d-flex align-items-center gap-3">
                         <img id="profilePic"
                              src=""
@@ -43,7 +42,6 @@ foreach ($BankCurr as $row_curr) {
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card mb-12">
-                            <!--div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"></div-->
                             <div class="card-body">
                                 <form id="transfer_form" method="POST" enctype="multipart/form-data">
 
@@ -70,6 +68,7 @@ foreach ($BankCurr as $row_curr) {
                                                            class="control-label">บ้านเลขที่</label>
                                                     <input type="text" name="house_number" class="form-control"
                                                            required
+                                                           readonly="true"
                                                            id="house_number"
                                                            value="<?php echo $house_number ?>">
                                                 </div>
@@ -105,34 +104,38 @@ foreach ($BankCurr as $row_curr) {
                                         </div>
                                     </div>
 
-                                    <!-- งวดเดือนและงวดปี (แถวเดียว กระชับ) -->
                                     <div class="form-group row align-items-end">
                                         <div class="col-md-4">
-                                            <label for="period_month_start">เริ่มงวดเดือน</label>
+                                            <label for="period_month_start">เริ่มงวดเดือน (เลือกเดือนที่ชำระ)</label>
                                             <select name="period_month_start" id="period_month_start"
-                                                    class="form-control" required>
+                                                    class="form-control" style="background-color: #FFDAB9;" required>
                                                 <option value="">เลือก</option>
                                                 <?php
+                                                $currentMonth = date('n'); // ดึงเลขเดือนปัจจุบัน (1-12)
                                                 $months = [
                                                     1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน',
                                                     5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม',
                                                     9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
                                                 ];
                                                 foreach ($months as $val => $name) {
-                                                    echo "<option value='$val'>$name</option>";
+                                                    // กำหนดให้เดือนปัจจุบันถูกเลือกเป็นค่าเริ่มต้น
+                                                    $selected = ($val == $currentMonth) ? 'selected' : '';
+                                                    echo "<option value='$val' $selected>$name</option>";
                                                 }
                                                 ?>
                                             </select>
                                         </div>
 
                                         <div class="col-md-4">
-                                            <label for="period_month_to">ถึงงวดเดือน</label>
+                                            <label for="period_month_to">ถึงงวดเดือน (เลือกเดือนที่ชำระ)</label>
                                             <select name="period_month_to" id="period_month_to" class="form-control"
-                                                    required>
+                                                    style="background-color: #FFDAB9;" required>
                                                 <option value="">เลือก</option>
                                                 <?php
+                                                // กำหนดให้เดือนปัจจุบันถูกเลือกเป็นค่าเริ่มต้นเช่นกัน
                                                 foreach ($months as $val => $name) {
-                                                    echo "<option value='$val'>$name</option>";
+                                                    $selected = ($val == $currentMonth) ? 'selected' : '';
+                                                    echo "<option value='$val' $selected>$name</option>";
                                                 }
                                                 ?>
                                             </select>
@@ -140,17 +143,24 @@ foreach ($BankCurr as $row_curr) {
 
                                         <div class="col-md-4">
                                             <label for="period_year">งวดปี</label>
-                                            <input type="number" name="period_year" id="period_year"
-                                                   class="form-control" required
-                                                   value="<?php echo date('Y'); ?>">
+                                            <select name="period_year" id="period_year" class="form-control" style="background-color: #0dcaf0" required>
+                                                <?php
+                                                $currentYear = date('Y'); // ดึงปีปัจจุบัน
+                                                $startYear = $currentYear - 1; // 5 ปีก่อนหน้า
+                                                $endYear = $currentYear + 1;  // 1 ปีข้างหน้า
+
+                                                for ($year = $startYear; $year <= $endYear; $year++) {
+                                                    $selected = ($year == $currentYear) ? 'selected' : '';
+                                                    echo "<option value='$year' $selected>$year</option>";
+                                                }
+                                                ?>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="form-group has-success">
                                         <div class="row">
-                                            <!-- งวดปี -->
                                             <div class="col-md-6">
-                                                <!-- ชื่อผู้โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="detail" class="control-label">ชื่อผู้ชำระ</label>
                                                     <input type="text" name="detail" class="form-control" required
@@ -165,7 +175,6 @@ foreach ($BankCurr as $row_curr) {
                                             </div>
 
                                             <div class="col-md-6">
-                                                <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="common_fee"
                                                            class="control-label">ค่าส่วนกลางรายเดือน (บาท)</label>
@@ -176,7 +185,6 @@ foreach ($BankCurr as $row_curr) {
 
 
                                             <div class="col-md-6">
-                                                <!-- จำนวนเงินที่โอน -->
                                                 <div class="form-group has-success">
                                                     <label for="amount"
                                                            class="control-label">จำนวนเงินที่ชำระ (บาท)</label>
@@ -188,7 +196,6 @@ foreach ($BankCurr as $row_curr) {
                                     </div>
 
 
-                                    <!-- หมายเหตุ -->
                                     <div class="form-group has-success">
                                         <label for="remark" class="control-label">หมายเหตุ</label>
                                         <input name="remark" class="form-control" id="remark" value="-">
@@ -213,7 +220,6 @@ foreach ($BankCurr as $row_curr) {
                                         </div>
                                     </div>
 
-                                    <!-- Loading Indicator -->
                                     <div id="loading"
                                          style="display: none; text-align: center; margin-top: 20px;">
                                         <img src="img/spin/spin_cir.gif" alt="Loading..." style="width: 50px;">
@@ -230,8 +236,6 @@ foreach ($BankCurr as $row_curr) {
                     </div>
                 </div>
             </div>
-            <!-- Container Fluid-->
-
         </div>
 
         <?php
@@ -242,7 +246,6 @@ foreach ($BankCurr as $row_curr) {
     </div>
 </div>
 
-<!-- Scroll to top -->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
@@ -378,9 +381,11 @@ foreach ($BankCurr as $row_curr) {
 <script>
     $(document).ready(function () {
         function toggleFields() {
+            const currentMonth = new Date().getMonth() + 1; // ดึงเลขเดือนปัจจุบัน (1-12)
+
             if ($("#option_monthly").is(":checked")) {
-                $("#period_month_start").prop("disabled", false).val(1); // กำหนดเป็น มกราคม
-                $("#period_month_to").prop("disabled", false).val(1); // กำหนดเป็น มกราคม
+                $("#period_month_start").prop("disabled", false).val(currentMonth); // กำหนดเป็น เดือนปัจจุบัน
+                $("#period_month_to").prop("disabled", false).val(currentMonth);   // กำหนดเป็น เดือนปัจจุบัน
                 $("#period_year").prop("disabled", false);
                 $("#payment_type").prop("disabled", false);
                 $("#payment_type").val(1);
@@ -389,8 +394,6 @@ foreach ($BankCurr as $row_curr) {
                 $("#period_month_to").prop("disabled", true).val(12);   // กำหนดเป็น ธันวาคม
                 $("#period_year").prop("disabled", false);
                 $("#payment_type").prop("disabled", true);
-                $("#period_month_start").val(1); // กำหนดเป็น มกราคม
-                $("#period_month_to").val(12); // กำหนดเป็น ธันวาคม
                 $("#payment_type").val(12);
             }
         }
@@ -461,8 +464,8 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value = (data.f_name || '') + ' ' + (data.l_name || '');
                                 document.getElementById('common_fee').value = data.common_fee;
-                                document.getElementById('amount').value = data.common_fee * document.getElementById('payment_type').value;
-                                document.getElementById('amount').readOnly = true;
+                                // Initialize and calculate amount after common_fee is loaded
+                                window.initWithCommonFeeInput();
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
                                 document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
                                 $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
@@ -552,6 +555,7 @@ foreach ($BankCurr as $row_curr) {
         const commonFeeInput = document.getElementById('common_fee');
         const amountInput = document.getElementById('amount');
         const paymentOptionInputs = document.querySelectorAll('input[name="payment_option"]');
+        const periodYearInput = document.getElementById('period_year'); // Get period_year input
 
         function getSelectedPaymentOption() {
             for (const el of paymentOptionInputs) {
@@ -563,24 +567,37 @@ foreach ($BankCurr as $row_curr) {
         function calculateAmount() {
             const commonFee = parseFloat(commonFeeInput.value) || 0;
             const paymentOption = getSelectedPaymentOption();
-
-            let paymentType = 0;
+            let calculatedAmount = 0;
 
             if (paymentOption === 'monthly') {
-                paymentType = parseInt(paymentTypeInput.value) || 0;
+                const paymentMonths = parseInt(paymentTypeInput.value) || 0;
+                calculatedAmount = commonFee * paymentMonths;
             } else if (paymentOption === 'yearly') {
-                paymentType = 12;
+                const currentDate = new Date();
+                const currentYear = currentDate.getFullYear();
+                const currentMonth = currentDate.getMonth() + 1; // January is 0, so add 1
+                const currentDay = currentDate.getDate();
+                const periodYear = parseInt(periodYearInput.value); // Use periodYearInput
+
+                const applyDiscount = (
+                    (currentYear === (periodYear - 1) && currentMonth === 12) || // Dec of previous year
+                    (currentYear === periodYear && currentMonth === 1 && currentDay <= 31) // Jan of current year
+                );
+
+                if (applyDiscount) {
+                    calculatedAmount = commonFee * 11;
+                } else {
+                    calculatedAmount = commonFee * 12;
+                }
             }
 
-            const total = paymentType * commonFee;
-            amountInput.value = total.toFixed(2);
+            amountInput.value = calculatedAmount.toFixed(2);
 
             // debug log
             console.log('[calculateAmount]');
             console.log('commonFee:', commonFee);
             console.log('paymentOption:', paymentOption);
-            console.log('paymentType:', paymentType);
-            console.log('total amount:', amountInput.value);
+            console.log('calculatedAmount:', amountInput.value);
         }
 
         function handlePaymentOptionChange() {
@@ -590,12 +607,10 @@ foreach ($BankCurr as $row_curr) {
 
             if (selectedOption === 'yearly') {
                 paymentTypeInput.value = 12;
-                //paymentTypeInput.disabled = false;  // ไม่ disable
-                amountInput.readOnly = false;
+                amountInput.readOnly = false; // Make amount editable for yearly
             } else if (selectedOption === 'monthly') {
                 paymentTypeInput.value = 1;
-                //paymentTypeInput.disabled = false;  // ไม่ disable
-                amountInput.readOnly = true;
+                amountInput.readOnly = true; // Make amount readonly for monthly
             }
 
             calculateAmount();
@@ -612,13 +627,13 @@ foreach ($BankCurr as $row_curr) {
         paymentOptionInputs.forEach(el =>
             el.addEventListener('change', handlePaymentOptionChange)
         );
+        periodYearInput.addEventListener('change', calculateAmount); // Recalculate if period year changes
 
         // ✅ เรียกหลังจากได้ data.common_fee แล้ว
         window.initWithCommonFeeInput = function () {
             // ตั้งค่ารายเดือนเป็น default
             document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
             paymentTypeInput.value = 1;
-            //paymentTypeInput.disabled = false;
             amountInput.readOnly = true;
 
             console.log('[initWithCommonFeeInput] init default monthly');
@@ -626,102 +641,6 @@ foreach ($BankCurr as $row_curr) {
         };
     });
 </script>
-
-<!--script>
-    $(document).ready(function () {
-        $("#transfer_form").on("submit", function (event) {
-            event.preventDefault();
-
-            let period_month_start = parseInt($("#period_month_start").val());
-            let period_month_to = parseInt($("#period_month_to").val());
-            let period_year = parseInt($("#period_year").val());
-            let amount = parseFloat($("#amount").val()) || 0;
-            let house_number = $("#house_number").val();
-            let period_month_start_name = monthNames[period_month_start];
-            let period_month_to_name = monthNames[period_month_to];
-
-            function padZero(n) {
-                return n < 10 ? '0' + n : n;
-            }
-
-            let date = new Date();
-            let current_date = padZero(date.getDate()) + "-" + padZero(date.getMonth() + 1) + "-" + date.getFullYear();
-            let current_time = padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
-            let date_time = current_date + " " + current_time;
-
-            if (period_month_start > period_month_to) {
-                alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง");
-                return;
-            }
-
-            if (amount <= 0) {
-                alertify.error("จำนวนเงินต้องมากกว่า 0 บาท");
-                return;
-            }
-
-            // 🔒 ปิดปุ่ม + แสดงโหลด
-            $("#submit_btn").prop("disabled", true);
-            $("#loading").show();
-
-            let formData = new FormData(this);
-            formData.append('period_month_start', $("#period_month_start").val());
-            formData.append('period_month_to', $("#period_month_to").val());
-            formData.append('payment_type', $("#payment_type").val());
-
-            $.ajax({
-                url: "model/manage_payment_transfer_smart.php",
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    $("#loading").hide();
-
-                    if (response == 1) {
-                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
-                        $("#transfer_form")[0].reset();
-                        $("#preview_image").hide().attr("src", "");
-                        $("#submit_btn").prop("disabled", true);
-
-                        if (liff.isInClient()) {
-                            liff.getProfile().then(profile => {
-                                const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
-                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
-                                \n🕔 วันที่ทำรายการ: ${date_time}
-                                \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
-                                liff.sendMessages([{type: "text", text: message}])
-                                    .then(() => {
-                                        setTimeout(() => {
-                                            liff.closeWindow();
-                                        }, 2000);
-                                    })
-                                    .catch(err => {
-                                        console.error("ส่งข้อความล้มเหลว:", err);
-                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
-                                        liff.closeWindow();
-                                    });
-                            });
-                        } else if (response == 2) {
-                            alertify.error("มีข้อมูลการชำระค่าส่วนกลางงวดนี้แล้ว ไม่สามารถบันทึกได้)");
-                        } else {
-                            alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
-                        }
-
-                    } else {
-                        alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
-                        $("#submit_btn").prop("disabled", false);
-                    }
-                },
-                error: function () {
-                    $("#loading").hide();
-                    alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
-                    $("#submit_btn").prop("disabled", false);
-                }
-            });
-        });
-    });
-
-</script-->
 
 <script>
     $(document).ready(function () {

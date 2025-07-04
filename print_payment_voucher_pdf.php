@@ -161,7 +161,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
 
             $html .= '<tr>
                 <td align="center">' . ($index + 1) . '</td>
-                <td>' . htmlspecialchars($item['product_name']) . '</td>
+                <td>' . htmlspecialchars($item['product_name']) . ' (' . htmlspecialchars($item['remark']) . ') '. '</td>
                 <td align="right">' . number_format($quantity, 2) . '</td>
                 <td align="center">' . htmlspecialchars($item['unit_name']) . '</td>
                 <td align="right">' . number_format($item_amount, 2) . '</td>
