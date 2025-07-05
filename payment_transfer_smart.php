@@ -179,7 +179,7 @@ foreach ($BankCurr as $row_curr) {
                                                     <label for="common_fee"
                                                            class="control-label">ค่าส่วนกลางรายเดือน (บาท)</label>
                                                     <input type="number" name="common_fee" class="form-control"
-                                                           id="common_fee" readonly="true">
+                                                           id="common_fee" readonly="true" step="0.01">
                                                 </div>
                                             </div>
 
@@ -189,7 +189,7 @@ foreach ($BankCurr as $row_curr) {
                                                     <label for="amount"
                                                            class="control-label">จำนวนเงินที่ชำระ (บาท)</label>
                                                     <input type="number" name="amount" class="form-control"
-                                                           required id="amount">
+                                                           required id="amount" step="0.01">
                                                 </div>
                                             </div>
                                         </div>
@@ -463,7 +463,8 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('displayName').value = displayName;
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value = (data.f_name || '') + ' ' + (data.l_name || '');
-                                document.getElementById('common_fee').value = data.common_fee;
+                                // **แก้ไขตรงนี้: กำหนดค่า common_fee ให้เป็นทศนิยม 2 ตำแหน่ง**
+                                document.getElementById('common_fee').value = parseFloat(data.common_fee).toFixed(2);
                                 // Initialize and calculate amount after common_fee is loaded
                                 window.initWithCommonFeeInput();
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
@@ -555,7 +556,7 @@ foreach ($BankCurr as $row_curr) {
         const commonFeeInput = document.getElementById('common_fee');
         const amountInput = document.getElementById('amount');
         const paymentOptionInputs = document.querySelectorAll('input[name="payment_option"]');
-        const periodYearInput = document.getElementById('period_year'); // Get period_year input
+        const periodYearInput = document.getElementById('period_year');
 
         function getSelectedPaymentOption() {
             for (const el of paymentOptionInputs) {
@@ -577,7 +578,7 @@ foreach ($BankCurr as $row_curr) {
                 const currentYear = currentDate.getFullYear();
                 const currentMonth = currentDate.getMonth() + 1; // January is 0, so add 1
                 const currentDay = currentDate.getDate();
-                const periodYear = parseInt(periodYearInput.value); // Use periodYearInput
+                const periodYear = parseInt(periodYearInput.value);
 
                 const applyDiscount = (
                     (currentYear === (periodYear - 1) && currentMonth === 12) || // Dec of previous year
@@ -590,7 +591,7 @@ foreach ($BankCurr as $row_curr) {
                     calculatedAmount = commonFee * 12;
                 }
             }
-
+            // **แก้ไขตรงนี้: จัดรูปแบบ calculatedAmount ให้เป็นทศนิยม 2 ตำแหน่ง**
             amountInput.value = calculatedAmount.toFixed(2);
 
             // debug log
@@ -607,7 +608,10 @@ foreach ($BankCurr as $row_curr) {
 
             if (selectedOption === 'yearly') {
                 paymentTypeInput.value = 12;
-                amountInput.readOnly = false; // Make amount editable for yearly
+                // สำหรับ yearly เราอาจต้องการให้ผู้ใช้แก้ไขจำนวนเงินได้เอง หรือกำหนดจากค่าส่วนกลาง * 11/12
+                // ถ้าต้องการให้คำนวณอัตโนมัติและแก้ไขไม่ได้ ควรเป็น readonly true
+                // แต่ถ้าตามความต้องการเดิมคือสามารถแก้ไขได้ ให้เป็น false
+                amountInput.readOnly = false;
             } else if (selectedOption === 'monthly') {
                 paymentTypeInput.value = 1;
                 amountInput.readOnly = true; // Make amount readonly for monthly
@@ -622,6 +626,10 @@ foreach ($BankCurr as $row_curr) {
         });
         commonFeeInput.addEventListener('input', () => {
             console.log('[commonFeeInput input] value:', commonFeeInput.value);
+            // เมื่อ common_fee เปลี่ยน ให้จัดรูปแบบเป็น 2 ตำแหน่งทันที
+            if (commonFeeInput.value !== '') {
+                commonFeeInput.value = parseFloat(commonFeeInput.value).toFixed(2);
+            }
             calculateAmount();
         });
         paymentOptionInputs.forEach(el =>
@@ -637,7 +645,7 @@ foreach ($BankCurr as $row_curr) {
             amountInput.readOnly = true;
 
             console.log('[initWithCommonFeeInput] init default monthly');
-            calculateAmount();
+            calculateAmount(); // เรียก calculateAmount เพื่อคำนวณจำนวนเงินเริ่มต้น
         };
     });
 </script>
@@ -685,6 +693,9 @@ foreach ($BankCurr as $row_curr) {
             formData.append('period_month_start', $("#period_month_start").val());
             formData.append('period_month_to', $("#period_month_to").val());
             formData.append('payment_type', $("#payment_type").val());
+            // **ส่งค่า amount ที่จัดรูปแบบแล้วไปหลังบ้าน**
+            formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
+
 
             $.ajax({
                 url: "model/manage_payment_transfer_smart.php",
