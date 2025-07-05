@@ -175,9 +175,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <div id="preview-area" class="row mt-2"></div>
                             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
 
+
+
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
                                 <input type="hidden" name="action" id="action" value=""/>
+                                <input type="hidden" id="approve_status" name="approve_status value="">
 
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
                                     บันทึก <i class="fa fa-save"></i>
@@ -330,6 +333,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#checker_name').val(queryString["checker_name"]);
                 $('#approve_name').val(queryString["approve_name"]);
                 $('#receipt_name').val(queryString["receipt_name"]);
+
+                $('#approve_status').val(queryString["approve_status"]);
 
                 loadDetailData(queryString["doc_no"]);
 
@@ -691,6 +696,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         payment_method: $('#payment_method').val(),
                         purpose: $('#purpose').val(),
                         picture_doc: finalPictureDoc,
+                        approve_status: $('#approve_status').val(),
                         details: details
                     };
 

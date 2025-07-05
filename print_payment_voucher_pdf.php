@@ -242,6 +242,6 @@ $stmt_approve->execute();
 $pdf->writeHTML($html, true, false, false, false, '');
 
 // สร้างชื่อไฟล์
-$filename = 'payment_voucher_' . $voucher_header['doc_no'] . '_' . date('Ymd_His') . '.pdf';
+$filename = 'payment_voucher_' . $voucher_header['doc_no'] . '.pdf';
 $pdf->Output($filename, 'I');
 ?>

@@ -144,8 +144,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     $isUser = $_SESSION['account_type'] !== "user";
 
     $statusMeta = [
-        'Y' => ['desc' => "อนุมัติ", 'color' => 'green', 'can_print' => true],
-        'N' => ['desc' => "รอการอนุมัติ", 'color' => 'gray', 'can_print' => false],
+        'Y' => ['desc' => "พิมพ์เอกสารแล้ว", 'color' => 'green', 'can_print' => true],
+        'N' => ['desc' => "ยังไม่ได้พิมพ์เอกสาร", 'color' => 'gray', 'can_print' => false],
     ];
 
     foreach ($empRecords as $row) {
