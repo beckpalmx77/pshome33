@@ -655,6 +655,12 @@ foreach ($BankCurr as $row_curr) {
         $("#transfer_form").on("submit", function (event) {
             event.preventDefault();
 
+            // ตรวจสอบว่าได้มีการเลือกไฟล์รูปภาพหรือไม่
+            if ($("#picture_payment").get(0).files.length === 0) {
+                alertify.error("กรุณาแนบ Slip/ใบโอนเงิน/ใบเสร็จ ก่อนบันทึกข้อมูล");
+                return; // หยุดการทำงานของฟังก์ชัน submit
+            }
+
             let period_month_start = parseInt($("#period_month_start").val());
             let period_month_to = parseInt($("#period_month_to").val());
             let period_year = parseInt($("#period_year").val()); // ดึงค่า period_year มาใช้งาน
@@ -695,7 +701,6 @@ foreach ($BankCurr as $row_curr) {
             formData.append('payment_type', $("#payment_type").val());
             // **ส่งค่า amount ที่จัดรูปแบบแล้วไปหลังบ้าน**
             formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
-
 
             $.ajax({
                 url: "model/manage_payment_transfer_smart.php",
