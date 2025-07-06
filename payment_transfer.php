@@ -63,7 +63,7 @@ if (strlen($_SESSION['alogin']) === "") {
 
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">โอนเงินและแนบ Slip/ใบโอนเงิน/ใบเสร็จ</h1>
+                        <h1 class="h3 mb-0 text-gray-800">ชำระเงิน-โอนเงิน แนบ Slip/ใบโอนเงิน/ใบเสร็จ</h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
                             </li>
@@ -534,6 +534,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 document.getElementById("common_fee").value = '';
                 document.getElementById("area_size").value = '';
                 document.getElementById("detail").value = ''; // Clear contact_name too, as it's related
+                document.getElementById("amount").value = '';
 
                 if (houseNumber.trim() !== "") {
                     fetch("model/get_house_info.php?house_number=" + encodeURIComponent(houseNumber))
