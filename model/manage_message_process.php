@@ -83,8 +83,7 @@ if ($_POST["action"] === 'UPDATE') {
                 contact_date=:contact_date,
                 contact_time=:contact_time,
                 answer=:answer,
-                status=:status,
-                update_date=:update_date 
+                status=:status
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
@@ -93,7 +92,6 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':contact_time', $contact_time, PDO::PARAM_STR);
         $query->bindParam(':answer', $answer, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
-        $query->bindParam(':update_date', $timestamp, PDO::PARAM_STR);
         $query->bindParam(':id', $id, PDO::PARAM_INT);
         $query->execute();
 
