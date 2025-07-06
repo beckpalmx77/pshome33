@@ -230,7 +230,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-4">
                                                     <div class="form-group has-success">
                                                         <label for="amount"
-                                                               class="control-label">จำนวนเงินที่โอน</label>
+                                                               class="control-label">จำนวนเงินที่ชำระ</label>
                                                         <input type="number" id="amount" name="amount"
                                                                class="form-control"
                                                                required id="amount">
@@ -521,10 +521,19 @@ if (strlen($_SESSION['alogin']) === "") {
         document.addEventListener("DOMContentLoaded", function () {
             const houseNumberInput = document.getElementById("house_number");
 
-            let amount_cal = 0;
+            let amount_cal = 0; // ตัวแปรนี้ไม่ได้ใช้ในส่วนนี้ สามารถลบออกได้ถ้าไม่จำเป็น
 
-            houseNumberInput.addEventListener("change", function () {
+            // Add event listener for 'change' and 'blur'
+            // houseNumberInput.addEventListener("change", handleHouseNumberChange);
+            houseNumberInput.addEventListener("blur", handleHouseNumberChange);
+
+            function handleHouseNumberChange() {
                 const houseNumber = this.value;
+
+                // Clear existing values immediately
+                document.getElementById("common_fee").value = '';
+                document.getElementById("area_size").value = '';
+                document.getElementById("detail").value = ''; // Clear contact_name too, as it's related
 
                 if (houseNumber.trim() !== "") {
                     fetch("model/get_house_info.php?house_number=" + encodeURIComponent(houseNumber))
@@ -537,17 +546,16 @@ if (strlen($_SESSION['alogin']) === "") {
                                 // Recalculate amount after common_fee is fetched
                                 calculateAmount();
                             } else {
-                                document.getElementById("common_fee").value = '';
-                                document.getElementById("area_size").value = '';
-                                document.getElementById("detail").value = '';
-                                alert("ไม่พบข้อมูลบ้านเลขที่นี้");
+                                // Already cleared, just show alert if not found
+                                //alert("ไม่พบข้อมูลบ้านเลขที่นี้");
                             }
                         })
                         .catch(error => {
                             console.error("เกิดข้อผิดพลาด:", error);
+                            //alert("เกิดข้อผิดพลาดในการดึงข้อมูลบ้าน");
                         });
                 }
-            });
+            }
         });
     </script>
 
