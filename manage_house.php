@@ -18,7 +18,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 <?php
                 include('includes/Top-Bar.php');
                 ?>
-                <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
@@ -98,45 +97,52 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <div class="modal-body">
                                                             <div class="modal-body">
 
-                                                                <div class="form-group">
-                                                                    <label for="house_number" class="control-label">บ้านเลขที่</label>
-                                                                    <input type="house_number" class="form-control"
-                                                                           id="house_number" name="house_number"
-                                                                           required
-                                                                           placeholder="">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="house_number" class="control-label">บ้านเลขที่</label>
+                                                                            <input type="house_number" class="form-control"
+                                                                                   id="house_number" name="house_number"
+                                                                                   required
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="contact_name"
+                                                                                   class="control-label">ชื่อผู้ติดต่อ</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="contact_name"
+                                                                                   name="contact_name"
+                                                                                   required
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="alley"
+                                                                                   class="control-label">ซอย</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="alley"
+                                                                                   name="alley"
+                                                                                   required
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="contact_name"
-                                                                           class="control-label">ชื่อผู้ติดต่อ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="contact_name"
-                                                                           name="contact_name"
-                                                                           required
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="alley"
-                                                                           class="control-label">ซอย</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="alley"
-                                                                           name="alley"
-                                                                           required
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="phone_number"
-                                                                           class="control-label">หมายเลขโทรศัพท์</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="phone_number"
-                                                                           name="phone_number"
-                                                                           required
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="row mt-2">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="phone_number"
+                                                                                   class="control-label">หมายเลขโทรศัพท์</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="phone_number"
+                                                                                   name="phone_number"
+                                                                                   required
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group has-success">
                                                                             <label for="house_status" class="control-label">สถานะที่อยู่อาศัย</label>
@@ -147,60 +153,74 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                             </select>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="col-md-4">
+                                                                    </div>
                                                                 </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="car_no1"
-                                                                           class="control-label">ทะเบียนรถ 1</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="car_no1"
-                                                                           name="car_no1"
-                                                                           placeholder="">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="car_no1"
+                                                                                   class="control-label">ทะเบียนรถ 1</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="car_no1"
+                                                                                   name="car_no1"
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="car_no2"
+                                                                                   class="control-label">ทะเบียนรถ 2</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="car_no2"
+                                                                                   name="car_no2"
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="car_no3"
+                                                                                   class="control-label">ทะเบียนรถ 3</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="car_no3"
+                                                                                   name="car_no3"
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="car_no2"
-                                                                           class="control-label">ทะเบียนรถ 2</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="car_no2"
-                                                                           name="car_no2"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="car_no3"
-                                                                           class="control-label">ทะเบียนรถ 3</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="car_no3"
-                                                                           name="car_no3"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="car_no4"
-                                                                           class="control-label">ทะเบียนรถ 4</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="car_no4"
-                                                                           name="car_no4"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="car_no5"
-                                                                           class="control-label">ทะเบียนรถ 4</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="car_no5"
-                                                                           name="car_no5"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="form-group">
-                                                                    <label for="remark"
-                                                                           class="control-label">หมายเหตุ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="remark"
-                                                                           name="remark"
-                                                                           placeholder="">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="car_no4"
+                                                                                   class="control-label">ทะเบียนรถ 4</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="car_no4"
+                                                                                   name="car_no4"
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="car_no5"
+                                                                                   class="control-label">ทะเบียนรถ 5</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="car_no5"
+                                                                                   name="car_no5"
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="remark"
+                                                                                   class="control-label">หมายเหตุ</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="remark"
+                                                                                   name="remark"
+                                                                                   placeholder="">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
 
                                                             </div>
@@ -240,7 +260,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     ?>
 
 
-    <!-- Scroll to top -->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
@@ -250,8 +269,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
-
-    <!-- Page level plugins -->
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
@@ -356,7 +373,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 ]
             });
 
-            <!-- *** FOR SUBMIT FORM *** -->
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
@@ -375,9 +391,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     }
                 })
             });
-            <!-- *** FOR SUBMIT FORM *** -->
-
-
         });
 
     </script>
