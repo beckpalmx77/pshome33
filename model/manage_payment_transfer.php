@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Error: Invalid file type. Only JPG, JPEG, PNG, GIF are allowed.";
             exit;
         }
-        if ($picture_payment['size'] > 5 * 1024 * 1024) {
+        if ($picture_payment['size'] > 30 * 1024 * 1024) {
             writeToCustomLog("Error: File " . $picture_payment['name'] . " is too large (" . $picture_payment['size'] . " bytes).");
             echo "Error: File too large. Maximum size is 5MB.";
             exit;
