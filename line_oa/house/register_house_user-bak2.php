@@ -9,13 +9,10 @@ header('Content-Type: text/html; charset=utf-8');
     <title>PS33 Home System</title>
     <link rel="icon" href="img/favicon.ico" type="image/x-icon"/>
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
-    <!-- Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
-    <!-- LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body class="bg-light">
@@ -45,6 +42,9 @@ header('Content-Type: text/html; charset=utf-8');
                 <label class="form-label">เลขที่บ้าน: (ใส่เฉพาะเลขที่บ้าน รูปแบบเช่น 99/99)</label>
                 <input type="text" id="house_number" name="house_number" class="form-control" required
                        oninput="this.value = this.value.replace(/[^0-9\/]/g, '')">
+                <div class="invalid-feedback">
+                    กรุณากรอกเลขที่บ้านในรูปแบบ 99/99 และต้องมีเครื่องหมาย '/'
+                </div>
             </div>
 
             <div class="mb-3 text-start">
@@ -78,7 +78,6 @@ header('Content-Type: text/html; charset=utf-8');
     </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -91,21 +90,57 @@ header('Content-Type: text/html; charset=utf-8');
     }
 
     const houseNumberInput = document.getElementById("house_number");
+    const registerForm = document.getElementById("registerForm");
 
-    // กรองตอนพิมพ์
+    // ฟังก์ชันสำหรับตรวจสอบและแสดงผลการ validation ของ house_number
+    function validateHouseNumber() {
+        const value = houseNumberInput.value;
+        // Regular Expression: ต้องมีตัวเลข 1 ตัวขึ้นไป ตามด้วยเครื่องหมาย '/' ตามด้วยตัวเลข 1 ตัวขึ้นไป
+        const houseNumberPattern = /^\d+\/\d+$/;
+
+        if (value.length === 0) { // ถ้าว่างเปล่า ให้ถือว่าถูกต้อง (จะถูกตรวจสอบโดย 'required' ของ form)
+            houseNumberInput.classList.remove('is-invalid');
+            houseNumberInput.setCustomValidity('');
+        } else if (!houseNumberPattern.test(value)) {
+            houseNumberInput.classList.add('is-invalid');
+            houseNumberInput.setCustomValidity('invalid'); // ทำให้ form รู้ว่า invalid
+        } else {
+            houseNumberInput.classList.remove('is-invalid');
+            houseNumberInput.setCustomValidity('');
+        }
+    }
+
+    // กรองและตรวจสอบตอนพิมพ์
     houseNumberInput.addEventListener("input", function () {
         this.value = cleanHouseNumber(this.value);
+        validateHouseNumber(); // ตรวจสอบทุกครั้งที่มีการเปลี่ยนแปลง
     });
 
     // ตรวจสอบอีกครั้งเมื่อเปลี่ยนค่า (เช่น copy/paste แล้วคลิกออก)
     houseNumberInput.addEventListener("change", function () {
         this.value = cleanHouseNumber(this.value);
+        validateHouseNumber();
     });
 
     // ตรวจสอบอีกครั้งเมื่อ focus หลุด (leave field)
     houseNumberInput.addEventListener("blur", function () {
         this.value = cleanHouseNumber(this.value);
+        validateHouseNumber();
     });
+
+    // ตรวจสอบก่อน submit form
+    registerForm.addEventListener('submit', function (e) {
+        // ทำการ validate house_number เป็นครั้งสุดท้ายก่อนส่ง
+        validateHouseNumber();
+
+        // ถ้ามี field ไหนไม่ถูกต้อง (รวมถึง house_number ที่เรา setCustomValidity ไว้)
+        if (!registerForm.checkValidity()) {
+            e.preventDefault(); // หยุดการส่งฟอร์ม
+            e.stopPropagation(); // หยุด event propagation
+        }
+        registerForm.classList.add('was-validated'); // เพิ่มคลาสเพื่อแสดง validation feedback ของ Bootstrap
+    }, false); // ใช้ capture phase เพื่อให้แน่ใจว่าทำงานก่อน default submit
+
 </script>
 
 <script>
@@ -124,8 +159,19 @@ header('Content-Type: text/html; charset=utf-8');
             }
         }).catch(err => console.error("LIFF Error:", err));
 
-        $('#registerForm').on('submit', function (e) {
-            e.preventDefault();
+        // ลบ .on('submit', function (e) { ... }); ของฟอร์มหลักออกไป
+        // เนื่องจากเราย้าย logic การป้องกันการ submit และเรียก FormData ไปไว้ใน event listener ของ form แล้ว
+        // เหลือเพียงการส่ง fetch หลังจากการตรวจสอบผ่าน
+        $('#registerForm').off('submit').on('submit', function (e) {
+            e.preventDefault(); // ป้องกันการ submit ซ้ำซ้อน
+
+            // ตรวจสอบอีกครั้งว่าฟอร์มถูกต้องแล้วจริงๆ (เผื่อมีการเรียก submit โดยตรง)
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                this.classList.add('was-validated');
+                return;
+            }
+
             let formData = new FormData(this);
 
             fetch("https://ps33home.com/line_oa/house/register_house_with_line_api.php", {
@@ -176,4 +222,3 @@ header('Content-Type: text/html; charset=utf-8');
 
 </body>
 </html>
-
