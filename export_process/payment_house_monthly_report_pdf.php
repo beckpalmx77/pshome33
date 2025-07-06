@@ -97,6 +97,7 @@ if (empty($payment_data)) {
 
 // กำหนดหัวตารางและคอลัมน์กว้าง (ใช้สำหรับสร้าง HTML table ใน PDF)
 $pdf_headers = [
+    "ลำดับที่",
     "วันที่ชำระ",
     "เดือน",
     "ปี",
@@ -107,7 +108,7 @@ $pdf_headers = [
     "วิธีการชำระ"
 ];
 $col_widths = [
-    '12%', '8%', '7%', '10%', '10%', '25%', '15%', '15%'
+    '6%','12%', '8%', '7%', '7%', '10%', '22%', '15%', '15%'
 ]; // รวมกัน 100% สำหรับหน้ากระดาษแนวตั้ง A4
 
 
@@ -231,19 +232,20 @@ $html_table .= '</tr>
     <tbody>';
 
 $grand_total_amount = 0;
-
+$line_no =0;
 foreach ($payment_data as $row) {
     $grand_total_amount += (float)($row['amount_for_month'] ?? 0);
-
+    $line_no++;
     $html_table .= '<tr>';
-    $html_table .= '<td width="' . $col_widths[0] . '">' . ($row['payment_date'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[1] . '" align="center">' . ($selected_months_text ?? '') . '</td>'; //
-    $html_table .= '<td width="' . $col_widths[2] . '" align="center">' . ($row['period_year'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[3] . '">' . ($row['house_number'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[4] . '" align="right">' . number_format($row['common_fee'] ?? 0, 2) . '</td>'; // เพิ่ม common_fee จัดชิดขวา
-    $html_table .= '<td width="' . $col_widths[5] . '">' . ($row['detail'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[6] . '" align="right">' . number_format($row['amount_for_month'] ?? 0, 2) . '</td>';
-    $html_table .= '<td width="' . $col_widths[7] . '">' . ($row['payment_method'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[0] . '">' . ($line_no) . '</td>';
+    $html_table .= '<td width="' . $col_widths[1] . '">' . ($row['payment_date'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[2] . '" align="center">' . ($selected_months_text ?? '') . '</td>'; //
+    $html_table .= '<td width="' . $col_widths[3] . '" align="center">' . ($row['period_year'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[4] . '">' . ($row['house_number'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[5] . '" align="right">' . number_format($row['common_fee'] ?? 0, 2) . '</td>'; // เพิ่ม common_fee จัดชิดขวา
+    $html_table .= '<td width="' . $col_widths[6] . '">' . ($row['detail'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[7] . '" align="right">' . number_format($row['amount_for_month'] ?? 0, 2) . '</td>';
+    $html_table .= '<td width="' . $col_widths[8] . '">' . ($row['payment_method'] ?? '') . '</td>';
     $html_table .= '</tr>';
 }
 
