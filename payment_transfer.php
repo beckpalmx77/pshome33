@@ -527,17 +527,19 @@ if (strlen($_SESSION['alogin']) === "") {
                 const houseNumber = this.value;
 
                 if (houseNumber.trim() !== "") {
-                    fetch("model/get_house_master.php?house_number=" + encodeURIComponent(houseNumber))
+                    fetch("model/get_house_info.php?house_number=" + encodeURIComponent(houseNumber))
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
                                 document.getElementById("common_fee").value = data.common_fee;
                                 document.getElementById("area_size").value = data.area_size;
+                                document.getElementById("detail").value = data.contact_name;
                                 // Recalculate amount after common_fee is fetched
                                 calculateAmount();
                             } else {
                                 document.getElementById("common_fee").value = '';
                                 document.getElementById("area_size").value = '';
+                                document.getElementById("detail").value = '';
                                 alert("ไม่พบข้อมูลบ้านเลขที่นี้");
                             }
                         })
