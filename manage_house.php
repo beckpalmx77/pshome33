@@ -102,6 +102,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <label for="house_number" class="control-label">บ้านเลขที่</label>
                                                                     <input type="house_number" class="form-control"
                                                                            id="house_number" name="house_number"
+                                                                           required
                                                                            placeholder="">
                                                                 </div>
 
@@ -111,7 +112,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <input type="text" class="form-control"
                                                                            id="contact_name"
                                                                            name="contact_name"
-                                                                           required="required"
+                                                                           required
                                                                            placeholder="">
                                                                 </div>
 
@@ -121,7 +122,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <input type="text" class="form-control"
                                                                            id="alley"
                                                                            name="alley"
-                                                                           required="required"
+                                                                           required
                                                                            placeholder="">
                                                                 </div>
 
@@ -131,7 +132,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <input type="text" class="form-control"
                                                                            id="phone_number"
                                                                            name="phone_number"
-                                                                           required="required"
+                                                                           required
                                                                            placeholder="">
                                                                 </div>
 
@@ -139,7 +140,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <div class="col-md-4">
                                                                         <div class="form-group has-success">
                                                                             <label for="house_status" class="control-label">สถานะที่อยู่อาศัย</label>
-                                                                            <select name="house_status" id="house_status" class="form-control">
+                                                                            <select name="house_status" id="house_status" class="form-control" required>
                                                                                 <option value="-">-</option>
                                                                                 <option value="O">บ้านตนเอง - ครอบครัว</option>
                                                                                 <option value="R">บ้านเช่า</option>

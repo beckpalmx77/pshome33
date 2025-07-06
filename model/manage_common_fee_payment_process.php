@@ -47,6 +47,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "picture_payment" => $result['picture_payment'],
             "payment_status" => $result['payment_status'],
             "payment_type" => $result['payment_type'],
+            "payment_method" => $result['payment_method'],
             "remark" => $result['remark'],
             "created_at" => $result['created_at'],
             "updated_at" => $result['updated_at'],
