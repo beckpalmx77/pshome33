@@ -141,14 +141,14 @@ if (strlen($_SESSION['alogin']) == "") {
             // เมื่อคลิกปุ่ม Print PDF
             $('#btnPrintPdf').on('click', function(e) {
                 e.preventDefault(); // หยุดการ submit ฟอร์มตามปกติ
-                $('#form_data').attr('action', 'export_process/payment_house_monthly_report_pdf.php');
+                $('#form_data').attr('action', 'export_process/payment_house_monthly_report_pdf');
                 $('#form_data').submit();
             });
 
             // เมื่อคลิกปุ่ม Export Excel
             $('#btnExportExcel').on('click', function(e) {
                 e.preventDefault(); // หยุดการ submit ฟอร์มตามปกติ
-                $('#form_data').attr('action', 'export_process/payment_house_monthly_report_excel.php');
+                $('#form_data').attr('action', 'export_process/payment_house_monthly_report_excel');
                 $('#form_data').submit();
             });
         });

@@ -189,7 +189,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </div>
 
                                                                 <div class="form-group row">
-                                                                    <div class="col-sm-6">
+                                                                    <div class="col-sm-4">
                                                                         <label for="amount"
                                                                                class="control-label">จำนวนเงิน</label>
                                                                         <input type="text" class="form-control"
@@ -198,7 +198,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                required="required"
                                                                                placeholder="">
                                                                     </div>
-                                                                    <div class="col-sm-6">
+                                                                    <div class="col-sm-4">
+                                                                        <label for="payment_method"
+                                                                               class="control-label">วิธีการชำระ</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="payment_method"
+                                                                               name="payment_method"
+                                                                               readonly="true"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                    <div class="col-sm-4">
                                                                         <label for="payment_status_desc"
                                                                                class="control-label">สถานะ</label>
                                                                         <input type="text" class="form-control"
@@ -543,6 +552,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let amount = data.amount;
                         let picture_payment = data.picture_payment;
                         let payment_status = data.payment_status;
+                        let payment_method = data.payment_method;
                         let payment_status_desc = (payment_status === "Y") ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
 
                         if (payment_status === "Y") {
@@ -569,6 +579,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#amount').val(amount);
                         $('#payment_status').val(payment_status);
                         $('#payment_status_desc').val(payment_status_desc);
+                        $('#payment_method').val(payment_method);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#saveButton').val('Save');
