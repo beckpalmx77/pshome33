@@ -1,0 +1,11 @@
+[2025-07-07 13:11:44] Script save_payment_data.php started.
+[2025-07-07 13:11:44] Received POST request.
+[2025-07-07 13:11:44] Basic POST data validation passed.
+[2025-07-07 13:11:44] Checking if house_number '68/56' exists in ims_house.
+[2025-07-07 13:11:44] House '68/56' found in ims_house. Alley: '10'.
+[2025-07-07 13:11:44] Generated doc_id: P-68/56-2025-008 with runno: 8.
+[2025-07-07 13:11:44] Attempting file upload for 477546.jpg.
+[2025-07-07 13:11:44] File successfully uploaded to: D:\website\pshome33\model/../uploads/slips/1751868704_477546.jpg.
+[2025-07-07 13:11:44] Attempting to insert data into ims_house_payment.
+[2025-07-07 13:11:44] Successfully inserted payment record for doc_id: P-68/56-2025-008.
+[2025-07-07 13:11:44] Script save_payment_data.php finished.
