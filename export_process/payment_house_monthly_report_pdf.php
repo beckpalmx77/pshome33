@@ -250,9 +250,9 @@ foreach ($payment_data as $row) {
 }
 
 $html_table .= '<tr>
-    <td colspan="6" align="right"><b>รวมยอดการชำระทั้งสิ้น:</b></td>
-    <td width="' . $col_widths[6] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
-    <td width="' . $col_widths[7] . '"></td>
+    <td colspan="7" align="right"><b>รวมยอดการชำระทั้งสิ้น:</b></td>
+    <td width="' . $col_widths[7] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
+    <td width="' . $col_widths[8] . '"></td>
 </tr>';
 
 $html_table .= '</tbody></table>';
