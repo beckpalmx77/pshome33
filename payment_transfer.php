@@ -250,39 +250,51 @@ if (strlen($_SESSION['alogin']) === "") {
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12 mb-3">
+                                        <div class="form-group has-success">
                                             <div class="row g-3">
-                                                <div class="col-md-7"> <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
+                                                <div class="col-md-7"><label for="payment_method"
+                                                                             class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
                                                     <div class="d-flex align-items-center gap-3 flex-wrap custom-radio-row">
                                                         <div class="d-flex gap-3">
                                                             <div class="form-check form-check-inline custom-radio">
-                                                                <input class="form-check-input" type="radio" name="payment_method_radio" id="method_transfer" value="โอนเงิน">
-                                                                <label class="form-check-label" for="method_transfer">💳 โอนเงิน</label>
+                                                                <input class="form-check-input" type="radio"
+                                                                       name="payment_method_radio" id="method_transfer"
+                                                                       value="โอนเงิน">
+                                                                <label class="form-check-label" for="method_transfer">💳
+                                                                    โอนเงิน</label>
                                                             </div>
                                                             <div class="form-check form-check-inline custom-radio">
-                                                                <input class="form-check-input" type="radio" name="payment_method_radio" id="method_cash" value="เงินสด" checked>
-                                                                <label class="form-check-label" for="method_cash">💵 เงินสด</label>
+                                                                <input class="form-check-input" type="radio"
+                                                                       name="payment_method_radio" id="method_cash"
+                                                                       value="เงินสด" checked>
+                                                                <label class="form-check-label" for="method_cash">💵
+                                                                    เงินสด</label>
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">
-                                                            <input type="text" class="form-control" name="payment_method" id="payment_method" placeholder="ระบุวิธีการชำระเงิน" readonly>
+                                                            <input type="text" class="form-control"
+                                                                   name="payment_method" id="payment_method"
+                                                                   placeholder="ระบุวิธีการชำระเงิน" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
+                                                    <label for="bank_transfer"
+                                                           class="control-label">โอนเงินเข้าบัญชี</label>
                                                     <input name="bank_name" class="form-control" id="bank_name"
                                                            value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>"
                                                            readonly="true">
                                                 </div>
                                             </div>
 
-                                            <div class="row mt-3">
-                                                <div class="col-md-12">
-                                                    <div class="form-group has-success">
-                                                        <label for="remark" class="control-label">หมายเหตุ</label>
-                                                        <input name="remark" class="form-control" id="remark"
-                                                               value="-">
+                                            <div class="form-group has-success">
+                                                <div class="row g-3">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group has-success">
+                                                            <label for="remark" class="control-label">หมายเหตุ</label>
+                                                            <input name="remark" class="form-control" id="remark"
+                                                                   value="-">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
