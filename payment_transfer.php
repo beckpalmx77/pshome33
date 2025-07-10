@@ -251,16 +251,8 @@ if (strlen($_SESSION['alogin']) === "") {
                                         </div>
 
                                         <div class="col-md-12 mb-3">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="remark" class="form-label fw-semibold mb-2">หมายเหตุ</label>
-                                                </div>
-                                            </div>
-                                            <div class="row g-3 align-items-center">
-                                                <div class="col-md-6">
+                                            <div class="row g-3">
+                                                <div class="col-md-7"> <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
                                                     <div class="d-flex align-items-center gap-3 flex-wrap custom-radio-row">
                                                         <div class="d-flex gap-3">
                                                             <div class="form-check form-check-inline custom-radio">
@@ -277,19 +269,24 @@ if (strlen($_SESSION['alogin']) === "") {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <input name="remark" class="form-control" id="remark" value="-">
+                                                <div class="col-md-5">
+                                                    <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
+                                                    <input name="bank_name" class="form-control" id="bank_name"
+                                                           value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>"
+                                                           readonly="true">
                                                 </div>
                                             </div>
-                                        </div>
 
+                                            <div class="row mt-3">
+                                                <div class="col-md-12">
+                                                    <div class="form-group has-success">
+                                                        <label for="remark" class="control-label">หมายเหตุ</label>
+                                                        <input name="remark" class="form-control" id="remark"
+                                                               value="-">
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                        <div class="form-group has-success">
-                                            <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
-
-                                            <input name="bank_name" class="form-control" id="bank_name"
-                                                   value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>"
-                                                   readonly="true">
                                         </div>
 
                                         <div class="form-group has-success">
