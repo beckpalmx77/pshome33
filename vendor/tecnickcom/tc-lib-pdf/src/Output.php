@@ -7,7 +7,7 @@
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2024 Nicola Asuni - Tecnick.com LTD
+ * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
@@ -28,7 +28,7 @@ use Com\Tecnick\Pdf\Font\Output as OutFont;
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2024 Nicola Asuni - Tecnick.com LTD
+ * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
  * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
@@ -417,8 +417,9 @@ use Com\Tecnick\Pdf\Font\Output as OutFont;
  * @phpstan-type TEmbeddedFile array{
  *        'a': int,
  *        'f': int,
- *        'file': string,
  *        'n': int,
+ *        'file': string,
+ *        'content': string,
  *    }
  *
  * @phpstan-type TObjID array{
@@ -788,12 +789,14 @@ abstract class Output extends \Com\Tecnick\Pdf\MetaInfo
         }
 
         if ($this->embeddedfiles !== []) {
-            $out .= ' /EmbeddedFiles << /Names [';
+            $afnames = [];
+            $afobjs = [];
             foreach ($this->embeddedfiles as $efname => $efdata) {
-                $out .= ' ' . $this->getOutTextString($efname, $oid) . ' ' . $efdata['f'] . ' 0 R';
+                $afnames[] = $this->getOutTextString($efname, $oid) . ' ' . $efdata['f'] . ' 0 R';
+                $afobjs[] = $efdata['f'] . ' 0 R';
             }
-
-            $out .= ' ] >>';
+            $out .= ' /AF [ ' . implode(' ', $afobjs) . ' ]';
+            $out .= ' /EmbeddedFiles << /Names [ ' . implode(' ', $afnames) . ' ] >>';
         }
 
         $out .= ' >>';
@@ -1159,10 +1162,15 @@ abstract class Output extends \Com\Tecnick\Pdf\MetaInfo
         $out = '';
         reset($this->embeddedfiles);
         foreach ($this->embeddedfiles as $name => $data) {
-            try {
-                $content = $this->file->fileGetContents($data['file']);
-            } catch (Exception) {
-                continue; // silently skip the file
+            if (!empty($data['content'])) {
+                // if content is already set, use it
+                $content = $data['content'];
+            } else {
+                try {
+                    $content = $this->file->fileGetContents($data['file']);
+                } catch (Exception) {
+                    continue; // silently skip the file
+                }
             }
 
             $rawsize = strlen($content);
@@ -1613,40 +1621,19 @@ abstract class Output extends \Com\Tecnick\Pdf\MetaInfo
 
         $fval = 0;
         foreach ($flags as $flag) {
-            switch (strtolower($flag)) {
-                case 'invisible':
-                    $fval += 1 << 0;
-                    break;
-                case 'hidden':
-                    $fval += 1 << 1;
-                    break;
-                case 'print':
-                    $fval += 1 << 2;
-                    break;
-                case 'nozoom':
-                    $fval += 1 << 3;
-                    break;
-                case 'norotate':
-                    $fval += 1 << 4;
-                    break;
-                case 'noview':
-                    $fval += 1 << 5;
-                    break;
-                case 'readonly':
-                    $fval += 1 << 6;
-                    break;
-                case 'locked':
-                    $fval += 1 << 7;
-                    break;
-                case 'togglenoview':
-                    $fval += 1 << 8;
-                    break;
-                case 'lockedcontents':
-                    $fval += 1 << 9;
-                    break;
-                default:
-                    break;
-            }
+            $fval += match (strtolower($flag)) {
+                'invisible'      => 1 << 0,
+                'hidden'         => 1 << 1,
+                'print'          => 1 << 2,
+                'nozoom'         => 1 << 3,
+                'norotate'       => 1 << 4,
+                'noview'         => 1 << 5,
+                'readonly'       => 1 << 6,
+                'locked'         => 1 << 7,
+                'togglenoview'   => 1 << 8,
+                'lockedcontents' => 1 << 9,
+                default          => 0,
+            };
         }
 
         return $fval;

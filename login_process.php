@@ -21,7 +21,7 @@ fwrite($myfile, $username . " | " . $password);
 fclose($myfile);
 */
 
-$sql = "SELECT iu.*, ih.house_number, ih.contact_name, pm.dashboard_page, ihu.line_picture_profile
+$sql = "SELECT iu.*, ih.house_number, ih.contact_name, pm.dashboard_page, ihu.line_picture_profile,ihu.line_phone
         FROM ims_user iu
         LEFT JOIN ims_permission pm ON pm.permission_id = iu.account_type
         LEFT JOIN ims_house ih ON ih.phone_number = iu.user_id
@@ -54,7 +54,7 @@ if ($query->rowCount() == 1) {
             $_SESSION['role'] = $result->role;
             $_SESSION['house_number'] = $result->house_number;
             $_SESSION['line_picture_profile'] = $result->line_picture_profile;
-
+            $_SESSION['phone_number'] = $result->line_phone;
             $_SESSION['user_signature'] = $result->user_signature;
 
 /*

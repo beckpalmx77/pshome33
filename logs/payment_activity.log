@@ -1,0 +1,38 @@
+[2025-07-07 13:11:44] Script save_payment_data.php started.
+[2025-07-07 13:11:44] Received POST request.
+[2025-07-07 13:11:44] Basic POST data validation passed.
+[2025-07-07 13:11:44] Checking if house_number '68/56' exists in ims_house.
+[2025-07-07 13:11:44] House '68/56' found in ims_house. Alley: '10'.
+[2025-07-07 13:11:44] Generated doc_id: P-68/56-2025-008 with runno: 8.
+[2025-07-07 13:11:44] Attempting file upload for 477546.jpg.
+[2025-07-07 13:11:44] File successfully uploaded to: D:\website\pshome33\model/../uploads/slips/1751868704_477546.jpg.
+[2025-07-07 13:11:44] Attempting to insert data into ims_house_payment.
+[2025-07-07 13:11:44] Successfully inserted payment record for doc_id: P-68/56-2025-008.
+[2025-07-07 13:11:44] Script save_payment_data.php finished.
+[2025-07-10 10:18:34] Script save_payment_data.php started.
+[2025-07-10 10:18:34] Received POST request.
+[2025-07-10 10:18:34] Basic POST data validation passed.
+[2025-07-10 10:18:34] Checking if house_number '67/1' exists in ims_house.
+[2025-07-10 10:18:34] House '67/1' not found in ims_house. Attempting to insert.
+[2025-07-10 10:18:34] Alley '1' found for '67/1' in ims_house_master.
+[2025-07-10 10:18:34] Critical Error inserting into ims_house: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[2025-07-10 10:18:54] Script save_payment_data.php started.
+[2025-07-10 10:18:54] Received POST request.
+[2025-07-10 10:18:54] Basic POST data validation passed.
+[2025-07-10 10:18:54] Checking if house_number '67/1' exists in ims_house.
+[2025-07-10 10:18:54] House '67/1' not found in ims_house. Attempting to insert.
+[2025-07-10 10:18:54] Alley '1' found for '67/1' in ims_house_master.
+[2025-07-10 10:18:54] Critical Error inserting into ims_house: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens
+[2025-07-10 10:26:38] Script save_payment_data.php started.
+[2025-07-10 10:26:38] Received POST request.
+[2025-07-10 10:26:38] Basic POST data validation passed.
+[2025-07-10 10:26:38] Checking if house_number '67/1' exists in ims_house.
+[2025-07-10 10:26:38] House '67/1' not found in ims_house. Attempting to insert.
+[2025-07-10 10:26:38] Alley '1' found for '67/1' in ims_house_master.
+[2025-07-10 10:26:38] Successfully inserted new house '67/1' into ims_house.
+[2025-07-10 10:26:38] Generated doc_id: P-67/1-2025-001 with runno: 1.
+[2025-07-10 10:26:38] Attempting file upload for Screenshot 2025-07-09 132541.png.
+[2025-07-10 10:26:38] File successfully uploaded to: D:\website\pshome33\model/../uploads/slips/1752117998_Screenshot 2025-07-09 132541.png.
+[2025-07-10 10:26:38] Attempting to insert data into ims_house_payment.
+[2025-07-10 10:26:38] Successfully inserted payment record for doc_id: P-67/1-2025-001.
+[2025-07-10 10:26:38] Script save_payment_data.php finished.

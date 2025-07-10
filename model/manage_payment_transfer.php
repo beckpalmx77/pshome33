@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 
 include('../config/connect_db.php');
 include('../config/lang.php');
-include('../util/record_util.php');
+include('../util/record_util.php'); // ตรวจสอบให้แน่ใจว่า LAST_DOCUMENT_NUMBER อยู่ในไฟล์นี้
 
 // --- ฟังก์ชันสำหรับเขียน Log ลงไฟล์ที่กำหนดเอง ---
 function writeToCustomLog($message) {
@@ -43,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_date = $_POST['payment_date'] ?? null;
     $house_number = $_POST['house_number'] ?? null;
     $detail = $_POST['detail'] ?? null;
+    // --- แก้ไข: เปลี่ยน '$phone_number' เป็น 'phone_number' ---
+    $phone_number = $_POST['phone_number'] ?? null;
     $payment_type = $_POST['payment_type'] ?? null;
     $period_month_start = $_POST['period_month_start'] ?? null;
     $period_month_to = $_POST['period_month_to'] ?? null;
@@ -55,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $create_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
     if (empty(trim($create_by))) {
         $create_by = 'System';
-        writeToCustomLog("create_by session empty, set to 'System'.");
+        writeToCustomLog("create_by session empty or invalid, set to 'System'."); // ปรับปรุงข้อความ Log
     }
 
     // --- ส่วนที่ 1: ตรวจสอบความถูกต้องของข้อมูลพื้นฐาน ---
@@ -111,21 +113,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 3. Insert ข้อมูลใหม่เข้าตาราง ims_house
+            // --- แก้ไข: เพิ่ม phone_number ใน VALUES ---
             $ins_house_sql = "INSERT INTO ims_house (
                                 house_number,
                                 contact_name,
+                                phone_number,
                                 alley,
                                 car_no1, car_no2, car_no3, car_no4, car_no5,
                                 create_by, update_by)
                               VALUES (
                                 :house_number,
                                 :contact_name,
+                                :phone_number,
                                 :alley,
                                 '', '', '', '', '',
                                 :create_by, :update_by)";
             $stmt_insert_house = $conn->prepare($ins_house_sql);
             $stmt_insert_house->bindParam(':house_number', $house_number);
-            $stmt_insert_house->bindParam(':contact_name', $detail);
+            $stmt_insert_house->bindParam(':contact_name', $detail); // ใช้ detail เป็น contact_name ชั่วคราว
+            $stmt_insert_house->bindParam(':phone_number', $phone_number); // ผูกค่า phone_number
             $stmt_insert_house->bindParam(':alley', $house_alley);
             $stmt_insert_house->bindParam(':create_by', $create_by);
             $stmt_insert_house->bindParam(':update_by', $create_by);
@@ -147,6 +153,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($conn) || !is_object($conn)) {
         writeToCustomLog("Error: Database connection object is not valid before LAST_DOCUMENT_NUMBER.");
         echo "Error: Database connection object is not valid.";
+        exit;
+    }
+
+    // ตรวจสอบว่า LAST_DOCUMENT_NUMBER ฟังก์ชันพร้อมใช้งานหรือไม่
+    if (!function_exists('LAST_DOCUMENT_NUMBER')) {
+        writeToCustomLog("Error: Function LAST_DOCUMENT_NUMBER is not defined. Check util/record_util.php.");
+        echo "Error: Required utility function not found.";
         exit;
     }
 
@@ -174,7 +187,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "Error: Invalid file type. Only JPG, JPEG, PNG, GIF are allowed.";
             exit;
         }
-        if ($picture_payment['size'] > 30 * 1024 * 1024) {
+        // --- ปรับปรุง: ขนาดไฟล์แจ้งเตือนให้ตรงกับเงื่อนไข (เลือก 5MB หรือ 30MB) ---
+        if ($picture_payment['size'] > 5 * 1024 * 1024) { // เปลี่ยนเป็น 5MB ตามข้อความแจ้งเตือน
             writeToCustomLog("Error: File " . $picture_payment['name'] . " is too large (" . $picture_payment['size'] . " bytes).");
             echo "Error: File too large. Maximum size is 5MB.";
             exit;
@@ -210,32 +224,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // --- ส่วนที่ 5: Insert ข้อมูลลง ims_house_payment ---
     try {
         writeToCustomLog("Attempting to insert data into ims_house_payment.");
-        if ($file_name) {
-            $ins_str = "INSERT INTO ims_house_payment (
-                            doc_id, payment_date, house_number, detail, runno,
-                            period_month_start, period_month_to, period_year, amount,
-                            picture_payment, remark, payment_type, payment_method, create_by
-                        )
-                        VALUES (
-                            :doc_id, :payment_date, :house_number, :detail, :runno,
-                            :period_month_start, :period_month_to, :period_year, :amount,
-                            :picture_payment, :remark, :payment_type, :payment_method, :create_by
-                        )";
-            $stmt = $conn->prepare($ins_str);
-            $stmt->bindParam(':picture_payment', $file_name);
-        } else {
-            $ins_str = "INSERT INTO ims_house_payment (
-                            doc_id, payment_date, house_number, detail,
-                            period_month_start, period_month_to, period_year, amount,
-                            remark, runno, payment_type, payment_method, create_by
-                        )
-                        VALUES (
-                            :doc_id, :payment_date, :house_number, :detail,
-                            :period_month_start, :period_month_to, :period_year, :amount,
-                            :remark, :runno, :payment_type, :payment_method, :create_by
-                        )";
-            $stmt = $conn->prepare($ins_str);
-        }
+
+        // --- ปรับปรุง: ใช้ INSERT statement เดียว และผูกค่า picture_payment_value ---
+        $ins_str = "INSERT INTO ims_house_payment (
+                        doc_id, payment_date, house_number, detail, runno,
+                        period_month_start, period_month_to, period_year, amount,
+                        picture_payment, remark, payment_type, payment_method, create_by
+                    )
+                    VALUES (
+                        :doc_id, :payment_date, :house_number, :detail, :runno,
+                        :period_month_start, :period_month_to, :period_year, :amount,
+                        :picture_payment, :remark, :payment_type, :payment_method, :create_by
+                    )";
+        $stmt = $conn->prepare($ins_str);
+
+        // กำหนดค่าเริ่มต้นสำหรับ picture_payment เป็น null ถ้าไม่มีไฟล์
+        $picture_payment_value = $file_name;
 
         $stmt->bindParam(':doc_id', $doc_id);
         $stmt->bindParam(':payment_date', $payment_date);
@@ -246,6 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':period_month_to', $period_month_to);
         $stmt->bindParam(':period_year', $period_year);
         $stmt->bindParam(':amount', $amount);
+        $stmt->bindParam(':picture_payment', $picture_payment_value); // ใช้ตัวแปรเดียว
         $stmt->bindParam(':remark', $remark);
         $stmt->bindParam(':payment_type', $payment_type);
         $stmt->bindParam(':payment_method', $payment_method);

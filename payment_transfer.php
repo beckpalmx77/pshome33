@@ -24,6 +24,7 @@ if (strlen($_SESSION['alogin']) === "") {
         $house_number = $_SESSION['house_number'];
         $f_name = $_SESSION['first_name'];
         $l_name = $_SESSION['last_name'];
+        $phone_number = $_SESSION['phone_number'];
 
         $sql_house_master = " SELECT * FROM ims_house_master where house_number = '" . $house_number . "'";
         $stmt_house_master = $conn->prepare($sql_house_master);
@@ -38,6 +39,7 @@ if (strlen($_SESSION['alogin']) === "") {
         $house_number = "";
         $f_name = "";
         $l_name = "";
+        $phone_number = "";
         $area_size = "";
         $common_fee = "";
     }
@@ -103,8 +105,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                                class="control-label">บ้านเลขที่</label>
                                                         <input type="text" name="house_number" class="form-control"
                                                                required
-                                                               id="house_number"
-                                                               value="<?php echo $house_number ?>">
+                                                               id="house_number" value="<?php echo $house_number ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -210,6 +211,16 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-2">
                                                     <div class="form-group has-success">
                                                         <label for="area_size"
+                                                               class="control-label">หมายเลขโทรศัพท์</label>
+                                                        <input type="text" name="phone_number" id="phone_number"
+                                                               class="form-control" required
+                                                               value="<?php echo $phone_number ?>">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="form-group has-success">
+                                                        <label for="area_size"
                                                                class="control-label">พื้นที่บ้าน ตรว</label>
                                                         <input type="number" name="area_size" id="area_size"
                                                                class="form-control" readonly="true"
@@ -227,59 +238,67 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
                                                     <div class="form-group has-success">
                                                         <label for="amount"
                                                                class="control-label">จำนวนเงินที่ชำระ</label>
                                                         <input type="number" id="amount" name="amount"
-                                                               class="form-control"
+                                                               class="form-control" required
                                                                required id="amount">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-
                                         <div class="form-group has-success">
-                                            <label for="remark" class="control-label">หมายเหตุ</label>
-                                            <input name="remark" class="form-control" id="remark" value="-">
-                                        </div>
-
-                                        <div class="col-md-12 mb-3">
-                                            <label for="payment_method" class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
-                                            <div class="d-flex align-items-center gap-3 flex-wrap custom-radio-row">
-                                                <div class="d-flex gap-3 flex-shrink-0">
-                                                    <div class="form-check form-check-inline custom-radio">
-                                                        <input class="form-check-input" type="radio"
-                                                               name="payment_method_radio"
-                                                               id="method_transfer" value="โอนเงิน">
-                                                        <label class="form-check-label" for="method_transfer">💳
-                                                            โอนเงิน</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline custom-radio">
-                                                        <input class="form-check-input" type="radio"
-                                                               name="payment_method_radio"
-                                                               id="method_cash" value="เงินสด" checked>
-                                                        <label class="form-check-label" for="method_cash">💵
-                                                            เงินสด</label>
+                                            <div class="row g-3">
+                                                <div class="col-md-7"><label for="payment_method"
+                                                                             class="form-label fw-semibold mb-2">วิธีการชำระเงิน</label>
+                                                    <div class="d-flex align-items-center gap-3 flex-wrap custom-radio-row">
+                                                        <div class="d-flex gap-3">
+                                                            <div class="form-check form-check-inline custom-radio">
+                                                                <input class="form-check-input" type="radio"
+                                                                       name="payment_method_radio" id="method_transfer"
+                                                                       value="โอนเงิน">
+                                                                <label class="form-check-label" for="method_transfer">💳
+                                                                    โอนเงิน</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline custom-radio">
+                                                                <input class="form-check-input" type="radio"
+                                                                       name="payment_method_radio" id="method_cash"
+                                                                       value="เงินสด" checked>
+                                                                <label class="form-check-label" for="method_cash">💵
+                                                                    เงินสด</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <input type="text" class="form-control"
+                                                                   name="payment_method" id="payment_method"
+                                                                   placeholder="ระบุวิธีการชำระเงิน" readonly>
+                                                        </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="flex-grow-1">
-                                                    <input type="text" class="form-control"
-                                                           name="payment_method" id="payment_method"
-                                                           placeholder="ระบุวิธีการชำระเงิน" readonly>
+                                                <div class="col-md-5">
+                                                    <label for="bank_transfer"
+                                                           class="control-label">โอนเงินเข้าบัญชี</label>
+                                                    <input name="bank_name" class="form-control" id="bank_name"
+                                                           value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>"
+                                                           readonly="true">
                                                 </div>
                                             </div>
-                                        </div>
 
+                                            <div class="form-group has-success">
+                                                <div class="row g-3">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group has-success">
+                                                            <label for="remark" class="control-label">หมายเหตุ</label>
+                                                            <input name="remark" class="form-control" id="remark"
+                                                                   value="-">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                        <div class="form-group has-success">
-                                            <label for="bank_transfer" class="control-label">โอนเงินเข้าบัญชี</label>
-
-                                            <input name="bank_name" class="form-control" id="bank_name"
-                                                   value="<?php echo $bank_name . " " . $bank_account_name . " เลขที่บัญชี : " . $bank_account_no ?>"
-                                                   readonly="true">
                                         </div>
 
                                         <div class="form-group has-success">
@@ -307,6 +326,30 @@ if (strlen($_SESSION['alogin']) === "") {
                             </div>
                         </div>
                     </div>
+
+                    <div class="modal fade" id="promotionModal" tabindex="-1" role="dialog" aria-labelledby="promotionModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title" id="promotionModalLabel">📣 โปรโมชั่นสำหรับสมาชิก</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า รายปี </p>
+                                    <p class="h6 text-primary">รับส่วนลดทันที 1 เดือน (ชำระเพียง 11 เดือน)</p>
+                                    <p class="h6 text-danger">โปรโมชั่นนี้มีผลถึงวันที่ 31 มกราคม</p>
+                                    <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3" style="max-width: 50%; height: auto;">
+                                </div>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -436,6 +479,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 formData.append('period_month_to', $("#period_month_to").val());
                 formData.append('payment_type', $("#payment_type").val());
                 formData.append('payment_method', $("#payment_method").val());
+                formData.append('phone_number', $("#phone_number").val());
 
                 $.ajax({
                     url: "model/manage_payment_transfer.php",
@@ -544,8 +588,9 @@ if (strlen($_SESSION['alogin']) === "") {
                                 document.getElementById("common_fee").value = data.common_fee;
                                 document.getElementById("area_size").value = data.area_size;
                                 document.getElementById("detail").value = data.contact_name;
-                                // Recalculate amount after common_fee is fetched
-                                calculateAmount();
+
+                                $("#amount").val((data.common_fee * 12).toFixed(2));
+
                             } else {
                                 // Already cleared, just show alert if not found
                                 //alert("ไม่พบข้อมูลบ้านเลขที่นี้");
@@ -633,6 +678,59 @@ if (strlen($_SESSION['alogin']) === "") {
 
             // Call immediately on page load
             calculateAmount();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
+            const currentDay = currentDate.getDate();
+
+            // Define the promotion period
+            const promoStartMonthPrevYear = 12; // December
+            const promoStartDayPrevYear = 15;
+
+            const promoEndMonthCurrentYear = 1; // January
+            const promoEndDayCurrentYear = 31;
+
+            let showPopup = false;
+
+            // Condition 1: From Dec 15 of current year
+            if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
+                showPopup = true;
+            }
+            // Condition 2: To Jan 31 of next year
+            else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
+                showPopup = true;
+            }
+
+            // Only show popup if it hasn't been shown in this session (optional, using sessionStorage)
+            // This prevents the popup from appearing every time the page is refreshed within the same session.
+            const hasPopupBeenShown = sessionStorage.getItem('promotionModalShown');
+
+            if (showPopup && !hasPopupBeenShown) {
+                // Use a slight delay to ensure Bootstrap's JS is fully loaded
+                setTimeout(function() {
+                    $('#promotionModal').modal('show');
+                    sessionStorage.setItem('promotionModalShown', 'true'); // Mark as shown
+                }, 500); // 500ms delay
+            }
+
+            // Optional: Reset sessionStorage on a specific condition, e.g., if you want it to show again after a day
+            // For simplicity, we are not adding a daily reset here.
+            // If you want it to show once per day, you'd need to store the date in localStorage.
+
+            // Also, pre-select the "yearly" option if within the promotion period
+            // This is optional but might be helpful for users.
+            if (showPopup) {
+                document.getElementById('option_yearly').checked = true;
+                document.getElementById('option_monthly').checked = false;
+                // Trigger change event to update related fields
+                const event = new Event('change');
+                document.getElementById('option_yearly').dispatchEvent(event);
+            }
         });
     </script>
 
