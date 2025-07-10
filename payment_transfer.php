@@ -332,16 +332,16 @@ if (strlen($_SESSION['alogin']) === "") {
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title" id="promotionModalLabel">📣 ประชาสัมพันธ์</h5>
+                                    <h5 class="modal-title" id="promotionModalLabel">📣 โปรโมชั่นสำหรับสมาชิก</h5>
                                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body text-center">
-                                    <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า</p>
+                                    <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า รายปี </p>
                                     <p class="h6 text-primary">รับส่วนลดทันที 1 เดือน (ชำระเพียง 11 เดือน)</p>
-                                    <p class="h6 text-danger">โปรโมชั่นนี้มีผลถึงวันที่ 31 มกราคมของปีถัดไป</p>
-                                    <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3" style="max-width: 100%; height: auto;">
+                                    <p class="h6 text-danger">โปรโมชั่นนี้มีผลถึงวันที่ 31 มกราคม</p>
+                                    <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3" style="max-width: 50%; height: auto;">
                                 </div>
                                 <div class="modal-footer justify-content-center">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
