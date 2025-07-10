@@ -77,7 +77,6 @@
       <path value="$PROJECT_DIR$/vendor/alertify/fonts" />
       <path value="$PROJECT_DIR$/vendor/datatables/v11" />
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
-      <path value="$PROJECT_DIR$/vendor/thiagoalessio/tesseract_ocr" />
       <path value="$PROJECT_DIR$/vendor/dompdf/php-svg-lib" />
       <path value="$PROJECT_DIR$/vendor/dompdf/php-font-lib" />
       <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
@@ -95,6 +94,7 @@
       <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-pdf-graph" />
       <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-unicode" />
       <path value="$PROJECT_DIR$/vendor/tecnickcom/tc-lib-color" />
+      <path value="$PROJECT_DIR$/vendor/thiagoalessio/tesseract_ocr" />
     </include_path>
   </component>
   <component name="PhpProjectServersManager">

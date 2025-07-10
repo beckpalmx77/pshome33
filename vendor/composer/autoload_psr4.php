@@ -28,6 +28,7 @@ return array(
     'Dompdf\\' => array($vendorDir . '/dompdf/dompdf/src'),
     'Detection\\' => array($vendorDir . '/mobiledetect/mobiledetectlib/src'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
+    'Composer\\Pcre\\' => array($vendorDir . '/composer/pcre/src'),
     'Complex\\' => array($vendorDir . '/markbaker/complex/classes/src'),
     'Com\\Tecnick\\Unicode\\Data\\' => array($vendorDir . '/tecnickcom/tc-lib-unicode-data/src'),
     'Com\\Tecnick\\Unicode\\' => array($vendorDir . '/tecnickcom/tc-lib-unicode/src'),

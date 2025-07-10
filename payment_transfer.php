@@ -24,6 +24,7 @@ if (strlen($_SESSION['alogin']) === "") {
         $house_number = $_SESSION['house_number'];
         $f_name = $_SESSION['first_name'];
         $l_name = $_SESSION['last_name'];
+        $phone_number = $_SESSION['phone_number'];
 
         $sql_house_master = " SELECT * FROM ims_house_master where house_number = '" . $house_number . "'";
         $stmt_house_master = $conn->prepare($sql_house_master);
@@ -38,6 +39,7 @@ if (strlen($_SESSION['alogin']) === "") {
         $house_number = "";
         $f_name = "";
         $l_name = "";
+        $phone_number = "";
         $area_size = "";
         $common_fee = "";
     }
@@ -103,8 +105,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                                class="control-label">บ้านเลขที่</label>
                                                         <input type="text" name="house_number" class="form-control"
                                                                required
-                                                               id="house_number"
-                                                               value="<?php echo $house_number ?>">
+                                                               id="house_number" value="<?php echo $house_number ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -210,6 +211,16 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-2">
                                                     <div class="form-group has-success">
                                                         <label for="area_size"
+                                                               class="control-label">หมายเลขโทรศัพท์</label>
+                                                        <input type="text" name="phone_number" id="phone_number"
+                                                               class="form-control" required
+                                                               value="<?php echo $phone_number ?>">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="form-group has-success">
+                                                        <label for="area_size"
                                                                class="control-label">พื้นที่บ้าน ตรว</label>
                                                         <input type="number" name="area_size" id="area_size"
                                                                class="form-control" readonly="true"
@@ -227,12 +238,12 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
                                                     <div class="form-group has-success">
                                                         <label for="amount"
                                                                class="control-label">จำนวนเงินที่ชำระ</label>
                                                         <input type="number" id="amount" name="amount"
-                                                               class="form-control"
+                                                               class="form-control" required
                                                                required id="amount">
                                                     </div>
                                                 </div>
@@ -436,6 +447,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 formData.append('period_month_to', $("#period_month_to").val());
                 formData.append('payment_type', $("#payment_type").val());
                 formData.append('payment_method', $("#payment_method").val());
+                formData.append('phone_number', $("#phone_number").val());
 
                 $.ajax({
                     url: "model/manage_payment_transfer.php",
