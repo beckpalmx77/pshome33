@@ -23,9 +23,19 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
     $check_type = $_POST['check_type'];
     $lat = $_POST['latitude'] ?? null;  // latitude กับ longitude อาจไม่มีส่งมาก็ได้
     $lon = $_POST['longitude'] ?? null;
+
+    $line_profile_url = $_POST['line_profile_url'] ?? null;
+
     $timestamp = date('Y-m-d H:i:s');
 
-    writeLog(sprintf("📥 รับข้อมูลจาก client: user_id=%s, display_name=%s, check_type=%s, location=%s || %s", $userId, $displayName, $check_type, $lat ?? 'null', $lon ?? 'null'));
+    writeLog(sprintf("📥 รับข้อมูลจาก client: user_id=%s, line_profile_url=%s, display_name=%s, check_type=%s, location=%s || %s", $userId, $line_profile_url , $displayName, $check_type, $lat ?? 'null', $lon ?? 'null'));
+
+    if (($line_profile_url === null || $line_profile_url === '') && !empty($userId)) {
+        $sql_update_house = "UPDATE ims_employee_line_user SET line_picture_profile = :line_picture_profile WHERE line_user_id = :line_user_id";
+        $stmt_update_house = $conn->prepare($sql_update_house);
+        $stmt_update_house->bindParam(':line_picture_profile', $line_profile_url);
+        $stmt_update_house->bindParam(':line_user_id', $userId);
+    }
 
     // ตรวจสอบการเช็คซ้ำภายใน 1 นาที (เดิมเขียนว่า 5 นาที แต่โค้ดจริง -1 นาที)
     $oneMinAgo = date('Y-m-d H:i:s', strtotime('-1 minutes', strtotime($timestamp)));

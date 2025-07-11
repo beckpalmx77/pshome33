@@ -9,80 +9,79 @@
   <title>PS33 Home System</title>
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="jsconfig/config_out.js"></script>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #ffffff;
-      color: #333;
+  <script src="jsconfig/config_out.js"></script> <style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #333;
+  }
+  .container {
+    max-width: 480px;
+    margin: auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+  .text-center {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+  }
+  input[type="file"],
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  button:hover {
+    background-color: #d10000;
+  }
+  #spinner {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #ff0000;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
     }
-    .container {
-      max-width: 480px;
-      margin: auto;
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      box-sizing: border-box;
+    100% {
+      transform: rotate(360deg);
     }
-    .text-center {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-    input[type="file"],
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      background-color: #ff0000;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-sizing: border-box;
-    }
-    button:hover {
-      background-color: #d10000;
-    }
-    #spinner {
-      display: none;
-      text-align: center;
-      margin-top: 20px;
-    }
-    .loader {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #ff0000;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: auto;
-    }
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 <div class="container">
@@ -108,9 +107,13 @@
 </div>
 
 <script>
+  let isSubmitting = false; // เพิ่มตัวแปรสถานะ เพื่อป้องกันการกดซ้ำ
+
   async function checkin() {
+    if (isSubmitting) return; // ถ้ากำลังส่งข้อมูลอยู่ ให้หยุด
+
     try {
-      await liff.init({ liffId: LIFF_ID });
+      await liff.init({ liffId: LIFF_ID }); // LIFF_ID ควรถูกกำหนดใน config_out.js
       if (!liff.isLoggedIn()) {
         liff.login();
         return;
@@ -125,7 +128,22 @@
         return alert('กรุณากรอกชื่อสถานที่');
       }
 
+      isSubmitting = true; // ตั้งสถานะว่ากำลังส่ง
+      document.querySelector('button').disabled = true; // ปิดปุ่ม
+
       const placeName = placeNameInput.value;
+
+      // เพิ่มโค้ดสำหรับดึงรูปโปรไฟล์ LINE
+      let lineProfileImageBlob = null;
+      if (profile.pictureUrl) {
+        try {
+          const response = await fetch(profile.pictureUrl);
+          lineProfileImageBlob = await response.blob();
+        } catch (imgErr) {
+          console.error("Failed to fetch LINE profile image:", imgErr);
+          // ไม่ต้องหยุดการทำงาน แค่ไม่ส่งรูปโปรไฟล์ LINE ไป
+        }
+      }
 
       navigator.geolocation.getCurrentPosition(
               (position) => {
@@ -134,21 +152,34 @@
                         check_type.value,
                         placeName,
                         photoInput,
+                        lineProfileImageBlob, // ส่ง Blob ของรูปโปรไฟล์ LINE ไปด้วย
                         position.coords.latitude,
                         position.coords.longitude
                 );
               },
               (error) => {
-                sendCheckin(profile, check_type.value, placeName, photoInput, 0, 0);
+                console.error("Geolocation error:", error);
+                sendCheckin(
+                        profile,
+                        check_type.value,
+                        placeName,
+                        photoInput,
+                        lineProfileImageBlob, // ส่ง Blob ของรูปโปรไฟล์ LINE ไปด้วย
+                        0, // ถ้าดึงพิกัดไม่ได้ ส่ง 0
+                        0  // ถ้าดึงพิกัดไม่ได้ ส่ง 0
+                );
               },
               { timeout: 10000 }
       );
     } catch (err) {
       alert('เกิดข้อผิดพลาด: ' + err.message);
+      isSubmitting = false; // คืนสถานะ
+      document.querySelector('button').disabled = false; // เปิดปุ่ม
     }
   }
 
-  function sendCheckin(profile, checkType, placeName, photoInput, lat, lng) {
+  // ปรับปรุงฟังก์ชัน sendCheckin ให้รับ lineProfileImageBlob
+  function sendCheckin(profile, checkType, placeName, photoInput, lineProfileImageBlob, lat, lng) {
     const formData = new FormData();
     formData.append('user_id', profile.userId);
     formData.append('check_type', checkType);
@@ -156,7 +187,15 @@
     formData.append('place_name', placeName);
     formData.append('latitude', lat);
     formData.append('longitude', lng);
+    // เพิ่ม profile.pictureUrl เผื่อ backend ต้องการ URL
+    formData.append('line_profile_url', profile.pictureUrl || '');
 
+    // เพิ่มรูปโปรไฟล์ LINE เข้าไปใน formData ถ้ามี
+    if (lineProfileImageBlob) {
+      formData.append('line_profile_image', lineProfileImageBlob, 'line_profile.jpg'); // ชื่อไฟล์สามารถตั้งอะไรก็ได้
+    }
+
+    // เพิ่มรูปภาพที่ผู้ใช้เลือกเข้ามา
     for (let i = 0; i < photoInput.files.length; i++) {
       formData.append('photo[]', photoInput.files[i]);
     }
@@ -167,12 +206,24 @@
       method: 'POST',
       body: formData,
     })
-            .then((res) => res.text())
-            .then(() => {
-              alert('✅ Check-out สำเร็จแล้ว');
+            .then((res) => {
+              if (!res.ok) {
+                // ถ้า HTTP status ไม่ใช่ 2xx ให้ throw error
+                return res.text().then(text => { throw new Error(text) });
+              }
+              return res.text();
+            })
+            .then((responseText) => {
+              // เนื่องจาก backend ส่งข้อความเป็น "✅ Check-out สำเร็จและส่ง LINE สำเร็จแล้ว"
+              // หรือข้อความ error มาตรงๆ จึงใช้ alert(responseText) ได้เลย
+              alert(responseText);
               liff.closeWindow();
             })
-            .catch((err) => alert('❌ ไม่สามารถ Check-out ได้: ' + err.message))
+            .catch((err) => {
+              alert('❌ ไม่สามารถ Check-out ได้: ' + err.message);
+              isSubmitting = false; // คืนสถานะ
+              document.querySelector('button').disabled = false; // เปิดปุ่ม
+            })
             .finally(() => {
               document.getElementById('spinner').style.display = 'none';
             });

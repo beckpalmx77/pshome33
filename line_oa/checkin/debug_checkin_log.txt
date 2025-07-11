@@ -2,3 +2,22 @@
 [2025-06-08 00:43:11] 📥 รับข้อมูลจาก client: user_id=Uc2648cdcef0f0608ce5c835883488bc7, display_name=หนุ่ม Dev IT, check_type=IN, location=13.900282764820288 || 100.36628580661524
 [2025-06-08 00:43:11] 🔁 เช็คซ้ำภายใน 1 นาที: 0
 [2025-06-08 00:43:11] 🔍 check_type ล่าสุด: IN
+[2025-07-11 17:03:39] 🔧 เริ่มต้นประมวลผล check-in
+[2025-07-11 17:03:39] 📥 รับข้อมูลจาก client: user_id=Uc2648cdcef0f0608ce5c835883488bc7, display_name=หนุ่ม Dev IT, check_type=IN, location=13.943970740639656 || 100.42727877633494, line_profile_url=https://profile.line-scdn.net/0h6WYaHrkMaXh0GHgF4EEXBwRIahJXaTBqWi10HhNLN0oefSwqUXh1GUZLYkxPfS0vD3pxGhIcYk94Cx4eak6VTHMoNElILiwpXX0mmA
+[2025-07-11 17:03:39] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-07-11 17:03:39] 🔍 check_type ล่าสุด: OUT
+[2025-07-11 17:03:39] ✅ บันทึกรูป LINE profile: Uc2648cdcef0f0608ce5c835883488bc7.jpg
+[2025-07-11 17:04:44] 🔧 เริ่มต้นประมวลผล check-in
+[2025-07-11 17:04:44] 📥 รับข้อมูลจาก client: user_id=Uc2648cdcef0f0608ce5c835883488bc7, display_name=หนุ่ม Dev IT, check_type=IN, location=13.943975958005218 || 100.42727191675638
+[2025-07-11 17:04:44] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-07-11 17:04:44] 🔍 check_type ล่าสุด: OUT
+[2025-07-11 17:04:45] ✅ บันทึกรูป: checkin_6870e1bce0136_IMG_5695.jpg
+[2025-07-11 17:04:45] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-07-11 17:04:45] 📤 ส่ง LINE: HTTP=429, Result={"message":"You have reached your monthly limit."}, Error=
+[2025-07-11 17:10:03] 🔧 เริ่มต้นประมวลผล check-in
+[2025-07-11 17:10:03] 📥 รับข้อมูลจาก client: user_id=Uc2648cdcef0f0608ce5c835883488bc7, line_profile_url=https://profile.line-scdn.net/0h6WYaHrkMaXh0GHgF4EEXBwRIahJXaTBqWi10HhNLN0oefSwqUXh1GUZLYkxPfS0vD3pxGhIcYk94Cx4eak6VTHMoNElILiwpXX0mmA, display_name=หนุ่ม Dev IT, check_type=IN, location=13.94397610398429 || 100.42727198993512
+[2025-07-11 17:10:03] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-07-11 17:10:03] 🔍 check_type ล่าสุด: OUT
+[2025-07-11 17:10:03] ✅ บันทึกรูป: checkin_6870e2fb41c68_IMG_5696.jpg
+[2025-07-11 17:10:03] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-07-11 17:10:03] 📤 ส่ง LINE: HTTP=429, Result={"message":"You have reached your monthly limit."}, Error=
