@@ -104,8 +104,8 @@ try {
 
     // Prepare header statement for ims_payment_voucher
     if ($action === 'ADD') {
-        $stmtHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     } else { // UPDATE
         $stmtHeader = $conn->prepare("UPDATE ims_payment_voucher SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?, payment_method = ?, bank_no = ?, total_amount = ?, picture_doc = ?, create_name = ?, checker_name = ?, receipt_name = ?, approve_name = ?, approve_status = ?
             WHERE doc_no = ?");
@@ -427,6 +427,7 @@ try {
         if (!$stmtHeader->execute([
             $doc_no,
             $doc_date,
+            date('m', strtotime($doc_date)), // Use doc_date month for consistency
             date('Y', strtotime($doc_date)), // Use doc_date year for consistency
             $next_pv_runno,
             $requester,

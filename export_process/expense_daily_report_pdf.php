@@ -1,5 +1,6 @@
 <?php
 session_start();
+header('Content-Type: text/html; charset=utf-8'); // เพิ่มบรรทัดนี้
 require_once('../vendor/tecnickcom/tcpdf/tcpdf.php');
 include('../config/connect_db.php');
 include('../util/number_to_thai_text.php');

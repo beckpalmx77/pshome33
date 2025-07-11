@@ -645,7 +645,9 @@ if (strlen($_SESSION['alogin']) === "") {
                 event.preventDefault();
 
                 // ตรวจสอบว่าได้มีการเลือกไฟล์รูปภาพหรือไม่
-                if ($("#picture_payment").get(0).files.length === 0) {
+                const paymentMethod = $("#payment_method").val(); // Get the selected payment method
+
+                if (paymentMethod !== "เงินสด" && $("#picture_payment").get(0).files.length === 0) {
                     alertify.error("กรุณาแนบ Slip/ใบโอนเงิน/ใบเสร็จ ก่อนบันทึกข้อมูล");
                     return; // หยุดการทำงานของฟังก์ชัน submit
                 }

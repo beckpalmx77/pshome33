@@ -352,15 +352,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         let isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
 
                         let fileBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
-                        let filePath = 'uploads/files/' + file;
 
                         if (isImage) {
-                            let imgLink = $('<a>').attr({'href': filePath, 'target': '_blank'}); // Added for click to enlarge
                             let img = $('<img>')
-                                .attr('src', filePath)
+                                .attr('src', 'uploads/files/' + file)
                                 .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
-                            imgLink.append(img);
-                            fileBox.append(imgLink);
+                            fileBox.append(img);
                         } else if (fileExtension === 'pdf') {
                             let pdfPlaceholder = $('<div>').css({
                                 'width': '120px',
@@ -377,7 +374,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             });
                             pdfPlaceholder.append($('<p>').text('PDF File').css('font-weight', 'bold'));
                             pdfPlaceholder.append($('<p>').text(file).css({'font-size': '0.7em', 'word-break': 'break-all'}));
-                            pdfPlaceholder.append($('<a>').attr({'href': filePath, 'target': '_blank'}).text('View').addClass('btn btn-sm btn-primary mt-1'));
+                            pdfPlaceholder.append($('<a>').attr({'href': 'uploads/files/' + file, 'target': '_blank'}).text('View').addClass('btn btn-sm btn-primary mt-1'));
                             fileBox.append(pdfPlaceholder);
                         }
 
@@ -855,13 +852,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         img.setAttribute('src', e.target.result);
                         img.classList.add('img-thumbnail');
                         img.style.cssText = 'width:100%; height:120px; object-fit:cover;';
-
-                        const imgLink = document.createElement('a'); // New: Create anchor tag
-                        imgLink.setAttribute('href', e.target.result); // Link to the full image
-                        imgLink.setAttribute('target', '_blank');     // Open in new tab
-                        imgLink.appendChild(img);                     // Append image to anchor
-
-                        filePreviewBox.appendChild(imgLink);          // Append anchor to box
+                        filePreviewBox.appendChild(img);
                         filePreviewBox.appendChild(removeButton);
                         previewArea.appendChild(filePreviewBox);
                     };

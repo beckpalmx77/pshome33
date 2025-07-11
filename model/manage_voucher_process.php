@@ -127,8 +127,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     $totalRecordwithFilter = $records['allcount'];
 
     // Fetch data
-    $sql = "SELECT * FROM ims_payment_voucher WHERE 1 " . $searchQuery .
-        " ORDER BY id DESC LIMIT :offset, :limit";
+    $sql = "SELECT * FROM v_ims_payment_voucher WHERE 1 " . $searchQuery .
+        " ORDER BY doc_year DESC,CAST(doc_month AS UNSIGNED) DESC,CAST(doc_day AS UNSIGNED) DESC LIMIT :offset, :limit";
     $stmt = $conn->prepare($sql);
 
     foreach ($searchArray as $key => $val) {
