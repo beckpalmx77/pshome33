@@ -36,3 +36,15 @@
 [2025-07-10 10:26:38] Attempting to insert data into ims_house_payment.
 [2025-07-10 10:26:38] Successfully inserted payment record for doc_id: P-67/1-2025-001.
 [2025-07-10 10:26:38] Script save_payment_data.php finished.
+[2025-07-11 15:06:47] Script manage_payment_transfer.php started.
+[2025-07-11 15:06:47] Received POST request.
+[2025-07-11 15:06:47] Basic POST data validation passed.
+[2025-07-11 15:06:47] Checking if house_number '68/56' exists in ims_house.
+[2025-07-11 15:06:47] House '68/56' found in ims_house. Alley: '10'. Current phone in DB: '0860565971'.
+[2025-07-11 15:06:47] Phone number for house '68/56' already exists in DB: '0860565971'. No update needed based on current logic.
+[2025-07-11 15:06:47] Generated doc_id: P-68/56-2025-008 with runno: 8.
+[2025-07-11 15:06:47] Attempting file upload for linux-prew-B4aTTzD-.png.
+[2025-07-11 15:06:47] File successfully uploaded to: D:\website\pshome33\model/../uploads/slips/1752221207_linux-prew-B4aTTzD-.png.
+[2025-07-11 15:06:47] Attempting to insert data into ims_house_payment.
+[2025-07-11 15:06:47] Successfully inserted payment record for doc_id: P-68/56-2025-008.
+[2025-07-11 15:06:47] Script manage_payment_transfer.php finished.

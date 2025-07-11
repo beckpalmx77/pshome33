@@ -9,8 +9,7 @@ include('../config/lang.php');
 include('../util/record_util.php'); // ตรวจสอบให้แน่ใจว่า LAST_DOCUMENT_NUMBER อยู่ในไฟล์นี้
 
 // --- ฟังก์ชันสำหรับเขียน Log ลงไฟล์ที่กำหนดเอง ---
-function writeToCustomLog($message)
-{
+function writeToCustomLog($message) {
     $log_file = __DIR__ . '/../logs/payment_activity.log'; // Path ไปยังไฟล์ Log
     $timestamp = date('Y-m-d H:i:s');
     $log_message = "[{$timestamp}] {$message}" . PHP_EOL; // เพิ่มเวลาและขึ้นบรรทัดใหม่
@@ -35,8 +34,7 @@ function writeToCustomLog($message)
     }
 }
 
-// <<< แก้ไขตรงนี้: ชื่อสคริปต์ใน Log
-writeToCustomLog("Script manage_payment_transfer.php started.");
+writeToCustomLog("Script save_payment_data.php started.");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     writeToCustomLog("Received POST request.");
@@ -45,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_date = $_POST['payment_date'] ?? null;
     $house_number = $_POST['house_number'] ?? null;
     $detail = $_POST['detail'] ?? null;
-    // --- ดึง phone_number จาก POST ---
+    // --- แก้ไข: เปลี่ยน '$phone_number' เป็น 'phone_number' ---
     $phone_number = $_POST['phone_number'] ?? null;
     $payment_type = $_POST['payment_type'] ?? null;
     $period_month_start = $_POST['period_month_start'] ?? null;
@@ -59,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $create_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
     if (empty(trim($create_by))) {
         $create_by = 'System';
-        writeToCustomLog("create_by session empty or invalid, set to 'System'.");
+        writeToCustomLog("create_by session empty or invalid, set to 'System'."); // ปรับปรุงข้อความ Log
     }
 
     // --- ส่วนที่ 1: ตรวจสอบความถูกต้องของข้อมูลพื้นฐาน ---
@@ -85,47 +83,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     writeToCustomLog("Basic POST data validation passed.");
 
-    // --- ส่วนที่ 2: ตรวจสอบและ INSERT/UPDATE เข้า ims_house ---
+    // --- ส่วนที่ 2: ตรวจสอบและ INSERT เข้า ims_house ---
     $house_alley = '';
     $phone_number_db = '';
 
     try {
         writeToCustomLog("Checking if house_number '{$house_number}' exists in ims_house.");
-        $stmt_check_house = $conn->prepare("SELECT alley, phone_number FROM ims_house WHERE house_number = :house_number");
+        $stmt_check_house = $conn->prepare("SELECT alley , phone_number FROM ims_house WHERE house_number = :house_number");
         $stmt_check_house->bindParam(':house_number', $house_number);
         $stmt_check_house->execute();
         $result_house = $stmt_check_house->fetch(PDO::FETCH_ASSOC);
 
         if ($result_house) {
-            // พบข้อมูลบ้านเลขที่ใน ims_house
             $house_alley = $result_house['alley'];
             $phone_number_db = $result_house['phone_number'];
 
-            writeToCustomLog("House '{$house_number}' found in ims_house. Alley: '{$house_alley}'. Current phone in DB: '{$phone_number_db}'.");
-
-            // <<< แก้ไขตรงนี้: เพิ่มเงื่อนไข !empty($phone_number) และ execute()
-            // อัปเดตเบอร์โทรศัพท์ใน ims_house หากเบอร์เดิมว่าง และมีเบอร์ใหม่ส่งมา
-            if (($phone_number_db === null || $phone_number_db === '') && !empty($phone_number)) {
-                $sql_update_house = "UPDATE ims_house SET phone_number = :phone_number WHERE house_number = :house_number";
+            if ($phone_number_db === null || $phone_number_db === '') {
+                $sql_update_house = "UPDATE ims_house SET phone_number  = :phone_number  WHERE house_number = :house_number";
                 $stmt_update_house = $conn->prepare($sql_update_house);
                 $stmt_update_house->bindParam(':phone_number', $phone_number);
                 $stmt_update_house->bindParam(':house_number', $house_number);
 
-                if ($stmt_update_house->execute()) {
-                    writeToCustomLog("Successfully updated phone number for house '{$house_number}' to '{$phone_number}'.");
-                } else {
-                    writeToCustomLog("Error updating phone number for house '{$house_number}'. PDO Error Info: " . json_encode($stmt_update_house->errorInfo()));
-                }
-            } else if (!empty($phone_number_db)) {
-                writeToCustomLog("Phone number for house '{$house_number}' already exists in DB: '{$phone_number_db}'. No update needed based on current logic.");
-            } else if (empty($phone_number) && ($phone_number_db === null || $phone_number_db === '')) {
-                writeToCustomLog("Phone number for house '{$house_number}' is empty in DB, and no new phone number provided from form to update.");
             }
+            writeToCustomLog("House '{$house_number}' found in ims_house. Alley: '{$house_alley}'.");
 
         } else {
-            // ไม่พบข้อมูลบ้านเลขที่ใน ims_house, ต้องค้นหา alley และ Insert ใหม่
-            writeToCustomLog("House '{$house_number}' not found in ims_house. Attempting to insert new record.");
-
+            writeToCustomLog("House '{$house_number}' not found in ims_house. Attempting to insert.");
             // 2. ค้นหา alley จาก ims_house_master
             $stmt_get_alley = $conn->prepare("SELECT alley FROM ims_house_master WHERE house_number = :house_number");
             $stmt_get_alley->bindParam(':house_number', $house_number);
@@ -141,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // 3. Insert ข้อมูลใหม่เข้าตาราง ims_house
+            // --- แก้ไข: เพิ่ม phone_number ใน VALUES ---
             $ins_house_sql = "INSERT INTO ims_house (
                                 house_number,
                                 contact_name,
@@ -157,35 +141,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 :create_by, :update_by)";
             $stmt_insert_house = $conn->prepare($ins_house_sql);
             $stmt_insert_house->bindParam(':house_number', $house_number);
-            // <<< พิจารณาค่าสำหรับ contact_name ให้เหมาะสม
-            $stmt_insert_house->bindParam(':contact_name', $detail); // ใช้ detail เป็น contact_name ชั่วคราว อาจต้องปรับ
-            $stmt_insert_house->bindParam(':phone_number', $phone_number); // ผูกค่า phone_number จาก POST
+            $stmt_insert_house->bindParam(':contact_name', $detail); // ใช้ detail เป็น contact_name ชั่วคราว
+            $stmt_insert_house->bindParam(':phone_number', $phone_number); // ผูกค่า phone_number
             $stmt_insert_house->bindParam(':alley', $house_alley);
             $stmt_insert_house->bindParam(':create_by', $create_by);
             $stmt_insert_house->bindParam(':update_by', $create_by);
 
-            if ($stmt_insert_house->execute()) {
-                writeToCustomLog("Successfully inserted new house '{$house_number}' into ims_house with phone: '{$phone_number}'.");
-            } else {
-                $errorInfo = $stmt_insert_house->errorInfo();
-                $errorMessage = isset($errorInfo[2]) ? $errorInfo[2] : "Unknown PDO error.";
-                writeToCustomLog("Error inserting new house into ims_house: {$errorMessage}");
-                // หากเกิด error 23000 (Duplicate entry) ในระหว่างที่สคริปต์ทำงาน อาจหมายถึงอีก process เพิ่ง insert ไป
-                if ($errorInfo[0] == '23000') {
-                    writeToCustomLog("Duplicate entry for house_number '{$house_number}' during ims_house insert. This might be a race condition, continuing.");
-                } else {
-                    echo "Error: Database error during house registration. Please check logs. " . $errorMessage;
-                    exit;
-                }
-            }
+            $stmt_insert_house->execute();
+            writeToCustomLog("Successfully inserted new house '{$house_number}' into ims_house.");
         }
     } catch (PDOException $e) {
-        writeToCustomLog("Exception during ims_house check/insert/update: " . $e->getMessage());
-        // ตรวจสอบ Duplicate entry (Code 23000) สำหรับกรณีที่มีการ Insert พร้อมกัน
         if ($e->getCode() == '23000') {
             writeToCustomLog("Duplicate house_number '{$house_number}' during ims_house insert. This is expected if another process added it. Continuing.");
         } else {
-            writeToCustomLog("Critical Error inserting/updating into ims_house: " . $e->getMessage());
+            writeToCustomLog("Critical Error inserting into ims_house: " . $e->getMessage());
             echo "Error: Database error during house registration. Please check logs. " . $e->getMessage();
             exit;
         }
@@ -218,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($picture_payment && $picture_payment['error'] == UPLOAD_ERR_OK) {
         function isAllowedFileType($filename)
         {
-            $allowed = ['jpg', 'jpeg', 'png', 'gif', 'pdf']; // <<< เพิ่ม pdf ถ้าต้องการ
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             return in_array($ext, $allowed);
         }
@@ -226,13 +195,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         writeToCustomLog("Attempting file upload for " . $picture_payment['name'] . ".");
         if (!isAllowedFileType($picture_payment['name'])) {
             writeToCustomLog("Error: Invalid file type for " . $picture_payment['name'] . ".");
-            echo "Error: Invalid file type. Only JPG, JPEG, PNG, GIF" . (in_array('pdf', isAllowedFileType('dummy.pdf') ? ['pdf'] : []) ? ", PDF" : "") . " are allowed."; // ปรับข้อความตาม allowed types
+            echo "Error: Invalid file type. Only JPG, JPEG, PNG, GIF are allowed.";
             exit;
         }
         // --- ปรับปรุง: ขนาดไฟล์แจ้งเตือนให้ตรงกับเงื่อนไข (เลือก 5MB หรือ 30MB) ---
-        if ($picture_payment['size'] > 30 * 1024 * 1024) { // 30MB (เปลี่ยนเป็น 5 * 1024 * 1024 สำหรับ 5MB)
+        if ($picture_payment['size'] > 30 * 1024 * 1024) { // เปลี่ยนเป็น 5MB ตามข้อความแจ้งเตือน
             writeToCustomLog("Error: File " . $picture_payment['name'] . " is too large (" . $picture_payment['size'] . " bytes).");
-            echo "Error: File too large. Maximum size is 30MB."; // แก้ข้อความแจ้งเตือนตามที่คุณต้องการ
+            echo "Error: File too large. Maximum size is 30MB.";
             exit;
         }
 
@@ -267,6 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         writeToCustomLog("Attempting to insert data into ims_house_payment.");
 
+        // --- ปรับปรุง: ใช้ INSERT statement เดียว และผูกค่า picture_payment_value ---
         $ins_str = "INSERT INTO ims_house_payment (
                         doc_id, payment_date, house_number, detail, runno,
                         period_month_start, period_month_to, period_year, amount,
@@ -314,7 +284,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     writeToCustomLog("Error: Invalid request method. Not a POST request.");
     echo "Error: Invalid request method. Only POST allowed.";
 }
-// <<< แก้ไขตรงนี้: ชื่อสคริปต์ใน Log
-writeToCustomLog("Script manage_payment_transfer.php finished.");
+writeToCustomLog("Script save_payment_data.php finished.");
 
 ?>
