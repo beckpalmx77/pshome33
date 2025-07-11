@@ -26,14 +26,13 @@ if (strlen($_SESSION['alogin']) === "") {
         $l_name = $_SESSION['last_name'];
         $phone_number = $_SESSION['phone_number'];
 
-        $sql_house_master = " SELECT * FROM v_ims_house where house_number = '" . $house_number . "'";
+        $sql_house_master = " SELECT * FROM ims_house_master where house_number = '" . $house_number . "'";
         $stmt_house_master = $conn->prepare($sql_house_master);
         $stmt_house_master->execute();
         $hmCurr = $stmt_house_master->fetchAll();
         foreach ($hmCurr as $hm_curr) {
             $area_size = $hm_curr["area_size"];
             $common_fee = $hm_curr["common_fee"];
-            $phone_number = $hm_curr["phone_number"];
         }
 
     } else {
@@ -489,7 +488,6 @@ if (strlen($_SESSION['alogin']) === "") {
                 // Clear existing values immediately
                 document.getElementById("common_fee").value = '';
                 document.getElementById("area_size").value = '';
-                document.getElementById("phone_number").value = '';
                 document.getElementById("detail").value = ''; // Clear contact_name too, as it's related
                 document.getElementById("amount").value = '';
 
@@ -501,12 +499,13 @@ if (strlen($_SESSION['alogin']) === "") {
                                 document.getElementById("common_fee").value = data.common_fee;
                                 document.getElementById("area_size").value = data.area_size;
                                 document.getElementById("detail").value = data.contact_name;
-                                document.getElementById("phone_number").value = data.phone_number;
 
                                 // Recalculate amount after house info is loaded, based on current options
                                 $('#common_fee').trigger('input'); // This calls calculateAmount()
 
-                                // Removed: applyPromotionLogic(); // Removed call to not show popup on house_number input
+                                // Apply promotion logic again after house info is loaded
+                                applyPromotionLogic(); // ADDED THIS LINE
+
                             } else {
                                 // Already cleared, just show alert if not found
                                 //alert("ไม่พบข้อมูลบ้านเลขที่นี้");
@@ -555,6 +554,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 } else { // Monthly payment
                     const months = parseInt($("#payment_type").val()) || 0;
                     $("#amount").prop("readonly", true); // Make amount readonly for monthly
+                    // ^^^^^^^^^^^ CHANGED HERE
 
                     if (commonFee > 0 && months > 0) {
                         const amount = commonFee * months;
@@ -585,10 +585,10 @@ if (strlen($_SESSION['alogin']) === "") {
             const currentDay = currentDate.getDate();
 
             // Define the promotion period for popup (Dec 15 of current year to Jan 31 of next year)
-            const promoStartMonthPrevYear = 12; // December
+            const promoStartMonthPrevYear = 6; // December
             const promoStartDayPrevYear = 15;
 
-            const promoEndMonthCurrentYear = 1; // January
+            const promoEndMonthCurrentYear = 7; // January
             const promoEndDayCurrentYear = 31;
 
             let showPopup = false;
@@ -707,6 +707,32 @@ if (strlen($_SESSION['alogin']) === "") {
                             $("#transfer_form")[0].reset();
                             $("#preview_image").hide().attr("src", "");
                             $("#submit_btn").prop("disabled", true);
+
+                            // The LIFF logic below is commented out as this file is not specifically for LIFF.
+                            // If this file is meant to be accessed via LIFF, then the LIFF SDK init and sendMessages should be uncommented/added.
+                            /*
+                            if (liff.isInClient()) {
+                                liff.getProfile().then(profile => {
+                                    const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
+                                    \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
+                                    \n🕔 วันที่ทำรายการ: ${date_time}
+                                    \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                    liff.sendMessages([{type: "text", text: message}])
+                                        .then(() => {
+                                            setTimeout(() => {
+                                                liff.closeWindow();
+                                            }, 2000);
+                                        })
+                                        .catch(err => {
+                                            console.error("ส่งข้อความล้มเหลว:", err);
+                                            alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
+                                            liff.closeWindow();
+                                        });
+                                });
+                            } else {
+                                alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
+                            }
+                            */
                         } else if (response == 2) {
                             // ปรับข้อความแจ้งเตือนให้แสดงปีด้วย
                             alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);

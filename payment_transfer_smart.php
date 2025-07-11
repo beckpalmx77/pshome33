@@ -101,6 +101,7 @@ foreach ($BankCurr as $row_curr) {
                                                            value="1">
                                                 </div>
                                             </div>
+                                            <input type="hidden" id="month_year_calculator" name="month_year_calculator" value="12">
                                         </div>
                                     </div>
 
@@ -440,8 +441,7 @@ foreach ($BankCurr as $row_curr) {
                 if (!isNaN(startMonth) && !isNaN(paymentMonths)) {
                     let endMonth = startMonth + paymentMonths - 1;
                     if (endMonth > 12) {
-                        endMonth = endMonth % 12;
-                        if (endMonth === 0) endMonth = 12;
+                        endMonth = ((endMonth - 1) % 12) + 1; // Correctly wraps around for months
                     }
                     $("#period_month_to").val(endMonth);
                 }
@@ -491,6 +491,10 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('common_fee').value = parseFloat(data.common_fee).toFixed(2);
                                 // Initialize and calculate amount after common_fee is loaded
                                 window.initWithCommonFeeInput();
+
+                                // NOW, re-apply promotion logic to override defaults if promo is active
+                                applyPromotionLogic(); // ADDED THIS LINE
+
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
                                 document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
                                 $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
@@ -581,6 +585,7 @@ foreach ($BankCurr as $row_curr) {
         const amountInput = document.getElementById('amount');
         const paymentOptionInputs = document.querySelectorAll('input[name="payment_option"]');
         const periodYearInput = document.getElementById('period_year');
+        const monthYearCalculatorInput = document.getElementById('month_year_calculator'); // รับค่า month_year_calculator
 
         function getSelectedPaymentOption() {
             for (const el of paymentOptionInputs) {
@@ -598,22 +603,9 @@ foreach ($BankCurr as $row_curr) {
                 const paymentMonths = parseInt(paymentTypeInput.value) || 0;
                 calculatedAmount = commonFee * paymentMonths;
             } else if (paymentOption === 'yearly') {
-                const currentDate = new Date();
-                const currentYear = currentDate.getFullYear();
-                const currentMonth = currentDate.getMonth() + 1; // January is 0, so add 1
-                const currentDay = currentDate.getDate();
-                const periodYear = parseInt(periodYearInput.value);
-
-                const applyDiscount = (
-                    (currentYear === (periodYear - 1) && currentMonth === 12) || // Dec of previous year
-                    (currentYear === periodYear && currentMonth === 1 && currentDay <= 31) // Jan of current year
-                );
-
-                if (applyDiscount) {
-                    calculatedAmount = commonFee * 11;
-                } else {
-                    calculatedAmount = commonFee * 12;
-                }
+                // ใช้ค่าจาก month_year_calculator สำหรับการคำนวณรายปี
+                const monthsToCharge = parseFloat(monthYearCalculatorInput.value) || 12; // ใช้ค่าจาก hidden input
+                calculatedAmount = commonFee * monthsToCharge;
             }
             // **แก้ไขตรงนี้: จัดรูปแบบ calculatedAmount ให้เป็นทศนิยม 2 ตำแหน่ง**
             amountInput.value = calculatedAmount.toFixed(2);
@@ -623,6 +615,7 @@ foreach ($BankCurr as $row_curr) {
             console.log('commonFee:', commonFee);
             console.log('paymentOption:', paymentOption);
             console.log('calculatedAmount:', amountInput.value);
+            console.log('monthYearCalculator:', monthYearCalculatorInput.value);
         }
 
         function handlePaymentOptionChange() {
@@ -631,17 +624,17 @@ foreach ($BankCurr as $row_curr) {
             console.log('[handlePaymentOptionChange] selectedOption:', selectedOption);
 
             if (selectedOption === 'yearly') {
-                paymentTypeInput.value = 12;
-                // สำหรับ yearly เราอาจต้องการให้ผู้ใช้แก้ไขจำนวนเงินได้เอง หรือกำหนดจากค่าส่วนกลาง * 11/12
-                // ถ้าต้องการให้คำนวณอัตโนมัติและแก้ไขไม่ได้ ควรเป็น readonly true
-                // แต่ถ้าตามความต้องการเดิมคือสามารถแก้ไขได้ ให้เป็น false
-                amountInput.readOnly = false;
+                paymentTypeInput.value = 12; // Default to 12 for yearly display, actual calculation uses month_year_calculator
+                amountInput.readOnly = false; // Allow editing if needed, though calculation will override
+                // Ensure month_year_calculator is correctly set when yearly is selected
+                // If promo script already ran, it's 11. Otherwise, default to 12.
+                // Re-trigger calculateAmount to reflect potential changes from month_year_calculator
+                calculateAmount();
             } else if (selectedOption === 'monthly') {
                 paymentTypeInput.value = 1;
                 amountInput.readOnly = true; // Make amount readonly for monthly
+                calculateAmount();
             }
-
-            calculateAmount();
         }
 
         paymentTypeInput.addEventListener('input', () => {
@@ -660,13 +653,17 @@ foreach ($BankCurr as $row_curr) {
             el.addEventListener('change', handlePaymentOptionChange)
         );
         periodYearInput.addEventListener('change', calculateAmount); // Recalculate if period year changes
+        // เพิ่ม listener สำหรับ month_year_calculator input
+        monthYearCalculatorInput.addEventListener('change', calculateAmount);
+
 
         // ✅ เรียกหลังจากได้ data.common_fee แล้ว
         window.initWithCommonFeeInput = function () {
-            // ตั้งค่ารายเดือนเป็น default
+            // ตั้งค่ารายเดือนเป็น default (หากไม่มีโปรโมชั่นหรือต้องการให้เริ่มต้นเป็นรายเดือน)
             document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
             paymentTypeInput.value = 1;
             amountInput.readOnly = true;
+            monthYearCalculatorInput.value = 12; // Ensure default is 12 if no promo applies initially
 
             console.log('[initWithCommonFeeInput] init default monthly');
             calculateAmount(); // เรียก calculateAmount เพื่อคำนวณจำนวนเงินเริ่มต้น
@@ -783,7 +780,8 @@ foreach ($BankCurr as $row_curr) {
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Moved the promotion logic into a named function
+    function applyPromotionLogic() {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
@@ -807,31 +805,38 @@ foreach ($BankCurr as $row_curr) {
             showPopup = true;
         }
 
-        // Only show popup if it hasn't been shown in this session (optional, using sessionStorage)
-        // This prevents the popup from appearing every time the page is refreshed within the same session.
-        const hasPopupBeenShown = sessionStorage.getItem('promotionModalShown');
-
-        if (showPopup && !hasPopupBeenShown) {
+        if (showPopup) {
             // Use a slight delay to ensure Bootstrap's JS is fully loaded
             setTimeout(function() {
                 $('#promotionModal').modal('show');
-                sessionStorage.setItem('promotionModalShown', 'true'); // Mark as shown
             }, 500); // 500ms delay
-        }
 
-        // Optional: Reset sessionStorage on a specific condition, e.g., if you want it to show again after a day
-        // For simplicity, we are not adding a daily reset here.
-        // If you want it to show once per day, you'd need to store the date in localStorage.
+            // Set month_year_calculator to 11 for the discount if promotion is active
+            $("#month_year_calculator").val(11);
 
-        // Also, pre-select the "yearly" option if within the promotion period
-        // This is optional but might be helpful for users.
-        if (showPopup) {
+            // Also, pre-select the "yearly" option if within the promotion period
             document.getElementById('option_yearly').checked = true;
             document.getElementById('option_monthly').checked = false;
-            // Trigger change event to update related fields
+            // Trigger change event to update related fields and recalculate amount
             const event = new Event('change');
             document.getElementById('option_yearly').dispatchEvent(event);
         }
+        // If not in promotion period, ensure month_year_calculator is reset to default 12 for yearly
+        else {
+            // Check if 'option_yearly' is checked, and if so, set calculator back to 12
+            // This ensures that if user manually selects yearly outside promo, they pay for 12 months
+            if (document.getElementById('option_yearly').checked) {
+                $("#month_year_calculator").val(12);
+                document.getElementById('option_monthly').checked = false; // Ensure monthly is not checked
+                document.getElementById('option_yearly').checked = true; // Explicitly keep yearly checked
+                const event = new Event('change');
+                document.getElementById('option_yearly').dispatchEvent(event);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        applyPromotionLogic(); // Call on DOMContentLoaded
     });
 </script>
 

@@ -7,7 +7,7 @@ if (isset($_GET['house_number'])) {
     $house_number = trim($_GET['house_number']);
 
     // ลองค้นหาใน v_ims_house ก่อน
-    $stmt = $conn->prepare("SELECT common_fee, area_size, contact_name FROM v_ims_house 
+    $stmt = $conn->prepare("SELECT common_fee, area_size, phone_number, contact_name FROM v_ims_house 
     WHERE house_number = :house_number LIMIT 1");
     $stmt->execute(['house_number' => $house_number]);
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -18,11 +18,12 @@ if (isset($_GET['house_number'])) {
             'success' => true,
             'common_fee' => $data['common_fee'],
             'area_size' => $data['area_size'],
+            'phone_number' => $data['phone_number'],
             'contact_name' => $data['contact_name']
         ]);
     } else {
         // หากไม่พบข้อมูลใน v_ims_house ให้ค้นหาใน ims_house_master
-        $stmt_master = $conn->prepare("SELECT common_fee, area_size, remark FROM ims_house_master 
+        $stmt_master = $conn->prepare("SELECT common_fee, area_size, remark as phone_number , remark FROM ims_house_master 
         WHERE house_number = :house_number LIMIT 1");
         $stmt_master->execute(['house_number' => $house_number]);
         $data_master = $stmt_master->fetch(PDO::FETCH_ASSOC);
@@ -33,6 +34,7 @@ if (isset($_GET['house_number'])) {
                 'success' => true,
                 'common_fee' => $data_master['common_fee'],
                 'area_size' => $data_master['area_size'],
+                'phone_number' => $data['phone_number'],
                 'contact_name' => $data_master['remark']
             ]);
         } else {
