@@ -1,6 +1,8 @@
 <?php
 // Make sure this path is correct relative to where upload_img_doc.php is located
-$targetDir = "uploads/inventory/";
+// $targetDir = "uploads/inventory/";
+   $targetDir = "uploads/files/";
+
 
 // Initialize the response with a success status and an empty filenames array
 $response = ['status' => 'success', 'message' => 'Upload successful', 'filenames' => []];
