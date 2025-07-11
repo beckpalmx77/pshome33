@@ -21,8 +21,6 @@
 [2025-07-11 17:10:03] ✅ บันทึกรูป: checkin_6870e2fb41c68_IMG_5696.jpg
 [2025-07-11 17:10:03] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
 [2025-07-11 17:10:03] 📤 ส่ง LINE: HTTP=429, Result={"message":"You have reached your monthly limit."}, Error=
-<<<<<<< HEAD
-=======
 [2025-07-11 17:14:01] 🔧 เริ่มต้นประมวลผล check-in
 [2025-07-11 17:14:01] 📥 รับข้อมูลจาก client: user_id=Uc2648cdcef0f0608ce5c835883488bc7, line_profile_url=https://profile.line-scdn.net/0h6WYaHrkMaXh0GHgF4EEXBwRIahJXaTBqWi10HhNLN0oefSwqUXh1GUZLYkxPfS0vD3pxGhIcYk94Cx4eak6VTHMoNElILiwpXX0mmA, display_name=หนุ่ม Dev IT, check_type=OUT, location=13.943975974809092 || 100.42727176824854
 [2025-07-11 17:14:01] 🔁 เช็คซ้ำภายใน 1 นาที: 0
@@ -73,4 +71,3 @@
 [2025-07-11 20:32:43] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7VVuJMUZkTi9RpqBPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🤥🥳ชินจัง🫨, check_type=OUT, location=13.900843 || 100.3673647
 [2025-07-11 20:32:43] 🔁 เช็คซ้ำภายใน 1 นาที: 0
 [2025-07-11 20:32:43] 🔍 check_type ล่าสุด: OUT
->>>>>>> a1fadf4059ac8e26f7a452e78a86821f6ed5e44d
