@@ -4,7 +4,7 @@ header("Access-Control-Allow-Origin: *");
 
 date_default_timezone_set("Asia/Bangkok");
 
-$channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU='; // This is no longer used for sending messages as per previous request
+$channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
 
 $logFile = __DIR__ . "/debug_checkin_log.txt";
 
@@ -25,28 +25,18 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
     $lat = $_POST['latitude'] ?? null;  // latitude กับ longitude อาจไม่มีส่งมาก็ได้
     $lon = $_POST['longitude'] ?? null;
 
-    $line_profile_url = $_POST['line_profile_url'] ?? null; // Correctly receives the URL from frontend
+    $line_profile_url = $_POST['line_profile_url'] ?? null;
 
     $timestamp = date('Y-m-d H:i:s');
 
     writeLog(sprintf("📥 รับข้อมูลจาก client: user_id=%s, line_profile_url=%s, display_name=%s, check_type=%s, location=%s || %s", $userId, $line_profile_url, $displayName, $check_type, $lat ?? 'null', $lon ?? 'null'));
 
-    // --- START OF REQUIRED CHANGES ---
-    // Update line_picture_profile if a new URL is provided and user_id is not empty
-    // The condition is changed to check if $line_profile_url is NOT empty and $userId is NOT empty.
-    if (!empty($userId) && $line_profile_url !== null && $line_profile_url !== '') {
-        try {
-            $sql_update_profile = "UPDATE ims_employee_line_user SET line_picture_profile = :line_picture_profile WHERE line_user_id = :line_user_id";
-            $stmt_update_profile = $conn->prepare($sql_update_profile);
-            $stmt_update_profile->bindParam(':line_picture_profile', $line_profile_url, PDO::PARAM_STR);
-            $stmt_update_profile->bindParam(':line_user_id', $userId, PDO::PARAM_STR);
-            $stmt_update_profile->execute(); // <<< THIS LINE IS CRUCIAL AND WAS MISSING/SKIPPED
-            writeLog("✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: $userId");
-        } catch (PDOException $e) {
-            writeLog("❌ Error updating line_picture_profile: " . $e->getMessage());
-        }
+    if (($line_profile_url === null || $line_profile_url === '') && !empty($userId)) {
+        $sql_update_house = "UPDATE ims_employee_line_user SET line_picture_profile = :line_picture_profile WHERE line_user_id = :line_user_id";
+        $stmt_update_house = $conn->prepare($sql_update_house);
+        $stmt_update_house->bindParam(':line_picture_profile', $line_profile_url);
+        $stmt_update_house->bindParam(':line_user_id', $userId);
     }
-    // --- END OF REQUIRED CHANGES ---
 
     // ตรวจสอบการเช็คซ้ำภายใน 1 นาที (เดิมเขียนว่า 5 นาที แต่โค้ดจริง -1 นาที)
     $oneMinAgo = date('Y-m-d H:i:s', strtotime('-1 minutes', strtotime($timestamp)));
@@ -56,7 +46,7 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
     writeLog("🔁 เช็คซ้ำภายใน 1 นาที: $count");
 
     if ($count > 0) {
-        echo "บันทึกไม่สำเร็จ";
+        echo "⚠️ ไม่สามารถ{$check_type} ได้ซ้ำภายใน 5 นาที";
         exit;
     }
 
@@ -67,7 +57,7 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
     writeLog("🔍 check_type ล่าสุด: $lastType");
 
     if ($lastType && $lastType === $check_type) {
-        echo "บันทึกไม่สำเร็จ";
+        echo "⚠️ ไม่สามารถ{$check_type} ซ้ำได้ กรุณาสลับเป็น " . ($check_type === 'IN' ? 'OUT' : 'IN');
         exit;
     }
 
@@ -79,7 +69,7 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
         } else {
             writeLog("❌ สร้างโฟลเดอร์ uploads ไม่สำเร็จ");
             http_response_code(500);
-            echo "บันทึกไม่สำเร็จ";
+            echo "❌ เกิดข้อผิดพลาดในการสร้างโฟลเดอร์อัปโหลด";
             exit;
         }
     }
@@ -143,20 +133,96 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
     $photoPaths = !empty($photoNames) ? implode(",", $photoNames) : null;
 
     // บันทึกข้อมูลลงฐานข้อมูลได้เลยไม่ว่ามีรูปหรือไม่มีรูป
-    try {
-        $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
-        writeLog("📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย");
-        echo "บันทึกสำเร็จ";
-    } catch (PDOException $e) {
-        writeLog("❌ Error saving to database: " . $e->getMessage());
-        echo "บันทึกไม่สำเร็จ";
+    $stmt = $conn->prepare("INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin]);
+    writeLog("📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย");
+
+    $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
+
+    // ส่งข้อความแจ้งเตือน LINE
+    $textMessage = [
+        'type' => 'text',
+        'text' => "✅ {$actionText} สำเร็จ\nสถานที่: {$place_name}\nเวลา: {$timestamp}"
+    ];
+
+    $messageData = [
+        'to' => $userId,
+        'messages' => [$textMessage]
+    ];
+
+    // ถ้ามีรูปภาพ ให้เพิ่ม Flex Message รูปภาพด้วย
+    if (!empty($photoNames)) {
+        $flexContents = [];
+        foreach (array_slice($photoNames, 0, 10) as $photo) {
+            $imageUrl = "https://ps33home.com/line_oa/checkin/uploads/" . $photo;
+            $flexContents[] = [
+                "type" => "bubble",
+                "hero" => [
+                    "type" => "image",
+                    "url" => $imageUrl,
+                    "size" => "full",
+                    "aspectRatio" => "1:1",
+                    "aspectMode" => "cover"
+                ],
+                "body" => [
+                    "type" => "box",
+                    "layout" => "vertical",
+                    "contents" => [
+                        [
+                            "type" => "text",
+                            "text" => "สถานที่ : " . $place_name,
+                            "weight" => "bold",
+                            "size" => "md"
+                        ],
+                        [
+                            "type" => "text",
+                            "text" => "เวลา: $timestamp",
+                            "size" => "sm",
+                            "color" => "#888888"
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        $flexMessage = [
+            'type' => 'flex',
+            'altText' => "📸 รูปภาพจากการ{$actionText}",
+            'contents' => [
+                'type' => 'carousel',
+                'contents' => $flexContents
+            ]
+        ];
+
+        // เพิ่ม Flex message เข้าไปในข้อความที่จะส่ง
+        $messageData['messages'][] = $flexMessage;
+    }
+
+    // ส่งข้อความ LINE
+    $ch = curl_init('https://api.line.me/v2/bot/message/push');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($messageData));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: ' . 'Bearer ' . $channelAccessToken
+    ]);
+
+    $result = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    writeLog("📤 ส่ง LINE: HTTP=$httpCode, Result=$result, Error=$error");
+
+    if ($httpCode === 200) {
+        echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
+    } else {
+        echo "❌ $actionText สำเร็จ แต่ส่ง LINE ไม่สำเร็จ: $result";
     }
 
 } else {
     http_response_code(400);
     writeLog("❌ ค่าที่ส่งมาไม่ครบ: " . json_encode($_POST));
-    echo "บันทึกไม่สำเร็จ";
+    echo "❌ ข้อมูลไม่ครบถ้วน";
 }
-
-?>
