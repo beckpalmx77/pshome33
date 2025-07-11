@@ -8,7 +8,8 @@ $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG
 
 $logFile = __DIR__ . "/debug_checkin_log.txt";
 
-function writeLog($message) {
+function writeLog($message)
+{
     global $logFile;
     file_put_contents($logFile, "[" . date("Y-m-d H:i:s") . "] $message\n", FILE_APPEND);
 }
@@ -28,7 +29,7 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
 
     $timestamp = date('Y-m-d H:i:s');
 
-    writeLog(sprintf("📥 รับข้อมูลจาก client: user_id=%s, line_profile_url=%s, display_name=%s, check_type=%s, location=%s || %s", $userId, $line_profile_url , $displayName, $check_type, $lat ?? 'null', $lon ?? 'null'));
+    writeLog(sprintf("📥 รับข้อมูลจาก client: user_id=%s, line_profile_url=%s, display_name=%s, check_type=%s, location=%s || %s", $userId, $line_profile_url, $displayName, $check_type, $lat ?? 'null', $lon ?? 'null'));
 
     if (($line_profile_url === null || $line_profile_url === '') && !empty($userId)) {
         $sql_update_house = "UPDATE ims_employee_line_user SET line_picture_profile = :line_picture_profile WHERE line_user_id = :line_user_id";
