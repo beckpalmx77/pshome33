@@ -12,7 +12,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <title>ฟอร์มขอเบิกพัสดุ</title>
+        <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+        <link href="../img/logo/logo.png" rel="icon">
+        <title>PS33 Home System</title>
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
