@@ -101,7 +101,8 @@ foreach ($BankCurr as $row_curr) {
                                                            value="1">
                                                 </div>
                                             </div>
-                                            <input type="hidden" id="month_year_calculator" name="month_year_calculator" value="12">
+                                            <input type="hidden" id="month_year_calculator" name="month_year_calculator"
+                                                   value="12">
                                         </div>
                                     </div>
 
@@ -144,7 +145,8 @@ foreach ($BankCurr as $row_curr) {
 
                                         <div class="col-md-4">
                                             <label for="period_year">งวดปี</label>
-                                            <select name="period_year" id="period_year" class="form-control" style="background-color: #0dcaf0" required>
+                                            <select name="period_year" id="period_year" class="form-control"
+                                                    style="background-color: #0dcaf0" required>
                                                 <?php
                                                 $currentYear = date('Y'); // ดึงปีปัจจุบัน
                                                 $startYear = $currentYear - 1; // 5 ปีก่อนหน้า
@@ -237,7 +239,8 @@ foreach ($BankCurr as $row_curr) {
                     </div>
                 </div>
 
-                <div class="modal fade" id="promotionModal" tabindex="-1" role="dialog" aria-labelledby="promotionModalLabel"
+                <div class="modal fade" id="promotionModal" tabindex="-1" role="dialog"
+                     aria-labelledby="promotionModalLabel"
                      aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -251,7 +254,8 @@ foreach ($BankCurr as $row_curr) {
                                 <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า รายปี </p>
                                 <p class="h6 text-primary">รับส่วนลดทันที 1 เดือน (ชำระเพียง 11 เดือน)</p>
                                 <p class="h6 text-danger">โปรโมชั่นนี้มีผลถึงวันที่ 31 มกราคม</p>
-                                <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3" style="max-width: 50%; height: auto;">
+                                <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3"
+                                     style="max-width: 50%; height: auto;">
                             </div>
                             <div class="modal-footer justify-content-center">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
@@ -807,7 +811,7 @@ foreach ($BankCurr as $row_curr) {
 
         if (showPopup) {
             // Use a slight delay to ensure Bootstrap's JS is fully loaded
-            setTimeout(function() {
+            setTimeout(function () {
                 $('#promotionModal').modal('show');
             }, 500); // 500ms delay
 
@@ -835,7 +839,7 @@ foreach ($BankCurr as $row_curr) {
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         applyPromotionLogic(); // Call on DOMContentLoaded
     });
 </script>
