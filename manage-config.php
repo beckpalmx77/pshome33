@@ -18,7 +18,6 @@ if (strlen($_SESSION['alogin']) == "") {
                 <?php
                 include('includes/Top-Bar.php');
                 ?>
-                <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
@@ -105,24 +104,54 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                            placeholder="รายละเอียด">
                                                                 </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="config_value1"
-                                                                           class="control-label">ค่า config 1</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="config_value1"
-                                                                           name="config_value1"
-                                                                           required="required"
-                                                                           placeholder="ค่า config 1">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="config_value1"
+                                                                                   class="control-label">ค่า config 1</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="config_value1"
+                                                                                   name="config_value1"
+                                                                                   required="required"
+                                                                                   placeholder="ค่า config 1">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="config_value2"
+                                                                                   class="control-label">ค่า config 2</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="config_value2"
+                                                                                   name="config_value2"
+                                                                                   required="required"
+                                                                                   placeholder="ค่า config 2">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
 
-                                                                <div class="form-group">
-                                                                    <label for="config_value2"
-                                                                           class="control-label">ค่า config 2</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="config_value2"
-                                                                           name="config_value2"
-                                                                           required="required"
-                                                                           placeholder="ค่า config 2">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="config_value3"
+                                                                                   class="control-label">ค่า config 3</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="config_value3"
+                                                                                   name="config_value3"
+                                                                                   required="required"
+                                                                                   placeholder="ค่า config 3">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="config_value4"
+                                                                                   class="control-label">ค่า config 4</label>
+                                                                            <input type="text" class="form-control"
+                                                                                   id="config_value4"
+                                                                                   name="config_value4"
+                                                                                   required="required"
+                                                                                   placeholder="ค่า config 4">
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
 
                                                                 <div class="form-group">
@@ -211,7 +240,6 @@ if (strlen($_SESSION['alogin']) == "") {
     ?>
 
 
-    <!-- Scroll to top -->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
@@ -221,13 +249,6 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
-
-    <!-- Page level plugins -->
-
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
@@ -263,7 +284,6 @@ if (strlen($_SESSION['alogin']) == "") {
     </script>
 
     <script>
-
         $("#description").blur(function () {
             let method = $('#action').val();
             if (method === "ADD") {
@@ -318,7 +338,6 @@ if (strlen($_SESSION['alogin']) == "") {
                 ]
             });
 
-            <!-- *** FOR SUBMIT FORM *** -->
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
@@ -336,7 +355,6 @@ if (strlen($_SESSION['alogin']) == "") {
                     }
                 })
             });
-            <!-- *** FOR SUBMIT FORM *** -->
         });
     </script>
 
@@ -349,6 +367,8 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#description').val("");
                 $('#config_value1').val("");
                 $('#config_value2').val("");
+                $('#config_value3').val(""); // Added
+                $('#config_value4').val(""); // Added
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -375,6 +395,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         let description = response[i].description;
                         let config_value1 = response[i].config_value1;
                         let config_value2 = response[i].config_value2;
+                        let config_value3 = response[i].config_value3; // Added
+                        let config_value4 = response[i].config_value4; // Added
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
@@ -383,6 +405,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#description').val(description);
                         $('#config_value1').val(config_value1);
                         $('#config_value2').val(config_value2);
+                        $('#config_value3').val(config_value3); // Added
+                        $('#config_value4').val(config_value4); // Added
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -415,6 +439,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         let description = response[i].description;
                         let config_value1 = response[i].config_value1;
                         let config_value2 = response[i].config_value2;
+                        let config_value3 = response[i].config_value3; // Added
+                        let config_value4 = response[i].config_value4; // Added
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
@@ -423,6 +449,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#description').val(description);
                         $('#config_value1').val(config_value1);
                         $('#config_value2').val(config_value2);
+                        $('#config_value3').val(config_value3); // Added
+                        $('#config_value4').val(config_value4); // Added
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');

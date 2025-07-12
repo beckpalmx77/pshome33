@@ -23,6 +23,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "description" => $result['description'],
             "config_value1" => $result['config_value1'],
             "config_value2" => $result['config_value2'],
+            "config_value3" => $result['config_value3'],
+            "config_value4" => $result['config_value4'],
             "status" => $result['status']);
     }
 
@@ -51,18 +53,25 @@ if ($_POST["action"] === 'ADD') {
         $description = $_POST["description"];
         $config_value1 = $_POST["config_value1"];
         $config_value2 = $_POST["config_value2"];
+        $config_value3 = $_POST["config_value3"];
+        $config_value4 = $_POST["config_value4"];
         $status = $_POST["status"];
         $sql_find = "SELECT * FROM m_config WHERE description = '" . $description . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo $dup;
         } else {
-            $sql = "INSERT INTO m_config(config_id,description,config_value1,config_value2,status) VALUES (:config_id,:description,:config_value1,:config_value2,:status)";
+            $sql = "INSERT INTO m_config(config_id,description,config_value1,config_value2
+            ,config_value3,config_value4,status) 
+            VALUES (:config_id,:description,:config_value1,:config_value2
+            ,:config_value3,:config_value4,:status)";
             $query = $conn->prepare($sql);
             $query->bindParam(':config_id', $config_id, PDO::PARAM_STR);
             $query->bindParam(':description', $description, PDO::PARAM_STR);
             $query->bindParam(':config_value1', $config_value1, PDO::PARAM_STR);
             $query->bindParam(':config_value2', $config_value2, PDO::PARAM_STR);
+            $query->bindParam(':config_value3', $config_value3, PDO::PARAM_STR);
+            $query->bindParam(':config_value4', $config_value4, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
@@ -86,17 +95,24 @@ if ($_POST["action"] === 'UPDATE') {
         $description = $_POST["description"];
         $config_value1 = $_POST["config_value1"];
         $config_value2 = $_POST["config_value2"];
+        $config_value3 = $_POST["config_value3"];
+        $config_value4 = $_POST["config_value4"];
         $status = $_POST["status"];
         $sql_find = "SELECT * FROM m_config WHERE config_id = '" . $config_id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE m_config SET config_id=:config_id,description=:description,config_value1=:config_value1,config_value2=:config_value2,status=:status            
+            $sql_update = "UPDATE m_config SET config_id=:config_id,description=:description
+            ,config_value1=:config_value1,config_value2=:config_value2
+            ,config_value3=:config_value3,config_value4=:config_value4
+            ,status=:status            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':config_id', $config_id, PDO::PARAM_STR);
             $query->bindParam(':description', $description, PDO::PARAM_STR);
             $query->bindParam(':config_value1', $config_value1, PDO::PARAM_STR);
             $query->bindParam(':config_value2', $config_value2, PDO::PARAM_STR);
+            $query->bindParam(':config_value3', $config_value3, PDO::PARAM_STR);
+            $query->bindParam(':config_value4', $config_value4, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
