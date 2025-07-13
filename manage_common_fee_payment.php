@@ -29,6 +29,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <input type="hidden" id="user_type" name="user_type" value="<?php echo $_SESSION['account_type']?>">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
@@ -648,7 +649,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script>
         $("#TableRecordList").on('click', '.print', function () {
             let id = $(this).attr("id");
-            let url = "print_pdf.php?id=" + encodeURIComponent(id);
+            let url = "";
+            if  ($('#ser_type').val()==='user')  {
+                url = "print_pdf.php?id=" + encodeURIComponent(id);
+            } else {
+                url = "print_pdf_smart.php?id=" + encodeURIComponent(id);
+            }
             window.open(url, "_blank"); // เปิดหน้าใหม่
         });
     </script>
