@@ -651,7 +651,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         $("#TableRecordList").on('click', '.print', function () {
             let id = $(this).attr("id");
             let url = "";
-            if ($('#user_type').val() === 'user') {
+            let user_type = $('#user_type').val();
+            //alert(user_type);
+            if (user_type === 'user') {
                 url = "print_pdf_smart.php?id=" + encodeURIComponent(id);
             } else {
                 url = "print_pdf.php?id=" + encodeURIComponent(id);
