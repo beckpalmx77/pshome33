@@ -1,4 +1,3 @@
-// Filename: manage_voucher_data.php
 <?php
 include('includes/Header.php');
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
@@ -17,6 +16,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         <title>PS33 Home System</title>
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+        <style>
+            .detail-input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .datepicker {
+                z-index: 9999 !important; /* Ensure datepicker is above modals if any */
+            }
+        </style>
 
     </head>
     <body id="page-top">
@@ -39,151 +48,123 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>เลขที่เอกสาร (สร้างอัตโนมัติ)</label>
-                                        <input type="text" id="doc_no" class="form-control" readonly>
+                                        <label>เลขที่เอกสารผ่อนชำระ (สร้างอัตโนมัติ)</label>
+                                        <input type="text" id="installment_id" class="form-control" readonly>
                                     </div>
                                 </div>
 
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>วันที่ (Click เลือกวันที่)</label>
+                                        <label>วันที่เอกสาร</label>
                                         <i class="fa fa-calendar" aria-hidden="true"></i>
                                         <input type="text" class="form-control" id="doc_date" name="doc_date"
                                                value="<?php echo $curr_date ?>" readonly required>
                                     </div>
                                 </div>
 
-                                <div class="col-md-8">
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="payment_method" class="form-label fw-semibold mb-2">
-                                            วิธีการชำระเงิน
-                                        </label>
-                                        <div class="d-flex align-items-center flex-wrap">
+                                        <label>บ้านเลขที่</label>
+                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="house_number" name="house_number"
+                                               value="" required>
+                                    </div>
+                                </div>
 
-                                            <div class="form-check form-check-inline d-flex align-items-center me-2">
-                                                <input class="form-check-input me-1" type="radio"
-                                                       name="payment_method_radio"
-                                                       id="method_transfer" value="โอนเงิน">
-                                                <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
-                                            </div>
-
-                                            <input type="text" class="form-control ms-2 me-2" name="bank_no"
-                                                   id="bank_no"
-                                                   placeholder="" style="width: 200px;">&nbsp;
-
-                                            <div class="form-check form-check-inline d-flex align-items-center">
-                                                <input class="form-check-input me-1" type="radio"
-                                                       name="payment_method_radio"
-                                                       id="method_cash" value="เงินสด" checked>
-                                                <label class="form-check-label" for="method_cash">💵 เงินสด</label>
-                                            </div>
-
-                                            <input type="text" class="form-control ms-2 me-2" name="payment_method"
-                                                   id="payment_method"
-                                                   placeholder="" style="width: 200px;">
-                                        </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ผู้ทำสัญญา/ผ่อนชำระ</label>
+                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="debtor" name="debtor"
+                                               value="" required>
                                     </div>
                                 </div>
 
                             </div>
-
-                            <input type="hidden" id="requester" name="requester" class="form-control" value="-">
-                            <input type="hidden" id="requester_id" name="requester_id" value="-">
-                            <input type="hidden" id="supplier_id" name="supplier_id">
-
-                            <div class="row align-items-end gx-3 gy-2">
-                                <div class="col-md-4 position-relative">
-                                    <label for="supplier_name" class="control-label">
-                                        จ่ายให้แก่ <b>(ถ้าไม่พบในระบบ สามารถเพิ่มชื่อโดยพิมพ์ในช่องนี้ได้)</b>
-                                    </label>
-                                    <input type="text" class="form-control" id="supplier_name" name="supplier_name"
-                                           autocomplete="off" required placeholder="">
-                                    <div id="supplier_list" class="list-group position-absolute"
-                                         style="z-index: 1000;"></div>
-                                </div>
-
-                                <div class="col-md-1 d-flex flex-column justify-content-end">
-                                    <label class="control-label" style="visibility: hidden;">เลือก</label>
-                                    <a data-toggle="modal" href="#SearchSupModal" class="btn btn-primary w-100">
-                                        Click <i class="fa fa-search" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-
-                                <div class="col-md-7">
-                                    <label for="purpose" class="control-label">จ่ายเพื่อ</label>
-                                    <input type="text" class="form-control" name="purpose" id="purpose" placeholder="">
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center mt-4 mb-3">
-                                <h5 class="text-primary mb-0 mr-2">รายการจ่าย</h5>
-                                <button class="btn btn-primary" id="addRow" type="button">+ เพิ่มรายการ</button>
-                            </div>
-
-                            <table class="table table-bordered" id="detailTable">
-                                <thead class="thead-primary">
-                                <tr>
-                                    <th style="width: 25%;">รายการจ่าย (พิมพ์ชื่อ ถ้าไม่พบรายการ)</th>
-                                    <th style="width: 10%;">จำนวน</th>
-                                    <th style="width: 10%;">ใบเสร็จ/inv</th>
-                                    <th style="width: 10%;">ราคาต่อหน่วย</th>
-                                    <th style="width: 15%;">รวมเงิน</th>
-                                    <th style="width: 15%;">หน่วยนับ</th>
-                                    <th style="width: 10%;">หมายเหตุ</th>
-                                    <th style="width: 5%;">ลบ</th>
-                                </tr>
-                                </thead>
-                                <tbody></tbody>
-                                <tfoot>
-                                <tr>
-                                    <td colspan="3" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
-                                    <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
-                                    </td>
-                                    <td colspan="3"></td>
-                                </tr>
-                                </tfoot>
-                            </table>
-                            <br>
 
                             <div class="row">
-                                <div class="col-md-3">
+
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>ผู้จัดทำ</label>
-                                        <input type="text" id="create_name" class="form-control" value="">
+                                        <label>ยอดเงินต้น</label>
+                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="principal_amount"
+                                               name="principal_amount"
+                                               value="" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>ผู้ตรวจสอบ</label>
-                                        <input type="text" id="checker_name" class="form-control" value="">
+                                        <label>เงินทำสัญญา</label>
+                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="down_payment"
+                                               name="down_payment"
+                                               value="" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>ผู้อนุมัติ</label>
-                                        <input type="text" id="approve_name" class="form-control" value="">
+                                        <label>จำนวนงวด</label>
+                                        <i class="fa fa-bookmark" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="num_installments"
+                                               name="num_installments"
+                                               value="" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+
+                                <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>ผู้รับเงิน</label>
-                                        <input type="text" id="receipt_name" class="form-control" value="">
+                                        <label>ยอดผ่อนแต่ละงวด</label>
+                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="installment_per_period"
+                                               name="installment_per_period"
+                                               value="" required>
                                     </div>
                                 </div>
+
                             </div>
 
+                            <input type="hidden" class="form-control" id="status" name="status" value="active">
+
                             <input type="file" id="pictures" multiple accept="image/*,application/pdf">
-                            <input type="hidden" id="picture_doc" name="picture_doc">
+                            <input type="hidden" id="picture_payment" name="picture_payment">
                             <input type="hidden" id="deleted_images" name="deleted_images" value="">
                             <div id="preview-area" class="row mt-2"></div>
                             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
 
+                            <div class="d-flex align-items-center mt-4 mb-3">
+                                <h4 class="h5 mb-0 text-gray-800">รายละเอียดงวดผ่อนชำระ</h4>
+                                <div class="ml-auto">
+                                    <button type="button" class="btn btn-success" id="addRow">
+                                        <i class="fas fa-plus"></i> เพิ่มงวด
+                                    </button>
+                                </div>
+                            </div>
 
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="detailTable">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>ยอดรวมที่ต้องชำระ</th>
+                                        <th>เงินต้นต่องวด</th>
+                                        <th>ยอดที่ชำระแล้ว</th>
+                                        <th>วันที่ชำระ</th>
+                                        <th>วิธีการชำระ</th>
+                                        <th>สถานะ</th>
+                                        <th style="width: 50px;">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
                                 <input type="hidden" name="action" id="action" value=""/>
-                                <input type="hidden" id="approve_status" name="approve_status value="">
 
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
                                     บันทึก <i class="fa fa-save"></i>
@@ -192,93 +173,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <button type="button" class="btn btn-danger" onclick="closeAndReload()">
                                     ปิด <i class="fa fa-window-close"></i>
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">เลือกรายการพัสดุ</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered" id="productTable">
-                                        <thead>
-                                        <tr>
-                                            <th>รหัส</th>
-                                            <th>ชื่อพัสดุ</th>
-                                            <th>เลือก</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal fade" id="unitModal" tabindex="-1" role="dialog" aria-labelledby="unitModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">เลือกหน่วยนับ</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered" id="unitTable">
-                                        <thead>
-                                        <tr>
-                                            <th>รหัสหน่วย</th>
-                                            <th>ชื่อหน่วย</th>
-                                            <th>เลือก</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal fade" id="SearchSupModal">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">เลือกผู้ขาย</h4>
-                                    <button type="button" class="close" data-dismiss="modal"
-                                            aria-hidden="true">×
-                                    </button>
-                                </div>
-
-                                <div class="container"></div>
-                                <div class="modal-body">
-
-                                    <div class="modal-body">
-
-                                        <table cellpadding="0" cellspacing="0" border="0"
-                                               class="display"
-                                               id="TableSupplierList"
-                                               width="100%">
-                                            <thead>
-                                            <tr>
-                                                <th>รหัสผู้ขาย</th>
-                                                <th>ชื่อผู้ขาย</th>
-                                                <th>Action</th>
-                                            </tr>
-                                            </thead>
-                                        </table>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -307,6 +201,62 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
     <script>
         $(document).ready(function () {
+            $('#doc_date').datepicker({
+                format: "dd-mm-yyyy",
+                todayHighlight: true,
+                language: "th",
+                autoclose: true
+            });
+        });
+    </script>
+
+    <script>
+
+        let rowIdx = 0; // Global counter for rows
+
+        function addRow(detailData = {}) {
+            rowIdx++;
+            const tableBody = $('#detailTable tbody');
+            const newRow = `
+                <tr id="R${rowIdx}">
+                    <td class="text-center">${rowIdx}</td>
+                    <td><input type="number" class="form-control detail-input" name="amount_due[]" value="${detailData.amount_due || ''}" step="0.01" min="0" required></td>
+                    <td><input type="number" class="form-control detail-input" name="principal_per_installment[]" value="${detailData.principal_per_installment || ''}" step="0.01" min="0" required></td>
+                    <td><input type="number" class="form-control detail-input" name="amount_paid[]" value="${detailData.amount_paid || ''}" step="0.01" min="0"></td>
+                    <td><input type="text" class="form-control detail-input datepicker-input" name="payment_date[]" value="${detailData.payment_date || ''}" readonly></td>
+                    <td>
+                        <select class="form-control detail-input" name="payment_method[]">
+                            <option value="">เลือก</option>
+                            <option value="เงินสด" ${detailData.payment_method === 'เงินสด' ? 'selected' : ''}>เงินสด</option>
+                            <option value="โอนเงิน" ${detailData.payment_method === 'โอนเงิน' ? 'selected' : ''}>โอนเงิน</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control detail-input" name="status[]">
+                            <option value="due" ${detailData.status === 'due' ? 'selected' : ''}>ยังไม่ชำระ</option>
+                            <option value="paid" ${detailData.status === 'paid' ? 'selected' : ''}>ชำระแล้ว</option>
+                            <option value="overdue" ${detailData.status === 'overdue' ? 'selected' : ''}>ค้างชำระ</option>
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger remove-row"><i class="fas fa-minus"></i></button>
+                    </td>
+                    <input type="hidden" name="installment_number[]" value="${detailData.installment_number || rowIdx}">
+                    <input type="hidden" name="line_no[]" value="${detailData.line_no || rowIdx}">
+                    <input type="hidden" name="detail_id[]" value="${detailData.id || ''}"> </tr>
+            `;
+            tableBody.append(newRow);
+
+            // Initialize datepicker for the new row's payment_date input
+            $(`#R${rowIdx} .datepicker-input`).datepicker({
+                format: "dd-mm-yyyy",
+                todayHighlight: true,
+                language: "th",
+                autoclose: true
+            });
+        }
+
+        $(document).ready(function () {
             let queryString = {};
             if (window.location.search.includes('?')) {
                 let params = window.location.search.split('?')[1].split('&');
@@ -321,336 +271,122 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             $('#action').val(queryString["action"]);
 
-            if (queryString["action"] !== 'ADD' && queryString["doc_no"]) {
-                $('#doc_no').val(queryString["doc_no"]);
-                $('#doc_date').val(queryString["doc_date"]);
-                $('#purpose').val(queryString["purpose"]);
-                $('#payment_method').val(queryString["payment_method"]);
-                $('#requester').val(queryString["requester"]);
-                $('#supplier_id').val(queryString["supplier_id"]);
-                $('#supplier_name').val(queryString["supplier_name"]);
-                $('#picture_doc').val(queryString["picture_doc"]);
-                $('#totalAmount').val(queryString["total_amount"]);
+            $('#installment_id').val(queryString["installment_id"]);
+            $('#principal_amount').val(queryString["principal_amount"]);
+            $('#down_payment').val(queryString["down_payment"]);
+            $('#num_installments').val(queryString["num_installments"]);
+            $('#installment_per_period').val(queryString["installment_per_period"]);
 
-                $('#create_name').val(queryString["create_name"]);
-                $('#checker_name').val(queryString["checker_name"]);
-                $('#approve_name').val(queryString["approve_name"]);
-                $('#receipt_name').val(queryString["receipt_name"]);
+            $('#doc_date').val(queryString["doc_date"]);
+            $('#house_number').val(queryString["house_number"]);
+            $('#debtor').val(queryString["debtor"]);
 
-                $('#approve_status').val(queryString["approve_status"]);
+            // Load existing main picture
+            if (queryString["picture_payment"]) {
+                $('#picture_payment').val(queryString["picture_payment"]); // Assuming picture_payment is for the main document
+                let filenames = queryString["picture_payment"].split(',');
+                let imagePreviewContainer = $('#imagePreview');
+                imagePreviewContainer.html('');
 
-                loadDetailData(queryString["doc_no"]);
+                filenames.forEach(file => {
+                    file = file.trim();
+                    if (!file) return;
 
-                if (queryString["picture_doc"]) {
-                    let filenames = queryString["picture_doc"].split(',');
-                    let imagePreviewContainer = $('#imagePreview');
-                    imagePreviewContainer.html('');
+                    let fileExtension = file.split('.').pop().toLowerCase();
+                    let isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
 
-                    filenames.forEach(file => {
-                        file = file.trim();
-                        if (!file) return;
+                    let fileBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
+                    let filePath = 'uploads/installment/' + file;
 
-                        let fileExtension = file.split('.').pop().toLowerCase();
-                        let isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
+                    if (isImage) {
+                        let imgLink = $('<a>').attr({'href': filePath, 'target': '_blank'});
+                        let img = $('<img>')
+                            .attr('src', filePath)
+                            .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
+                        imgLink.append(img);
+                        fileBox.append(imgLink);
+                    } else if (fileExtension === 'pdf') {
+                        let pdfPlaceholder = $('<div>').css({
+                            'width': '120px', 'height': '120px', 'background-color': '#f0f0f0',
+                            'border': '1px solid #ccc', 'display': 'flex', 'flex-direction': 'column',
+                            'justify-content': 'center', 'align-items': 'center', 'text-align': 'center',
+                            'overflow': 'hidden', 'padding': '5px'
+                        });
+                        pdfPlaceholder.append($('<p>').text('PDF File').css('font-weight', 'bold'));
+                        pdfPlaceholder.append($('<p>').text(file).css({
+                            'font-size': '0.7em',
+                            'word-break': 'break-all'
+                        }));
+                        pdfPlaceholder.append($('<a>').attr({
+                            'href': filePath,
+                            'target': '_blank'
+                        }).text('View').addClass('btn btn-sm btn-primary mt-1'));
+                        fileBox.append(pdfPlaceholder);
+                    }
 
-                        let fileBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
-                        let filePath = 'uploads/files/' + file;
+                    let deleteBtn = $('<button>')
+                        .addClass('btn btn-danger btn-sm position-absolute top-0 end-0')
+                        .html('&times;')
+                        .css({zIndex: 2, padding: '2px 6px', borderRadius: '50%'})
+                        .on('click', function () {
+                            fileBox.remove();
+                            let deleted = $('#deleted_images').val();
+                            let deletedArray = deleted ? deleted.split(',') : [];
+                            if (!deletedArray.includes(file)) {
+                                deletedArray.push(file);
+                                $('#deleted_images').val(deletedArray.join(','));
+                            }
+                        });
 
-                        if (isImage) {
-                            let imgLink = $('<a>').attr({'href': filePath, 'target': '_blank'}); // Added for click to enlarge
-                            let img = $('<img>')
-                                .attr('src', filePath)
-                                .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
-                            imgLink.append(img);
-                            fileBox.append(imgLink);
-                        } else if (fileExtension === 'pdf') {
-                            let pdfPlaceholder = $('<div>').css({
-                                'width': '120px',
-                                'height': '120px',
-                                'background-color': '#f0f0f0',
-                                'border': '1px solid #ccc',
-                                'display': 'flex',
-                                'flex-direction': 'column',
-                                'justify-content': 'center',
-                                'align-items': 'center',
-                                'text-align': 'center',
-                                'overflow': 'hidden',
-                                'padding': '5px'
-                            });
-                            pdfPlaceholder.append($('<p>').text('PDF File').css('font-weight', 'bold'));
-                            pdfPlaceholder.append($('<p>').text(file).css({'font-size': '0.7em', 'word-break': 'break-all'}));
-                            pdfPlaceholder.append($('<a>').attr({'href': filePath, 'target': '_blank'}).text('View').addClass('btn btn-sm btn-primary mt-1'));
-                            fileBox.append(pdfPlaceholder);
+                    fileBox.append(deleteBtn);
+                    imagePreviewContainer.append(fileBox);
+                });
+            }
+
+            // Load detail data if in UPDATE mode and installment_id is present
+            if (queryString["action"] === 'UPDATE' && queryString["installment_id"]) {
+
+
+                $.ajax({
+                    url: 'model/get_installment_details.php', // New endpoint to fetch details
+                    method: 'GET',
+                    data: {installment_id: queryString["installment_id"]},
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status === 'success' && res.details.length > 0) {
+                            // Reset rowIdx before loading from DB to ensure correct sequence
+                            rowIdx = 0;
+                            res.details.forEach(detail => addRow(detail));
+                        } else if (res.details.length === 0) {
+                            alertify.message('ไม่พบรายละเอียดงวดผ่อนชำระสำหรับเอกสารนี้');
+                        } else {
+                            alertify.error('ไม่สามารถโหลดรายละเอียดงวดผ่อนชำระได้: ' + res.message);
                         }
-
-                        let deleteBtn = $('<button>')
-                            .addClass('btn btn-danger btn-sm position-absolute top-0 end-0')
-                            .html('&times;')
-                            .css({zIndex: 2, padding: '2px 6px', borderRadius: '50%'})
-                            .on('click', function () {
-                                // Remove image from display
-                                fileBox.remove();
-
-                                // Add filename to deleted_images hidden field
-                                let deleted = $('#deleted_images').val();
-                                let deletedArray = deleted ? deleted.split(',') : [];
-                                if (!deletedArray.includes(file)) {
-                                    deletedArray.push(file);
-                                    $('#deleted_images').val(deletedArray.join(','));
-                                }
-                            });
-
-                        fileBox.append(deleteBtn);
-                        imagePreviewContainer.append(fileBox);
-                    });
-                }
-            }
-        });
-    </script>
-
-    <script>
-        function loadDetailData(docNo) {
-            $.ajax({
-                url: 'model/manage_voucher_process.php',
-                method: 'GET',
-                data: {
-                    action: 'GET_DATA_DETAIL',
-                    doc_no: docNo
-                },
-                dataType: 'json',
-                success: function (response) {
-                    if (Array.isArray(response)) {
-                        $('#detailTable tbody').empty(); // Clear before loading new data
-                        response.forEach(item => {
-                            $('#detailTable tbody').append(`
-<tr>
-    <td style="width: 25%;">
-        <div class="d-flex align-items-center">
-            <input type="hidden" class="form-control product_id" value="${item.product_id}" readonly>
-            <input type="text" class="form-control product_name" value="${item.product_name}" style="flex: 1; margin-right: 5px;">
-            <a href="#itemModal" data-toggle="modal" class="btn btn-primary btn-select-item" style="white-space: nowrap;">
-                <i class="fa fa-search"></i>
-            </a>
-        </div>
-    </td>
-    <td style="width: 10%;"><input type="number" class="form-control item-quantity" value="${item.quantity}" min="1"></td>
-    <td style="width: 10%;"><input type="text" class="form-control item-inv" value="${item.inv}"></td>
-    <td style="width: 10%;"><input type="number" class="form-control item-price" value="${item.price}" min="0"></td>
-    <td style="width: 15%;"><input type="number" class="form-control item-amount" value="${(item.quantity * item.price).toFixed(2)}" readonly></td>
-    <td style="width: 15%;">
-        <div class="d-flex">
-            <input type="hidden" class="form-control item-unit-code" value="${item.unit_id}" readonly style="flex: 1;">
-            <input type="text" class="form-control item-unit-name" value="${item.unit_name}" readonly style="flex: 1;">
-            <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
-                <i class="fa fa-search"></i>
-            </a>
-        </div>
-    </td>
-    <td style="width: 10%;"><input type="text" class="form-control item-remark" value="${item.remark || ''}"></td>
-    <td style="width: 5%;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
-</tr>
-                        `);
-                        });
-                        calculateTotalAmount(); // Recalculate total after loading details
-                    } else if (response.error) {
-                        alertify.error("Error: " + response.error);
-                    } else {
-                        alertify.error("ข้อมูลว่างเปล่า");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error loading details:", status, error);
+                        alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เพื่อโหลดรายละเอียดได้');
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error("AJAX Error:", status, error);
-                    alertify.error("โหลดข้อมูลไม่สำเร็จ");
-                }
-            });
-        }
-    </script>
+                });
+            }
 
-
-    <script>
-        $(document).ready(function () {
-            $('#doc_date').datepicker({
-                format: "dd-mm-yyyy",
-                todayHighlight: true,
-                language: "th",
-                autoclose: true
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $('#addRow').on('click', function () {
-                $('#detailTable tbody').append(`
-<tr>
-  <td style="width: 25%;">
-    <div class="d-flex align-items-center">
-      <input type="hidden" class="form-control product_id" readonly>
-      <input type="text" class="form-control product_name" style="flex: 1; margin-right: 5px;">
-      <a href="#itemModal" data-toggle="modal" class="btn btn-primary btn-select-item" style="white-space: nowrap;">
-        <i class="fa fa-search"></i>
-      </a>
-    </div>
-  </td>
-  <td style="width: 10%;"><input type="number" class="form-control item-quantity" min="1" required style="width: 100%;"></td>
-  <td style="width: 10%;"><input type="text" class="form-control item-inv" style="width: 100%;"></td>
-  <td style="width: 10%;"><input type="number" class="form-control item-price" min="0" required style="width: 100%;"></td>
-  <td style="width: 15%;"><input type="number" class="form-control item-amount" min="0" required style="width: 100%;" readonly></td>
-  <td style="width: 15%;">
-    <div class="d-flex">
-      <input type="hidden" class="form-control item-unit-code" readonly style="flex: 1;">
-      <input type="text" class="form-control item-unit-name" readonly style="flex: 1;">
-      <a href="#unitModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-unit" style="white-space: nowrap;">
-        <i class="fa fa-search"></i>
-      </a>
-    </div>
-  </td>
-  <td style="width: 10%;"><input type="text" class="form-control item-remark" style="width: 100%;"></td>
-  <td style="width: 5%;"><button class="btn btn-danger btn-sm remove-row" type="button">ลบ</button></td>
-</tr>
-        `);
+            // Add row button click
+            $('#addRow').click(function () {
+                addRow();
             });
 
-            $(document).on('click', '.remove-row', function () {
+            // Remove row button click (delegated event for dynamic rows)
+            $('#detailTable tbody').on('click', '.remove-row', function () {
                 $(this).closest('tr').remove();
-                calculateTotalAmount();
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            let currentRow = null;
-
-            $(document).on('click', '.btn-select-item', function () {
-                currentRow = $(this).closest('tr');
-                loadProductTable();
-                $('#itemModal').modal('show');
-            });
-
-            $(document).on('click', '.select-this', function () {
-                const code = $(this).data('code');
-                const name = $(this).data('name');
-
-                if (currentRow) {
-                    currentRow.find('.product_id').val(code);
-                    currentRow.find('.product_name').val(name);
-                }
-
-                $('#itemModal').modal('hide');
-            });
-
-            function loadProductTable() {
-                $.ajax({
-                    url: 'model/get_products.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        let html = '';
-                        data.forEach(item => {
-                            html += `
-<tr>
-    <td>${item.product_id}</td>
-    <td>${item.product_name}</td>
-    <td>
-        <button class="btn btn-sm btn-primary select-this"
-                data-code="${item.product_id}"
-                data-name="${item.product_name}">เลือก</button>
-    </td>
-</tr>`;
-                        });
-                        $('#productTable tbody').html(html);
-                    },
-                    error: function () {
-                        alert('โหลดข้อมูลสินค้าไม่สำเร็จ');
-                    }
+                // Re-index row numbers and hidden inputs after removal
+                $('#detailTable tbody tr').each(function (i) {
+                    const currentLineNum = i + 1;
+                    $(this).find('td:first').text(currentLineNum); // Update displayed #
+                    $(this).find('input[name="installment_number[]"]').val(currentLineNum); // Update hidden installment_number
+                    $(this).find('input[name="line_no[]"]').val(currentLineNum); // Update hidden line_no
                 });
-            }
-        });
-    </script>
-
-
-    <script>
-        $(document).ready(function () {
-            let currentRow = null;
-
-            $(document).on('click', '.btn-select-unit', function () {
-                currentRow = $(this).closest('tr');
-                loadUnitTable();
-                $('#unitModal').modal('show');
+                rowIdx = $('#detailTable tbody tr').length; // Update global rowIdx based on remaining rows
             });
-
-            $(document).on('click', '.select-this-unit', function () {
-                const code = $(this).data('code');
-                const name = $(this).data('name');
-
-                if (currentRow) {
-                    currentRow.find('.item-unit-code').val(code);
-                    currentRow.find('.item-unit-name').val(name);
-                }
-
-                $('#unitModal').modal('hide');
-            });
-
-            function loadUnitTable() {
-                $.ajax({
-                    url: 'model/get_unit.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        let html = '';
-                        data.forEach(unit => {
-                            html += `
-<tr>
-    <td>${unit.unit_id}</td>
-    <td>${unit.unit_name}</td>
-    <td>
-        <button class="btn btn-sm btn-primary select-this-unit"
-                data-code="${unit.unit_id}"
-                data-name="${unit.unit_name}">เลือก</button>
-    </td>
-</tr>`;
-                        });
-                        $('#unitTable tbody').html(html);
-                    },
-                    error: function () {
-                        alert('โหลดข้อมูลหน่วยนับไม่สำเร็จ');
-                    }
-                });
-            }
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            function calculateAmount(row) {
-                const quantity = parseFloat(row.find('.item-quantity').val()) || 0;
-                const price = parseFloat(row.find('.item-price').val()) || 0;
-                const amount = quantity * price;
-                row.find('.item-amount').val(amount.toFixed(2));
-            }
-
-            $(document).on('input', '.item-quantity, .item-price', function () {
-                const row = $(this).closest('tr');
-                calculateAmount(row);
-                calculateTotalAmount();
-            });
-
-            calculateTotalAmount();
-        });
-
-        function calculateTotalAmount() {
-            let total = 0;
-            $('#detailTable tbody tr').each(function () {
-                const amount = parseFloat($(this).find('.item-amount').val()) || 0;
-                total += amount;
-            });
-            $('#totalAmount').val(total.toFixed(2));
-        }
-
-        $(document).on('click', '.remove-row', function () {
-            $(this).closest('tr').remove();
-            calculateTotalAmount();
         });
     </script>
 
@@ -668,79 +404,93 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#save').on('click', async function (e) {
                 e.preventDefault();
 
-                if (!$('#doc_date').val() || !$('#supplier_name').val()) {
-                    alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
+                if (!$('#doc_date').val() || ($('#installment_id').val() === '' && $('#action').val() !== 'ADD')) {
+                    alertify.error('กรุณากรอกวันที่เอกสารและเลขที่เอกสารผ่อนชำระ');
                     return;
                 }
 
-                const details = [];
-                let valid = true;
-
+                const detailRows = [];
+                let isValidDetails = true;
                 $('#detailTable tbody tr').each(function () {
-                    const product_id = $(this).find('.product_id').val();
-                    const product_name = $(this).find('.product_name').val();
-                    const quantity = parseFloat($(this).find('.item-quantity').val());
-                    const inv = $(this).find('.item-inv').val();
-                    const price = parseFloat($(this).find('.item-price').val());
-                    const unit_id = $(this).find('.item-unit-code').val();
-                    const unit_name = $(this).find('.item-unit-name').val();
-                    const remark = $(this).find('.item-remark').val();
+                    const row = $(this);
+                    const detail = {
+                        line_no: row.find('input[name="line_no[]"]').val(),
+                        id: row.find('input[name="detail_id[]"]').val(),
+                        installment_number: row.find('input[name="installment_number[]"]').val(),
+                        amount_due: row.find('input[name="amount_due[]"]').val(),
+                        principal_per_installment: row.find('input[name="principal_per_installment[]"]').val(),
+                        amount_paid: row.find('input[name="amount_paid[]"]').val(),
+                        payment_date: row.find('input[name="payment_date[]"]').val(),
+                        payment_method: row.find('select[name="payment_method[]"]').val(),
+                        status: row.find('select[name="status[]"]').val()
+                    };
 
-                    if (!product_name || isNaN(quantity) || isNaN(price) || !unit_id || quantity <= 0 || price < 0) {
-                        valid = false;
-                        alertify.error("กรุณากรอกข้อมูลให้ครบและถูกต้องในทุกรายการ");
-                        return false;
+                    // Basic validation for detail rows
+                    if (!detail.principal_per_installment || !detail.payment_method) {
+                        alertify.error('กรุณากรอกข้อมูลในตารางรายละเอียดงวดผ่อนชำระให้ครบถ้วน');
+                        isValidDetails = false;
+                        return false; // Break .each loop
                     }
 
-                    details.push({product_id, product_name, quantity, inv, price, unit_id, unit_name, remark});
+                    detailRows.push(detail);
                 });
 
-                if (!valid) return;
+                if (!isValidDetails) {
+                    return;
+                }
+
+                if (detailRows.length === 0) {
+                    alertify.error('กรุณาเพิ่มรายละเอียดงวดผ่อนชำระอย่างน้อย 1 รายการ');
+                    return;
+                }
 
                 $('#save').prop('disabled', true);
 
                 try {
                     const newlyUploadedFilenames = await uploadImages();
 
-                    let existingPictureDoc = $('#picture_doc').val();
-                    let existingFilenames = existingPictureDoc ? existingPictureDoc.split(',').map(name => name.trim()).filter(name => name) : [];
+                    let existingPicturePayment = $('#picture_payment').val();
+                    let existingFilenames = existingPicturePayment ? existingPicturePayment.split(',').map(name => name.trim()).filter(name => name) : [];
 
                     let deletedFilenames = $('#deleted_images').val();
                     let deletedArray = deletedFilenames ? deletedFilenames.split(',').map(name => name.trim()).filter(name => name) : [];
 
                     let currentFilenames = existingFilenames.filter(filename => !deletedArray.includes(filename));
 
-                    const finalPictureDoc = currentFilenames.concat(newlyUploadedFilenames).join(',');
+                    const finalPicturePayment = currentFilenames.concat(newlyUploadedFilenames).join(',');
 
                     const payload = {
                         action: $('#action').val(),
-                        doc_no: $('#doc_no').val(),
-                        date: $('#doc_date').val(),
-                        requester: $('#requester').val(),
-                        supplier_id: $('#supplier_id').val(),
-                        supplier_name: $('#supplier_name').val(),
-                        create_name: $('#create_name').val(),
-                        checker_name: $('#checker_name').val(),
-                        approve_name: $('#approve_name').val(),
-                        receipt_name: $('#receipt_name').val(),
-                        payment_method: $('#payment_method').val(),
-                        purpose: $('#purpose').val(),
-                        picture_doc: finalPictureDoc,
-                        approve_status: $('#approve_status').val(),
-                        details: details
+                        installment_id: $('#installment_id').val(),
+                        house_number: $('#house_number').val(),
+                        debtor: $('#debtor').val(),
+                        doc_date: $('#doc_date').val(),
+                        start_date: $('#start_date').val(), // This field is not defined in the HTML
+                        down_payment: $('#down_payment').val(),
+                        principal_amount: $('#principal_amount').val(),
+                        interest_rate: $('#interest_rate').val(), // This field is not defined in the HTML
+                        installment_per_period: $('#installment_per_period').val(),
+                        num_installments: $('#num_installments').val(),
+                        status: $('#status').val(),
+                        picture_payment: finalPicturePayment,
+                        details: detailRows
                     };
 
                     $.ajax({
-                        url: 'model/manage_voucher_data_detail_process.php',
+                        url: 'model/manage_installment_process.php',
                         method: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify(payload),
                         success: function (res) {
                             if (res.status === 'success') {
                                 alertify.success('บันทึกสำเร็จแล้ว');
-                                //closeAndReload();
+                                if ($('#action').val() === 'ADD' && res.installment_id) {
+                                    $('#installment_id').val(res.installment_id);
+                                    $('#action').val('UPDATE');
+                                }
+                                $('#deleted_images').val('');
                             } else {
-                                alert('เกิดข้อผิดพลาด: ' + res.message);
+                                alertify.error('เกิดข้อผิดพลาด: ' + (res.message || 'Unknown error'));
                                 $('#save').prop('disabled', false);
                             }
                         },
@@ -757,79 +507,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
         });
     </script>
-
-
-    <script>
-        $(document).ready(function () {
-            $('#supplier_name').on('keyup', function () {
-                let query = $(this).val();
-
-                if (query.length >= 2) {
-                    $.ajax({
-                        url: 'model/get_suppliers.php',
-                        method: 'POST',
-                        data: {query: query},
-                        success: function (data) {
-                            $('#supplier_list').fadeIn().html(data);
-                        }
-                    });
-                } else {
-                    $('#supplier_list').fadeOut();
-                }
-            });
-
-            $(document).on('click', '.supplier-item', function () {
-                let name = $(this).data('name');
-                let id = $(this).data('id');
-
-                $('#supplier_name').val(name);
-                $('#supplier_id').val(id);
-                $('#supplier_list').fadeOut();
-            });
-
-            $(document).on('click', function (e) {
-                if (!$(e.target).closest('#supplier_name, #supplier_list').length) {
-                    $('#supplier_list').fadeOut();
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $('#requester').on('keyup', function () {
-                let query = $(this).val();
-
-                if (query.length >= 2) {
-                    $.ajax({
-                        url: 'model/get_requester.php',
-                        method: 'POST',
-                        data: {query: query},
-                        success: function (data) {
-                            $('#requester_list').fadeIn().html(data);
-                        }
-                    });
-                } else {
-                    $('#requester_list').fadeOut();
-                }
-            });
-
-            $(document).on('click', '.requester-item', function () {
-                const name = $(this).data('name');
-                const id = $(this).data('id');
-                $('#requester').val(name);
-                $('#requester_id').val(id);
-                $('#requester_list').fadeOut();
-            });
-
-            $(document).on('click', function (e) {
-                if (!$(e.target).closest('#requester, #requester_list').length) {
-                    $('#requester_list').fadeOut();
-                }
-            });
-        });
-    </script>
-
 
     <script>
         let uploadedImages = [];
@@ -858,12 +535,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         img.classList.add('img-thumbnail');
                         img.style.cssText = 'width:100%; height:120px; object-fit:cover;';
 
-                        const imgLink = document.createElement('a'); // New: Create anchor tag
-                        imgLink.setAttribute('href', e.target.result); // Link to the full image
-                        imgLink.setAttribute('target', '_blank');     // Open in new tab
-                        imgLink.appendChild(img);                     // Append image to anchor
+                        const imgLink = document.createElement('a');
+                        imgLink.setAttribute('href', e.target.result);
+                        imgLink.setAttribute('target', '_blank');
+                        imgLink.appendChild(img);
 
-                        filePreviewBox.appendChild(imgLink);          // Append anchor to box
+                        filePreviewBox.appendChild(imgLink);
                         filePreviewBox.appendChild(removeButton);
                         previewArea.appendChild(filePreviewBox);
                     };
@@ -910,13 +587,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
         async function uploadImages() {
             const formData = new FormData();
-            uploadedImages.forEach(file => formData.append('images[]', file)); // The server-side script will need to handle file types
+            uploadedImages.forEach(file => formData.append('images[]', file));
 
             if (uploadedImages.length === 0) {
                 return Promise.resolve([]);
             }
 
-            const response = await fetch('upload_img_doc.php', { // Assuming upload_img_doc.php can handle PDFs
+            const response = await fetch('upload_img_installment.php', {
                 method: 'POST',
                 body: formData
             });
@@ -933,35 +610,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
         }
     </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const radioButtons = document.querySelectorAll('input[name="payment_method_radio"]');
-            const paymentMethodInput = document.getElementById('payment_method');
-
-            function updatePaymentMethodInput() {
-                radioButtons.forEach(radio => {
-                    if (radio.checked) {
-                        paymentMethodInput.value = radio.value;
-                        if (radio.value === 'เงินสด' || radio.value === 'โอนเงิน') {
-                            paymentMethodInput.setAttribute('readonly', true);
-                        } else {
-                            paymentMethodInput.removeAttribute('readonly');
-                            paymentMethodInput.focus();
-                        }
-                    }
-                });
-            }
-
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', updatePaymentMethodInput);
-            });
-
-            updatePaymentMethodInput();
-        });
-    </script>
-
-
     </body>
     </html>
 

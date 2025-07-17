@@ -42,20 +42,21 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
         $return_arr[] = array(
             "id" => $result['id'],
             "installment_id" => $result['installment_id'],
+            "doc_date" => $result['doc_date'],
             "house_number" => $result['house_number'],
-            "payer" => $result['payer'],
+            "debtor" => $result['debtor'],
             "detail" => $result['detail'],
             "total_amount" => $result['total_amount'],
             "down_payment" => $result['down_payment'],
             "principal_amount" => $result['principal_amount'],
             "num_installments" => $result['num_installments'],
             "interest_rate" => $result['interest_rate'],
+            "installment_per_period" => $result['installment_per_period'],
             "start_date" => $result['start_date'],
             // เพิ่มคอลัมน์เหล่านี้ถ้ามีในฐานข้อมูลและต้องการส่งกลับ
             "payment_schedule_type" => $result['payment_schedule_type'] ?? null,
             "due_date_first_installment" => $result['due_date_first_installment'] ?? null,
-            "status" => $result['status'],
-            "created_at" => $result['created_at']
+            "status" => $result['status']
         );
     }
 
@@ -68,11 +69,11 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
 // จัดการการเพิ่ม/แก้ไขข้อมูลการผ่อนชำระ (Master & Details)
 // ตรวจสอบ action จาก $payload ที่อ่านมาจาก JSON input
 // ------------------------------------------
-if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['action'] === 'EDIT')) { // Frontend ใช้ 'EDIT' ไม่ใช่ 'UPDATE'
+if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['action'] === 'UPDATE')) {
 
-    $action = $payload['action']; // ใช้ action จาก payload
-    $id = $payload['id'] ?? null; // Primary key from ims_installment
-    $installment_id = $payload['installment_id'] ?? null; // Document number, could be generated
+    $action = $payload['action'];
+    $id = $payload['id'] ?? null;
+    $installment_id = $payload['installment_id'] ?? null;
 
     try {
         $conn->beginTransaction(); // เริ่มต้น transaction
@@ -81,42 +82,43 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
             // --- ส่วนของการเพิ่มข้อมูลใหม่ (ADD) ---
             // 1. สร้าง installment_id ใหม่ ถ้ายังไม่มี
             if (empty($installment_id)) {
-                $stmt_count = $conn->prepare("SELECT COUNT(*) FROM ims_installment WHERE DATE(created_at) = CURDATE()");
+                $stmt_count = $conn->prepare("SELECT COUNT(*) FROM ims_installment WHERE house_number = '" . $payload['house_number'] . "'");
                 $stmt_count->execute();
                 $count = $stmt_count->fetchColumn();
                 $stmt_count->closeCursor();
-
                 $new_count = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
-                $installment_id = "INST-" . date("Ymd") . "-" . $new_count;
+                $installment_id = "INST-" . $payload['house_number'] . "-" . date("Ymd") . "-" . $new_count;
             }
 
             // 2. บันทึกข้อมูลหลักลงใน ims_installment
-            $stmt_master = $conn->prepare("INSERT INTO ims_installment (installment_id, house_number, payer, detail, total_amount, down_payment, principal_amount, num_installments, interest_rate, payment_schedule_type, due_date_first_installment, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt_master = $conn->prepare("INSERT INTO ims_installment (installment_id, house_number, debtor, doc_date, down_payment
+            , principal_amount, num_installments, installment_per_period, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
             $stmt_master->execute([
                 $installment_id,
-                $payload['house_number'], // ใช้ $payload แทน $_POST
-                $payload['payer'],        // ใช้ $payload แทน $_POST
-                $payload['detail'],       // ใช้ $payload แทน $_POST
-                $payload['total_amount'], // ใช้ $payload แทน $_POST
-                $payload['down_payment'], // ใช้ $payload แทน $_POST
-                $payload['principal_amount'], // ใช้ $payload แทน $_POST
-                $payload['num_installments'], // ใช้ $payload แทน $_POST
-                $payload['interest_rate'],    // ใช้ $payload แทน $_POST
-                $payload['payment_schedule_type'], // ใช้ $payload แทน $_POST
-                $payload['due_date_first_installment'], // ใช้ $payload แทน $_POST
-                $payload['status']        // ใช้ $payload แทน $_POST
+                $payload['house_number'],
+                $payload['debtor'],
+                $payload['doc_date'],
+                $payload['down_payment'],
+                $payload['principal_amount'],
+                $payload['num_installments'],
+                $payload['installment_per_period'],
+                $payload['status']
             ]);
-            $id = $conn->lastInsertId(); // ได้ primary key id ที่สร้างขึ้นมา
+            $id = $conn->lastInsertId();
 
-            // 3. บันทึกข้อมูลรายละเอียดลงใน ims_installment_details
+            // 3. บันทึกข้อมูลรายละเอียดลงใน ims_installment_detail
             if (!empty($payload['details']) && is_array($payload['details'])) {
-                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_details (installment_id, detail_item, amount, due_date, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number , amount_paid, payment_method, payment_date, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
                 foreach ($payload['details'] as $detail_row) {
                     $stmt_detail->execute([
                         $installment_id,
-                        $detail_row['detail_item'] ?? '',
-                        $detail_row['amount'] ?? 0,
-                        $detail_row['due_date'] ?? '',
+                        $detail_row['line_no'] ?? 0,
+                        $detail_row['installment_number'] ?? 0,
+                        $detail_row['amount_paid'] ?? 0,
+                        $detail_row['payment_method'] ?? 0,
+                        $detail_row['payment_date'] ?? '',
                         $detail_row['status'] ?? 0
                     ]);
                 }
@@ -124,21 +126,23 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
             }
             $stmt_master->closeCursor();
 
-            $conn->commit(); // Commit transaction
+            $conn->commit();
             echo json_encode(['status' => 'success', 'message' => 'Data added successfully.', 'id' => $id, 'installment_id' => $installment_id]);
 
-        } elseif ($action === 'EDIT') { // Frontend ใช้ 'EDIT'
-            // --- ส่วนของการแก้ไขข้อมูล (EDIT) ---
+        } elseif ($action === 'UPDATE') {
+            // --- ส่วนของการแก้ไขข้อมูล (UPDATE) ---
             if (!$id || !$installment_id) {
-                echo json_encode(['status' => 'error', 'message' => 'Missing ID or Installment ID for EDIT action.']);
+                echo json_encode(['status' => 'error', 'message' => 'Missing ID or Installment ID for UPDATE action.']);
                 exit();
             }
 
             // 1. อัปเดตข้อมูลหลักใน ims_installment
-            $stmt_master = $conn->prepare("UPDATE ims_installment SET house_number=?, payer=?, detail=?, total_amount=?, down_payment=?, principal_amount=?, num_installments=?, interest_rate=?, payment_schedule_type=?, due_date_first_installment=?, status=?, updated_at=NOW() WHERE id=? AND installment_id=?");
+            $stmt_master = $conn->prepare("UPDATE ims_installment SET house_number=?, debtor=?, detail=?, total_amount=?
+            , down_payment=?, principal_amount=?, num_installments=?, interest_rate=?, payment_schedule_type=?, due_date_first_installment=?, status=?
+            WHERE installment_id=? ");
             $stmt_master->execute([
                 $payload['house_number'],
-                $payload['payer'],
+                $payload['debtor'],
                 $payload['detail'],
                 $payload['total_amount'],
                 $payload['down_payment'],
@@ -148,32 +152,33 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['payment_schedule_type'],
                 $payload['due_date_first_installment'],
                 $payload['status'],
-                $id,
                 $installment_id
             ]);
             $stmt_master->closeCursor();
 
-            // 2. จัดการข้อมูลรายละเอียดใน ims_installment_details
-            // วิธีที่ง่ายที่สุดคือการลบรายละเอียดเก่าทั้งหมดแล้วเพิ่มใหม่
-            $stmt_delete_details = $conn->prepare("DELETE FROM ims_installment_details WHERE installment_id = ?");
+            // 2. จัดการข้อมูลรายละเอียดใน ims_installment_detail
+            $stmt_delete_details = $conn->prepare("DELETE FROM ims_installment_detail WHERE installment_id = ?");
             $stmt_delete_details->execute([$installment_id]);
             $stmt_delete_details->closeCursor();
 
             if (!empty($payload['details']) && is_array($payload['details'])) {
-                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_details (installment_id, detail_item, amount, due_date, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number , amount_paid,payment_method, payment_date, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)");
                 foreach ($payload['details'] as $detail_row) {
                     $stmt_detail->execute([
                         $installment_id,
-                        $detail_row['detail_item'] ?? '',
-                        $detail_row['amount'] ?? 0,
-                        $detail_row['due_date'] ?? '',
+                        $detail_row['line_no'] ?? 0,
+                        $detail_row['installment_number'] ?? 0,
+                        $detail_row['amount_paid'] ?? 0,
+                        $detail_row['payment_method'] ?? 0,
+                        $detail_row['payment_date'] ?? '',
                         $detail_row['status'] ?? 0
                     ]);
                 }
                 $stmt_detail->closeCursor();
             }
 
-            $conn->commit(); // Commit transaction
+            $conn->commit();
             echo json_encode(['status' => 'success', 'message' => 'Data updated successfully.', 'id' => $id, 'installment_id' => $installment_id]);
 
         } else {
@@ -181,11 +186,11 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
         }
 
     } catch (PDOException $e) {
-        $conn->rollBack(); // Rollback transaction หากเกิดข้อผิดพลาด
-        error_log("PDO Error in manage_installment_process.php (ADD/EDIT): " . $e->getMessage()); // บันทึก error ลง log
+        $conn->rollBack();
+        error_log("PDO Error in manage_installment_process.php (ADD/UPDATE): " . $e->getMessage());
         echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
     }
-    exit; // สำคัญ: ต้อง exit เพื่อไม่ให้โค้ดส่วนอื่นทำงานต่อเมื่อจัดการเสร็จ
+    exit;
 }
 
 // -----------------------------
@@ -203,7 +208,7 @@ if (isset($_GET["action"]) && $_GET["action"] === 'GET_DATA_DETAIL') {
     try {
         $stmt = $conn->prepare("
             SELECT *
-            FROM ims_installment_details
+            FROM ims_installment_detail
             WHERE installment_id = ?
             ORDER BY id ASC -- หรือ line_no ASC ถ้ามีคอลัมน์ line_no
         ");
@@ -242,7 +247,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
     // Total records (no filter)
     $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_installment");
     $stmt->execute();
-    $totalRecords = $stmt->fetchColumn(); // ใช้ fetchColumn()
+    $totalRecords = $stmt->fetchColumn();
 
     // Total records (with filter)
     $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_installment WHERE 1 " . $searchQuery);
@@ -250,11 +255,11 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
         $stmt->bindValue(':' . $key, $val, PDO::PARAM_STR);
     }
     $stmt->execute();
-    $totalRecordwithFilter = $stmt->fetchColumn(); // ใช้ fetchColumn()
+    $totalRecordwithFilter = $stmt->fetchColumn();
 
     // Fetch data
     $sql = "SELECT * FROM ims_installment WHERE 1 " . $searchQuery .
-        " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :offset, :limit"; // แก้ไขตาม column order
+        " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :offset, :limit";
     $stmt = $conn->prepare($sql);
 
     foreach ($searchArray as $key => $val) {
@@ -267,7 +272,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
 
     $data = [];
 
-    $isUser = $_SESSION['account_type'] !== "user"; // ตรวจสอบตัวแปรนี้ว่าใช้หรือไม่ในส่วนอื่น
+    $isUser = $_SESSION['account_type'] !== "user";
 
     foreach ($empRecords as $row) {
         if (isset($_POST['sub_action']) && $_POST['sub_action'] === "GET_MASTER") {
@@ -276,12 +281,13 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
                 "installment_id" => $row['installment_id'],
                 "house_number" => $row['house_number'],
                 "detail" => $row['detail'],
-                "payer" => $row['payer'],
+                "debtor" => $row['debtor'],
                 "interest_rate" => $row['interest_rate'],
                 "principal_amount" => $row['principal_amount'],
                 "total_amount" => $row['total_amount'],
                 "down_payment" => $row['down_payment'],
                 "num_installments" => $row['num_installments'],
+                "installment_per_period" => $row['installment_per_period'],
                 "start_date" => $row['start_date'],
                 "status" => $row['status'],
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",

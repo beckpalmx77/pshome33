@@ -64,8 +64,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     <th>ชื่อผู้ชำระ</th>
                                                     <th>จำนวนเงินต้น</th>
                                                     <th>จำนวนเงินดาวน์</th>
-                                                    <th>จำนวนเงินทั้งสิ้น</th>
                                                     <th>จำนวนงวด</th>
+                                                    <th>จำนวนผ่อนแต่ละงวด</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
@@ -198,11 +198,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                 'columns': [
                     {data: 'installment_id'},
                     {data: 'house_number'},
-                    {data: 'payer'},
+                    {data: 'debtor'},
                     {data: 'principal_amount'},
                     {data: 'down_payment'},
-                    {data: 'total_amount'},
                     {data: 'num_installments'},
+                    {data: 'installment_per_period'},
                     {data: 'update'},
                     {data: 'print'},
                     {data: 'delete'}
@@ -240,20 +240,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                         for (let i = 0; i < len; i++) {
                             let id = response[i].id;
                             let installment_id = response[i].installment_id;
+                            let doc_date = response[i].doc_date;
                             let house_number = response[i].house_number;
-                            let requester = response[i].requester;
-                            let supplier_id = response[i].supplier_id;
-                            let payer = response[i].payer;
-                            let purpose = response[i].purpose;
+                            let debtor = response[i].debtor;
+                            let down_payment = response[i].down_payment;
+                            let num_installments = response[i].num_installments;
+                            let interest_rate = response[i].interest_rate;
                             let principal_amount = response[i].principal_amount;
+                            let installment_per_period = response[i].installment_per_period;
                             let picture_doc = response[i].picture_doc;
-
-                            let create_name = response[i].create_name;
-                            let checker_name = response[i].checker_name;
-                            let approve_name = response[i].approve_name;
-                            let receipt_name = response[i].receipt_name;
                             let payment_method = response[i].payment_method;
-
                             let bank_no = response[i].bank_no;
                             let approve_status = response[i].approve_status;
                             let status = response[i].status;
@@ -263,18 +259,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                             let url = "manage_installment_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
                                 + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                                 + '&id=' + id
+                                + '&doc_date=' + doc_date
                                 + '&installment_id=' + installment_id
                                 + '&house_number=' + house_number
                                 + '&picture_doc=' + picture_doc
-                                + '&purpose=' + purpose
-                                + '&requester=' + requester
-                                + '&supplier_id=' + supplier_id
-                                + '&payer=' + payer
+                                + '&debtor=' + debtor
                                 + '&principal_amount=' + principal_amount
-                                + '&create_name=' + create_name
-                                + '&checker_name=' + checker_name
-                                + '&approve_name=' + approve_name
-                                + '&receipt_name=' + receipt_name
+                                + '&num_installments=' + num_installments
+                                + '&installment_per_period=' + installment_per_period
+                                + '&interest_rate=' + interest_rate
+                                + '&down_payment=' + down_payment
                                 + '&payment_method=' + payment_method
                                 + '&bank_no=' + bank_no
                                 + '&approve_status=' + approve_status
