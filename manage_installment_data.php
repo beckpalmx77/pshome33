@@ -48,7 +48,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label>เลขที่เอกสารผ่อนชำระ (สร้างอัตโนมัติ)</label>
+                                        <label>เลขที่เอกสาร</label>
                                         <input type="text" id="installment_id" class="form-control" readonly>
                                     </div>
                                 </div>
