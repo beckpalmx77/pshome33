@@ -47,6 +47,7 @@ try {
             status,
             principal_per_installment,
             amount_paid,
+            amount_due,
             payment_date,
             payment_method
         FROM ims_installment_detail
@@ -69,6 +70,7 @@ try {
             'installment_number' => $row['installment_number'],
             'principal_per_installment' => $row['principal_per_installment'] ?? null,
             'amount_paid' => $row['amount_paid'] ?? null,
+            'amount_due' => $row['amount_due'] ?? null,
             'payment_date' => $row['payment_date'] ?? '',
             'payment_method' => $row['payment_method'] ?? null,
             'status' => $row['status'],

@@ -108,9 +108,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>จำนวนงวด</label>
                                         <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="num_installments"
-                                               name="num_installments"
+                                        <input type="number" class="form-control" id="num_installments"
+                                               name="num_installments" min="1"
                                                value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ยอดเงินที่ต้องผ่อนชำระ</label>
+                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="principal_amount_balance"
+                                               name="principal_amount_balance"
+                                               value="" readonly="true">
                                     </div>
                                 </div>
 

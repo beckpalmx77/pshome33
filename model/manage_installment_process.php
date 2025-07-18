@@ -72,7 +72,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
 if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['action'] === 'UPDATE')) {
 
     $action = $payload['action'];
-    $id = $payload['id'] ?? null;
+    //$id = $payload['id'] ?? null;
     $installment_id = $payload['installment_id'] ?? null;
 
     try {
@@ -109,13 +109,16 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
 
             // 3. บันทึกข้อมูลรายละเอียดลงใน ims_installment_detail
             if (!empty($payload['details']) && is_array($payload['details'])) {
-                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number , amount_paid, payment_method, payment_date, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
+                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number ,amount_due , principal_per_installment, amount_paid
+                , payment_method, payment_date, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
                 foreach ($payload['details'] as $detail_row) {
                     $stmt_detail->execute([
                         $installment_id,
                         $detail_row['line_no'] ?? 0,
                         $detail_row['installment_number'] ?? 0,
+                        $detail_row['amount_due'] ?? 0,
+                        $detail_row['principal_per_installment'] ?? 0,
                         $detail_row['amount_paid'] ?? 0,
                         $detail_row['payment_method'] ?? 0,
                         $detail_row['payment_date'] ?? '',
@@ -131,26 +134,23 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
 
         } elseif ($action === 'UPDATE') {
             // --- ส่วนของการแก้ไขข้อมูล (UPDATE) ---
-            if (!$id || !$installment_id) {
+            if (!$installment_id) {
                 echo json_encode(['status' => 'error', 'message' => 'Missing ID or Installment ID for UPDATE action.']);
                 exit();
             }
 
             // 1. อัปเดตข้อมูลหลักใน ims_installment
-            $stmt_master = $conn->prepare("UPDATE ims_installment SET house_number=?, debtor=?, detail=?, total_amount=?
-            , down_payment=?, principal_amount=?, num_installments=?, interest_rate=?, payment_schedule_type=?, due_date_first_installment=?, status=?
+            $stmt_master = $conn->prepare("UPDATE ims_installment SET house_number=?, debtor=?, doc_date=?, down_payment=?
+            , principal_amount=?, num_installments=?, installment_per_period=?, status=?
             WHERE installment_id=? ");
             $stmt_master->execute([
                 $payload['house_number'],
                 $payload['debtor'],
-                $payload['detail'],
-                $payload['total_amount'],
+                $payload['doc_date'],
                 $payload['down_payment'],
                 $payload['principal_amount'],
                 $payload['num_installments'],
-                $payload['interest_rate'],
-                $payload['payment_schedule_type'],
-                $payload['due_date_first_installment'],
+                $payload['installment_per_period'],
                 $payload['status'],
                 $installment_id
             ]);
@@ -162,13 +162,16 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
             $stmt_delete_details->closeCursor();
 
             if (!empty($payload['details']) && is_array($payload['details'])) {
-                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number , amount_paid,payment_method, payment_date, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number, amount_due, principal_per_installment, amount_paid
+                , payment_method, payment_date, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
                 foreach ($payload['details'] as $detail_row) {
                     $stmt_detail->execute([
                         $installment_id,
                         $detail_row['line_no'] ?? 0,
                         $detail_row['installment_number'] ?? 0,
+                        $detail_row['amount_due'] ?? 0,
+                        $detail_row['principal_per_installment'] ?? 0,
                         $detail_row['amount_paid'] ?? 0,
                         $detail_row['payment_method'] ?? 0,
                         $detail_row['payment_date'] ?? '',
