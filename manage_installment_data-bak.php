@@ -25,15 +25,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             .datepicker {
                 z-index: 9999 !important; /* Ensure datepicker is above modals if any */
             }
-            /* Style for the remaining balance display */
-            #remaining_balance_display {
-                font-size: 1.2em;
-                font-weight: bold;
-                color: #28a745; /* Green color for positive balance */
-            }
-            #remaining_balance_display.negative {
-                color: #dc3545; /* Red color for negative balance */
-            }
         </style>
 
     </head>
@@ -97,7 +88,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>ยอดเงินต้น</label>
                                         <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="principal_amount"
+                                        <input type="number" class="form-control" id="principal_amount"
                                                name="principal_amount"
                                                value="" required>
                                     </div>
@@ -107,7 +98,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>เงินทำสัญญา</label>
                                         <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="down_payment"
+                                        <input type="number" class="form-control" id="down_payment"
                                                name="down_payment"
                                                value="" required>
                                     </div>
@@ -117,9 +108,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>จำนวนงวด</label>
                                         <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="num_installments"
-                                               name="num_installments"
+                                        <input type="number" class="form-control" id="num_installments"
+                                               name="num_installments" min="1"
                                                value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ยอดเงินที่ต้องผ่อนชำระ</label>
+                                        <i class="fa fa-money" aria-hidden="true"></i>
+                                        <input type="text" class="form-control" id="principal_amount_balance"
+                                               name="principal_amount_balance"
+                                               value="" readonly="true">
                                     </div>
                                 </div>
 
@@ -127,7 +128,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>ยอดผ่อนแต่ละงวด</label>
                                         <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="installment_per_period"
+                                        <input type="number" class="form-control" id="installment_per_period"
                                                name="installment_per_period"
                                                value="" required>
                                     </div>
@@ -159,7 +160,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         <th style="width: 50px;">#</th>
                                         <th>ยอดรวมที่ต้องชำระ</th>
                                         <th>เงินต้นต่องวด</th>
-                                        <th>ยอดที่ชำระงวดนี้</th>
+                                        <th>ยอดที่ชำระแล้ว</th>
                                         <th>วันที่ชำระ</th>
                                         <th>วิธีการชำระ</th>
                                         <th>สถานะ</th>
@@ -169,13 +170,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <tbody>
                                     </tbody>
                                 </table>
-                            </div>
-
-                            <div class="row mt-3">
-                                <div class="col-md-12 text-right">
-                                    <label>คงเหลือในการผ่อนชำระ:</label>
-                                    <span id="remaining_balance_display">0.00</span> บาท
-                                </div>
                             </div>
 
                             <div class="modal-footer">
@@ -200,11 +194,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         </div>
 
     </div>
-
-    <?php
-    include('includes/Modal-Logout.php'); // Assuming this is needed. Not in original snippet.
-    include('includes/Footer.php'); // Assuming this is needed. Not in original snippet.
-    ?>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
@@ -238,25 +227,22 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         function addRow(detailData = {}) {
             rowIdx++;
             const tableBody = $('#detailTable tbody');
-            // Get installment_per_period from the main form
-            const installmentPerPeriod = parseFloat($('#installment_per_period').val()) || 0;
-
             const newRow = `
                 <tr id="R${rowIdx}">
                     <td class="text-center">${rowIdx}</td>
-                    <td><input type="number" class="form-control detail-input amount-due" name="amount_due[]" value="${detailData.amount_due || installmentPerPeriod.toFixed(2)}" step="0.01" min="0" required readonly></td>
-                    <td><input type="number" class="form-control detail-input principal-per-installment" name="principal_per_installment[]" value="${detailData.principal_per_installment || installmentPerPeriod.toFixed(2)}" step="0.01" min="0" required readonly></td>
-                    <td><input type="number" class="form-control detail-input amount-paid" name="amount_paid[]" value="${detailData.amount_paid || ''}" step="0.01" min="0"></td>
+                    <td><input type="number" class="form-control detail-input" name="amount_due[]" value="${detailData.amount_due || ''}" step="0.01" min="0" required></td>
+                    <td><input type="number" class="form-control detail-input" name="principal_per_installment[]" value="${detailData.principal_per_installment || ''}" step="0.01" min="0" required></td>
+                    <td><input type="number" class="form-control detail-input" name="amount_paid[]" value="${detailData.amount_paid || ''}" step="0.01" min="0"></td>
                     <td><input type="text" class="form-control detail-input datepicker-input" name="payment_date[]" value="${detailData.payment_date || ''}" readonly></td>
                     <td>
-                        <select class="form-control detail-input payment-method" name="payment_method[]">
+                        <select class="form-control detail-input" name="payment_method[]">
                             <option value="">เลือก</option>
                             <option value="เงินสด" ${detailData.payment_method === 'เงินสด' ? 'selected' : ''}>เงินสด</option>
                             <option value="โอนเงิน" ${detailData.payment_method === 'โอนเงิน' ? 'selected' : ''}>โอนเงิน</option>
                         </select>
                     </td>
                     <td>
-                        <select class="form-control detail-input status-select" name="status[]">
+                        <select class="form-control detail-input" name="status[]">
                             <option value="due" ${detailData.status === 'due' ? 'selected' : ''}>ยังไม่ชำระ</option>
                             <option value="paid" ${detailData.status === 'paid' ? 'selected' : ''}>ชำระแล้ว</option>
                             <option value="overdue" ${detailData.status === 'overdue' ? 'selected' : ''}>ค้างชำระ</option>
@@ -278,35 +264,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 language: "th",
                 autoclose: true
             });
-
-            // Re-calculate remaining balance after adding a row
-            calculateRemainingBalance();
         }
-
-        function calculateRemainingBalance() {
-            let totalPrincipalAmount = parseFloat($('#principal_amount').val()) || 0;
-            let totalDownPayment = parseFloat($('#down_payment').val()) || 0;
-            let totalAmountPaidInDetails = 0;
-
-            $('#detailTable tbody tr').each(function() {
-                const amountPaid = parseFloat($(this).find('.amount-paid').val()) || 0;
-                totalAmountPaidInDetails += amountPaid;
-            });
-
-            // Calculate the remaining balance
-            let remainingBalance = totalPrincipalAmount - totalDownPayment - totalAmountPaidInDetails;
-
-            const remainingBalanceDisplay = $('#remaining_balance_display');
-            remainingBalanceDisplay.text(remainingBalance.toFixed(2));
-
-            // Apply styling based on balance
-            if (remainingBalance < 0) {
-                remainingBalanceDisplay.addClass('negative');
-            } else {
-                remainingBalanceDisplay.removeClass('negative');
-            }
-        }
-
 
         $(document).ready(function () {
             let queryString = {};
@@ -414,18 +372,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         } else {
                             alertify.error('ไม่สามารถโหลดรายละเอียดงวดผ่อนชำระได้: ' + res.message);
                         }
-                        calculateRemainingBalance(); // Calculate after loading details
                     },
                     error: function (xhr, status, error) {
                         console.error("AJAX Error loading details:", status, error);
                         alertify.error('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เพื่อโหลดรายละเอียดได้');
                     }
                 });
-            } else {
-                // If not in update mode, initialize remaining balance
-                calculateRemainingBalance();
             }
-
 
             // Add row button click
             $('#addRow').click(function () {
@@ -443,47 +396,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     $(this).find('input[name="line_no[]"]').val(currentLineNum); // Update hidden line_no
                 });
                 rowIdx = $('#detailTable tbody tr').length; // Update global rowIdx based on remaining rows
-                calculateRemainingBalance(); // Re-calculate after removing a row
             });
-
-            // Event listener for changes in 'principal_amount', 'down_payment', 'installment_per_period', and '.amount-paid'
-            $('#principal_amount, #down_payment').on('input', calculateRemainingBalance);
-            $('#detailTable tbody').on('input', '.amount-paid', calculateRemainingBalance);
-
-            // Update amount_due for new rows based on installment_per_period
-            $('#installment_per_period').on('input', function() {
-                const newInstallmentPerPeriod = parseFloat($(this).val()) || 0;
-                $('#detailTable tbody tr').each(function() {
-                    const status = $(this).find('.status-select').val();
-                    // Only update if the status is 'due' (unpaid)
-                    if (status === 'due') {
-                        $(this).find('.amount-due').val(newInstallmentPerPeriod.toFixed(2));
-                        $(this).find('.principal-per-installment').val(newInstallmentPerPeriod.toFixed(2));
-                    }
-                });
-            });
-
-            // Update status and payment_date when amount_paid is entered
-            $('#detailTable tbody').on('input', '.amount-paid', function() {
-                const amountPaid = parseFloat($(this).val()) || 0;
-                const row = $(this).closest('tr');
-                const amountDue = parseFloat(row.find('.amount-due').val()) || 0;
-                const statusSelect = row.find('.status-select');
-                const paymentDateInput = row.find('.datepicker-input');
-
-                if (amountPaid > 0) {
-                    paymentDateInput.val('<?php echo $curr_date; ?>'); // Set current date
-                    if (amountPaid >= amountDue) {
-                        statusSelect.val('paid'); // Set status to 'ชำระแล้ว'
-                    } else {
-                        statusSelect.val('due'); // Keep as 'ยังไม่ชำระ' if partial payment
-                    }
-                } else {
-                    paymentDateInput.val(''); // Clear date if amount paid is zero
-                    statusSelect.val('due'); // Set status to 'ยังไม่ชำระ'
-                }
-            });
-
         });
     </script>
 
@@ -586,7 +499,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     $('#action').val('UPDATE');
                                 }
                                 $('#deleted_images').val('');
-                                calculateRemainingBalance(); // Recalculate after successful save
                             } else {
                                 alertify.error('เกิดข้อผิดพลาด: ' + (res.message || 'Unknown error'));
                                 $('#save').prop('disabled', false);
