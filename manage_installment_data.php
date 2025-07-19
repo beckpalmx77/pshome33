@@ -323,16 +323,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             $('#action').val(queryString["action"]);
 
-            $('#installment_id').val(queryString["installment_id"]);
-            $('#principal_amount').val(queryString["principal_amount"]);
-            $('#down_payment').val(queryString["down_payment"]);
-            $('#num_installments').val(queryString["num_installments"]);
-            $('#installment_per_period').val(queryString["installment_per_period"]);
-
-            $('#doc_date').val(queryString["doc_date"]);
-            $('#house_number').val(queryString["house_number"]);
-            $('#debtor').val(queryString["debtor"]);
-
             // Load existing main picture
             if (queryString["picture_payment"]) {
                 $('#picture_payment').val(queryString["picture_payment"]); // Assuming picture_payment is for the main document
@@ -397,6 +387,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             // Load detail data if in UPDATE mode and installment_id is present
             if (queryString["action"] === 'UPDATE' && queryString["installment_id"]) {
+
+                $('#installment_id').val(queryString["installment_id"]);
+                $('#principal_amount').val(queryString["principal_amount"]);
+                $('#down_payment').val(queryString["down_payment"]);
+                $('#num_installments').val(queryString["num_installments"]);
+                $('#installment_per_period').val(queryString["installment_per_period"]);
+
+                $('#doc_date').val(queryString["doc_date"]);
+                $('#house_number').val(queryString["house_number"]);
+                $('#debtor').val(queryString["debtor"]);
 
 
                 $.ajax({
