@@ -215,8 +215,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     </div>
 
     <?php
-    include('includes/Modal-Logout.php'); // Assuming this is needed. Not in original snippet.
-    include('includes/Footer.php'); // Assuming this is needed. Not in original snippet.
+    include('includes/Modal-Logout.php');
+    include('includes/Footer.php');
     ?>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
@@ -543,13 +543,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     return;
                 }
 
-                // ** START: New validation for house_number **
                 if (!$('#house_number').val()) {
                     alertify.error('กรุณากรอกบ้านเลขที่');
                     return;
                 }
 
-                // ** START: New validation for house_number **
                 if (!$('#debtor').val()) {
                     alertify.error('กรุณากรอกชื่อผู้ทำสัญญา');
                     return;
@@ -764,8 +762,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         // Function to calculate principal_amount_balance and installment_per_period
         function calculateInstallmentDetails() {
             // Get values from input fields
-            // Ensure you have input fields with these IDs in your manage_installment_data.php
-            // For example: <input type="number" id="principal_amount_input">
             let principalAmount = parseFloat($('#principal_amount').val()) || 0;
             let downPayment = parseFloat($('#down_payment').val()) || 0;
             let numInstallments = parseInt($('#num_installments').val()) || 0;
@@ -778,16 +774,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
 
             // Update the display fields
-            // Ensure you have display elements with these IDs in your manage_installment_data.php
-            // For example: <input type="text" id="principal_amount_balance_display" readonly>
-            // Or: <span id="principal_amount_balance_display"></span>
-            $('#principal_amount_balance').val(principal_amount_balance.toFixed(2)); // Use .val() if it's an input field
-            $('#installment_per_period').val(installment_per_period.toFixed(2));   // Use .val() if it's an input field
+            $('#principal_amount_balance').val(principal_amount_balance.toFixed(2));
+            $('#installment_per_period').val(installment_per_period.toFixed(2));
         }
 
         $(document).ready(function () {
             // Attach the calculateInstallmentDetails function to the 'input' event of the relevant fields
-            // This ensures the calculation happens as the user types or changes values
             $('#principal_amount, #down_payment, #num_installments').on('input', function () {
                 calculateInstallmentDetails();
             });

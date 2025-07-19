@@ -105,7 +105,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
     <table border="0" cellspacing="0" cellpadding="0" width="100%" style="font-size:12pt;">
         <tr>
             <td width="30%" align="left" valign="top">
-                <img src="img/logo/ps33-rec-logo.png" height="20">
+                <img src="img/logo/niti_ps33_header.png" height="20">
             </td>
             <td width="70%" align="left" valign="top">
                 <b>' . htmlspecialchars($company['company_name']) . '</b>

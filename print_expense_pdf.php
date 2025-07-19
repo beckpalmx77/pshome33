@@ -60,7 +60,7 @@ function generate_voucher_html($company, $receipt, $items, $total, $thai_text_to
     <table width="100%" cellspacing="0" cellpadding="0" style="margin:20px 0; text-align:center;">
       <tr><td>
         <h2>ใบสำคัญจ่าย ' . $title_note . '</h2>
-        <img src="img/logo/ps33-rec-logo.png" height="40">
+        <img src="img/logo/niti_ps33_header.png" height="40">
       </td></tr>
     </table>
     <table width="100%" cellpadding="4" style="font-size:12pt">

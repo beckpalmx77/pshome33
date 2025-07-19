@@ -81,7 +81,7 @@ $html = '';
 
 // ส่วนหัวรายงาน - เพิ่มโลโก้ที่นี่
 $html .= '<div style="text-align: center; margin-bottom: 10px;">';
-$html .= '<img src="../img/logo/ps33-rec-logo.png" style="max-height: 30mm; display: block; margin: 0 auto;">'; // ปรับ max-height หรือ width ตามขนาดที่ต้องการ
+$html .= '<img src="../img/logo/niti_ps33_header.png" style="max-height: 30mm; display: block; margin: 0 auto;">'; // ปรับ max-height หรือ width ตามขนาดที่ต้องการ
 $html .= '</div>';
 
 $html .= '<h2 style="text-align: center; margin-bottom: 5px;">รายงานค่าใช้จ่าย</h2>';

@@ -23,6 +23,7 @@ $company = $stmt->fetch(PDO::FETCH_ASSOC);
 // โดยใช้ installment_id และ line_no เป็นเงื่อนไขในการค้นหา
 $stmt = $conn->prepare("
     SELECT
+        i.installment_id,         -- เพิ่ม field นี้เข้ามาเพื่อให้ใช้งานในใบเสร็จได้
         i.house_number,
         i.debtor,
         i.detail,
@@ -43,9 +44,9 @@ $stmt = $conn->prepare("
         id.payment_date,
         id.status AS detail_status,
         id.notes,
-        id.print_status,         -- เพิ่ม field print_status
-        id.print_first_date,     -- เพิ่ม field print_first_date
-        id.print_last_date       -- เพิ่ม field print_last_date
+        id.print_status,          -- เพิ่ม field print_status
+        id.print_first_date,      -- เพิ่ม field print_first_date
+        id.print_last_date        -- เพิ่ม field print_last_date
     FROM
         ims_installment i
     JOIN
@@ -91,6 +92,9 @@ $pdf->setPrintFooter(true);
 $pdf->SetMargins(8, 5, 8);
 
 // ลดขนาดฟอนต์
+// ตรวจสอบให้แน่ใจว่าได้ติดตั้ง font THSarabunNew ใน TCPDF แล้ว
+// หากยังไม่ได้ติดตั้ง จะต้องใช้ script tcpdf_addfont.php เพื่อแปลงและติดตั้ง font
+// ตัวอย่าง: php vendor/tecnickcom/tcpdf/tools/tcpdf_addfont.php -i C:\path\to\THSarabunNew.ttf
 $pdf->SetFont('THSarabunNew', '', 12);
 
 $pdf->AddPage();
@@ -110,26 +114,26 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:20px; margin-top:20px; text-align:center;">
         <tr>
             <td>
-                <h2 style="margin-bottom: 5px;">ใบเสร็จรับเงิน ' . $title_note . '</h2>
-                <img src="img/logo/ps33-rec-logo.png" height="40" style="display: block; margin: 0 auto;">
+                <h2 style="margin-bottom: 5px;">ใบเสร็จรับเงิน ' . htmlspecialchars($title_note ?? '') . '</h2>
+                <img src="img/logo/niti_ps33_header.png" height="40" style="display: block; margin: 0 auto;">
             </td>
         </tr>
     </table>
 
     <table border="0" cellspacing="0" cellpadding="4" width="100%" style="font-size:12pt;">
         <tr>
-            <td><b>' . htmlspecialchars($company['company_name']) . '</b></td>
-            <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . htmlspecialchars($receipt['installment_id']) . '</td>
+            <td><b>' . htmlspecialchars($company['company_name'] ?? '') . '</b></td>
+            <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . htmlspecialchars($receipt['installment_id'] ?? '') . '</td>
         </tr>
         <tr>
-            <td><b>ที่อยู่:</b> ' . htmlspecialchars($company['address_1']) . ' ' . htmlspecialchars($company['address_2']) . ' ' . htmlspecialchars($company['state']) . ' ' . htmlspecialchars($company['zip_code']) . '</td>
-            <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['payment_date'])) . '</td>
+            <td><b>ที่อยู่:</b> ' . htmlspecialchars($company['address_1'] ?? '') . ' ' . htmlspecialchars($company['address_2'] ?? '') . ' ' . htmlspecialchars($company['state'] ?? '') . ' ' . htmlspecialchars($company['zip_code'] ?? '') . '</td>
+            <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['payment_date'] ?? '')) . '</td>
         </tr>
     </table>';
 
     $html .= '<table border="1" cellspacing="0" cellpadding="5" width="100%" style="table-layout: fixed; font-size:12pt;">
         <tr style="background-color:#f2f2f2;">
-            <th width="10%" align="center"><b>#</b></th>
+            <th width="10%" align="center"><b>งวดที่</b></th>
             <th width="65%" align="center"><b>รายการ</b></th>
             <th width="10%" align="center"><b>จำนวน</b></th>
             <th width="15%" align="center"><b>จำนวนเงิน</b></th>
@@ -138,30 +142,29 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     // วนลูปแสดงรายการ (ในกรณีนี้จะมีเพียง 1 รายการ)
     foreach ($items as $index => $item) {
         $html .= '<tr>
-            <td align="center">' . htmlspecialchars($item['line_no']) . '</td>
-            <td><b>ค่าผ่อนชำระบ้านเลขที่ ' . htmlspecialchars($receipt['house_number']) . ' งวดที่ ' . htmlspecialchars($receipt['installment_number']) . '</b><br>
-                (' . htmlspecialchars($receipt['notes']) . ')
+            <td align="center">' . htmlspecialchars($item['line_no'] ?? '') . '</td>
+            <td><b>ค่าผ่อนชำระ ค่าส่วนกลางที่ค้าง บ้านเลขที่ ' . htmlspecialchars($receipt['house_number'] ?? '') . ' งวดที่ ' . htmlspecialchars($receipt['installment_number'] ?? '') . '</b>
             </td>
             <td align="right">1</td>
-            <td align="right">' . number_format($item['amount_paid'], 2) . '</td>
+            <td align="right">' . number_format($item['amount_paid'] ?? 0, 2) . '</td>
         </tr>';
     }
 
     $html .= '<tr>
-    <td colspan="2" align="left"><b>วิธีการชำระเงิน : ' . htmlspecialchars($receipt['payment_method']) . '</b></td>
+    <td colspan="2" align="left"><b>วิธีการชำระเงิน : ' . htmlspecialchars($receipt['payment_method'] ?? '') . '</b></td>
     <td align="right"><b>รวมทั้งสิ้น:</b></td>
     <td align="right"><b>' . number_format($total, 2) . '</b></td>
 </tr>';
 
     $html .= '<tr>
-        <td colspan="4" align="right"><i>( ' . htmlspecialchars($thai_text_total) . ' )</i></td>
+        <td colspan="4" align="right"><i>( ' . htmlspecialchars($thai_text_total ?? '') . ' )</i></td>
     </tr>';
 
     $html .= '</table><br><br>';
 
     $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="margin-top:20px; margin-bottom:20px; font-size:12pt;">
 <tr>
-    <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . htmlspecialchars($receipt['debtor']) . ')</td>
+    <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . htmlspecialchars($receipt['debtor'] ?? '') . ')</td>
     <td align="center">
         <b>ผู้รับเงิน</b><br>
         ' . $signature_img . '<br>
@@ -173,7 +176,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         วันที่พิมพ์: ' . date('d/m/Y H:i') . '
     </td>
     <td align="right" style="font-size:10pt;">
-        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'เจ้าหน้าที่นิติฯ') . '
+        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name'] ?? '') : 'เจ้าหน้าที่นิติฯ') . '
     </td>
 </tr>
 </table>';

@@ -75,7 +75,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         <tr>
             <td>
                 <h2 style="margin-bottom: 5px;">ใบเสร็จรับเงิน ' . $title_note . '</h2>
-                <img src="img/logo/ps33-rec-logo.png" height="40" style="display: block; margin: 0 auto;">
+                <img src="img/logo/niti_ps33_header.png" height="40" style="display: block; margin: 0 auto;">
             </td>
         </tr>
     </table>
