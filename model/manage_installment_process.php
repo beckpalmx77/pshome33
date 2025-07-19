@@ -49,6 +49,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "total_amount" => $result['total_amount'],
             "down_payment" => $result['down_payment'],
             "principal_amount" => $result['principal_amount'],
+            "principal_amount_balance" => $result['principal_amount_balance'],
             "num_installments" => $result['num_installments'],
             "interest_rate" => $result['interest_rate'],
             "installment_per_period" => $result['installment_per_period'],
@@ -92,8 +93,8 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
 
             // 2. บันทึกข้อมูลหลักลงใน ims_installment
             $stmt_master = $conn->prepare("INSERT INTO ims_installment (installment_id, house_number, debtor, doc_date, down_payment
-            , principal_amount, num_installments, installment_per_period, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
+            , principal_amount, principal_amount_balance, num_installments, installment_per_period, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
             $stmt_master->execute([
                 $installment_id,
                 $payload['house_number'],
@@ -101,6 +102,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['doc_date'],
                 $payload['down_payment'],
                 $payload['principal_amount'],
+                $payload['principal_amount_balance'],
                 $payload['num_installments'],
                 $payload['installment_per_period'],
                 $payload['status']
@@ -141,7 +143,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
 
             // 1. อัปเดตข้อมูลหลักใน ims_installment
             $stmt_master = $conn->prepare("UPDATE ims_installment SET house_number=?, debtor=?, doc_date=?, down_payment=?
-            , principal_amount=?, num_installments=?, installment_per_period=?, status=?
+            , principal_amount=?, principal_amount_balance=?, num_installments=?, installment_per_period=?, status=?
             WHERE installment_id=? ");
             $stmt_master->execute([
                 $payload['house_number'],
@@ -149,6 +151,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['doc_date'],
                 $payload['down_payment'],
                 $payload['principal_amount'],
+                $payload['principal_amount_balance'],
                 $payload['num_installments'],
                 $payload['installment_per_period'],
                 $payload['status'],
@@ -162,8 +165,8 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
             $stmt_delete_details->closeCursor();
 
             if (!empty($payload['details']) && is_array($payload['details'])) {
-                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number, amount_due, principal_per_installment, amount_paid
-                , payment_method, payment_date, status)
+                $stmt_detail = $conn->prepare("INSERT INTO ims_installment_detail (installment_id, line_no, installment_number, amount_due, principal_per_installment
+                , amount_paid, payment_method, payment_date, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"); // Corrected: Added closing parenthesis
                 foreach ($payload['details'] as $detail_row) {
                     $stmt_detail->execute([

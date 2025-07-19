@@ -68,7 +68,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     <th>จำนวนผ่อนแต่ละงวด</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
-                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -199,12 +198,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                     {data: 'installment_id'},
                     {data: 'house_number'},
                     {data: 'debtor'},
-                    {data: 'principal_amount'},
-                    {data: 'down_payment'},
-                    {data: 'num_installments'},
-                    {data: 'installment_per_period'},
+                    {data: 'principal_amount', className: 'text-right'}, // จัดชิดขวา
+                    {data: 'down_payment', className: 'text-right'},     // จัดชิดขวา
+                    {data: 'num_installments', className: 'text-right'}, // จัดชิดขวา
+                    {data: 'installment_per_period', className: 'text-right'}, // จัดชิดขวา
                     {data: 'update'},
-                    {data: 'print'},
                     {data: 'delete'}
                 ]
             });
