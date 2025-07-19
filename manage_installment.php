@@ -246,7 +246,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                             let interest_rate = response[i].interest_rate;
                             let principal_amount = response[i].principal_amount;
                             let installment_per_period = response[i].installment_per_period;
-                            let picture_doc = response[i].picture_doc;
+                            let installment_img = response[i].installment_img;
                             let payment_method = response[i].payment_method;
                             let bank_no = response[i].bank_no;
                             let approve_status = response[i].approve_status;
@@ -260,7 +260,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                 + '&doc_date=' + doc_date
                                 + '&installment_id=' + installment_id
                                 + '&house_number=' + house_number
-                                + '&picture_doc=' + picture_doc
+                                + '&installment_img=' + installment_img
                                 + '&debtor=' + debtor
                                 + '&principal_amount=' + principal_amount
                                 + '&num_installments=' + num_installments

@@ -150,7 +150,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <input type="hidden" class="form-control" id="status" name="status" value="active">
 
                             <input type="file" id="pictures" multiple accept="image/*,application/pdf">
-                            <input type="hidden" id="picture_payment" name="picture_payment">
+                            <input type="hidden" id="installment_img" name="installment_img">
                             <input type="hidden" id="deleted_images" name="deleted_images" value="">
                             <div id="preview-area" class="row mt-2"></div>
                             <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
@@ -340,9 +340,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#action').val(queryString["action"]);
 
             // Load existing main picture
-            if (queryString["picture_payment"]) {
-                $('#picture_payment').val(queryString["picture_payment"]); // Assuming picture_payment is for the main document
-                let filenames = queryString["picture_payment"].split(',');
+            if (queryString["installment_img"]) {
+                $('#installment_img').val(queryString["installment_img"]); // Assuming installment_img is for the main document
+                let filenames = queryString["installment_img"].split(',');
                 let imagePreviewContainer = $('#imagePreview');
                 imagePreviewContainer.html('');
 
@@ -595,7 +595,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 try {
                     const newlyUploadedFilenames = await uploadImages();
 
-                    let existingPicturePayment = $('#picture_payment').val();
+                    let existingPicturePayment = $('#installment_img').val();
                     let existingFilenames = existingPicturePayment ? existingPicturePayment.split(',').map(name => name.trim()).filter(name => name) : [];
 
                     let deletedFilenames = $('#deleted_images').val();
@@ -619,7 +619,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         installment_per_period: $('#installment_per_period').val(),
                         num_installments: $('#num_installments').val(),
                         status: $('#status').val(),
-                        picture_payment: finalPicturePayment,
+                        installment_img: finalPicturePayment,
                         details: detailRows
                     };
 
