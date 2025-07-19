@@ -63,7 +63,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     <th>บ้านเลขที่</th>
                                                     <th>ชื่อผู้ชำระ</th>
                                                     <th>จำนวนเงินต้น</th>
-                                                    <th>จำนวนเงินดาวน์</th>
+                                                    <th>จำนวนเงินทำสัญญา</th>
                                                     <th>จำนวนงวด</th>
                                                     <th>จำนวนผ่อนแต่ละงวด</th>
                                                     <th>Action</th>
