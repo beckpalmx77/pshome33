@@ -209,11 +209,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $installment_id
             ]);
             $stmt_master->closeCursor();
-
-            $myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
-            fwrite($myfile, " Row IMG = " . $installment_id . " | existing_images = " . $final_images_str . " | " . $existing_images . " | deleted_images = " . $deleted_images);
-            fclose($myfile);
-
+            
             // 2. จัดการข้อมูลรายละเอียดใน ims_installment_detail (ใช้ logic เดิมของคุณ)
             $stmt_delete_details = $conn->prepare("DELETE FROM ims_installment_detail WHERE installment_id = ?");
             $stmt_delete_details->execute([$installment_id]);
