@@ -23,7 +23,7 @@ $company = $stmt->fetch(PDO::FETCH_ASSOC);
 // โดยใช้ installment_id และ line_no เป็นเงื่อนไขในการค้นหา
 $stmt = $conn->prepare("
     SELECT
-        i.installment_id,
+        i.installment_id,         -- เพิ่ม field นี้เข้ามาเพื่อให้ใช้งานในใบเสร็จได้
         i.house_number,
         i.debtor,
         i.detail,
@@ -44,9 +44,9 @@ $stmt = $conn->prepare("
         id.payment_date,
         id.status AS detail_status,
         id.notes,
-        id.print_status,
-        id.print_first_date,
-        id.print_last_date
+        id.print_status,          -- เพิ่ม field print_status
+        id.print_first_date,      -- เพิ่ม field print_first_date
+        id.print_last_date        -- เพิ่ม field print_last_date
     FROM
         ims_installment i
     JOIN
@@ -64,44 +64,10 @@ if (!$receipt) {
     die("ไม่พบข้อมูลใบเสร็จสำหรับการผ่อนชำระนี้ (Installment ID: " . htmlspecialchars($installment_id) . ", Line No: " . htmlspecialchars($line_no) . ")");
 }
 
-// *** เพิ่มโค้ดส่วนนี้เพื่อดึงยอดรวมที่ชำระแล้วทั้งหมดและคำนวณยอดคงเหลือ ***
-$stmt_summary = $conn->prepare("
-    SELECT
-        i.principal_amount,
-        i.interest_rate,
-        i.down_payment,
-        i.num_installments,
-        SUM(id.amount_paid) AS total_paid_all_installments
-    FROM
-        ims_installment i
-    LEFT JOIN
-        ims_installment_detail id ON i.installment_id = id.installment_id
-    WHERE
-        i.installment_id = :installment_id
-    GROUP BY
-        i.principal_amount, i.interest_rate, i.down_payment, i.num_installments
-");
-$stmt_summary->bindParam(':installment_id', $installment_id, PDO::PARAM_STR);
-$stmt_summary->execute();
-$summary_data = $stmt_summary->fetch(PDO::FETCH_ASSOC);
-
-$total_principal_overall = $summary_data['principal_amount'] ?? 0;
-$total_interest_rate_overall = $summary_data['interest_rate'] ?? 0;
-$total_down_payment_overall = $summary_data['down_payment'] ?? 0; // เงินทำสัญญา / เงินดาวน์
-$total_num_installments_overall = $summary_data['num_installments'] ?? 0; // จำนวนงวดทั้งหมด
-$total_amount_paid_all_installments = $summary_data['total_paid_all_installments'] ?? 0;
-
-// คำนวณยอดรวมที่ต้องชำระทั้งหมด (เงินต้น + ค่าปรับ)
-$total_amount_due_all_overall = $total_principal_overall + $total_interest_rate_overall;
-
-// คำนวณยอดคงเหลือทั้งหมด
-$remaining_balance_overall = $total_amount_due_all_overall - $total_down_payment_overall - $total_amount_paid_all_installments;
-// *** สิ้นสุดโค้ดส่วนเพิ่ม ***
-
 // สำหรับใบเสร็จงวดผ่อนชำระนี้ จะมีเพียง 1 รายการ
 $items = [$receipt];
 
-// คำนวณยอดรวม ซึ่งคือ amount_paid ของงวดผ่อนชำระนี้ (สำหรับใบเสร็จเฉพาะงวดนี้)
+// คำนวณยอดรวม ซึ่งคือ amount_paid ของงวดผ่อนชำระนี้
 $total = $receipt['amount_paid'];
 $thai_text_total = converNumberToThaiText($total);
 
@@ -134,27 +100,22 @@ $pdf->SetFont('THSarabunNew', '', 12);
 $pdf->AddPage();
 
 // ฟังก์ชันสำหรับสร้าง HTML ของใบเสร็จ
-function generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, $total_principal_overall, $total_amount_paid_overall, $remaining_balance_overall, $total_down_payment_overall, $total_num_installments_overall, $total_interest_rate_overall_from_installment_table, $title_note = '', $is_copy = false)
+function generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, $title_note = '')
 {
     // ตรวจสอบและกำหนดค่าผู้พิมพ์ (ผู้รับเงิน) และลายเซ็น
     $full_name = isset($_SESSION['first_name']) && isset($_SESSION['last_name']) ? $_SESSION['first_name'] . " " . $_SESSION['last_name'] : 'เจ้าหน้าที่';
     $user_signature = isset($_SESSION['user_signature']) ? $_SESSION['user_signature'] : '';
     $signature_path = $user_signature ? 'img_sig/' . $user_signature : '';
     $signature_img = $user_signature && file_exists($signature_path)
-        ? '<img src="' . $signature_path . '" height="20">'
+        ? '<img src="' . $signature_path . '" height="30">'
         : '____________';
 
-    // เพิ่ม margin-top สำหรับส่วนสำเนา
-    $margin_top_for_copy = $is_copy ? 'margin-top: 50px;' : ''; // ปรับค่า 50px ได้ตามต้องการ
-
     $html = '
-    <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:10px; ' . $margin_top_for_copy . '">
+    <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:20px; margin-top:20px; text-align:center;">
         <tr>
-            <td width="20%" align="left">
-                <img src="img/logo/niti_ps33_header.png" height="40">
-            </td>
-            <td width="80%" align="center">
-                <h2 style="margin: 0;">ใบเสร็จรับเงิน ' . htmlspecialchars($title_note ?? '') . '</h2>
+            <td>
+                <h2 style="margin-bottom: 5px;">ใบเสร็จรับเงิน ' . htmlspecialchars($title_note ?? '') . '</h2>
+                <img src="img/logo/niti_ps33_header.png" height="40" style="display: block; margin: 0 auto;">
             </td>
         </tr>
     </table>
@@ -182,8 +143,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     foreach ($items as $index => $item) {
         $html .= '<tr>
             <td align="center">' . htmlspecialchars($item['line_no'] ?? '') . '</td>
-            <td>
-                <b>ค่าผ่อนชำระ ค่าส่วนกลางที่ค้าง บ้านเลขที่ ' . htmlspecialchars($receipt['house_number'] ?? '') . ' งวดที่ ' . htmlspecialchars($receipt['installment_number'] ?? '') . ' / ' . htmlspecialchars($total_num_installments_overall) . '</b>
+            <td><b>ค่าผ่อนชำระ ค่าส่วนกลางที่ค้าง บ้านเลขที่ ' . htmlspecialchars($receipt['house_number'] ?? '') . ' งวดที่ ' . htmlspecialchars($receipt['installment_number'] ?? '') . '</b>
             </td>
             <td align="right">1</td>
             <td align="right">' . number_format($item['amount_paid'] ?? 0, 2) . '</td>
@@ -200,18 +160,9 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         <td colspan="4" align="right"><i>( ' . htmlspecialchars($thai_text_total ?? '') . ' )</i></td>
     </tr>';
 
-    $html .= '</table>';
+    $html .= '</table><br><br>';
 
-    $html .= '<p style="font-size:12pt; text-align:right; margin-top: 0px;">
-        <b>ยอดเงินต้นรวม:</b> ' . number_format($total_principal_overall, 2) . ' &nbsp; &nbsp;
-        <b>ค่าปรับล่าช้า:</b> ' . number_format($total_interest_rate_overall_from_installment_table, 2) . ' &nbsp; &nbsp;
-        <b>เงินทำสัญญา:</b> ' . number_format($total_down_payment_overall, 2) . ' &nbsp; &nbsp;
-        <b>ยอดที่ชำระแล้วทั้งหมด:</b> ' . number_format($total_amount_paid_overall, 2) . ' &nbsp; &nbsp;
-        <b>ยอดคงเหลือ:</b> ' . number_format($remaining_balance_overall, 2) . ' &nbsp; &nbsp;        
-        <b>จำนวนงวด:</b> ' . htmlspecialchars($total_num_installments_overall) . ' งวด
-    </p>';
-
-    $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="margin-top:10px; margin-bottom:20px; font-size:12pt;">
+    $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="margin-top:20px; margin-bottom:20px; font-size:12pt;">
 <tr>
     <td align="left"><b>ผู้ชำระเงิน</b> ___________ (' . htmlspecialchars($receipt['debtor'] ?? '') . ')</td>
     <td align="center">
@@ -234,54 +185,29 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
 }
 
 // รวม HTML สองชุด (ต้นฉบับ + สำเนา) โดยเว้น space ระหว่างต้นฉบับกับสำเนา
-$html = generate_receipt_html(
-    $company,
-    $receipt,
-    $items,
-    $total,
-    $thai_text_total,
-    $total_principal_overall,
-    $total_amount_paid_all_installments,
-    $remaining_balance_overall,
-    $total_down_payment_overall,
-    $total_num_installments_overall,
-    $total_interest_rate_overall,
-    "(ต้นฉบับ)",
-    false // กำหนดเป็น false สำหรับต้นฉบับ
-);
-$html .= '<hr style="border-top: dashed 1px; margin: 50px 0;">'; // ปรับ margin-bottom ของเส้นแบ่ง
-$html .= generate_receipt_html(
-    $company,
-    $receipt,
-    $items,
-    $total,
-    $thai_text_total,
-    $total_principal_overall,
-    $total_amount_paid_all_installments,
-    $remaining_balance_overall,
-    $total_down_payment_overall,
-    $total_num_installments_overall,
-    $total_interest_rate_overall,
-    "(สำเนา)",
-    true // กำหนดเป็น true สำหรับสำเนา
-);
+$html = generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, "(ต้นฉบับ)");
+$html .= '<hr style="border-top: dashed 1px; margin: 30px 0;">';  // space เพิ่มขึ้นระหว่างต้นฉบับกับสำเนา
+$html .= generate_receipt_html($company, $receipt, $items, $total, $thai_text_total, "(สำเนา)");
 
 // เขียน HTML ลง PDF
 $pdf->writeHTML($html, true, false, false, false, '');
 
 // อัปเดตสถานะการพิมพ์ในตาราง ims_installment_detail
-$current_print_status = $receipt['print_status'];
+$current_print_status = $receipt['print_status']; // ดึงสถานะการพิมพ์ปัจจุบันจากข้อมูลที่ดึงมา
 
 if ($current_print_status == 'N') {
+    // ถ้ายังไม่เคยพิมพ์ ให้ตั้งค่าเป็น 'Y' และบันทึกเวลาที่พิมพ์ครั้งแรก
     $stmt_update = $conn->prepare("UPDATE ims_installment_detail
                                   SET print_status = 'Y', print_first_date = NOW()
                                   WHERE installment_id = :installment_id AND line_no = :line_no AND print_status = 'N'");
 } else if ($current_print_status == 'Y') {
+    // ถ้าเคยพิมพ์แล้ว ให้บันทึกเวลาที่พิมพ์ล่าสุด
     $stmt_update = $conn->prepare("UPDATE ims_installment_detail
                                   SET print_last_date = NOW()
                                   WHERE installment_id = :installment_id AND line_no = :line_no AND print_status = 'Y'");
 }
 
+// ตรวจสอบว่ามีการเตรียมคำสั่ง UPDATE หรือไม่ ก่อนที่จะ execute
 if (isset($stmt_update)) {
     $stmt_update->bindParam(':installment_id', $installment_id, PDO::PARAM_STR);
     $stmt_update->bindParam(':line_no', $line_no, PDO::PARAM_INT);
@@ -290,6 +216,6 @@ if (isset($stmt_update)) {
 
 // สร้างชื่อไฟล์ PDF
 $filename = 'receipt_installment_' . $installment_id . '_line_' . $line_no . '_' . date('Ymd_His') . '.pdf';
-$pdf->Output($filename, 'I');
+$pdf->Output($filename, 'I'); // 'I' คือการแสดงผลในเบราว์เซอร์
 
 ?>
