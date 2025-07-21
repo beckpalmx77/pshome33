@@ -208,7 +208,6 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         <b>เงินทำสัญญา:</b> ' . number_format($total_down_payment_overall, 2) . ' &nbsp; &nbsp;
         <b>ยอดที่ชำระแล้วทั้งหมด:</b> ' . number_format($total_amount_paid_overall, 2) . ' &nbsp; &nbsp;
         <b>ยอดคงเหลือ:</b> ' . number_format($remaining_balance_overall, 2) . ' &nbsp; &nbsp;        
-        <b>จำนวนงวด:</b> ' . htmlspecialchars($total_num_installments_overall) . ' งวด
     </p>';
 
     $html .= '<table border="0" cellspacing="0" cellpadding="5" width="100%" style="margin-top:10px; margin-bottom:20px; font-size:12pt;">
