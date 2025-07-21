@@ -212,7 +212,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <span id="total_principal_and_interest_display">0.00</span> บาท<br>
                                     <label>เงินทำสัญญา:</label>
                                     <span id="total_down_payment_display">0.00</span> บาท<br>
-                                    <label>ยอดชำระรวมแต่ละงวด:</label>
+                                    <label>ยอดที่ชำระแล้ว:</label>
                                     <span id="total_amount_paid_display">0.00</span> บาท<br>
                                     <label>คงเหลือในการผ่อนชำระ:</label>
                                     <span id="remaining_balance_display">0.00</span> บาท
