@@ -99,9 +99,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>ยอดเงินต้น</label>
                                         <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="principal_amount"
+                                        <input type="number" class="form-control" id="principal_amount"
                                                name="principal_amount"
-                                               value="" required>
+                                               value="0.00" required>
                                     </div>
                                 </div>
 
@@ -109,9 +109,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>เงินทำสัญญา</label>
                                         <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="down_payment"
+                                        <input type="number" class="form-control" id="down_payment"
                                                name="down_payment"
-                                               value="" required>
+                                               value="0.00" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>ค่าปรับล่าช้า</label>
+                                        <i class="fa fa-link" aria-hidden="true"></i>
+                                        <input type="number" class="form-control" id="interest_rate"
+                                               name="interest_rate"
+                                               value="0.00">
                                     </div>
                                 </div>
 
@@ -119,9 +129,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>จำนวนงวด</label>
                                         <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="num_installments"
+                                        <input type="number" class="form-control" id="num_installments"
                                                name="num_installments"
-                                               value="" required>
+                                               value="1" required>
                                     </div>
                                 </div>
 
@@ -129,9 +139,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <div class="form-group">
                                         <label>ยอดเงินที่ต้องผ่อนชำระ</label>
                                         <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="principal_amount_balance"
+                                        <input type="number" class="form-control" id="principal_amount_balance"
                                                name="principal_amount_balance"
-                                               value="" required>
+                                               value="0.00" required>
                                     </div>
                                 </div>
 
