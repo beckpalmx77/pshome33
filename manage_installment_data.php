@@ -620,6 +620,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         num_installments: $('#num_installments').val(),
                         status: $('#status').val(),
                         installment_img: finalPicturePayment,
+                        deleted_images: JSON.stringify(deletedArray), // แปลง array เป็น JSON string
                         details: detailRows
                     };
 

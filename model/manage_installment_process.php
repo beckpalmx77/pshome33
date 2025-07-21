@@ -92,16 +92,16 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
             }
 
             // รับค่า installment_img จาก payload
-            $installment_img = $payload['picture_payment'] ?? '';
+            $installment_img = $payload['installment_img'] ?? '';
 
             // 2. บันทึกข้อมูลหลักลงใน ims_installment
             $stmt_master = $conn->prepare("
                 INSERT INTO ims_installment (
                     installment_id, house_number, debtor, doc_date, down_payment,
                     principal_amount, principal_amount_balance, num_installments, installment_per_period,
-                    detail, interest_rate, start_date, status, installment_img, create_date, update_date
+                    detail, interest_rate, status, installment_img
                 ) VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                 )
             ");
             $stmt_master->execute([
@@ -116,7 +116,6 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['installment_per_period'],
                 $payload['detail'] ?? '',
                 $payload['interest_rate'] ?? 0,
-                $payload['start_date'] ?? '',
                 $payload['status'],
                 $installment_img
             ]);
@@ -155,7 +154,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
             }
 
             // จัดการรูปภาพ (ดึงค่าเดิม, รวมค่าใหม่, ลบค่าที่ถูกลบ)
-            $installment_img_new_upload = $payload['picture_payment'] ?? '';
+            $installment_img_new_upload = $payload['installment_img'] ?? '';
 
             // ดึงชื่อไฟล์รูปภาพเดิมจากฐานข้อมูล
             $stmt_current_img = $conn->prepare("SELECT installment_img FROM ims_installment WHERE installment_id = :installment_id");
@@ -191,9 +190,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                     status = ?,
                     detail = ?,                 -- เพิ่ม detail
                     interest_rate = ?,          -- เพิ่ม interest_rate
-                    start_date = ?,             -- เพิ่ม start_date
-                    installment_img = ?,        -- เพิ่ม installment_img
-                    update_date = NOW()
+                    installment_img = ?        -- เพิ่ม installment_img                    
                 WHERE installment_id = ?
             ");
             $stmt_master->execute([
@@ -208,11 +205,14 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['status'],
                 $payload['detail'] ?? '',
                 $payload['interest_rate'] ?? 0,
-                $payload['start_date'] ?? '',
                 $final_images_str, // ใช้ string รูปภาพที่ประมวลผลแล้ว
                 $installment_id
             ]);
             $stmt_master->closeCursor();
+
+            $myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
+            fwrite($myfile, " Row IMG = " . $installment_id . " | existing_images = " . $final_images_str . " | " . $existing_images . " | deleted_images = " . $deleted_images);
+            fclose($myfile);
 
             // 2. จัดการข้อมูลรายละเอียดใน ims_installment_detail (ใช้ logic เดิมของคุณ)
             $stmt_delete_details = $conn->prepare("DELETE FROM ims_installment_detail WHERE installment_id = ?");
