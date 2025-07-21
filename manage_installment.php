@@ -251,8 +251,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                             let installment_img = response[i].installment_img;
                             let payment_method = response[i].payment_method;
                             let bank_no = response[i].bank_no;
-                            let approve_status = response[i].approve_status;
+                            let payment_due_day_period = response[i].payment_due_day_period;
                             let status = response[i].status;
+                            let approve_status = response[i].approve_status;
+
 
                             let main_menu = document.getElementById("main_menu").value;
                             let sub_menu = document.getElementById("sub_menu").value;
@@ -271,6 +273,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                 + '&down_payment=' + down_payment
                                 + '&payment_method=' + payment_method
                                 + '&bank_no=' + bank_no
+                                + '&payment_due_day_period' + payment_due_day_period
                                 + '&approve_status=' + approve_status
                                 + '&status=' + status
                                 + '&action=UPDATE';
@@ -291,6 +294,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
     </script>
 
     <script>
+        $("#TableRecordList").on('click', '.print', function () {
+            let account_type = $('#account_type').val();
+            let id = $(this).attr("id");
+            let url = "print_payment_voucher_pdf?id=";
+            window.open(url + encodeURIComponent(id), "_blank");
+        });
+    </script>
+
+    <script>
         let deleteId = null;
 
         $("#TableRecordList").on('click', '.delete', function () {
@@ -301,7 +313,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
         $("#confirmDeleteBtn").on("click", function () {
             if (deleteId) {
                 $.ajax({
-                    url: "model/manage_voucher_detail_process.php",
+                    url: "model/manage_installment_detail_process.php",
                     method: "POST",
                     data: {id: deleteId, action: "DELETE"},
                     success: function (response) {
@@ -316,15 +328,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
             }
         });
 
-    </script>
-
-    <script>
-        $("#TableRecordList").on('click', '.print', function () {
-            let account_type = $('#account_type').val();
-            let id = $(this).attr("id");
-            let url = "print_payment_voucher_pdf?id=";
-            window.open(url + encodeURIComponent(id), "_blank");
-        });
     </script>
 
     </body>

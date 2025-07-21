@@ -51,6 +51,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "principal_amount_balance" => $result['principal_amount_balance'],
             "num_installments" => $result['num_installments'],
             "interest_rate" => $result['interest_rate'] ?? null, // เพิ่ม interest_rate
+            "payment_due_day_period" => $result['payment_due_day_period'] ?? null,
             "installment_per_period" => $result['installment_per_period'],
             "start_date" => $result['start_date'] ?? null, // เพิ่ม start_date
             "status" => $result['status'],
@@ -99,9 +100,9 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 INSERT INTO ims_installment (
                     installment_id, house_number, debtor, doc_date, down_payment,
                     principal_amount, principal_amount_balance, num_installments, installment_per_period,
-                    detail, interest_rate, status, installment_img
+                    detail, interest_rate, payment_due_day_period, status, installment_img
                 ) VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                 )
             ");
             $stmt_master->execute([
@@ -116,6 +117,7 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['installment_per_period'],
                 $payload['detail'] ?? '',
                 $payload['interest_rate'] ?? 0,
+                $payload['payment_due_day_period'] ?? 0,
                 $payload['status'],
                 $installment_img
             ]);
@@ -190,7 +192,8 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                     status = ?,
                     detail = ?,                 -- เพิ่ม detail
                     interest_rate = ?,          -- เพิ่ม interest_rate
-                    installment_img = ?        -- เพิ่ม installment_img                    
+                    installment_img = ?,        -- เพิ่ม installment_img                
+                    payment_due_day_period = ?    
                 WHERE installment_id = ?
             ");
             $stmt_master->execute([
@@ -206,10 +209,11 @@ if (isset($payload['action']) && ($payload['action'] === 'ADD' || $payload['acti
                 $payload['detail'] ?? '',
                 $payload['interest_rate'] ?? 0,
                 $final_images_str, // ใช้ string รูปภาพที่ประมวลผลแล้ว
+                $payload['payment_due_day_period'] ?? 0,
                 $installment_id
             ]);
             $stmt_master->closeCursor();
-            
+
             // 2. จัดการข้อมูลรายละเอียดใน ims_installment_detail (ใช้ logic เดิมของคุณ)
             $stmt_delete_details = $conn->prepare("DELETE FROM ims_installment_detail WHERE installment_id = ?");
             $stmt_delete_details->execute([$installment_id]);
