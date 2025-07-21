@@ -65,6 +65,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     <th>จำนวนเงินต้น</th>
                                                     <th>จำนวนเงินทำสัญญา</th>
                                                     <th>จำนวนงวด</th>
+                                                    <th>จำนวนงวดที่ผ่อนชำระ</th>
                                                     <th>จำนวนผ่อนแต่ละงวด</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
@@ -201,6 +202,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                     {data: 'principal_amount', className: 'text-right'}, // จัดชิดขวา
                     {data: 'down_payment', className: 'text-right'},     // จัดชิดขวา
                     {data: 'num_installments', className: 'text-right'}, // จัดชิดขวา
+                    {data: 'installment_paid_period', className: 'text-right'}, // จัดชิดขวา
                     {data: 'installment_per_period', className: 'text-right'}, // จัดชิดขวา
                     {data: 'update'},
                     {data: 'delete'}

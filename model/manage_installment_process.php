@@ -285,6 +285,10 @@ if (isset($_GET["action"]) && $_GET["action"] === 'GET_DATA_DETAIL') {
     exit;
 }
 
+
+// Assume $conn is your PDO connection object, and session is started.
+// This is a simplified example; your actual setup might be more complex.
+
 // -----------------------------
 // DATATABLE SERVER-SIDE LOAD (ใช้ $_POST)
 // -----------------------------
@@ -302,7 +306,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
     $searchQuery = "";
     if (!empty($searchValue)) {
         // ใช้ debtor สำหรับการค้นหา แทน payer เพราะ ims_installment ไม่มี payer
-        $searchQuery = " AND (debtor LIKE :debtor OR house_number LIKE :house_number OR installment_id LIKE :installment_id) ";
+        $searchQuery = " AND (i.debtor LIKE :debtor OR i.house_number LIKE :house_number OR i.installment_id LIKE :installment_id) ";
         $searchArray = [
             'debtor' => "%$searchValue%",
             'house_number' => "%$searchValue%",
@@ -310,22 +314,50 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
         ];
     }
 
-    // Total records (no filter)
+    // --- Total records (no filter) ---
+    // Count from ims_installment directly for total records
     $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_installment");
     $stmt->execute();
     $totalRecords = $stmt->fetchColumn();
 
-    // Total records (with filter)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_installment WHERE 1 " . $searchQuery);
+    // --- Total records (with filter) ---
+    // We need to count the distinct installments after the join and filter.
+    // This is more complex because of the JOIN and GROUP BY.
+    // For simplicity, we'll often count from the primary table after applying the search filter
+    // or perform a subquery/derived table count if precision is needed for the filtered count.
+    // For DataTables, iTotalDisplayRecords usually reflects the count of rows after filtering.
+    // Let's adapt the count query to match the main data fetch logic for consistency.
+
+    $countFilterSql = "
+        SELECT COUNT(DISTINCT i.installment_id)
+        FROM ims_installment i
+        LEFT JOIN ims_installment_detail id ON i.installment_id = id.installment_id
+        WHERE 1 " . $searchQuery;
+
+    $stmt = $conn->prepare($countFilterSql);
     foreach ($searchArray as $key => $val) {
         $stmt->bindValue(':' . $key, $val, PDO::PARAM_STR);
     }
     $stmt->execute();
     $totalRecordwithFilter = $stmt->fetchColumn();
 
-    // Fetch data
-    $sql = "SELECT * FROM ims_installment WHERE 1 " . $searchQuery .
-        " ORDER BY " . $columnName . " " . $columnSortOrder . " LIMIT :offset, :limit";
+
+    // --- Fetch data ---
+    // Modify the SQL query to include the JOIN and COUNT for detail records
+    $sql = "
+        SELECT
+            i.*,
+            COUNT(id.installment_id) AS detail_record_count
+        FROM
+            ims_installment i
+        LEFT JOIN
+            ims_installment_detail id ON i.installment_id = id.installment_id
+        WHERE 1 " . $searchQuery . "
+        GROUP BY
+            i.id -- Group by the primary key of ims_installment to get all its columns uniquely
+        ORDER BY " . $columnName . " " . $columnSortOrder . "
+        LIMIT :offset, :limit";
+
     $stmt = $conn->prepare($sql);
 
     foreach ($searchArray as $key => $val) {
@@ -341,6 +373,10 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
     $isUser = $_SESSION['account_type'] !== "user"; // ตรวจสอบจาก session
 
     foreach ($empRecords as $row) {
+        // Here's where you use 'detail_record_count'
+        // You can assign it to 'installment_paid_period' or another field as needed.
+        $installmentPaidPeriodValue = $row['detail_record_count']; // Get the count from the query result
+
         if (isset($_POST['sub_action']) && $_POST['sub_action'] === "GET_MASTER") {
             $data[] = array(
                 "id" => $row['id'],
@@ -352,7 +388,9 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
                 "principal_amount" => $row['principal_amount'],
                 "down_payment" => $row['down_payment'],
                 "num_installments" => $row['num_installments'],
-                "installment_per_period" => $row['installment_per_period'],
+                // Using the counted value here
+                "installment_per_period" => $row['installment_per_period'], // Keep original if needed
+                "installment_paid_period" => $installmentPaidPeriodValue, // Use the calculated count
                 "start_date" => $row['start_date'],
                 "status" => $row['status'],
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
@@ -364,6 +402,8 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
                 "id" => $row['id'],
                 "installment_id" => $row['installment_id'],
                 "house_number" => $row['house_number'],
+                // You might also want to display the count in this view
+                "installment_paid_period_display" => $installmentPaidPeriodValue, // Example for sub_action != GET_MASTER
                 "select" => "<button type='button' name='select' id='{$row['installment_id']}@{$row['house_number']}' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='Select'>Select <i class='fa fa-check' aria-hidden='true'></i></button>"
             );
         }
@@ -379,7 +419,6 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_INSTALLMENT') {
     echo json_encode($response);
     exit;
 }
-
 
 function get_total_all_records($conn) // ฟังก์ชันนี้ซ้ำกับในโค้ดเก่า, แนะนำให้ใช้แค่ get_total_all_records หรือเปลี่ยนชื่อให้ไม่ซ้ำ
 {
