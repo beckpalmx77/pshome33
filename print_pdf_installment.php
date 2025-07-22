@@ -150,10 +150,10 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     $html = '
     <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:10px; ' . $margin_top_for_copy . '">
         <tr>
-            <td width="20%" align="left">
+            <td width="15%" align="left">
                 <img src="img/logo/niti_ps33_header.png" height="40">
             </td>
-            <td width="80%" align="center">
+            <td width="85%" align="center">
                 <h2 style="margin: 0;">ใบเสร็จรับเงิน ' . htmlspecialchars($title_note ?? '') . '</h2>
             </td>
         </tr>

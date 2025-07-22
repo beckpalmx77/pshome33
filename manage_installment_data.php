@@ -30,12 +30,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             #remaining_balance_display {
                 font-size: 1.2em;
                 font-weight: bold;
-                color: #28a745; /* Green color for positive balance */
+                color: #dc3545; /* Red color for positive balance */
             }
 
             #remaining_balance_display.negative {
-                color: #dc3545; /* Red color for negative balance */
+                color: #28a745; /* Green color for negative balance */
             }
+
+            #total_amount_paid_display {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #28a745;
+            }
+
         </style>
 
     </head>
@@ -208,10 +215,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                             <div class="row mt-3">
                                 <div class="col-md-12 text-right">
+                                    <!--label>ยอดเงินต้น:</label>
+                                    <span id="totalPrincipalAmountTotal">0.00</span> บาท<br>
                                     <label>ยอดรวมที่ต้องชำระทั้งหมด:</label>
                                     <span id="total_principal_and_interest_display">0.00</span> บาท<br>
                                     <label>เงินทำสัญญา:</label>
-                                    <span id="total_down_payment_display">0.00</span> บาท<br>
+                                    <span id="total_down_payment_display">0.00</span> บาท<br-->
                                     <label>ยอดที่ชำระแล้ว:</label>
                                     <span id="total_amount_paid_display">0.00</span> บาท<br>
                                     <label>คงเหลือในการผ่อนชำระ:</label>
@@ -345,6 +354,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             let remainingBalance = totalAmountDueAll - totalDownPayment - totalAmountPaidInDetails;
 
             // Update display for all values
+            $('#totalPrincipalAmountTotal').text(totalPrincipalAmount.toFixed(2));
             $('#total_principal_and_interest_display').text(totalAmountDueAll.toFixed(2));
             $('#total_down_payment_display').text(totalDownPayment.toFixed(2));
             $('#total_amount_paid_display').text(totalAmountPaidInDetails.toFixed(2)); // <-- เพิ่มบรรทัดนี้
