@@ -49,10 +49,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
-                                            <!--button type='button' name='btnExp' id='btnExp'
-                                                    class='btn btn-success btn-xs'>Export Excel
-                                                <i class="fa fa-file-excel-o"></i>
-                                            </button-->
+
+                                            <button type='button' name='btnExp' id='btnExp'
+                                                    class='btn btn-success btn-xs'>หนังสือรับสภาพหนี้
+                                                <i class="fa fa-rss"></i>
+                                            </button>
+
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
@@ -219,6 +221,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
             let url = "manage_installment_data?title=จัดการผ่อนชำระค่าส่วนกลาง(Manage Installment)"
                 + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                 + '&action=ADD';
+            window.open(url, '_blank');
+        });
+
+    </script>
+
+    <script>
+
+        $("#btnExp").click(function () {
+            let url = "document/doc_pdf/หนังสือรับสภาพหนี้ค่าส่วนกลางหมู่บ้าน.pdf";
             window.open(url, '_blank');
         });
 
