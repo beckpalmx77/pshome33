@@ -128,7 +128,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <td colspan="4" class="text-right"><strong>รวมเงินทั้งหมด:</strong></td>
                                     <td><input type="text" class="form-control text-right" id="totalAmount" readonly>
                                     </td>
-                                    <td colspan="3"></td>
+                                    <td colspan="1">
+                                        <label for="approve_status" class="control-label"><strong>การตรวจสอบรายการ</strong></label>
+                                    </td>
+                                    <td colspan="2">
+                                        <div class="form-group">
+                                            <select id="approve_status" name="approve_status"
+                                                    class="form-control" data-live-search="true"
+                                                    title="Please select">
+                                                <option value="N" selected>รอการอนุมัติ
+                                                </option>
+                                                <option value="Y">อนุมัติ
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </td>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -317,6 +331,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#purpose').val(queryString["purpose"]);
                 $('#picture_doc').val(queryString["picture_doc"]);
                 $('#totalAmount').val(queryString["total_amount"]);
+                $('#approve_status').val(queryString["approve_status"]);
+
+                //alert("data " + queryString["approve_status"]);
+
                 loadDetailData(queryString["doc_no"]);
 
                 if (queryString["picture_doc"]) {
@@ -677,6 +695,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         supplier_id: $('#supplier_id').val(),
                         supplier_name: $('#supplier_name').val(),
                         purpose: $('#purpose').val(),
+                        approve_status: $('#approve_status').val(),
                         picture_doc: finalPictureDoc, // Use the combined string here
                         details: details
                     };

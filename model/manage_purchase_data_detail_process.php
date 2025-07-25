@@ -23,7 +23,13 @@ $supplier_name = $data['supplier_name'] ?? '';
 $purpose = $data['purpose'] ?? '';
 $details = $data['details'] ?? [];
 $picture_doc = $data['picture_doc'] ?? ''; // << เพิ่มรับชื่อไฟล์รูป
+$approve_status = $data['approve_status'] ?? '';
 
+/*
+$myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
+fwrite($myfile, " Row approve_status = " . $approve_status);
+fclose($myfile);
+*/
 
 if (!in_array($action, ['ADD', 'UPDATE'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid or missing action']);
@@ -77,9 +83,9 @@ try {
         $doc_no = sprintf("PCR-%s-%s-%04d", $month, $year, $newRunNo);
 
         $stmt = $conn->prepare("INSERT INTO ims_purchase 
-            (doc_no, doc_date, requester, supplier_id, supplier_name, purpose, total_amount, picture_doc)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        if (!$stmt->execute([$doc_no, $doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc])) {
+            (doc_no, doc_date, requester, supplier_id, supplier_name, purpose, total_amount, picture_doc, approve_status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt->execute([$doc_no, $doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc, $approve_status])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Insert master failed: " . $errorInfo[2]);
         }
@@ -111,9 +117,9 @@ try {
         }
 
         $stmt = $conn->prepare("UPDATE ims_purchase 
-            SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?, total_amount = ?, picture_doc = ?
+            SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?, total_amount = ?, picture_doc = ? , approve_status = ?
             WHERE doc_no = ?");
-        if (!$stmt->execute([$doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc, $doc_no])) {
+        if (!$stmt->execute([$doc_date, $requester, $supplier_id, $supplier_name, $purpose, $total_amount, $picture_doc, $approve_status, $doc_no])) {
             $errorInfo = $stmt->errorInfo();
             throw new Exception("Update master failed: " . $errorInfo[2]);
         }

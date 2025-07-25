@@ -32,8 +32,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_DATA') {
             "purpose" => $result['purpose'],
             "total_amount" => $result['total_amount'],
             "picture_doc" => $result['picture_doc'],
-            "approve_status" => $result['approve_status'],
-            "status" => $result['status']
+            "approve_status" => $result['approve_status']
         );
     }
 
@@ -133,11 +132,13 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     $statusMeta = [
         'Y' => ['desc' => "อนุมัติ", 'color' => 'green', 'can_print' => true],
         'N' => ['desc' => "รอการอนุมัติ", 'color' => 'gray', 'can_print' => false],
+        // Add more statuses if needed
     ];
 
     foreach ($empRecords as $row) {
+
         if ($_POST['sub_action'] === "GET_MASTER") {
-            $approve_status = $row['approve_status'] ?? 'N';
+            $approve_status = $row['approve_status'];
             $meta = $statusMeta[$approve_status] ?? ['desc' => 'ไม่ทราบสถานะ', 'color' => 'gray', 'can_print' => false];
 
             $data[] = array(
@@ -146,17 +147,16 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
                 "supplier_name" => $row['supplier_name'],
                 "doc_date" => $row['doc_date'],
                 "total_amount" => $row['total_amount'],
-                "approve_status" => $row['approve_status'],
                 "approve_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
-                "status" => $row['status'] === 'Active'
-                    ? "<div class='text-success'>{$row['status']}</div>"
-                    : "<div class='text-muted'>{$row['status']}</div>",
+                //"approve_status_desc" => $approve_status,
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
-                "print" => "<button type='button' name='print' id='" . $row['doc_no'] . "' class='btn btn-outline-success btn-xs print' data-toggle='tooltip' title='Print'>Print</button>",
+                "print" => $meta['can_print']
+                    ? "<button type='button' name='print' id='" . $row['doc_no'] . "' class='btn btn-outline-success btn-xs print' data-toggle='tooltip' title='Print'>Print</button>"
+                    : "<button type='button' name='print' id='" . $row['doc_no'] . "' class='btn btn-secondary btn-xs print' data-toggle='tooltip' title='Print' disabled>Print</button>",
                 "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
             );
         }
-        else {
+        else { // This branch is for 'select' action, likely for a modal or lookup
             $data[] = array(
                 "id" => $row['id'],
                 "doc_no" => $row['doc_no'],
@@ -172,6 +172,12 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
         "iTotalDisplayRecords" => $totalRecordwithFilter,
         "aaData" => $data
     );
+
+    // --- ADD THIS SECTION TO WRITE TO FILE ---
+    $json_output = json_encode($response, JSON_PRETTY_PRINT); // JSON_PRETTY_PRINT for readability
+    $file_path = 'datatables_response_' . date('Ymd_His') . '.json'; // You might need to create a 'logs' directory
+    file_put_contents($file_path, $json_output);
+    // --- END OF ADDED SECTION ---
 
     echo json_encode($response);
     exit;
