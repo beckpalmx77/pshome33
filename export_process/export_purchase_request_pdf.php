@@ -189,7 +189,9 @@ class MYPDF extends TCPDF {
         $signature_block_y = -35; // Start signature blocks higher up, e.g., 35mm from bottom
         $line_length = 50; // Length of the signature line
         $text_offset_y = 5; // Offset for text below the line
-        $block_padding = 40; // Space between blocks
+        $total_width_for_blocks = $page_width - $margin_left - $margin_right;
+        $num_blocks = 3; // Now we have 3 blocks
+        $block_spacing = ($total_width_for_blocks - ($line_length * $num_blocks)) / ($num_blocks - 1); // Calculate even spacing
 
         $this->SetFont('THSarabunNew', '', 10); // Set font for signature labels
 
@@ -200,13 +202,19 @@ class MYPDF extends TCPDF {
         $this->SetXY($prepared_by_x, $signature_block_y + $text_offset_y);
         $this->Cell($line_length, 0, '(ผู้จัดทำ)', 0, 0, 'C');
 
+        // ผู้ตรวจสอบ (Reviewed by) - NEW BLOCK
+        $reviewed_by_x = $prepared_by_x + $line_length + $block_spacing;
+        $this->SetXY($reviewed_by_x, $signature_block_y);
+        $this->Cell($line_length, 0, '__________________________________', 0, 0, 'C'); // Signature line
+        $this->SetXY($reviewed_by_x, $signature_block_y + $text_offset_y);
+        $this->Cell($line_length, 0, '(ผู้ตรวจสอบ)', 0, 0, 'C');
+
         // ผู้อนุมัติ (Approved by)
-        $approved_by_x = $margin_left + $line_length + $block_padding;
+        $approved_by_x = $reviewed_by_x + $line_length + $block_spacing;
         $this->SetXY($approved_by_x, $signature_block_y);
         $this->Cell($line_length, 0, '__________________________________', 0, 0, 'C'); // Signature line
         $this->SetXY($approved_by_x, $signature_block_y + $text_offset_y);
         $this->Cell($line_length, 0, '(ผู้อนุมัติ)', 0, 0, 'C');
-
 
         // Page number and print date
         $this->SetY(-15); // Set Y back to lower part for page number and print date
