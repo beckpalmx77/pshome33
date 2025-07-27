@@ -604,6 +604,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     return;
                 }
 
+                if (!$('#payment_due_day_period').val()) {
+                    alertify.error('กรุณากรอกวันที่ครบกำหนดชำระ');
+                    return;
+                }
+
                 const detailRows = [];
                 let isValidDetails = true;
                 $('#detailTable tbody tr').each(function () {
