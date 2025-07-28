@@ -296,7 +296,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     <td class="text-center">${rowIdx}</td>
                     <td><input type="number" class="form-control detail-input amount-due" name="amount_due[]" value="${detailData.amount_due || installmentPerPeriod.toFixed(2)}" step="0.01" min="0" required readonly></td>
                     <td><input type="number" class="form-control detail-input principal-per-installment" name="principal_per_installment[]" value="${detailData.principal_per_installment || installmentPerPeriod.toFixed(2)}" step="0.01" min="0" required readonly></td>
-                    <td><input type="number" class="form-control detail-input amount-paid" name="amount_paid[]" value="${detailData.amount_paid || ''}" step="0.01" min="0"></td>
+                    <td><input type="number" class="form-control detail-input amount-paid" name="amount_paid[]" value="${detailData.amount_paid || ''}" step="0.01" min="0" required></td>
                     <td><input type="text" class="form-control detail-input datepicker-input" name="payment_date[]" value="${detailData.payment_date || ''}" readonly></td>
                     <td>
                         <select class="form-control detail-input payment-method" name="payment_method[]">
@@ -603,12 +603,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     alertify.error('กรุณากรอกชื่อผู้ทำสัญญา');
                     return;
                 }
-
+/*
                 if (!$('#payment_due_day_period').val()) {
                     alertify.error('กรุณากรอกวันที่ครบกำหนดชำระ');
                     return;
                 }
-
+*/
                 const detailRows = [];
                 let isValidDetails = true;
                 $('#detailTable tbody tr').each(function () {
@@ -829,11 +829,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             let interest_rate = parseInt($('#interest_rate').val()) || 0;
 
             let principal_amount_balance = (principalAmount + interest_rate) - downPayment;
-            let installment_per_period = 0;
+            //let installment_per_period = 0;
 
-            if (numInstallments > 0) {
-                installment_per_period = principal_amount_balance / numInstallments;
-            }
+            //if (numInstallments > 0) {
+                //installment_per_period = principal_amount_balance / numInstallments;
+            //}
 
             // Update the display fields
             // Ensure you have display elements with these IDs in your manage_installment_data.php
