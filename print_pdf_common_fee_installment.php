@@ -33,7 +33,7 @@ $total = 0;
 // เพิ่มเงินทำสัญญา/เงินดาวน์เป็นรายการหลัก
 if ($main_installment['down_payment'] > 0) {
     $items[] = [
-        'description' => 'เงินทำสัญญา',
+        'description' => 'เงินทำสัญญา/เงินดาวน์',
         'quantity' => 1,
         'amount' => $main_installment['down_payment'],
         // ใช้วันที่เอกสารเป็นวันที่ชำระสำหรับ down_payment
@@ -66,25 +66,16 @@ $pdf->setPrintFooter(true);
 $pdf->SetMargins(8, 5, 8);
 
 // ลดขนาดฟอนต์เริ่มต้นของ PDF
-$pdf->SetFont('THSarabunNew', '', 11); // ปรับจาก 12 เป็น 11
+$pdf->SetFont('THSarabunNew', '', 11);
 
 $pdf->AddPage();
 
 // ฟังก์ชันสร้าง HTML สำหรับใบเสร็จ
-function generate_receipt_html($company, $main_installment, $items, $total, $thai_text_total, $title_note = '', $pdf_obj)
+// แก้ไขลำดับ parameter: ย้าย $pdf_obj ให้เป็น parameter สุดท้าย (required parameter ควรอยู่ก่อน optional parameter)
+function generate_receipt_html($company, $main_installment, $items, $total, $thai_text_total, $title_note = '', $pdf_obj = null)
 {
     $full_name = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
-    $user_signature = isset($_SESSION['user_signature']) ? $_SESSION['user_signature'] : '';
-    //$signature_path = $user_signature ? 'img_sig/' . $user_signature : '';
-    $signature_path = '';
-    $signature_img_html = '';
-    if ($user_signature && file_exists($signature_path)) {
-        // ใช้ Image() method ของ TCPDF เพื่อให้รูปแสดงผล
-        $signature_img_html = $pdf_obj->Image($signature_path, '', '', 30, 0, '', '', 'T', false, 300, '', false, false, 0, false, false, false);
-    } else {
-        $signature_img_html = '____________';
-    }
-
+    $signature_img_html = '____________';
 
     $html = '
     <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:5px; margin-top:5px; text-align:center;">
