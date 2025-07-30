@@ -59,189 +59,202 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <li class="breadcrumb-item"><span id="main_menu"></span></li>
                         </ol>
                     </div>
+                    <form id="form_data" method="post"
+                          enctype="multipart/form-data" target="_blank">
+                        <div class="card shadow mb-4">
+                            <div class="card-body">
 
-                    <div class="card shadow mb-4">
-                        <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>เลขที่เอกสาร</label>
+                                            <input type="text" id="installment_id"  name="installment_id" class="form-control" readonly>
+                                        </div>
+                                    </div>
 
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>เลขที่เอกสาร</label>
-                                        <input type="text" id="installment_id" class="form-control" readonly>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>วันที่เอกสาร</label>
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                            <input type="text" class="form-control" id="doc_date" name="doc_date"
+                                                   value="<?php echo $curr_date ?>" readonly required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>บ้านเลขที่</label>
+                                            <i class="fa fa-home" aria-hidden="true"></i>
+                                            <input type="text" class="form-control" id="house_number"
+                                                   name="house_number"
+                                                   value="" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>ผู้ทำสัญญา/ผ่อนชำระ</label>
+                                            <i class="fa fa-user-circle" aria-hidden="true"></i>
+                                            <input type="text" class="form-control" id="debtor" name="debtor"
+                                                   value="" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>ยอดเงินต้น</label>
+                                            <i class="fa fa-money" aria-hidden="true"></i>
+                                            <input type="number" class="form-control" id="principal_amount"
+                                                   name="principal_amount"
+                                                   value="0.00" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>ค่าปรับล่าช้า</label>
+                                            <i class="fa fa-link" aria-hidden="true"></i>
+                                            <input type="number" class="form-control" id="interest_rate"
+                                                   name="interest_rate"
+                                                   value="0.00">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>เงินทำสัญญา</label>
+                                            <i class="fa fa-money" aria-hidden="true"></i>
+                                            <input type="number" class="form-control" id="down_payment"
+                                                   name="down_payment"
+                                                   value="0.00" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>จำนวนงวด</label>
+                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                                            <input type="number" class="form-control" id="num_installments"
+                                                   name="num_installments"
+                                                   value="1" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>ยอดเงินที่ต้องผ่อนชำระ</label>
+                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
+                                            <input type="number" class="form-control" id="principal_amount_balance"
+                                                   name="principal_amount_balance"
+                                                   value="0.00" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>ยอดผ่อนแต่ละงวด</label>
+                                            <i class="fa fa-money" aria-hidden="true"></i>
+                                            <input type="text" class="form-control" id="installment_per_period"
+                                                   name="installment_per_period"
+                                                   value="" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="payment_due_day_period">วันที่ครบกำหนดชำระแต่ละงวด</label>
+                                            <div class="input-group"><input type="varchar" class="form-control"
+                                                                            id="payment_due_day_period"
+                                                                            name="payment_due_day_period"
+                                                                            value="">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mt-4">
+                                            <button type="button" class="btn btn-primary"
+                                                    id="btnPrintDownPaymentPdf">
+                                                ใบเสร็จค่าทำสัญญา <i class="fa fa-file-pdf"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>วันที่เอกสาร</label>
-                                        <i class="fa fa-calendar" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="doc_date" name="doc_date"
-                                               value="<?php echo $curr_date ?>" readonly required>
+                                <input type="hidden" class="form-control" id="status" name="status" value="active">
+
+                                <input type="file" id="pictures" multiple accept="image/*,application/pdf">
+                                <input type="hidden" id="installment_img" name="installment_img">
+                                <input type="hidden" id="deleted_images" name="deleted_images" value="">
+                                <div id="preview-area" class="row mt-2"></div>
+                                <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
+
+                                <div class="d-flex align-items-center mt-4 mb-3">
+                                    <h4 class="h5 mb-0 text-gray-800">รายละเอียดงวดผ่อนชำระ</h4>
+                                    <div class="ml-auto">
+                                        <button type="button" class="btn btn-success" id="addRow">
+                                            <i class="fas fa-plus"></i> เพิ่มงวด
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>บ้านเลขที่</label>
-                                        <i class="fa fa-home" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="house_number" name="house_number"
-                                               value="" required>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="detailTable">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>ยอดรวมที่ต้องชำระ</th>
+                                            <th>เงินต้นต่องวด</th>
+                                            <th>ยอดที่ชำระงวดนี้</th>
+                                            <th>วันที่ชำระ</th>
+                                            <th>วิธีการชำระ</th>
+                                            <th>สถานะ</th>
+                                            <th style="width: 50px;">พิมพ์</th>
+                                            <th style="width: 50px;">ลบ</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-12 text-right">
+                                        <!--label>ยอดเงินต้น:</label>
+                                        <span id="totalPrincipalAmountTotal">0.00</span> บาท<br>
+                                        <label>ยอดรวมที่ต้องชำระทั้งหมด:</label>
+                                        <span id="total_principal_and_interest_display">0.00</span> บาท<br>
+                                        <label>เงินทำสัญญา:</label>
+                                        <span id="total_down_payment_display">0.00</span> บาท<br-->
+                                        <label>ยอดที่ชำระแล้ว:</label>
+                                        <span id="total_amount_paid_display">0.00</span> บาท<br>
+                                        <label>คงเหลือในการผ่อนชำระ:</label>
+                                        <span id="remaining_balance_display">0.00</span> บาท
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>ผู้ทำสัญญา/ผ่อนชำระ</label>
-                                        <i class="fa fa-user-circle" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="debtor" name="debtor"
-                                               value="" required>
-                                    </div>
-                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" name="id" id="id"/>
+                                    <input type="hidden" name="action" id="action" value=""/>
 
-                            </div>
+                                    <button type="submit" name="save" id="save" class="btn btn-primary">
+                                        บันทึก <i class="fa fa-save"></i>
+                                    </button>
 
-                            <div class="row">
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>ยอดเงินต้น</label>
-                                        <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="number" class="form-control" id="principal_amount"
-                                               name="principal_amount"
-                                               value="0.00" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>ค่าปรับล่าช้า</label>
-                                        <i class="fa fa-link" aria-hidden="true"></i>
-                                        <input type="number" class="form-control" id="interest_rate"
-                                               name="interest_rate"
-                                               value="0.00">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>เงินทำสัญญา</label>
-                                        <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="number" class="form-control" id="down_payment"
-                                               name="down_payment"
-                                               value="0.00" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>จำนวนงวด</label>
-                                        <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        <input type="number" class="form-control" id="num_installments"
-                                               name="num_installments"
-                                               value="1" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>ยอดเงินที่ต้องผ่อนชำระ</label>
-                                        <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        <input type="number" class="form-control" id="principal_amount_balance"
-                                               name="principal_amount_balance"
-                                               value="0.00" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>ยอดผ่อนแต่ละงวด</label>
-                                        <i class="fa fa-money" aria-hidden="true"></i>
-                                        <input type="text" class="form-control" id="installment_per_period"
-                                               name="installment_per_period"
-                                               value="" required>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>วันที่ครบกำหนดชำระแต่ละงวด</label>
-                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                        <input type="varchar" class="form-control" id="payment_due_day_period"
-                                               name="payment_due_day_period"
-                                               value="">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input type="hidden" class="form-control" id="status" name="status" value="active">
-
-                            <input type="file" id="pictures" multiple accept="image/*,application/pdf">
-                            <input type="hidden" id="installment_img" name="installment_img">
-                            <input type="hidden" id="deleted_images" name="deleted_images" value="">
-                            <div id="preview-area" class="row mt-2"></div>
-                            <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
-
-                            <div class="d-flex align-items-center mt-4 mb-3">
-                                <h4 class="h5 mb-0 text-gray-800">รายละเอียดงวดผ่อนชำระ</h4>
-                                <div class="ml-auto">
-                                    <button type="button" class="btn btn-success" id="addRow">
-                                        <i class="fas fa-plus"></i> เพิ่มงวด
+                                    <button type="button" class="btn btn-danger" onclick="closeAndReload()">
+                                        ปิด <i class="fa fa-window-close"></i>
                                     </button>
                                 </div>
                             </div>
-
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="detailTable">
-                                    <thead>
-                                    <tr>
-                                        <th style="width: 50px;">#</th>
-                                        <th>ยอดรวมที่ต้องชำระ</th>
-                                        <th>เงินต้นต่องวด</th>
-                                        <th>ยอดที่ชำระงวดนี้</th>
-                                        <th>วันที่ชำระ</th>
-                                        <th>วิธีการชำระ</th>
-                                        <th>สถานะ</th>
-                                        <th style="width: 50px;">พิมพ์</th>
-                                        <th style="width: 50px;">ลบ</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="row mt-3">
-                                <div class="col-md-12 text-right">
-                                    <!--label>ยอดเงินต้น:</label>
-                                    <span id="totalPrincipalAmountTotal">0.00</span> บาท<br>
-                                    <label>ยอดรวมที่ต้องชำระทั้งหมด:</label>
-                                    <span id="total_principal_and_interest_display">0.00</span> บาท<br>
-                                    <label>เงินทำสัญญา:</label>
-                                    <span id="total_down_payment_display">0.00</span> บาท<br-->
-                                    <label>ยอดที่ชำระแล้ว:</label>
-                                    <span id="total_amount_paid_display">0.00</span> บาท<br>
-                                    <label>คงเหลือในการผ่อนชำระ:</label>
-                                    <span id="remaining_balance_display">0.00</span> บาท
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <input type="hidden" name="id" id="id"/>
-                                <input type="hidden" name="action" id="action" value=""/>
-
-                                <button type="submit" name="save" id="save" class="btn btn-primary">
-                                    บันทึก <i class="fa fa-save"></i>
-                                </button>
-
-                                <button type="button" class="btn btn-danger" onclick="closeAndReload()">
-                                    ปิด <i class="fa fa-window-close"></i>
-                                </button>
-                            </div>
                         </div>
-                    </div>
+                    </form>
 
                 </div>
 
@@ -603,12 +616,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     alertify.error('กรุณากรอกชื่อผู้ทำสัญญา');
                     return;
                 }
-/*
-                if (!$('#payment_due_day_period').val()) {
-                    alertify.error('กรุณากรอกวันที่ครบกำหนดชำระ');
-                    return;
-                }
-*/
+                /*
+                                if (!$('#payment_due_day_period').val()) {
+                                    alertify.error('กรุณากรอกวันที่ครบกำหนดชำระ');
+                                    return;
+                                }
+                */
                 const detailRows = [];
                 let isValidDetails = true;
                 $('#detailTable tbody tr').each(function () {
@@ -832,7 +845,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             //let installment_per_period = 0;
 
             //if (numInstallments > 0) {
-                //installment_per_period = principal_amount_balance / numInstallments;
+            //installment_per_period = principal_amount_balance / numInstallments;
             //}
 
             // Update the display fields
@@ -852,6 +865,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             // Call the function once on page load, in case the fields are pre-filled (e.g., during an 'UPDATE' action)
             calculateInstallmentDetails();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#btnPrintDownPaymentPdf').on('click', function (e) {
+                e.preventDefault(); // หยุดการ submit ฟอร์มตามปกติ
+                const installment_id = $('#installment_id').val();
+                //alert('installment_id ที่จะส่ง: ' + installment_id); // แสดงค่า installment_id ที่ได้
+
+                // ตรวจสอบว่า installment_id มีค่าหรือไม่ก่อนส่ง
+                if (installment_id) {
+                    // สร้างฟอร์มชั่วคราวเพื่อส่งค่าแบบ GET
+                    const tempForm = $('<form>')
+                        .attr('method', 'get') // กำหนด method เป็น GET
+                        .attr('action', 'print_pdf_common_fee_installment.php') // ชี้ไปที่ print_pdf.php
+                        .attr('target', '_blank') // เปิดในแท็บใหม่
+                        .append($('<input type="hidden" name="installment_id">').val(installment_id)); // เพิ่ม input hidden สำหรับ installment_id
+
+                    $('body').append(tempForm); // เพิ่มฟอร์มเข้าสู่ body
+                    tempForm.submit(); // Submit ฟอร์ม
+                    tempForm.remove(); // ลบฟอร์มชั่วคราวออกหลังจาก submit
+                } else {
+                    alertify.error('ไม่พบ installment_id ไม่สามารถพิมพ์ใบเสร็จได้');
+                }
+            });
         });
     </script>
 
