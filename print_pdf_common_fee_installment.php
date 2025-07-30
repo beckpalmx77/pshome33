@@ -30,10 +30,10 @@ if (!$main_installment) {
 $items = [];
 $total = 0;
 
-// เพิ่มเงินทำสัญญา/เงินดาวน์เป็นรายการหลัก
+// เพิ่มเงินทำสัญญาเป็นรายการหลัก
 if ($main_installment['down_payment'] > 0) {
     $items[] = [
-        'description' => 'เงินทำสัญญา/เงินดาวน์',
+        'description' => 'เงินทำสัญญา',
         'quantity' => 1,
         'amount' => $main_installment['down_payment'],
         // ใช้วันที่เอกสารเป็นวันที่ชำระสำหรับ down_payment
@@ -112,7 +112,7 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
 
     if (empty($items)) {
         $html .= '<tr>
-            <td colspan="4" align="center"><i>ไม่พบรายการรับเงิน (ไม่มีเงินทำสัญญา/เงินดาวน์)</i></td>
+            <td colspan="4" align="center"><i>ไม่พบรายการรับเงิน (ไม่มีเงินทำสัญญา)</i></td>
         </tr>';
     } else {
         foreach ($items as $index => $item) {
