@@ -148,8 +148,8 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
             <td width="50%"><b>ค่าปรับล่าช้ารวม:</b> ' . number_format($main_installment['interest_rate'], 2) . ' บาท</td>
         </tr>
         <tr>
-            <td width="50%"><b>เงินทำสัญญา/เงินดาวน์:</b> ' . number_format($main_installment['down_payment'], 2) . ' บาท</td>
-            <td width="50%"><b>ยอดเงินที่ต้องผ่อนชำระ (หลังหักเงินดาวน์):</b> ' . number_format($main_installment['principal_amount_balance'], 2) . ' บาท</td>
+            <td width="50%"><b>เงินทำสัญญา:</b> ' . number_format($main_installment['down_payment'], 2) . ' บาท</td>
+            <td width="50%"><b>ยอดเงินที่ต้องผ่อนชำระ (หลังหักเงินทำสัญญา):</b> ' . number_format($main_installment['principal_amount_balance'], 2) . ' บาท</td>
         </tr>
         <tr>
             <td width="50%"><b>จำนวนงวด:</b> ' . htmlspecialchars($main_installment['num_installments']) . ' งวด</td>
