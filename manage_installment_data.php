@@ -167,7 +167,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="payment_due_day_period">วันที่ครบกำหนดชำระแต่ละงวด</label>
                                             <div class="input-group"><input type="varchar" class="form-control"
