@@ -160,8 +160,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PAYROLL') {
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
             );
-        }
-        else {
+        } else {
             $data[] = array(
                 "id" => $row['id'],
                 "doc_no" => $row['doc_no'],
