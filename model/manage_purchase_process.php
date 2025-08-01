@@ -176,7 +176,7 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     // --- ADD THIS SECTION TO WRITE TO FILE ---
     $json_output = json_encode($response, JSON_PRETTY_PRINT); // JSON_PRETTY_PRINT for readability
     $file_path = 'datatables_response_' . date('Ymd_His') . '.json'; // You might need to create a 'logs' directory
-    file_put_contents($file_path, $json_output);
+    //file_put_contents($file_path, $json_output);
     // --- END OF ADDED SECTION ---
 
     echo json_encode($response);
