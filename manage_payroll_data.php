@@ -158,7 +158,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="work_day_month" class="control-label">จำนวนวันในเดือน</label>
-                                        <input type="text" id="work_day_month" name="work_day_month" class="form-control" readonly>
+                                        <input type="text" id="work_day_month" name="work_day_month"
+                                               class="form-control" readonly>
                                     </div>
                                 </div>
 
@@ -172,7 +173,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             <input class="form-check-input me-1" type="radio"
                                                    name="payment_method_radio"
                                                    id="method_transfer" value="โอนเงิน">
-                                            <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
+                                            <label class="form-check-label" for="method_transfer">💳 โอนเงิน
+                                                หมายเลขบัญชีฯ</label>
                                         </div>
 
                                         <input type="text" class="form-control ms-2 me-2" name="bank_no"
@@ -211,7 +213,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         <th style="width: 15%;">จำนวน</th>
                                         <th style="width: 15%;">จำนวนเงิน</th>
                                         <th style="width: 15%;">รวมเงิน</th>
-                                        <th style="width: 20%;">หมายเหตุ</th> <th style="width: 5%;">ลบ</th>
+                                        <th style="width: 20%;">หมายเหตุ</th>
+                                        <th style="width: 5%;">ลบ</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -331,7 +334,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
         <script src="vendor/datatables/v11/bootbox.min.js"></script>
-        <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+        <
+        script
+        src = "vendor/datatables/v11/jquery.dataTables.min.js" ></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
@@ -402,6 +407,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#work_day_month').val(''); // Clear if month/year not selected or invalid
             }
         }
+
         // END: ฟังก์ชันใหม่สำหรับคำนวณและแสดงจำนวนวันในเดือน
 
 

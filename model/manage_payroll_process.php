@@ -6,6 +6,7 @@ include('../config/connect_db.php');
 include('../config/lang.php');
 include('../util/record_util.php');
 include('../util/reorder_record.php');
+include('../util/month_util.php');
 
 header('Content-Type: application/json');
 
@@ -144,12 +145,14 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PAYROLL') {
             $approve_status = $row['approve_status'] ?? 'N';
             $meta = $statusMeta[$approve_status] ?? ['desc' => 'ไม่ทราบสถานะ', 'color' => 'gray', 'can_print' => false];
 
+            $payroll_month = $month_arr[$row['payroll_month']];
+
             $data[] = array(
                 "doc_no" => $row['doc_no'],
                 "emp_id" => $row['emp_id'],
                 "employee_fullname" => $row['employee_fullname'],
                 "doc_date" => $row['doc_date'],
-                "payroll_month" => $row['payroll_month'],
+                "payroll_month" => $payroll_month,
                 "payroll_year" => $row['payroll_year'],
                 "payment_method" => $row['payment_method'],
                 "bank_no" => $row['bank_no'],
