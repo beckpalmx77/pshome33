@@ -158,8 +158,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="work_day_month" class="control-label">จำนวนวันในเดือน</label>
-                                        <input type="text" id="work_day_month" name="work_day_month"
-                                               class="form-control" readonly>
+                                        <input type="text" id="work_day_month" name="work_day_month" class="form-control" readonly>
                                     </div>
                                 </div>
 
@@ -173,8 +172,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             <input class="form-check-input me-1" type="radio"
                                                    name="payment_method_radio"
                                                    id="method_transfer" value="โอนเงิน">
-                                            <label class="form-check-label" for="method_transfer">💳 โอนเงิน
-                                                หมายเลขบัญชีฯ</label>
+                                            <label class="form-check-label" for="method_transfer">💳 โอนเงิน   หมายเลขบัญชีฯ</label>
                                         </div>
 
                                         <input type="text" class="form-control ms-2 me-2" name="bank_no"
@@ -213,8 +211,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         <th style="width: 15%;">จำนวน</th>
                                         <th style="width: 15%;">จำนวนเงิน</th>
                                         <th style="width: 15%;">รวมเงิน</th>
-                                        <th style="width: 20%;">หมายเหตุ</th>
-                                        <th style="width: 5%;">ลบ</th>
+                                        <th style="width: 20%;">หมายเหตุ</th> <th style="width: 5%;">ลบ</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -231,6 +228,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </table>
                             </div>
                             <br>
+
+                            <input type="file" id="pictures" multiple accept="image/*,application/pdf">
+                            <input type="hidden" id="picture_doc" name="picture_doc">
+                            <input type="hidden" id="deleted_images" name="deleted_images" value="">
+                            <div id="preview-area" class="row mt-2"></div>
+                            <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
 
                             <div class="modal-footer justify-content-end">
                                 <input type="hidden" name="action" id="action" value=""/>
@@ -334,9 +337,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
         <script src="vendor/datatables/v11/bootbox.min.js"></script>
-        <
-        script
-        src = "vendor/datatables/v11/jquery.dataTables.min.js" ></script>
+        <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
@@ -407,7 +408,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#work_day_month').val(''); // Clear if month/year not selected or invalid
             }
         }
-
         // END: ฟังก์ชันใหม่สำหรับคำนวณและแสดงจำนวนวันในเดือน
 
 
@@ -822,6 +822,111 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             updatePaymentMethodInput();
         });
     </script>
+
+
+    <script>
+        let uploadedImages = [];
+        document.getElementById('pictures').addEventListener('change', function (e) {
+            const files = Array.from(e.target.files);
+            const previewArea = document.getElementById('preview-area');
+
+            files.forEach((file) => {
+                const fileIndex = uploadedImages.push(file) - 1;
+
+                const filePreviewBox = document.createElement('div');
+                filePreviewBox.classList.add('col-md-2', 'position-relative', 'mb-2');
+
+                const removeButton = document.createElement('button');
+                removeButton.setAttribute('type', 'button');
+                removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'position-absolute', 'top-0', 'end-0', 'remove-new-img');
+                removeButton.setAttribute('data-file-index', fileIndex);
+                removeButton.innerHTML = '&times;';
+                removeButton.style.cssText = 'z-index: 2; padding: 2px 6px; border-radius: 50%;';
+
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = document.createElement('img');
+                        img.setAttribute('src', e.target.result);
+                        img.classList.add('img-thumbnail');
+                        img.style.cssText = 'width:100%; height:120px; object-fit:cover;';
+
+                        const imgLink = document.createElement('a'); // New: Create anchor tag
+                        imgLink.setAttribute('href', e.target.result); // Link to the full image
+                        imgLink.setAttribute('target', '_blank');     // Open in new tab
+                        imgLink.appendChild(img);                     // Append image to anchor
+
+                        filePreviewBox.appendChild(imgLink);          // Append anchor to box
+                        filePreviewBox.appendChild(removeButton);
+                        previewArea.appendChild(filePreviewBox);
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    const pdfPlaceholder = document.createElement('div');
+                    pdfPlaceholder.style.cssText = 'width:100%; height:120px; background-color: #f0f0f0; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden;';
+
+                    const pdfText = document.createElement('p');
+                    pdfText.textContent = 'PDF File';
+                    pdfText.style.cssText = 'font-weight: bold; margin-bottom: 5px;';
+
+                    const fileNameShort = document.createElement('p');
+                    fileNameShort.textContent = file.name;
+                    fileNameShort.style.cssText = 'font-size: 0.7em; word-break: break-all; padding: 0 5px;';
+
+                    const viewLink = document.createElement('a');
+                    viewLink.setAttribute('href', URL.createObjectURL(file));
+                    viewLink.setAttribute('target', '_blank');
+                    viewLink.textContent = 'View';
+                    viewLink.classList.add('btn', 'btn-sm', 'btn-primary', 'mt-1');
+
+                    pdfPlaceholder.appendChild(pdfText);
+                    pdfPlaceholder.appendChild(fileNameShort);
+                    pdfPlaceholder.appendChild(viewLink);
+                    filePreviewBox.appendChild(pdfPlaceholder);
+                    filePreviewBox.appendChild(removeButton);
+                    previewArea.appendChild(filePreviewBox);
+                }
+            });
+        });
+
+        document.getElementById('preview-area').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-new-img')) {
+                const fileIndex = parseInt(e.target.getAttribute('data-file-index'));
+                uploadedImages.splice(fileIndex, 1);
+                e.target.parentElement.remove();
+
+                $('#preview-area .remove-new-img').each(function (i) {
+                    $(this).attr('data-file-index', i);
+                });
+            }
+        });
+
+        async function uploadImages() {
+            const formData = new FormData();
+            uploadedImages.forEach(file => formData.append('images[]', file)); // The server-side script will need to handle file types
+
+            if (uploadedImages.length === 0) {
+                return Promise.resolve([]);
+            }
+
+            const response = await fetch('upload_img_doc.php', { // Assuming upload_img_doc.php can handle PDFs
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (result.status === 'success') {
+                return result.filenames;
+            } else {
+                throw new Error(result.message || 'Image upload failed on server.');
+            }
+        }
+    </script>
+
 
     </body>
     </html>
