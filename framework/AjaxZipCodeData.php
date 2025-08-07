@@ -35,5 +35,3 @@ if (!empty($_POST["province_id"])) {
     }
 
 }
-
-?>
