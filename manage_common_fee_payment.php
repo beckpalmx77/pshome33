@@ -233,6 +233,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                              style="display: none; margin-top: 10px; max-width: 200px; cursor: pointer;"
                                                                              onclick="openImageInNewWindow(this.src)"/>
                                                                     </div>
+
+
                                                                     <div class="col-sm-6">
                                                                         <label>สถานะการอนุมัติ</label><br>
                                                                         <input type="radio" id="approved"
@@ -241,6 +243,51 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <input type="radio" id="rejected"
                                                                                name="payment_status" value="N">
                                                                         <label for="rejected" class="btn btn-danger">ยังไม่ยืนยันการชำระ</label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-4">
+                                                                        <label for="create_by"
+                                                                               class="control-label">สร้างรายการ
+                                                                            โดย</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="create_by"
+                                                                               name="create_by"
+                                                                               readonly="true"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <label for="created_at"
+                                                                               class="control-label">วัน-เวลา
+                                                                            สร้างรายการ</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="created_at"
+                                                                               name="created_at"
+                                                                               readonly="true"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-4">
+                                                                        <label for="approve_by"
+                                                                               class="control-label">ปรับปรุงข้อมูล/อนุมัติ
+                                                                            โดย</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="approve_by"
+                                                                               name="approve_by"
+                                                                               readonly="true"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <label for="updated_at"
+                                                                               class="control-label">วัน-เวลา
+                                                                            ปรับปรุงข้อมูล</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="updated_at"
+                                                                               name="updated_at"
+                                                                               readonly="true"
+                                                                               placeholder="">
                                                                     </div>
                                                                 </div>
 
@@ -568,6 +615,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         // path ของไฟล์ภาพ
                         let image_path = 'uploads/slips/' + picture_payment;
 
+                        let create_by = data.create_by;
+                        let created_at = data.created_at;
+                        let approve_by = data.approve_by;
+                        let updated_at = data.updated_at;
+
                         // แสดง modal
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -582,6 +634,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#payment_status').val(payment_status);
                         $('#payment_status_desc').val(payment_status_desc);
                         $('#payment_method').val(payment_method);
+                        $('#create_by').val(create_by);
+                        $('#created_at').val(created_at);
+                        $('#approve_by').val(approve_by);
+                        $('#updated_at').val(updated_at);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#saveButton').val('Save');

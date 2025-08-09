@@ -50,6 +50,8 @@ if ($_POST["action"] === 'GET_DATA') {
             "payment_method" => $result['payment_method'],
             "remark" => $result['remark'],
             "created_at" => $result['created_at'],
+            "create_by" => $result['create_by'],
+            "approve_by" => $result['approve_by'],
             "updated_at" => $result['updated_at'],
             "line_picture_profile_show" => $result['line_picture_profile_show'],
             "alley" => $result['alley'],
