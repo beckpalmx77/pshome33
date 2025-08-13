@@ -113,7 +113,7 @@ if ($_POST["action"] === 'UPDATE') {
     }
 }
 
-
+/*
 if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
@@ -129,6 +129,49 @@ if ($_POST["action"] === 'DELETE') {
         } catch (Exception $e) {
             echo 'Message: ' . $e->getMessage();
         }
+    }
+}
+*/
+
+if ($_POST["action"] === 'DELETE') {
+
+    $id = $_POST["id"];
+
+    // Find the line_phone from ims_house_line_user using the provided id
+    $sql_find_line_phone = "SELECT line_phone FROM ims_house_line_user WHERE id = :id";
+    $stmt_find_line_phone = $conn->prepare($sql_find_line_phone);
+    $stmt_find_line_phone->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt_find_line_phone->execute();
+    $line_phone = $stmt_find_line_phone->fetchColumn();
+
+    if ($line_phone) {
+        try {
+            // Start a transaction to ensure both deletions are successful
+            $conn->beginTransaction();
+
+            // 1. Delete from ims_house_line_user
+            $sql_delete_house = "DELETE FROM ims_house_line_user WHERE id = :id";
+            $stmt_delete_house = $conn->prepare($sql_delete_house);
+            $stmt_delete_house->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt_delete_house->execute();
+
+            // 2. Delete from ims_user using the line_phone found earlier
+            $sql_delete_user = "DELETE FROM ims_user WHERE user_id = :line_phone";
+            $stmt_delete_user = $conn->prepare($sql_delete_user);
+            $stmt_delete_user->bindParam(':line_phone', $line_phone, PDO::PARAM_STR);
+            $stmt_delete_user->execute();
+
+            // Commit the transaction if both queries were successful
+            $conn->commit();
+            echo $del_success;
+        } catch (Exception $e) {
+            // Roll back the transaction if an error occurred
+            $conn->rollBack();
+            echo 'Message: ' . $e->getMessage();
+        }
+    } else {
+        // Handle case where id is not found
+        echo "Record not found.";
     }
 }
 
