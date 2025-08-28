@@ -149,7 +149,7 @@ foreach ($BankCurr as $row_curr) {
                                                     style="background-color: #0dcaf0" required>
                                                 <?php
                                                 $currentYear = date('Y'); // ดึงปีปัจจุบัน
-                                                $startYear = $currentYear - 1; // 5 ปีก่อนหน้า
+                                                $startYear = $currentYear - 20; // 20 ปีก่อนหน้า
                                                 $endYear = $currentYear + 1;  // 1 ปีข้างหน้า
 
                                                 for ($year = $startYear; $year <= $endYear; $year++) {
