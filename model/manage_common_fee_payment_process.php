@@ -6,6 +6,7 @@ include('../config/connect_db.php'); // ไฟล์เชื่อมต่อ�
 include('../config/lang.php'); // ไฟล์ภาษา
 include('../util/record_util.php'); // ยูทิลิตี้สำหรับ Record
 include('../util/reorder_record.php'); // ยูทิลิตี้สำหรับการเรียง Record
+include('../util/month_util.php'); // ยูทิลิตี้สำหรับการเรียง Record
 
 // กำหนดข้อความแจ้งเตือนความสำเร็จ (สามารถย้ายไปอยู่ในไฟล์ lang.php ได้)
 $save_success = "บันทึกข้อมูลสำเร็จ";
@@ -75,6 +76,9 @@ if ($_POST["action"] === 'UPDATE') {
         $period_month_to = $_POST["period_month_to"];
         $period_year = $_POST["period_year"];
         $amount = $_POST["amount"];
+
+        $month_start = $month_arr[$period_month_start];
+        $month_to = $month_arr[$period_month_to];
 
         // กำหนดผู้ที่อนุมัติจาก session
         $approve_by = (isset($_SESSION['first_name']) && isset($_SESSION['last_name'])) ? $_SESSION['first_name'] . " " . $_SESSION['last_name'] : "Unknown User";
@@ -210,7 +214,7 @@ if ($_POST["action"] === 'UPDATE') {
                                                     ],
                                                     [
                                                         "type" => "text",
-                                                        "text" => $_POST["month_name_start"] . " - " . $_POST["month_name_to"],
+                                                        "text" => $month_start . " - " . $month_to,
                                                         "wrap" => true,
                                                         "color" => "#666666",
                                                         "size" => "sm",
