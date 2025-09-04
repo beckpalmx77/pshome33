@@ -68,6 +68,7 @@ if ($_POST["action"] === 'UPDATE') {
 
     if (!empty($_POST["house_number"])) {
         $id = $_POST["id"];
+        // กำหนดค่า payment_status เป็น 'Y' หรือ 'N' จากข้อมูลที่ส่งมา
         $payment_status = ($_POST["payment_status"] === "Y") ? "Y" : "N";
 
         $period_month_start = $_POST["period_month_start"];
@@ -75,35 +76,42 @@ if ($_POST["action"] === 'UPDATE') {
         $period_year = $_POST["period_year"];
         $amount = $_POST["amount"];
 
+        // กำหนดผู้ที่อนุมัติจาก session
         $approve_by = (isset($_SESSION['first_name']) && isset($_SESSION['last_name'])) ? $_SESSION['first_name'] . " " . $_SESSION['last_name'] : "Unknown User";
 
+        // --- ขั้นตอนที่ 1: ดึงข้อมูล payment_status และ update_count ปัจจุบันจากฐานข้อมูล ---
         $sql_find_current = "SELECT payment_status, update_count, doc_id, house_number FROM v_ims_house_payment WHERE id = :id";
         $stmt_find_current = $conn->prepare($sql_find_current);
         $stmt_find_current->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt_find_current->execute();
         $current_data = $stmt_find_current->fetch(PDO::FETCH_ASSOC);
 
+        // ตรวจสอบว่าพบข้อมูลหรือไม่
         $nRows = $current_data ? 1 : 0;
 
         if ($nRows > 0) {
+            // ดึงค่า update_count ปัจจุบัน
             $current_update_count = $current_data['update_count'];
             $house_number_to_notify = $current_data['house_number'];
             $doc_id = $current_data['doc_id'];
 
+            // กำหนดค่า update_count ใหม่ เริ่มต้นด้วยค่าปัจจุบัน
             $new_update_count = $current_update_count;
 
+            // เพิ่มค่า update_count เฉพาะเมื่อ payment_status ที่จะอัปเดตเป็น 'Y' เท่านั้น
             if ($payment_status === 'Y') {
                 $new_update_count++;
             }
 
-            $sql_update = "UPDATE ims_house_payment SET 
-                payment_status = :payment_status, 
-                approve_by = :approve_by, 
-                period_month_start = :period_month_start, 
+            // --- ขั้นตอนที่ 2: อัปเดตข้อมูลในฐานข้อมูล ---
+            $sql_update = "UPDATE ims_house_payment SET
+                payment_status = :payment_status,
+                approve_by = :approve_by,
+                period_month_start = :period_month_start,
                 period_month_to = :period_month_to,
-                period_year = :period_year, 
-                amount = :amount, 
-                update_count = :new_update_count 
+                period_year = :period_year,
+                amount = :amount,
+                update_count = :new_update_count
             WHERE id = :id";
 
             $query = $conn->prepare($sql_update);
@@ -261,20 +269,40 @@ if ($_POST["action"] === 'UPDATE') {
                                         "margin" => "md"
                                     ],
                                     [
-                                        "type" => "box",
-                                        "layout" => "vertical",
-                                        "margin" => "md",
-                                        "contents" => [
-                                            [
-                                                "type" => "text",
-                                                "text" => "🏤 รับใบเสร็จรับเงินด้วยตนเองที่สำนักงานนิติฯ / 📬 จัดส่งที่บ้าน",
-                                                "size" => "xs",
-                                                "align" => "center",
-                                                "color" => "#999999"
-                                            ]
-                                        ]
+                                        "type" => "text",
+                                        "text" => "🏤 รับใบเสร็จรับเงินด้วยตนเองที่สำนักงานนิติฯ",
+                                        "size" => "xs",
+                                        "align" => "center",
+                                        "wrap" => true,
+                                        "color" => "#999999"
+                                    ],
+                                    [
+                                        "type" => "text",
+                                        "text" => "📬 จัดส่งที่บ้าน",
+                                        "size" => "xs",
+                                        "align" => "center",
+                                        "wrap" => true,
+                                        "color" => "#999999"
                                     ]
                                 ]
+                            ],
+                            "footer" => [
+                                "type" => "box",
+                                "layout" => "vertical",
+                                "spacing" => "sm",
+                                "contents" => [
+                                    [
+                                        "type" => "button",
+                                        "style" => "link",
+                                        "height" => "sm",
+                                        "action" => [
+                                            "type" => "uri",
+                                            "label" => "Click เพื่อ ดูประวัติการชำระ",
+                                            "uri" => "https://liff.line.me/2007370141-13Wzad0L" // 👈 Change to your history page URL
+                                        ]
+                                    ]
+                                ],
+                                "flex" => 0
                             ]
                         ]
                     ];
@@ -324,6 +352,7 @@ if ($_POST["action"] === 'UPDATE') {
                     error_log("ไม่พบ Line User ID สำหรับบ้านเลขที่: " . $house_number_to_notify . " ใน ims_house_line_user");
                 }
             }
+
         } else {
             echo "ไม่พบรายการที่ต้องการอัปเดต (ID: {$id})";
         }
@@ -354,6 +383,7 @@ if ($_POST["action"] === 'DELETE') {
             echo 'Message: ' . $e->getMessage();
         }
     }
+
     exit;
 }
 
@@ -363,11 +393,11 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     ## Read value from DataTable's request
     $draw = $_POST['draw'];
     $row = $_POST['start'];
-    $rowperpage = $_POST['length'];
-    $columnIndex = $_POST['order'][0]['column'];
-    $columnName = $_POST['columns'][$columnIndex]['data'];
-    $columnSortOrder = 'desc';
-    $searchValue = $_POST['search']['value'];
+    $rowperpage = $_POST['length']; // จำนวนแถวที่แสดงต่อหน้า
+    $columnIndex = $_POST['order'][0]['column']; // Index ของคอลัมน์ที่ใช้เรียงลำดับ
+    $columnName = $_POST['columns'][$columnIndex]['data']; // ชื่อคอลัมน์ที่ใช้เรียงลำดับ
+    $columnSortOrder = 'desc'; // กำหนดให้เรียงลำดับจากมากไปน้อยเสมอ
+    $searchValue = $_POST['search']['value']; // ค่าค้นหาที่ผู้ใช้ป้อน
 
     $searchArray = array();
 
@@ -401,10 +431,11 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     ## Fetch records
     $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number
-        . " ORDER BY id DESC " . " LIMIT :limit,:offset";
+        . " ORDER BY id DESC " . " LIMIT :limit,:offset"; // เรียงตาม ID จากมากไปน้อย
 
     $stmt = $conn->prepare($sql_getdata);
 
+    // Bind values
     foreach ($searchArray as $key => $search) {
         $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
     }
@@ -478,4 +509,6 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     ];
 
     echo json_encode($response);
+
 }
+?>
