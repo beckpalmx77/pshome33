@@ -68,6 +68,7 @@ if ($_POST["action"] === 'UPDATE') {
 
     if (!empty($_POST["house_number"])) {
         $id = $_POST["id"];
+        // กำหนดค่า payment_status เป็น 'Y' หรือ 'N' จากข้อมูลที่ส่งมา
         $payment_status = ($_POST["payment_status"] === "Y") ? "Y" : "N";
 
         $period_month_start = $_POST["period_month_start"];
@@ -75,27 +76,38 @@ if ($_POST["action"] === 'UPDATE') {
         $period_year = $_POST["period_year"];
         $amount = $_POST["amount"];
 
+        // กำหนดผู้ที่อนุมัติจาก session
         $approve_by = (isset($_SESSION['first_name']) && isset($_SESSION['last_name'])) ? $_SESSION['first_name'] . " " . $_SESSION['last_name'] : "Unknown User";
 
-        $sql_find_current = "SELECT payment_status, update_count, doc_id, house_number FROM v_ims_house_payment WHERE id = :id";
+        // --- ขั้นตอนที่ 1: ดึงข้อมูล payment_status และ update_count ปัจจุบันจากฐานข้อมูล ---
+        $sql_find_current = "SELECT payment_status, update_count,month_name_start,month_name_to,period_year,amount FROM v_ims_house_payment WHERE id = :id";
         $stmt_find_current = $conn->prepare($sql_find_current);
         $stmt_find_current->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt_find_current->execute();
         $current_data = $stmt_find_current->fetch(PDO::FETCH_ASSOC);
 
+        // ตรวจสอบว่าพบข้อมูลหรือไม่
         $nRows = $current_data ? 1 : 0;
 
         if ($nRows > 0) {
+            // ดึงค่า update_count ปัจจุบัน
             $current_update_count = $current_data['update_count'];
-            $house_number_to_notify = $current_data['house_number'];
-            $doc_id = $current_data['doc_id'];
+            $month_name_start = $current_data['month_name_start'];
+            $month_name_to = $current_data['month_name_to'];
 
+            $text_send = "📅 งวดเดือน " . $month_name_start . " - " . $month_name_to . " ปี " . $period_year . "\n\r" . "💵 ยอดชำระ : " . $amount . " บาท";
+
+            $text_send_doc = "🏤 รับใบเสร็จรับเงินด้วยตนเองที่สำนักงานนิติฯ / 📬 จัดส่งที่บ้าน";
+
+            // กำหนดค่า update_count ใหม่ เริ่มต้นด้วยค่าปัจจุบัน
             $new_update_count = $current_update_count;
 
+            // เพิ่มค่า update_count เฉพาะเมื่อ payment_status ที่จะอัปเดตเป็น 'Y' เท่านั้น
             if ($payment_status === 'Y') {
                 $new_update_count++;
             }
 
+            // --- ขั้นตอนที่ 2: อัปเดตข้อมูลในฐานข้อมูล ---
             $sql_update = "UPDATE ims_house_payment SET 
                 payment_status = :payment_status, 
                 approve_by = :approve_by, 
@@ -123,6 +135,7 @@ if ($_POST["action"] === 'UPDATE') {
             // เงื่อนไข: payment_status เป็น 'Y' และเป็นการอัปเดตครั้งแรก (update_count = 1)
             if ($payment_status === 'Y' && $new_update_count === 1) {
                 // ดึง line_user_id จาก table ims_house_line_user โดยใช้ house_number
+                $house_number_to_notify = $_POST["house_number"];
                 $sql_get_line_users = "SELECT line_user_id FROM ims_house_line_user WHERE house_number = :house_number";
                 $stmt_line_users = $conn->prepare($sql_get_line_users);
                 $stmt_line_users->bindParam(':house_number', $house_number_to_notify, PDO::PARAM_STR);
@@ -130,155 +143,12 @@ if ($_POST["action"] === 'UPDATE') {
                 $line_users = $stmt_line_users->fetchAll(PDO::FETCH_ASSOC);
 
                 if (!empty($line_users)) {
-                    // สร้าง Flex Message JSON
-                    $flex_message_json = [
-                        "type" => "flex",
-                        "altText" => "รายการชำระเงินได้รับการอนุมัติแล้ว",
-                        "contents" => [
-                            "type" => "bubble",
-                            "hero" => [
-                                "type" => "image",
-                                "url" => "https://ps33home.com/img/logo/niti_ps33_header200.png", // *** เปลี่ยน URL ตรงนี้ ***
-                                "size" => "full",
-                                "aspectRatio" => "200:85",
-                                "aspectMode" => "fit",
-                                "gravity" => "center",
-                                "margin" => "none"
-                            ],
-                            "body" => [
-                                "type" => "box",
-                                "layout" => "vertical",
-                                "contents" => [
-                                    [
-                                        "type" => "text",
-                                        "text" => "✅ อนุมัติการชำระเงิน",
-                                        "weight" => "bold",
-                                        "size" => "lg",
-                                        "color" => "#1DB446"
-                                    ],
-                                    [
-                                        "type" => "separator",
-                                        "margin" => "md"
-                                    ],
-                                    [
-                                        "type" => "box",
-                                        "layout" => "vertical",
-                                        "margin" => "lg",
-                                        "spacing" => "sm",
-                                        "contents" => [
-                                            [
-                                                "type" => "box",
-                                                "layout" => "baseline",
-                                                "spacing" => "sm",
-                                                "contents" => [
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => "บ้านเลขที่:",
-                                                        "color" => "#aaaaaa",
-                                                        "size" => "sm",
-                                                        "flex" => 3
-                                                    ],
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => $house_number_to_notify,
-                                                        "wrap" => true,
-                                                        "color" => "#666666",
-                                                        "size" => "sm",
-                                                        "flex" => 5
-                                                    ]
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "box",
-                                                "layout" => "baseline",
-                                                "spacing" => "sm",
-                                                "contents" => [
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => "เดือน:",
-                                                        "color" => "#aaaaaa",
-                                                        "size" => "sm",
-                                                        "flex" => 3
-                                                    ],
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => $_POST["month_name_start"] . " - " . $_POST["month_name_to"],
-                                                        "wrap" => true,
-                                                        "color" => "#666666",
-                                                        "size" => "sm",
-                                                        "flex" => 5
-                                                    ]
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "box",
-                                                "layout" => "baseline",
-                                                "spacing" => "sm",
-                                                "contents" => [
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => "ปี:",
-                                                        "color" => "#aaaaaa",
-                                                        "size" => "sm",
-                                                        "flex" => 3
-                                                    ],
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => $period_year,
-                                                        "wrap" => true,
-                                                        "color" => "#666666",
-                                                        "size" => "sm",
-                                                        "flex" => 5
-                                                    ]
-                                                ]
-                                            ],
-                                            [
-                                                "type" => "box",
-                                                "layout" => "baseline",
-                                                "spacing" => "sm",
-                                                "contents" => [
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => "จำนวนเงิน:",
-                                                        "color" => "#aaaaaa",
-                                                        "size" => "sm",
-                                                        "flex" => 3
-                                                    ],
-                                                    [
-                                                        "type" => "text",
-                                                        "text" => $amount . " บาท",
-                                                        "wrap" => true,
-                                                        "color" => "#666666",
-                                                        "size" => "sm",
-                                                        "flex" => 5
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        "type" => "separator",
-                                        "margin" => "md"
-                                    ],
-                                    [
-                                        "type" => "box",
-                                        "layout" => "vertical",
-                                        "margin" => "md",
-                                        "contents" => [
-                                            [
-                                                "type" => "text",
-                                                "text" => "🏤 รับใบเสร็จรับเงินด้วยตนเองที่สำนักงานนิติฯ / 📬 จัดส่งที่บ้าน",
-                                                "size" => "xs",
-                                                "align" => "center",
-                                                "color" => "#999999"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ];
-
+                    $message_text = "✅ ตรวจสอบและอนุมัติรายการชำระเรียบร้อยแล้ว (ID: {$id})" . "\n\r" . "🏠 บ้านเลขที่ " . $house_number_to_notify . "\n\r" . $text_send . "\n\r" . $text_send_doc;
+                    /*
+                                        $myfile = fopen("a_permission.txt", "w") or die("Unable to open file!");
+                                        fwrite($myfile, " Row Text = " . $message_text);
+                                        fclose($myfile);
+                    */
                     foreach ($line_users as $user) {
                         $target_line_user_id = $user['line_user_id'];
 
@@ -286,16 +156,19 @@ if ($_POST["action"] === 'UPDATE') {
                         $line_api_url = "https://api.line.me/v2/bot/message/push";
 
                         // สร้าง Headers สำหรับ LINE Messaging API
-                        $headers = [
+                        $headers = array(
                             'Content-Type: application/json',
-                            'Authorization: Bearer ' . $line_channel_access_token
-                        ];
+                            'Authorization: Bearer ' . $line_channel_access_token // ใช้ Channel Access Token
+                        );
 
                         // สร้าง Body ของ Request ในรูปแบบ JSON
                         $post_data = json_encode([
                             "to" => $target_line_user_id,
                             "messages" => [
-                                $flex_message_json
+                                [
+                                    "type" => "text",
+                                    "text" => $message_text
+                                ]
                             ]
                         ]);
 
@@ -306,32 +179,44 @@ if ($_POST["action"] === 'UPDATE') {
                         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                        // สำหรับ production ควรตั้งค่า SSL verification ให้เหมาะสม
                         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 
                         $result = curl_exec($ch);
                         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
+                        // ตรวจสอบข้อผิดพลาด cURL
                         if (curl_errno($ch)) {
                             error_log("cURL Error for LINE Push Message (ID: {$id}, User: {$target_line_user_id}): " . curl_error($ch));
-                        } else if ($http_code !== 200) {
-                            $line_response = json_decode($result, true);
-                            error_log("LINE Push Message failed (HTTP Status: {$http_code}) for ID: {$id}, User: {$target_line_user_id}. Response: " . print_r($line_response, true));
+                        } else {
+                            // LINE API จะคืนค่า {} สำหรับ success (HTTP 200) หรือ error object สำหรับ fail
+                            if ($http_code !== 200) {
+                                $line_response = json_decode($result, true);
+                                error_log("LINE Push Message failed (HTTP Status: {$http_code}) for ID: {$id}, User: {$target_line_user_id}. Response: " . print_r($line_response, true));
+                            } else {
+                                // ส่งสำเร็จ (ไม่จำเป็นต้อง log ทุกครั้งใน production)
+                                // error_log("LINE Push Message sent successfully to User: {$target_line_user_id} for ID: {$id}");
+                            }
                         }
                         curl_close($ch);
                     }
                 } else {
+                    // หากไม่พบ line_user_id สำหรับ house_number นี้
                     error_log("ไม่พบ Line User ID สำหรับบ้านเลขที่: " . $house_number_to_notify . " ใน ims_house_line_user");
                 }
             }
+
         } else {
+            // กรณีไม่พบรายการที่ต้องการอัปเดต (ID ไม่ถูกต้อง)
             echo "ไม่พบรายการที่ต้องการอัปเดต (ID: {$id})";
         }
     } else {
+        // กรณีข้อมูล house_number ไม่ครบถ้วน
         echo "ข้อมูล House Number ไม่ครบถ้วน";
     }
 
-    exit;
+    exit; // หยุดการทำงานหลังจากประมวลผลการอัปเดต
 }
 
 // ลบข้อมูล
@@ -354,6 +239,7 @@ if ($_POST["action"] === 'DELETE') {
             echo 'Message: ' . $e->getMessage();
         }
     }
+
     exit;
 }
 
@@ -363,11 +249,11 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     ## Read value from DataTable's request
     $draw = $_POST['draw'];
     $row = $_POST['start'];
-    $rowperpage = $_POST['length'];
-    $columnIndex = $_POST['order'][0]['column'];
-    $columnName = $_POST['columns'][$columnIndex]['data'];
-    $columnSortOrder = 'desc';
-    $searchValue = $_POST['search']['value'];
+    $rowperpage = $_POST['length']; // จำนวนแถวที่แสดงต่อหน้า
+    $columnIndex = $_POST['order'][0]['column']; // Index ของคอลัมน์ที่ใช้เรียงลำดับ
+    $columnName = $_POST['columns'][$columnIndex]['data']; // ชื่อคอลัมน์ที่ใช้เรียงลำดับ
+    $columnSortOrder = 'desc'; // กำหนดให้เรียงลำดับจากมากไปน้อยเสมอ
+    $searchValue = $_POST['search']['value']; // ค่าค้นหาที่ผู้ใช้ป้อน
 
     $searchArray = array();
 
@@ -381,7 +267,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     }
 
     $where_house_number = " ";
-    if (isset($_SESSION['account_type']) && $_SESSION['account_type'] === "user") {
+    if ($_SESSION['account_type'] === "user") {
         $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
     }
 
@@ -401,10 +287,11 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     ## Fetch records
     $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number
-        . " ORDER BY id DESC " . " LIMIT :limit,:offset";
+        . " ORDER BY id DESC " . " LIMIT :limit,:offset"; // เรียงตาม ID จากมากไปน้อย
 
     $stmt = $conn->prepare($sql_getdata);
 
+    // Bind values
     foreach ($searchArray as $key => $search) {
         $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
     }
@@ -415,7 +302,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $empRecords = $stmt->fetchAll();
     $data = array();
 
-    $isUser = isset($_SESSION['account_type']) && $_SESSION['account_type'] === "user";
+    $isUser = $_SESSION['account_type'] === "user";
     $isMaster = $_POST['sub_action'] === "GET_MASTER";
 
     $statusMeta = [
@@ -470,12 +357,14 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     }
 
     ## Response Return Value for DataTable
-    $response = [
+    $response = array(
         "draw" => intval($draw),
         "iTotalRecords" => $totalRecords,
         "iTotalDisplayRecords" => $totalRecordwithFilter,
         "aaData" => $data
-    ];
+    );
 
     echo json_encode($response);
+
 }
+?>
