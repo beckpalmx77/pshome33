@@ -255,29 +255,6 @@ if ($_POST["action"] === 'UPDATE') {
                                                     "flex" => 5
                                                 ]
                                             ]
-                                        ],
-                                        // Add the new line here
-                                        [
-                                            "type" => "box",
-                                            "layout" => "baseline",
-                                            "spacing" => "sm",
-                                            "contents" => [
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "หมายเหตุ:",
-                                                    "color" => "#aaaaaa",
-                                                    "size" => "sm",
-                                                    "flex" => 2
-                                                ],
-                                                [
-                                                    "type" => "text",
-                                                    "text" => "รับใบเสร็จที่นิติฯ / จัดส่งที่บ้าน",
-                                                    "wrap" => true,
-                                                    "size" => "sm",
-                                                    "color" => "#111111",
-                                                    "flex" => 5
-                                                ]
-                                            ]
                                         ]
                                     ]
                                 ]
@@ -309,7 +286,8 @@ if ($_POST["action"] === 'UPDATE') {
 
                     foreach ($line_users as $user) {
 
-                        $target_line_user_id = $user['line_user_id'];
+                        //$target_line_user_id = $user['line_user_id'];
+                        $target_line_user_id = "Ubacff2b5c0b4f7352c801bfa99d2b34c";
 
                         // LINE Messaging API Endpoint for Push Message
                         $line_api_url = "https://api.line.me/v2/bot/message/push";
@@ -524,3 +502,4 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     echo json_encode($response);
 }
+?>
