@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 "contents" => [
                     [
                         "type" => "text",
-                        "text" => "✅ บันทึกการชำระเงินเรียบร้อย",
+                        "text" => "✅ บันทึกการชำระเงิน",
                         "weight" => "bold",
                         "size" => "lg",
                         "color" => "#1DB446"
