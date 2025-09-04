@@ -676,6 +676,114 @@ foreach ($BankCurr as $row_curr) {
 </script>
 
 <script>
+    $(document).ready(function () {
+        $("#transfer_form").on("submit", function (event) {
+            event.preventDefault();
+
+            // ตรวจสอบว่าได้มีการเลือกไฟล์รูปภาพหรือไม่
+            if ($("#picture_payment").get(0).files.length === 0) {
+                alertify.error("กรุณาแนบ Slip/ใบโอนเงิน/ใบเสร็จ ก่อนบันทึกข้อมูล");
+                return; // หยุดการทำงานของฟังก์ชัน submit
+            }
+
+            let period_month_start = parseInt($("#period_month_start").val());
+            let period_month_to = parseInt($("#period_month_to").val());
+            let period_year = parseInt($("#period_year").val()); // ดึงค่า period_year มาใช้งาน
+            let amount = parseFloat($("#amount").val()) || 0;
+            let house_number = $("#house_number").val();
+
+            // ต้องมั่นใจว่า monthNames ถูกกำหนดไว้แล้ว ตัวอย่างเช่น:
+            const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            let period_month_start_name = monthNames[period_month_start];
+            let period_month_to_name = monthNames[period_month_to];
+
+            function padZero(n) {
+                return n < 10 ? '0' + n : n;
+            }
+
+            let date = new Date();
+            let current_date = padZero(date.getDate()) + "-" + padZero(date.getMonth() + 1) + "-" + date.getFullYear();
+            let current_time = padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
+            let date_time = current_date + " " + current_time;
+
+            if (period_month_start > period_month_to) {
+                alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง");
+                return;
+            }
+
+            if (amount <= 0) {
+                alertify.error("จำนวนเงินต้องมากกว่า 0 บาท");
+                return;
+            }
+
+            // 🔒 ปิดปุ่ม + แสดงโหลด
+            $("#submit_btn").prop("disabled", true);
+            $("#loading").show();
+
+            let formData = new FormData(this);
+            formData.append('period_month_start', $("#period_month_start").val());
+            formData.append('period_month_to', $("#period_month_to").val());
+            formData.append('payment_type', $("#payment_type").val());
+            // **ส่งค่า amount ที่จัดรูปแบบแล้วไปหลังบ้าน**
+            formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
+
+            $.ajax({
+                url: "model/manage_payment_transfer_smart.php",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#loading").hide();
+
+                    if (response == 1) {
+                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
+                        $("#transfer_form")[0].reset();
+                        $("#preview_image").hide().attr("src", "");
+                        $("#submit_btn").prop("disabled", true);
+
+                        if (liff.isInClient()) {
+                            liff.getProfile().then(profile => {
+                                const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
+                                \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
+                                \n🕔 วันที่ทำรายการ: ${date_time}
+                                \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
+                                liff.sendMessages([{type: "text", text: message}])
+                                    .then(() => {
+                                        setTimeout(() => {
+                                            liff.closeWindow();
+                                        }, 2000);
+                                    })
+                                    .catch(err => {
+                                        console.error("ส่งข้อความล้มเหลว:", err);
+                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
+                                        liff.closeWindow();
+                                    });
+                            });
+                        } else {
+                            alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
+                        }
+                    } else if (response == 2) {
+                        // ปรับข้อความแจ้งเตือนให้แสดงปีด้วย
+                        alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);
+                        $("#submit_btn").prop("disabled", false);
+                    } else {
+                        alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
+                        $("#submit_btn").prop("disabled", false);
+                    }
+                },
+                error: function () {
+                    $("#loading").hide();
+                    alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                    $("#submit_btn").prop("disabled", false);
+                }
+            });
+        });
+    });
+
+</script>
+
+<script>
     // Moved the promotion logic into a named function
     function applyPromotionLogic() {
         const currentDate = new Date();
@@ -733,251 +841,6 @@ foreach ($BankCurr as $row_curr) {
 
     document.addEventListener('DOMContentLoaded', function () {
         applyPromotionLogic(); // Call on DOMContentLoaded
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $("#transfer_form").on("submit", function (event) {
-            event.preventDefault();
-
-            if ($("#picture_payment").get(0).files.length === 0) {
-                alertify.error("กรุณาแนบ Slip/ใบโอนเงิน/ใบเสร็จ ก่อนบันทึกข้อมูล");
-                return;
-            }
-
-            let period_month_start = parseInt($("#period_month_start").val());
-            let period_month_to = parseInt($("#period_month_to").val());
-            let period_year = parseInt($("#period_year").val());
-            let amount = parseFloat($("#amount").val()) || 0;
-            let house_number = $("#house_number").val();
-
-            const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            let period_month_start_name = monthNames[period_month_start];
-            let period_month_to_name = monthNames[period_month_to];
-
-            function padZero(n) {
-                return n < 10 ? '0' + n : n;
-            }
-
-            let date = new Date();
-            let current_date = padZero(date.getDate()) + "-" + padZero(date.getMonth() + 1) + "-" + date.getFullYear();
-            let current_time = padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
-            let date_time = current_date + " " + current_time;
-
-            if (period_month_start > period_month_to) {
-                alertify.error("กรุณาตรวจสอบเดือนเริ่มต้นและเดือนสิ้นสุดให้ถูกต้อง");
-                return;
-            }
-
-            if (amount <= 0) {
-                alertify.error("จำนวนเงินต้องมากกว่า 0 บาท");
-                return;
-            }
-
-            $("#submit_btn").prop("disabled", true);
-            $("#loading").show();
-
-            let formData = new FormData(this);
-            formData.append('period_month_start', $("#period_month_start").val());
-            formData.append('period_month_to', $("#period_month_to").val());
-            formData.append('payment_type', $("#payment_type").val());
-            formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
-
-            $.ajax({
-                url: "model/manage_payment_transfer_smart.php",
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    $("#loading").hide();
-
-                    if (response == 1) {
-                        alertify.success("บันทึกข้อมูลการชำระเงินและส่ง Slip สำเร็จ");
-                        $("#transfer_form")[0].reset();
-                        $("#preview_image").hide().attr("src", "");
-                        $("#submit_btn").prop("disabled", true);
-
-                        if (liff.isInClient()) {
-                            liff.getProfile().then(profile => {
-                                const flexMessage = {
-                                    "type": "flex",
-                                    "altText": "แจ้งการโอนเงินเรียบร้อยแล้ว",
-                                    "contents": {
-                                        "type": "bubble",
-                                        "body": {
-                                            "type": "box",
-                                            "layout": "vertical",
-                                            "spacing": "md",
-                                            "contents": [
-                                                {
-                                                    "type": "image",
-                                                    "url": "https://ps33home.com/img/logo/niti_ps33_header200.png", // 👈 **URL โลโก้ของคุณ**
-                                                    "size": "sm",
-                                                    "aspectRatio": "200:85",
-                                                    "aspectMode": "fit",
-                                                    "gravity": "center",
-                                                    "margin": "none"
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": "แจ้งการโอนเงิน",
-                                                    "weight": "bold",
-                                                    "size": "xxl",
-                                                    "color": "#000000",
-                                                    "align": "center",
-                                                    "margin": "lg"
-                                                },
-                                                {
-                                                    "type": "box",
-                                                    "layout": "vertical",
-                                                    "margin": "lg",
-                                                    "spacing": "sm",
-                                                    "contents": [
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "spacing": "sm",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "บ้านเลขที่:",
-                                                                    "color": "#aaaaaa",
-                                                                    "size": "sm",
-                                                                    "flex": 4
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": `${house_number}`,
-                                                                    "wrap": true,
-                                                                    "color": "#666666",
-                                                                    "size": "sm",
-                                                                    "flex": 5
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "spacing": "sm",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "จำนวนเงิน:",
-                                                                    "color": "#aaaaaa",
-                                                                    "size": "sm",
-                                                                    "flex": 4
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": `${amount} บาท`,
-                                                                    "wrap": true,
-                                                                    "color": "#009933",
-                                                                    "size": "sm",
-                                                                    "flex": 5,
-                                                                    "weight": "bold"
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "spacing": "sm",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "ช่วงเดือน:",
-                                                                    "color": "#aaaaaa",
-                                                                    "size": "sm",
-                                                                    "flex": 4
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": `${period_month_start_name} - ${period_month_to_name} ${period_year}`,
-                                                                    "wrap": true,
-                                                                    "color": "#666666",
-                                                                    "size": "sm",
-                                                                    "flex": 5
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "type": "box",
-                                                            "layout": "baseline",
-                                                            "spacing": "sm",
-                                                            "contents": [
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": "วันที่ทำรายการ:",
-                                                                    "color": "#aaaaaa",
-                                                                    "size": "sm",
-                                                                    "flex": 4
-                                                                },
-                                                                {
-                                                                    "type": "text",
-                                                                    "text": `${date_time}`,
-                                                                    "wrap": true,
-                                                                    "color": "#666666",
-                                                                    "size": "sm",
-                                                                    "flex": 5
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        "footer": {
-                                            "type": "box",
-                                            "layout": "vertical",
-                                            "spacing": "sm",
-                                            "contents": [
-                                                {
-                                                    "type": "button",
-                                                    "style": "link",
-                                                    "height": "sm",
-                                                    "action": {
-                                                        "type": "uri",
-                                                        "label": "Click เพื่อ ดูประวัติการชำระ",
-                                                        "uri": "https://liff.line.me/2007370141-13Wzad0L" // 👈 Change to your history page URL
-                                                    }
-                                                }
-                                            ],
-                                            "flex": 0
-                                        }
-                                    }
-                                };
-
-                                liff.sendMessages([flexMessage])
-                                    .then(() => {
-                                        setTimeout(() => {
-                                            liff.closeWindow();
-                                        }, 2000);
-                                    })
-                                    .catch(err => {
-                                        console.error("ส่งข้อความล้มเหลว:", err);
-                                        alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
-                                        liff.closeWindow();
-                                    });
-                            });
-                        } else {
-                            alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
-                        }
-                    } else if (response == 2) {
-                        alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);
-                        $("#submit_btn").prop("disabled", false);
-                    } else {
-                        alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
-                        $("#submit_btn").prop("disabled", false);
-                    }
-                },
-                error: function () {
-                    $("#loading").hide();
-                    alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
-                    $("#submit_btn").prop("disabled", false);
-                }
-            });
-        });
     });
 </script>
 

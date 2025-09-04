@@ -54,89 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $runno = LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond);
     $doc_id = "P-" . $house_number . "-" . $period_year . "-" . sprintf('%03s', $runno);
 
-    // โค้ด JSON สำหรับ Flex Message (Bubble)
-    $flex_message_json = [
-        "type" => "flex",
-        "altText" => "บันทึกการชำระเงินเรียบร้อย",
-        "contents" => [
-            "type" => "bubble",
-            "body" => [
-                "type" => "box",
-                "layout" => "vertical",
-                "contents" => [
-                    [
-                        "type" => "text",
-                        "text" => "✅ บันทึกการชำระเงินเรียบร้อย",
-                        "weight" => "bold",
-                        "size" => "lg",
-                        "color" => "#1DB446"
-                    ],
-                    [
-                        "type" => "box",
-                        "layout" => "vertical",
-                        "margin" => "lg",
-                        "spacing" => "sm",
-                        "contents" => [
-                            [
-                                "type" => "box",
-                                "layout" => "baseline",
-                                "spacing" => "sm",
-                                "contents" => [
-                                    [
-                                        "type" => "text",
-                                        "text" => "เลขที่เอกสาร:",
-                                        "color" => "#aaaaaa",
-                                        "size" => "sm",
-                                        "flex" => 3
-                                    ],
-                                    [
-                                        "type" => "text",
-                                        "text" => "$doc_id",
-                                        "wrap" => true,
-                                        "color" => "#666666",
-                                        "size" => "sm",
-                                        "flex" => 5
-                                    ]
-                                ]
-                            ],
-                            [
-                                "type" => "box",
-                                "layout" => "baseline",
-                                "spacing" => "sm",
-                                "contents" => [
-                                    [
-                                        "type" => "text",
-                                        "text" => "จำนวนเงิน:",
-                                        "color" => "#aaaaaa",
-                                        "size" => "sm",
-                                        "flex" => 3
-                                    ],
-                                    [
-                                        "type" => "text",
-                                        "text" => "$amount บาท",
-                                        "wrap" => true,
-                                        "color" => "#666666",
-                                        "size" => "sm",
-                                        "flex" => 5
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ];
-
-    $messageData = [
-        'to' => $line_user_id,
-        'messages' => [
-            $flex_message_json
-        ]
-    ];
-
-
-    // --- ส่วนสำหรับอัปโหลดรูปภาพ ---
     if ($picture_payment['error'] == 0) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (!in_array($picture_payment['type'], $allowed_types)) {
@@ -173,8 +90,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($stmt->execute()) {
 
-                // ======= ส่ง Flex Message ไป LINE =======
+/*
+                $updateSql = "UPDATE ims_house SET contact_name = :contact_name , phone_number = :phone_number WHERE house_number = :house_number";
+                $updateStmt = $conn->prepare($updateSql);
+                $updateStmt->bindParam(':contact_name', $contact_name);
+                $updateStmt->bindParam(':phone_number', $line_phone);
+                $updateStmt->bindParam(':house_number', $house_number);
+                $updateStmt->execute();
+*/
+
+                // ======= ส่งเฉพาะข้อความไป LINE =======
                 $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
+
+                $messageData = [
+                    'to' => $line_user_id,
+                    'messages' => [
+                        [
+                            'type' => 'text',
+                            'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
+                        ]
+                    ]
+                ];
+
                 $ch = curl_init('https://api.line.me/v2/bot/message/push');
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -185,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);
-                // ======= จบการส่ง Flex Message =======
+                // ======= จบส่งเฉพาะข้อความ =======
 
                 echo 1;
             } else {
@@ -196,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "FILE_UPLOAD_FAILED";
         }
     } else {
-        // --- กรณีไม่มีการอัปโหลดรูป ---
+        // ไม่มีการอัปโหลดรูป
         $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail, period_month_start, period_month_to, period_year, amount, remark, runno,line_user_id,line_picture_profile_show,create_by,payment_method) 
         VALUES (:doc_id, :payment_date, :house_number, :detail, :period_month_start, :period_month_to, :period_year, :amount, :remark, :runno, :line_user_id,:line_picture_profile_show,:create_by,:payment_method)";
         $stmt = $conn->prepare($ins_str);
@@ -225,8 +162,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $updateStmt->bindParam(':house_number', $house_number);
             $updateStmt->execute();
 
-            // ======= ส่ง Flex Message ไป LINE =======
+            // ======= ส่งเฉพาะข้อความไป LINE =======
             $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
+
+            $messageData = [
+                'to' => $line_user_id,
+                'messages' => [
+                    [
+                        'type' => 'text',
+                        'text' => "บันทึกการชำระเงินเรียบร้อย\nเลขที่เอกสาร: $doc_id\nจำนวน: $amount บาท"
+                    ]
+                ]
+            ];
 
             $ch = curl_init('https://api.line.me/v2/bot/message/push');
             curl_setopt($ch, CURLOPT_POST, true);
@@ -238,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $result = curl_exec($ch);
             curl_close($ch);
-            // ======= จบการส่ง Flex Message =======
+            // ======= จบส่งเฉพาะข้อความ =======
 
             echo 1;
         } else {

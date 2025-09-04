@@ -676,70 +676,11 @@ foreach ($BankCurr as $row_curr) {
 </script>
 
 <script>
-    // Moved the promotion logic into a named function
-    function applyPromotionLogic() {
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
-        const currentDay = currentDate.getDate();
-
-        // Define the promotion period
-        const promoStartMonthPrevYear = 12; // December
-        const promoStartDayPrevYear = 15;
-
-        const promoEndMonthCurrentYear = 1; // January
-        const promoEndDayCurrentYear = 31;
-
-        let showPopup = false;
-
-        // Condition 1: From Dec 15 of current year
-        if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
-            showPopup = true;
-        }
-        // Condition 2: To Jan 31 of next year
-        else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
-            showPopup = true;
-        }
-
-        if (showPopup) {
-            // Use a slight delay to ensure Bootstrap's JS is fully loaded
-            setTimeout(function () {
-                $('#promotionModal').modal('show');
-            }, 500); // 500ms delay
-
-            // Set month_year_calculator to 11 for the discount if promotion is active
-            $("#month_year_calculator").val(11);
-
-            // Also, pre-select the "yearly" option if within the promotion period
-            document.getElementById('option_yearly').checked = true;
-            document.getElementById('option_monthly').checked = false;
-            // Trigger change event to update related fields and recalculate amount
-            const event = new Event('change');
-            document.getElementById('option_yearly').dispatchEvent(event);
-        }
-        // If not in promotion period, ensure month_year_calculator is reset to default 12 for yearly
-        else {
-            // Check if 'option_yearly' is checked, and if so, set calculator back to 12
-            // This ensures that if user manually selects yearly outside promo, they pay for 12 months
-            if (document.getElementById('option_yearly').checked) {
-                $("#month_year_calculator").val(12);
-                document.getElementById('option_monthly').checked = false; // Ensure monthly is not checked
-                document.getElementById('option_yearly').checked = true; // Explicitly keep yearly checked
-                const event = new Event('change');
-                document.getElementById('option_yearly').dispatchEvent(event);
-            }
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        applyPromotionLogic(); // Call on DOMContentLoaded
-    });
-</script>
-<script>
     $(document).ready(function () {
         $("#transfer_form").on("submit", function (event) {
             event.preventDefault();
 
+            // Check if a picture file has been selected.
             if ($("#picture_payment").get(0).files.length === 0) {
                 alertify.error("กรุณาแนบ Slip/ใบโอนเงิน/ใบเสร็จ ก่อนบันทึกข้อมูล");
                 return;
@@ -774,6 +715,7 @@ foreach ($BankCurr as $row_curr) {
                 return;
             }
 
+            // Disable button and show loading spinner
             $("#submit_btn").prop("disabled", true);
             $("#loading").show();
 
@@ -805,28 +747,30 @@ foreach ($BankCurr as $row_curr) {
                                     "altText": "แจ้งการโอนเงินเรียบร้อยแล้ว",
                                     "contents": {
                                         "type": "bubble",
+                                        "size": "mega",
+                                        "hero": {
+                                            "type": "image",
+                                            "url": "https://ps33home.com/img/slip/slip_bg_imgs.png", // 👈 Change to your background image URL
+                                            "size": "full",
+                                            "aspectRatio": "20:13",
+                                            "aspectMode": "cover",
+                                            "action": {
+                                                "type": "uri",
+                                                "uri": "http://line.me/"
+                                            },
+                                            "backgroundColor": "#FFC0CB"
+                                        },
                                         "body": {
                                             "type": "box",
                                             "layout": "vertical",
                                             "spacing": "md",
                                             "contents": [
                                                 {
-                                                    "type": "image",
-                                                    "url": "https://ps33home.com/img/logo/niti_ps33_header200.png", // 👈 **URL โลโก้ของคุณ**
-                                                    "size": "sm",
-                                                    "aspectRatio": "200:85",
-                                                    "aspectMode": "fit",
-                                                    "gravity": "center",
-                                                    "margin": "none"
-                                                },
-                                                {
                                                     "type": "text",
                                                     "text": "แจ้งการโอนเงิน",
                                                     "weight": "bold",
                                                     "size": "xxl",
-                                                    "color": "#000000",
-                                                    "align": "center",
-                                                    "margin": "lg"
+                                                    "color": "#000000"
                                                 },
                                                 {
                                                     "type": "box",
@@ -938,7 +882,7 @@ foreach ($BankCurr as $row_curr) {
                                                     "height": "sm",
                                                     "action": {
                                                         "type": "uri",
-                                                        "label": "Click เพื่อ ดูประวัติการชำระ",
+                                                        "label": "ดูประวัติการชำระ",
                                                         "uri": "https://liff.line.me/2007370141-13Wzad0L" // 👈 Change to your history page URL
                                                     }
                                                 }
@@ -978,6 +922,67 @@ foreach ($BankCurr as $row_curr) {
                 }
             });
         });
+    });
+</script>
+
+<script>
+    // Moved the promotion logic into a named function
+    function applyPromotionLogic() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
+        const currentDay = currentDate.getDate();
+
+        // Define the promotion period
+        const promoStartMonthPrevYear = 12; // December
+        const promoStartDayPrevYear = 15;
+
+        const promoEndMonthCurrentYear = 1; // January
+        const promoEndDayCurrentYear = 31;
+
+        let showPopup = false;
+
+        // Condition 1: From Dec 15 of current year
+        if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
+            showPopup = true;
+        }
+        // Condition 2: To Jan 31 of next year
+        else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
+            showPopup = true;
+        }
+
+        if (showPopup) {
+            // Use a slight delay to ensure Bootstrap's JS is fully loaded
+            setTimeout(function () {
+                $('#promotionModal').modal('show');
+            }, 500); // 500ms delay
+
+            // Set month_year_calculator to 11 for the discount if promotion is active
+            $("#month_year_calculator").val(11);
+
+            // Also, pre-select the "yearly" option if within the promotion period
+            document.getElementById('option_yearly').checked = true;
+            document.getElementById('option_monthly').checked = false;
+            // Trigger change event to update related fields and recalculate amount
+            const event = new Event('change');
+            document.getElementById('option_yearly').dispatchEvent(event);
+        }
+        // If not in promotion period, ensure month_year_calculator is reset to default 12 for yearly
+        else {
+            // Check if 'option_yearly' is checked, and if so, set calculator back to 12
+            // This ensures that if user manually selects yearly outside promo, they pay for 12 months
+            if (document.getElementById('option_yearly').checked) {
+                $("#month_year_calculator").val(12);
+                document.getElementById('option_monthly').checked = false; // Ensure monthly is not checked
+                document.getElementById('option_yearly').checked = true; // Explicitly keep yearly checked
+                const event = new Event('change');
+                document.getElementById('option_yearly').dispatchEvent(event);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        applyPromotionLogic(); // Call on DOMContentLoaded
     });
 </script>
 
