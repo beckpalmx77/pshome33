@@ -270,9 +270,9 @@ if ($_POST["action"] === 'UPDATE') {
                                     ],
                                     [
                                         "type" => "text",
-                                        "text" => "🏤 รับใบเสร็จรับเงินด้วยตนเองที่สำนักงานนิติฯ",
+                                        "text" => "🏤 รับใบเสร็จฯ ที่สำนักงานนิติฯ",
                                         "size" => "xs",
-                                        "align" => "center",
+                                        "align" => "left",
                                         "wrap" => true,
                                         "color" => "#999999"
                                     ],
@@ -280,7 +280,7 @@ if ($_POST["action"] === 'UPDATE') {
                                         "type" => "text",
                                         "text" => "📬 จัดส่งที่บ้าน",
                                         "size" => "xs",
-                                        "align" => "center",
+                                        "align" => "left",
                                         "wrap" => true,
                                         "color" => "#999999"
                                     ]
