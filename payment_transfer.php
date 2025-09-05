@@ -660,7 +660,13 @@ if (strlen($_SESSION['alogin']) === "") {
                 let period_month_to = parseInt($("#period_month_to").val());
                 let period_year = parseInt($("#period_year").val()); // ดึงค่า period_year มาใช้งาน
                 let amount = parseFloat($("#amount").val()) || 0;
-                let house_number = $("#house_number").val();
+
+                let house_number = document.getElementById("house_number").value;
+
+                if (house_number === null || house_number.trim() === "") {
+                    alertify.error("กรุณาใส่บ้านเลขที่");
+                    return; // Stops the function from running further
+                }
 
                 // ต้องมั่นใจว่า monthNames ถูกกำหนดไว้แล้ว ตัวอย่างเช่น:
                 const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];

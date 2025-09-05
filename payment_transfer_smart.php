@@ -749,7 +749,13 @@ foreach ($BankCurr as $row_curr) {
             let period_month_to = parseInt($("#period_month_to").val());
             let period_year = parseInt($("#period_year").val());
             let amount = parseFloat($("#amount").val()) || 0;
-            let house_number = $("#house_number").val();
+
+            let house_number = document.getElementById("house_number").value;
+
+            if (house_number === null || house_number.trim() === "") {
+                alertify.error("กรุณาใส่บ้านเลขที่");
+                return; // Stops the function from running further
+            }
 
             const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             let period_month_start_name = monthNames[period_month_start];
