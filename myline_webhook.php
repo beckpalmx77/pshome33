@@ -66,4 +66,3 @@ function reply_message($reply_token, $message) {
 
     return $result;
 }
-?>
