@@ -15,6 +15,28 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 <html lang="th">
 <head>
     <link rel="stylesheet" href="css/spin_datatables.css"/>
+    <style>
+        .dataTables_wrapper {
+            overflow-x: auto;
+        }
+        /* CSS ที่เพิ่มใหม่สำหรับลดช่องว่าง */
+        .card-body {
+            padding-bottom: 0 !important;
+        }
+
+        #content-wrapper {
+            padding-bottom: 0 !important;
+        }
+
+        #TableRecordList_wrapper {
+            margin-bottom: 0 !important;
+        }
+
+        footer {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+    </style>
 </head>
 <body id="page-top">
 <div id="wrapper">
@@ -35,8 +57,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     </ol>
                 </div>
 
-                <div class="card mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="card mb-0"> <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -73,138 +94,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 </div>
 
 <div class="modal fade" id="recordModal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">ข้อมูลการชำระเงิน</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <form method="post" id="recordForm">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="doc_id">เลขที่เอกสาร</label>
-                            <input type="text" class="form-control" id="doc_id" name="doc_id" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="payment_date">วันที่เอกสาร</label>
-                            <input type="text" class="form-control" id="payment_date" name="payment_date" readonly>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="house_number">บ้านเลขที่</label>
-                            <input type="text" class="form-control" id="house_number" name="house_number" readonly>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="detail">ผู้ชำระ</label>
-                            <input type="text" class="form-control" id="detail" name="detail" readonly>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="period_month_start">เริ่มงวดเดือน</label>
-                            <select name="period_month_start" id="period_month_start" class="form-control" required>
-                                <option value="">เลือก</option>
-                                <?php
-                                $months = [1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน', 5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม', 9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'];
-                                foreach ($months as $val => $name) {
-                                    echo "<option value='$val'>$name</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="period_month_to">ถึงงวดเดือน</label>
-                            <select name="period_month_to" id="period_month_to" class="form-control" required>
-                                <option value="">เลือก</option>
-                                <?php
-                                foreach ($months as $val => $name) {
-                                    echo "<option value='$val'>$name</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="period_year">งวดปี</label>
-                            <input type="number" name="period_year" id="period_year" class="form-control" required value="<?= date('Y'); ?>">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="amount">จำนวนเงิน</label>
-                            <input type="text" class="form-control" id="amount" name="amount" required>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="payment_method">วิธีการชำระ</label>
-                            <input type="text" class="form-control" id="payment_method" name="payment_method" readonly>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="payment_status_desc">สถานะ</label>
-                            <input type="text" class="form-control" id="payment_status_desc" name="payment_status_desc" readonly>
-                        </div>
-                    </div>
-
-                    <div class="form-group row mt-3">
-                        <div class="col-sm-6 zoom-container text-center">
-                            <img id="preview_image" src="#" alt="Preview Image" style="display: none; max-width: 200px; cursor: pointer;" onclick="openImageInNewWindow(this.src)"/>
-                        </div>
-                        <div class="col-sm-6 text-center">
-                            <label>สถานะการอนุมัติ</label><br>
-                            <input type="radio" id="approved" name="payment_status" value="Y" class="d-none">
-                            <label for="approved" class="btn btn-success">ยืนยันการชำระ</label>
-                            <input type="radio" id="rejected" name="payment_status" value="N" class="d-none">
-                            <label for="rejected" class="btn btn-danger">ยังไม่ยืนยันการชำระ</label>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="create_by">สร้างรายการโดย</label>
-                            <input type="text" class="form-control" id="create_by" name="create_by" readonly>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="created_at">วัน-เวลาสร้างรายการ</label>
-                            <input type="text" class="form-control" id="created_at" name="created_at" readonly>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="approve_by">อนุมัติโดย</label>
-                            <input type="text" class="form-control" id="approve_by" name="approve_by" readonly>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="hidden" name="id" id="id"/>
-                    <input type="hidden" name="action" id="action" value="UPDATE"/>
-                    <button type="submit" class="btn btn-primary" id="saveButton">บันทึก <i class="fa fa-check"></i></button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด <i class="fa fa-times"></i></button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">ลบข้อมูล</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <?php
@@ -229,13 +121,8 @@ include('includes/Footer.php');
 <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
 <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-<style>
-    .dataTables_wrapper {
-        overflow-x: auto;
-    }
-</style>
-
 <script>
+    // Your existing JavaScript code for DataTable and modals
     $(document).ready(function () {
         let dataRecords = $('#TableRecordList').DataTable({
             'lengthMenu': [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
@@ -301,7 +188,7 @@ include('includes/Footer.php');
                 method: "POST",
                 data: formData,
                 success: function (data) {
-                    alert(data); // Use a better alert library like SweetAlert
+                    alert(data);
                     $('#recordForm')[0].reset();
                     $('#recordModal').modal('hide');
                     $('#saveButton').attr('disabled', false);
