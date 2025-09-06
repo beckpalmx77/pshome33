@@ -7,6 +7,7 @@
         "dompdf/dompdf": "^3.1",
         "tecnickcom/tcpdf": "^6.8",
         "tecnickcom/tc-lib-pdf": "^8.0",
-        "thiagoalessio/tesseract_ocr": "^2.13"
+        "thiagoalessio/tesseract_ocr": "^2.13",
+        "linecorp/line-bot-sdk": "^11.3"
     }
 }

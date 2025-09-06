@@ -829,7 +829,7 @@ foreach ($BankCurr as $row_curr) {
                                                     "type": "text",
                                                     "text": "แจ้งการโอนเงิน",
                                                     "weight": "bold",
-                                                    "size": "xxl",
+                                                    "size": "xl",
                                                     "color": "#000000",
                                                     "align": "center",
                                                     "margin": "lg"
