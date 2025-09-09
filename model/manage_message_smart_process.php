@@ -179,7 +179,7 @@ if ($_POST["action"] === 'GET_MESSAGE') {
 
 ## Fetch records
 
-    $sql_record = "SELECT * FROM afront_contact WHERE 1 " . $where_house_number .  $searchQuery;
+    $sql_record = "SELECT * FROM afront_contact WHERE 1 AND delete_flag <> 'Y' " . $where_house_number .  $searchQuery;
     
 /*
     if ($columnName === 'create_date') {

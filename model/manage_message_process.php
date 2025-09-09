@@ -129,7 +129,28 @@ if ($_POST["action"] === 'UPDATE') {
     }
 }
 
+if ($_POST["action"] === 'DELETE') {
+    if (!empty($_POST["id"])) { // ใช้ !empty() แทน != '' เพื่อความปลอดภัย
+        $id = $_POST["id"];
+        $delete_flag = 'Y';
 
+        // แก้ไขส่วนนี้: ใช้ Prepared Statement สำหรับ SELECT
+        $sql_find = "SELECT COUNT(*) FROM afront_contact WHERE id = ?";
+        $query_find = $conn->prepare($sql_find);
+        $query_find->bindParam(1, $id, PDO::PARAM_INT); // ใช้ PARAM_INT เพราะ id ควรเป็นตัวเลข
+        $query_find->execute();
+        $nRows = $query_find->fetchColumn();
+
+        if ($nRows > 0) {
+            $sql_update = "UPDATE afront_contact SET delete_flag = ? WHERE id = ?";
+            $query_update = $conn->prepare($sql_update);
+            $query_update->bindParam(1, $delete_flag, PDO::PARAM_STR);
+            $query_update->bindParam(2, $id, PDO::PARAM_INT);
+            $query_update->execute();
+            echo $del_success;
+        }
+    }
+}
 
 if ($_POST["action"] === 'GET_MESSAGE') {
 
@@ -177,7 +198,7 @@ if ($_POST["action"] === 'GET_MESSAGE') {
 
 ## Fetch records
 
-    $sql_record = "SELECT * FROM afront_contact WHERE 1 " . $where_house_number .  $searchQuery;
+    $sql_record = "SELECT * FROM afront_contact WHERE 1 AND delete_flag <> 'Y' " . $where_house_number .  $searchQuery;
     
 /*
     if ($columnName === 'create_date') {

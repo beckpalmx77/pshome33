@@ -50,6 +50,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <th>ข้อความ</th>
                                                     <th>สถานะ</th>
                                                     <th>action</th>
+                                                    <th>action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -60,6 +61,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                     <th>บ้านเลขที่</th>
                                                     <th>ข้อความ</th>
                                                     <th>สถานะ</th>
+                                                    <th>action</th>
                                                     <th>action</th>
                                                 </tr>
                                                 </tfoot>
@@ -233,6 +235,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     </div>
                 </div>
 
+                <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+                     aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
+                                <button type="button" class="close text-white"
+                                        data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">ยกเลิก
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        id="confirmDeleteBtn">ลบข้อมูล
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
             </div>
         </div>
@@ -338,7 +366,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                     {data: 'house_number'},
                     {data: 'remark'},
                     {data: 'status'},
-                    {data: 'update'}
+                    {data: 'update'},
+                    {data: 'delete'},
+
                 ]
             });
         });
@@ -443,6 +473,41 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             let imgSrc = $(this).attr('src');  // ดึง src ของภาพที่ถูกคลิก
             $('#modalImage').attr('src', imgSrc);  // เปลี่ยน src ของ modal image ให้เป็นภาพที่ถูกคลิก
             $('#imageModal').modal('show');  // แสดง modal ที่มีภาพขนาดใหญ่
+        });
+    </script>
+
+    <script>
+        // ประกาศตัวแปร deleteId ไว้ด้านนอกเพื่อให้ทุกฟังก์ชันเข้าถึงได้
+        let deleteId = null;
+
+        // เมื่อคลิกปุ่ม "ลบ" ในตาราง
+        $("#TableRecordList").on('click', '.delete', function () {
+            // กำหนดค่า id ให้กับตัวแปร deleteId
+            deleteId = $(this).attr("id");
+            // แสดง Modal ยืนยัน
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        // เมื่อคลิกปุ่ม "ยืนยันการลบ" ใน Modal
+        $("#confirmDeleteBtn").on("click", function () {
+            // ตรวจสอบว่ามีค่า id ที่จะลบหรือไม่
+            if (deleteId) {
+                $.ajax({
+                    url: "model/manage_message_process.php",
+                    method: "POST",
+                    data: {id: deleteId, action: "DELETE"}, // ใช้ตัวแปร deleteId
+                    success: function (response) {
+                        $("#confirmDeleteModal").modal("hide");
+                        $('#TableRecordList').DataTable().ajax.reload();
+                        alertify.success("ลบข้อมูลเรียบร้อยแล้ว");
+                        // รีเซ็ตค่า deleteId กลับเป็น null หลังการลบสำเร็จ
+                        deleteId = null;
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการลบข้อมูล");
+                    }
+                });
+            }
         });
     </script>
 
