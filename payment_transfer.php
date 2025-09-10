@@ -739,6 +739,48 @@ if (strlen($_SESSION['alogin']) === "") {
 
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // อ้างอิงถึง Element ต่างๆ ที่เราจะใช้งาน
+            const startMonthSelect = document.getElementById('period_month_start');
+            const endMonthSelect = document.getElementById('period_month_to');
+            const paymentTypeInput = document.getElementById('payment_type');
+            const periodYearSelect = document.getElementById('period_year');
+
+            // ฟังก์ชันสำหรับคำนวณและอัปเดตค่า
+            function calculateAndSetMonths() {
+                const startMonth = parseInt(startMonthSelect.value);
+                const endMonth = parseInt(endMonthSelect.value);
+                const year = parseInt(periodYearSelect.value);
+
+                // ตรวจสอบว่าได้เลือกเดือนเริ่มต้นและสิ้นสุดแล้ว
+                if (startMonth && endMonth) {
+                    // ตรวจสอบเงื่อนไข: period_month_start ต้องไม่น้อยกว่า period_month_to
+                    if (startMonth > endMonth) {
+                        alert('ต้องเลือกเดือน "เริ่มงวด" ให้น้อยกว่าหรือเท่ากับเดือน "ถึงงวด" กรุณาเลือกใหม่ให้ถูกต้อง');
+                        // ตั้งค่า payment_type กลับไปที่ค่าเริ่มต้น
+                        paymentTypeInput.value = 1;
+                        return; // หยุดการทำงานของฟังก์ชัน
+                    }
+
+                    // คำนวณจำนวนเดือน
+                    const numberOfMonths = endMonth - startMonth + 1;
+
+                    // อัปเดตค่าในช่อง payment_type
+                    paymentTypeInput.value = numberOfMonths;
+                } else {
+                    // ถ้ายังไม่ได้เลือกเดือนใดเดือนหนึ่ง ให้ค่าเป็น 1
+                    paymentTypeInput.value = 1;
+                }
+            }
+
+            // เพิ่ม Event Listener เพื่อเรียกฟังก์ชันเมื่อค่ามีการเปลี่ยนแปลง
+            startMonthSelect.addEventListener('change', calculateAndSetMonths);
+            endMonthSelect.addEventListener('change', calculateAndSetMonths);
+            periodYearSelect.addEventListener('change', calculateAndSetMonths);
+        });
+    </script>
+
 
     </body>
     </html>
