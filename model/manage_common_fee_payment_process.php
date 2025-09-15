@@ -76,6 +76,20 @@ if ($_POST["action"] === 'UPDATE') {
         $period_year = $_POST["period_year"];
         $amount = $_POST["amount"];
 
+        // ตรวจสอบเงื่อนไข: ถ้าเลือกเดือนมกราคมถึงธันวาคม (1 ถึง 12)
+        if ($period_month_start == 1 && $period_month_to == 12) {
+            // กำหนดค่า payment_type เป็น 12 ทันที
+            $payment_type = 12; // <-- แก้ไขตรงนี้
+        } else {
+            // ถ้าไม่ใช่กรณี 1-12 ให้คำนวณจำนวนเดือนปกติ
+            if ($period_month_to >= $period_month_start) {
+                $payment_type = $period_month_to - $period_month_start + 1;
+            } else {
+                // กรณีข้ามปี (เช่น เริ่ม ธ.ค. -> สิ้นสุด ม.ค.)
+                $payment_type = (12 - $period_month_start) + $period_month_to + 1;
+            }
+        }
+
         // Set the approver from the session
         $approve_by = (isset($_SESSION['first_name']) && isset($_SESSION['last_name'])) ? $_SESSION['first_name'] . " " . $_SESSION['last_name'] : "Unknown User";
 
@@ -109,7 +123,8 @@ if ($_POST["action"] === 'UPDATE') {
                 approve_by = :approve_by, 
                 period_month_start = :period_month_start, 
                 period_month_to = :period_month_to,
-                period_year = :period_year, 
+                period_year = :period_year,
+                payment_type = :payment_type,  
                 amount = :amount, 
                 update_count = :new_update_count 
             WHERE id = :id";
@@ -120,6 +135,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':period_month_start', $period_month_start, PDO::PARAM_STR);
             $query->bindParam(':period_month_to', $period_month_to, PDO::PARAM_STR);
             $query->bindParam(':period_year', $period_year, PDO::PARAM_STR);
+            $query->bindParam(':payment_type', $payment_type, PDO::PARAM_STR);
             $query->bindParam(':amount', $amount, PDO::PARAM_STR);
             $query->bindParam(':new_update_count', $new_update_count, PDO::PARAM_INT);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
