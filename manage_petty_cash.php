@@ -183,12 +183,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
                 </div>
             </div>
+            <?php include('includes/Footer.php'); ?>
         </div>
     </div>
 
     <?php
     include('includes/Modal-Logout.php');
-    include('includes/Footer.php');
+    //include('includes/Footer.php');
     ?>
 
 
