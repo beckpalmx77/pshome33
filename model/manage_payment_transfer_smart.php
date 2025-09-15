@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_date = $_POST['payment_date'];
     $house_number = $_POST['house_number'];
     $detail = $_POST['detail'];
-    $payment_type = $_POST['payment_type'];
     $period_month_start = $_POST['period_month_start'];
     $period_month_to = $_POST['period_month_to'];
     $period_year = $_POST['period_year'];
@@ -22,6 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $picture_payment = $_FILES['picture_payment'];
 
     $payment_method = "โอนเงิน";
+
+// ตรวจสอบเงื่อนไข: ถ้าเลือกเดือนมกราคมถึงธันวาคม (1 ถึง 12)
+    if ($period_month_start == 1 && $period_month_to == 12) {
+        // กำหนดค่า payment_type เป็น 12 ทันที
+        $payment_type = 12; // <-- แก้ไขตรงนี้
+    } else {
+        // ถ้าไม่ใช่กรณี 1-12 ให้คำนวณจำนวนเดือนปกติ
+        if ($period_month_to >= $period_month_start) {
+            $payment_type = $period_month_to - $period_month_start + 1;
+        } else {
+            // กรณีข้ามปี (เช่น เริ่ม ธ.ค. -> สิ้นสุด ม.ค.)
+            $payment_type = (12 - $period_month_start) + $period_month_to + 1;
+        }
+    }
 
     // --- ส่วนที่เพิ่มเข้ามาสำหรับการตรวจสอบข้อมูลซ้ำซ้อน ---
     $check_stmt = $conn->prepare("SELECT COUNT(*) FROM ims_house_payment WHERE house_number = :house_number AND period_month_start = :period_month_start AND period_year = :period_year");
