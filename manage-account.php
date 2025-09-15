@@ -314,12 +314,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                 </div>
             </div>
+            <?php include('includes/Footer.php'); ?>
         </div>
     </div>
 
     <?php
     include('includes/Modal-Logout.php');
-    include('includes/Footer.php');
+    //include('includes/Footer.php');
     ?>
 
 
@@ -387,6 +388,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         $(document).ready(function () {
             let formData = {action: "GET_ACCOUNT", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
+                'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
