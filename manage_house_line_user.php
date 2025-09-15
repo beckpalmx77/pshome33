@@ -219,12 +219,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
 
                 </div>
             </div>
+            <?php include('includes/Footer.php'); ?>
         </div>
     </div>
 
     <?php
     include('includes/Modal-Logout.php');
-    include('includes/Footer.php');
+    //include('includes/Footer.php');
     ?>
 
 
