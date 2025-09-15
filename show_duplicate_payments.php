@@ -140,12 +140,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                 </div>
             </div>
+            <?php include('includes/Footer.php'); ?>
         </div>
     </div>
 
     <?php
     include('includes/Modal-Logout.php');
-    include('includes/Footer.php');
+    //include('includes/Footer.php');
     ?>
 
 
