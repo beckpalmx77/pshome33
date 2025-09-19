@@ -487,7 +487,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 let received_date = $('#received_date').val();
                 let formData = {action: "SEARCH", received_date: received_date};
                 $.ajax({
-                    url: 'model/manage_ equipment_process.php',
+                    url: 'model/manage_document_contact_process.php',
                     method: "POST",
                     data: formData,
                     success: function (data) {
@@ -525,7 +525,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     echo "'scrollX': true,";
                 }?>
                 'ajax': {
-                    'url': 'model/manage_ equipment_process.php',
+                    'url': 'model/manage_document_contact_process.php',
                     'data': formDataObj
                 },
                 'columns': [
@@ -574,7 +574,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 formData.set('existing_files', existingFiles.join(','));
 
                 $.ajax({
-                    url: 'model/manage_ equipment_process.php',
+                    url: 'model/manage_document_contact_process.php',
                     method: "POST",
                     data: formData,
                     contentType: false,
@@ -632,7 +632,7 @@ if (strlen($_SESSION['alogin']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_ equipment_process.php',
+                url: 'model/manage_document_contact_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -724,7 +724,7 @@ if (strlen($_SESSION['alogin']) == "") {
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
-                url: 'model/manage_ equipment_process.php',
+                url: 'model/manage_document_contact_process.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
@@ -754,7 +754,7 @@ if (strlen($_SESSION['alogin']) == "") {
                             fileList = file_attach.split(",").map(f => f.trim()).filter(f => f);
 
                             fileList.forEach(function (file, index) {
-                                let fileUrl = "uploads/equipment/" + file;
+                                let fileUrl = "uploads/document/" + file;
                                 let extension = file.split('.').pop().toLowerCase();
                                 let iconHTML = "";
 

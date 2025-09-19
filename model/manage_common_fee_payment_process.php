@@ -198,7 +198,7 @@ if ($_POST["action"] === 'UPDATE') {
                                                 ],
                                                 [
                                                     "type" => "text",
-                                                    "text" => "✅ อนุมัติการชำระเงิน",
+                                                    "text" => "✅ การชำระเงินเรียบร้อย",
                                                     "wrap" => true,
                                                     "size" => "sm",
                                                     "color" => "#669933",

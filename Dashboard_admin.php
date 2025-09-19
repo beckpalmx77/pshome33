@@ -79,9 +79,12 @@ $percent_68 = ($count_68_house_master > 0) ? ($count_68 / $count_68_house_master
                                         <canvas id="totalHousePieChart"
                                                 style="max-width: 100%; max-height: 400px;"></canvas>
                                         <p class="text-center mt-3">
-                                            จำนวนบ้านทั้งหมด (67 และ 68) : <strong><?= number_format($all_total_house) ?> หลัง</strong><br>
-                                            จำนวนบ้านที่ลงทะเบียนในระบบทั้งหมด (67 และ 68) : <strong><?= number_format($total_house) ?> หลัง</strong><br>
-                                            คิดเป็น <strong><?= number_format($percent_chk, 2) ?>%</strong> ของบ้านทั้งหมด
+                                            จำนวนบ้านทั้งหมด (67 และ 68) :
+                                            <strong><?= number_format($all_total_house) ?> หลัง</strong><br>
+                                            จำนวนบ้านที่ลงทะเบียนในระบบทั้งหมด (67 และ 68) :
+                                            <strong><?= number_format($total_house) ?> หลัง</strong><br>
+                                            คิดเป็น <strong><?= number_format($percent_chk, 2) ?>%</strong>
+                                            ของบ้านทั้งหมด
                                         </p>
                                     </div>
                                 </div>
@@ -143,7 +146,8 @@ $percent_68 = ($count_68_house_master > 0) ? ($count_68 / $count_68_house_master
                                                     จาก <?= number_format($count_67_house_master) ?> หลัง
                                                 </div>
                                                 <div class="text-xs text-info mt-1">
-                                                    คิดเป็น <strong><?= number_format($percent_67, 2) ?>%</strong> ของบ้านทั้งหมด
+                                                    คิดเป็น <strong><?= number_format($percent_67, 2) ?>%</strong>
+                                                    ของบ้านทั้งหมด
                                                 </div>
                                             </div>
                                             <div class="col-auto">
@@ -165,7 +169,8 @@ $percent_68 = ($count_68_house_master > 0) ? ($count_68 / $count_68_house_master
                                                     จาก <?= number_format($count_68_house_master) ?> หลัง
                                                 </div>
                                                 <div class="text-xs text-success mt-1">
-                                                    คิดเป็น <strong><?= number_format($percent_68, 2) ?>%</strong> ของบ้านทั้งหมด
+                                                    คิดเป็น <strong><?= number_format($percent_68, 2) ?>%</strong>
+                                                    ของบ้านทั้งหมด
                                                 </div>
                                             </div>
                                             <div class="col-auto">
@@ -194,77 +199,77 @@ $percent_68 = ($count_68_house_master > 0) ? ($count_68 / $count_68_house_master
                                 </div>
                             </div>
                         </div>
-    </div>
+                    </div>
 
-</div>
+                </div>
 
-<?php
-include('includes/Modal-Logout.php');
-include('includes/Footer.php');
-?>
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
+                <?php
+                include('includes/Modal-Logout.php');
+                include('includes/Footer.php');
+                ?>
+                <a class="scroll-to-top rounded" href="#page-top">
+                    <i class="fas fa-angle-up"></i>
+                </a>
 
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="js/myadmin.min.js"></script>
-<script src="vendor/chart.js/Chart.min.js"></script>
-<script src="js/chart/chart-area-demo.js"></script>
+                <script src="vendor/jquery/jquery.min.js"></script>
+                <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+                <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+                <script src="js/myadmin.min.js"></script>
+                <script src="vendor/chart.js/Chart.min.js"></script>
+                <script src="js/chart/chart-area-demo.js"></script>
 
-<link href='vendor/calendar/main.css' rel='stylesheet'/>
-<script src='vendor/calendar/main.js'></script>
-<script src='vendor/calendar/locales/th.js'></script>
+                <link href='vendor/calendar/main.css' rel='stylesheet'/>
+                <script src='vendor/calendar/main.js'></script>
+                <script src='vendor/calendar/locales/th.js'></script>
 
-<script src='js/clock_time.js'></script>
+                <script src='js/clock_time.js'></script>
 
-<script src="vendor/datatables/v11/bootbox.min.js"></script>
-<script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
-<link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+                <script src="vendor/datatables/v11/bootbox.min.js"></script>
+                <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+                <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+                <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const collapseCard = document.getElementById("collapseCard");
-        const collapseIcon = document.getElementById("collapseIcon");
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const collapseCard = document.getElementById("collapseCard");
+                        const collapseIcon = document.getElementById("collapseIcon");
 
-        // ใช้ Bootstrap collapse events
-        collapseCard.addEventListener("show.bs.collapse", function () {
-            collapseIcon.classList.remove("fa-chevron-down");
-            collapseIcon.classList.add("fa-chevron-up");
-        });
+                        // ใช้ Bootstrap collapse events
+                        collapseCard.addEventListener("show.bs.collapse", function () {
+                            collapseIcon.classList.remove("fa-chevron-down");
+                            collapseIcon.classList.add("fa-chevron-up");
+                        });
 
-        collapseCard.addEventListener("hide.bs.collapse", function () {
-            collapseIcon.classList.remove("fa-chevron-up");
-            collapseIcon.classList.add("fa-chevron-down");
-        });
-    });
-</script>
+                        collapseCard.addEventListener("hide.bs.collapse", function () {
+                            collapseIcon.classList.remove("fa-chevron-up");
+                            collapseIcon.classList.add("fa-chevron-down");
+                        });
+                    });
+                </script>
 
-<script>
-    const ctxTotal = document.getElementById("totalHousePieChart").getContext('2d');
-    const totalHousePieChart = new Chart(ctxTotal, {
-        type: 'pie',
-        data: {
-            labels: ['ลงทะเบียนแล้ว', 'ยังไม่ลงทะเบียน'],
-            datasets: [{
-                data: [<?= $total_house ?>, <?= $unregistered_house ?>],
-                backgroundColor: ['#28a745', '#dc3545'],
-                hoverBackgroundColor: ['#218838', '#c82333'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-</script>
+                <script>
+                    const ctxTotal = document.getElementById("totalHousePieChart").getContext('2d');
+                    const totalHousePieChart = new Chart(ctxTotal, {
+                        type: 'pie',
+                        data: {
+                            labels: ['ลงทะเบียนแล้ว', 'ยังไม่ลงทะเบียน'],
+                            datasets: [{
+                                data: [<?= $total_house ?>, <?= $unregistered_house ?>],
+                                backgroundColor: ['#28a745', '#dc3545'],
+                                hoverBackgroundColor: ['#218838', '#c82333'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                </script>
 
 </body>
 </html>
