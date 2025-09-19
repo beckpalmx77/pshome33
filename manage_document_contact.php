@@ -42,7 +42,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <section class="container-fluid">
 
                                         <div class="col-md-12 col-md-offset-2">
-                                            <label for="item_name"
+                                            <label for="doc_date"
                                                    class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
 
                                             <button type='button' name='btnAdd' id='btnAdd'
@@ -55,26 +55,22 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>รหัสพัสดุ/ครุภัณฑ์</th>
-                                                    <th>ชื่อพัสดุ/ครุภัณฑ์</th>
-                                                    <th>หมวดหมู่</th>
-                                                    <th>ยี่ห้อ</th>
-                                                    <th>รุ่น</th>
-                                                    <th>วันที่รับเข้า</th>
-                                                    <th>สถานะ</th>
+                                                    <th>เลขที่เอกสาร</th>
+                                                    <th>ปีเอกสาร</th>
+                                                    <th>วันที่ติดต่อ</th>
+                                                    <th>หน่วยงานที่ติดต่อ</th>
+                                                    <th>เรื่องที่ติดต่อ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
                                                 <tr>
-                                                    <th>รหัสพัสดุ/ครุภัณฑ์</th>
-                                                    <th>ชื่อพัสดุ/ครุภัณฑ์</th>
-                                                    <th>หมวดหมู่</th>
-                                                    <th>ยี่ห้อ</th>
-                                                    <th>รุ่น</th>
-                                                    <th>วันที่รับเข้า</th>
-                                                    <th>สถานะ</th>
+                                                    <th>เลขที่เอกสาร</th>
+                                                    <th>ปีเอกสาร</th>
+                                                    <th>วันที่ติดต่อ</th>
+                                                    <th>หน่วยงานที่ติดต่อ</th>
+                                                    <th>เรื่องที่ติดต่อ</th>
                                                     <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -99,113 +95,72 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <form method="post" id="recordForm" enctype="multipart/form-data">
                                                         <div class="modal-body">
                                                             <div class="form-group row">
-                                                                <div class="col-sm-3">
-                                                                    <label for="received_date"
-                                                                           class="control-label">วันที่รับเข้า</label>
+                                                                <div class="col-md-3">
+                                                                    <label for="doc_date">วันที่ติดต่อ</label>
                                                                     <i class="fa fa-calendar"
                                                                        aria-hidden="true"></i>
                                                                     <input type="text" class="form-control"
-                                                                           id="received_date"
-                                                                           name="received_date"
-                                                                           value="<?php echo $curr_date ?>"
-                                                                           required="required"
-                                                                           readonly="true"
-                                                                           placeholder="">
+                                                                           id="doc_date" name="doc_date"
+                                                                           value="<?php echo $curr_date ?>" required
+                                                                           readonly>
                                                                 </div>
                                                                 <div class="col-sm-3">
-                                                                    <label for="item_code"
-                                                                           class="control-label">รหัส พัสดุ/ครุภัณฑ์</label>
-                                                                    <i class="fa fa-calendar"
-                                                                       aria-hidden="true"></i>
+                                                                    <label for="doc_no"
+                                                                           class="control-label">เลขที่เอกสาร</label>
                                                                     <input type="text" class="form-control"
-                                                                           id="item_code"
-                                                                           name="item_code"
+                                                                           id="doc_no"
+                                                                           name="doc_no"
                                                                            value=""
                                                                            required="required"
                                                                            readonly="true"
                                                                            placeholder="">
                                                                 </div>
-
-                                                                <div class="col-sm-6">
-                                                                    <label for="item_name"
-                                                                           class="control-label">ชื่อ พัสดุ/ครุภัณฑ์</label>
-                                                                    <input list="item_nameList" type="text"
-                                                                           class="form-control"
-                                                                           id="item_name" name="item_name"
-                                                                           required="required" placeholder="">
-                                                                    <datalist id="item_nameList">
-                                                                        <?php
-                                                                        $stmt = $conn->prepare("SELECT DISTINCT(item_name) FROM inventory_items WHERE item_name IS NOT NULL AND item_name != '' ORDER BY item_code ASC");
-                                                                        $stmt->execute();
-                                                                        $item_names = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                                                                        foreach ($item_names as $item_name) {
-                                                                            echo '<option value="' . htmlspecialchars($item_name) . '">';
-                                                                        }
-                                                                        ?>
-                                                                    </datalist>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
                                                                 <input type="hidden" class="form-control"
                                                                        id="category_id"
                                                                        name="category_id">
-                                                                <div class="col-sm-10">
-                                                                    <label for="category_name"
-                                                                           class="control-label">หมวดหมู่</label>
+                                                                <div class="col-sm-3">
+                                                                    <label for="doc_year"
+                                                                           class="control-label">ปีเอกสาร</label>
                                                                     <input type="text" class="form-control"
-                                                                           id="category_name"
-                                                                           name="category_name"
+                                                                           id="doc_year"
+                                                                           name="doc_year"
                                                                            required="required"
                                                                            readonly="true"
                                                                            placeholder="">
-                                                                </div>
-
-                                                                <div class="col-sm-2">
-                                                                    <label for="qty"
-                                                                           class="control-label">เลือก</label>
-
-                                                                    <a data-toggle="modal" href="#Search-CATEGORY-Modal"
-                                                                       class="btn btn-primary">
-                                                                        Click <i class="fa fa-search"
-                                                                                 aria-hidden="true"></i>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="form-group row">
-                                                                <input type="hidden" class="form-control"
-                                                                       id="brand_id"
-                                                                       name="brand_id">
-                                                                <div class="col-sm-10">
-                                                                    <label for="brand_name"
-                                                                           class="control-label">ยี่ห้อ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="brand_name"
-                                                                           name="brand_name"
-                                                                           readonly="true"
-                                                                           placeholder="">
-                                                                </div>
-
-                                                                <div class="col-sm-2">
-                                                                    <label for="qty"
-                                                                           class="control-label">เลือก</label>
-
-                                                                    <a data-toggle="modal" href="#Search-BRAND-Modal"
-                                                                       class="btn btn-primary">
-                                                                        Click <i class="fa fa-search"
-                                                                                 aria-hidden="true"></i>
-                                                                    </a>
                                                                 </div>
                                                             </div>
 
                                                             <div class="form-group row">
                                                                 <div class="col-sm-12">
-                                                                    <label for="model"
-                                                                           class="control-label">รุ่น</label>
+                                                                    <label for="contact_name"
+                                                                           class="control-label">หน่วยงานที่ติดต่อ</label>
                                                                     <input type="text" class="form-control"
-                                                                           id="model"
-                                                                           name="model"
+                                                                           id="contact_name"
+                                                                           name="contact_name"
                                                                            placeholder="">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12">
+                                                                    <label for="topic"
+                                                                           class="control-label">เรื่องที่ติดต่อ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="topic"
+                                                                           name="topic"
+                                                                           placeholder="">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12">
+                                                                    <label for="detail"
+                                                                           class="control-label">รายละเอียด</label>
+                                                                    <textarea class="form-control"
+                                                                              id="detail"
+                                                                              name="detail"
+                                                                              rows="3"
+                                                                              placeholder=""></textarea>
                                                                 </div>
                                                             </div>
 
@@ -227,29 +182,18 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                      class="border rounded p-2 bg-light"></div>
                                                             </div>
 
-                                                            <div class="form-group row">
-                                                                <div class="col-sm-12">
-                                                                    <label for="details"
-                                                                           class="control-label">หมายเหตุ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="details"
-                                                                           name="details"
-                                                                           placeholder="">
-                                                                </div>
-                                                            </div>
-
                                                             <div class="form-group">
                                                                 <label for="status" class="control-label">สถานะ</label>
                                                                 <select id="status" name="status"
                                                                         class="form-control" data-live-search="true"
                                                                         title="Please select">
-                                                                    <option value="ใช้งาน" selected>ใช้งาน</option>
-                                                                    <option value="เสียหาย/ชำรุด">เสียหาย/ชำรุด</option>
-                                                                    <option value="จำหน่าย">จำหน่าย</option>
+                                                                    <option value="Active" selected>Active</option>
+                                                                    <option value="Inactive">Inactive</option>
                                                                 </select>
                                                             </div>
 
                                                         </div>
+
                                                         <div class="modal-footer">
                                                             <input type="hidden" name="id" id="id"/>
                                                             <input type="hidden" name="action" id="action" value=""/>
@@ -268,88 +212,6 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 </div>
                                             </div>
                                         </div>
-
-
-                                        <div class="modal fade" id="Search-CATEGORY-Modal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-
-                                                        <div class="modal-body">
-
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TableCatList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัสหมวดหมู่</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัสหมวดหมู่</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal fade" id="Search-BRAND-Modal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-
-                                                        <div class="modal-body">
-
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TableBrandList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัสยี่ห้อ</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัสยี่ห้อ</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
 
                                 </div>
                             </div>
@@ -480,30 +342,8 @@ if (strlen($_SESSION['alogin']) == "") {
     </script>
 
     <script>
-
-        $("#received_date").blur(function () {
-            let method = $('#action').val();
-            if (method === "ADD") {
-                let received_date = $('#received_date').val();
-                let formData = {action: "SEARCH", received_date: received_date};
-                $.ajax({
-                    url: 'model/manage_document_contact_process.php',
-                    method: "POST",
-                    data: formData,
-                    success: function (data) {
-                        if (data == 2) {
-                            alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
-                        }
-                    }
-                })
-            }
-        });
-
-    </script>
-
-    <script>
         $(document).ready(function () {
-            let formDataObj = {action: "GET_INVENTORY", sub_action: "GET_MASTER"};
+            let formDataObj = {action: "GET_DOCUMENT", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
@@ -529,13 +369,11 @@ if (strlen($_SESSION['alogin']) == "") {
                     'data': formDataObj
                 },
                 'columns': [
-                    {data: 'item_code'},
-                    {data: 'item_name'},
-                    {data: 'category_name'},
-                    {data: 'brand_name'},
-                    {data: 'model'},
-                    {data: 'received_date'},
-                    {data: 'status'},
+                    {data: 'doc_no'},
+                    {data: 'doc_year'},
+                    {data: 'doc_date'},
+                    {data: 'contact_name'},
+                    {data: 'topic'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]
@@ -599,20 +437,13 @@ if (strlen($_SESSION['alogin']) == "") {
     <script>
         $(document).ready(function () {
             $("#btnAdd").click(function () {
-
-                let today = new Date();
-                let day = String(today.getDate()).padStart(2, '0');
-                let month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-                let year = today.getFullYear();
-                let formattedDate = day + '-' + month + '-' + year;
-
                 $('#recordModal').modal('show');
                 $('#id').val("");
-                $('#received_date').val(formattedDate);
-                $('#item_name').val("");
-                $('#category_id').val("");
-                $('#category_name').val("");
-                $('#details').val("");
+                $('#doc_no').val("");
+                $('#doc_year').val("");
+                $('#contact_name').val("");
+                $('#topic').val("");
+                $('#detail').val("");
                 $('#file_attach').val("");
                 filesArray = [];
                 $('#previewList').html("");
@@ -639,106 +470,12 @@ if (strlen($_SESSION['alogin']) == "") {
                     let len = response.length;
                     for (let i = 0; i < len; i++) {
                         let id = response[i].id;
-                        let received_date = response[i].received_date;
-                        let item_code = response[i].item_code;
-                        let item_name = response[i].item_name;
-                        let category_id = response[i].category_id;
-                        let category_name = response[i].category_name;
-                        let brand_id = response[i].brand_id;
-                        let brand_name = response[i].brand_name;
-                        let details = response[i].details;
-                        let status = response[i].status;
-                        let file_attach = response[i].file_attach;
-
-                        let fileHTML = "";
-                        let fileList = [];
-
-                        $('#file_attach').val("");
-                        filesArray = [];
-                        $('#previewList').html("");
-                        $('#filePreview').html("");
-
-                        if (file_attach) {
-                            fileList = file_attach.split(",").map(f => f.trim()).filter(f => f);
-
-                            fileList.forEach(function (file, index) {
-                                let fileUrl = "uploads/equipment/" + file;
-                                let extension = file.split('.').pop().toLowerCase();
-                                let iconHTML = "";
-
-                                if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(extension)) {
-                                    iconHTML = `<img src="${fileUrl}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">`;
-                                } else if (extension === "pdf") {
-                                    iconHTML = `<i class="fa fa-file-pdf text-danger" style="font-size:40px;"></i>`;
-                                } else {
-                                    iconHTML = `<i class="fa fa-file text-secondary" style="font-size:40px;"></i>`;
-                                }
-
-                                fileHTML += `
-        <div class="text-center m-2" style="display:inline-block;" id="fileBox_${index}">
-            <a href="${fileUrl}" target="_blank">${iconHTML}</a>
-            <div class="small text-truncate" style="max-width: 100px;">${file}</div>
-            <button type="button" class="btn btn-sm btn-danger btnRemoveFile" data-index="${index}" data-filename="${file}">ลบ</button>
-        </div>
-        `;
-                            });
-                        } else {
-                            fileHTML = "<div class='text-muted'>ไม่มีไฟล์แนบ</div>";
-                        }
-
-                        $("#filePreview").html(fileHTML);
-
-// เก็บชื่อไฟล์ใน hidden input เพื่อส่งกลับ PHP ตอน update
-                        $("#existing_files").val(fileList.join(","));
-
-
-                        $('#recordModal').modal('show');
-                        $('#id').val(id);
-                        $('#received_date').val(received_date);
-                        $('#item_code').val(item_code);
-                        $('#item_name').val(item_name);
-                        $('#category_id').val(category_id);
-                        $('#category_name').val(category_name);
-                        $('#brand_id').val(brand_id);
-                        $('#brand_name').val(brand_name);
-                        $('#details').val(details);
-                        $('#status').val(status);
-                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
-                        $('#action').val('UPDATE');
-                        $('#save').val('Save');
-                    }
-                },
-                error: function (response) {
-                    alertify.error("error : " + response);
-                }
-            });
-        });
-
-    </script>
-
-    <script>
-
-        $("#TableRecordList").on('click', '.delete', function () {
-            let id = $(this).attr("id");
-            //alert(id);
-            let formData = {action: "GET_DATA", id: id};
-            $.ajax({
-                type: "POST",
-                url: 'model/manage_document_contact_process.php',
-                dataType: "json",
-                data: formData,
-                success: function (response) {
-                    let len = response.length;
-                    for (let i = 0; i < len; i++) {
-                        let id = response[i].id;
-                        let received_date = response[i].received_date;
-                        let item_code = response[i].item_code;
-                        let item_name = response[i].item_name;
-                        let category_id = response[i].category_id;
-                        let category_name = response[i].category_name;
-                        let brand_id = response[i].brand_id;
-                        let brand_name = response[i].brand_name;
-                        let details = response[i].details;
+                        let doc_no = response[i].doc_no;
+                        let doc_date = response[i].doc_date;
+                        let doc_year = response[i].doc_year;
+                        let contact_name = response[i].contact_name;
+                        let topic = response[i].topic;
+                        let detail = response[i].detail;
                         let status = response[i].status;
                         let file_attach = response[i].file_attach;
 
@@ -783,21 +520,18 @@ if (strlen($_SESSION['alogin']) == "") {
 // เก็บชื่อไฟล์ใน hidden input เพื่อส่งกลับ PHP ตอน update
                         $("#existing_files").val(fileList.join(","));
 
-
                         $('#recordModal').modal('show');
                         $('#id').val(id);
-                        $('#received_date').val(received_date);
-                        $('#item_code').val(item_code);
-                        $('#item_name').val(item_name);
-                        $('#category_id').val(category_id);
-                        $('#category_name').val(category_name);
-                        $('#brand_id').val(brand_id);
-                        $('#brand_name').val(brand_name);
-                        $('#details').val(details);
+                        $('#doc_no').val(doc_no);
+                        $('#doc_date').val(doc_date);
+                        $('#doc_year').val(doc_year);
+                        $('#contact_name').val(contact_name);
+                        $('#topic').val(topic);
+                        $('#detail').val(detail);
                         $('#status').val(status);
-                        $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
-                        $('#action').val('DELETE');
-                        $('#save').val('Confirm Delete');
+                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
+                        $('#action').val('UPDATE');
+                        $('#save').val('Save');
                     }
                 },
                 error: function (response) {
@@ -809,8 +543,17 @@ if (strlen($_SESSION['alogin']) == "") {
     </script>
 
     <script>
+
+        $("#TableRecordList").on('click', '.delete', function () {
+            let id = $(this).attr("id");
+            alert(id);
+        });
+
+    </script>
+
+    <script>
         $(document).ready(function () {
-            $('#received_date').datepicker({
+            $('#doc_date').datepicker({
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
                 language: "th",

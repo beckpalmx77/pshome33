@@ -14,20 +14,18 @@ if ($_POST["action"] === 'GET_DATA') {
 
     $return_arr = array();
 
-    $sql_get = "SELECT * FROM v_inventory_items WHERE id = " . $id;
+    $sql_get = "SELECT * FROM ims_document_contact WHERE id = " . $id;
     $statement = $conn->query($sql_get);
     $results = $statement->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($results as $result) {
         $return_arr[] = array("id" => $result['id'],
-            "item_code" => $result['item_code'],
-            "item_name" => $result['item_name'],
-            "category_id" => $result['category_id'],
-            "category_name" => $result['category_name'],
-            "brand_id" => $result['brand_id'],
-            "brand_name" => $result['brand_name'],
-            "received_date" => $result['received_date'],
-            "details" => $result['details'],
+            "doc_no" => $result['doc_no'],
+            "doc_date" => $result['doc_date'],
+            "doc_year" => $result['doc_year'],
+            "contact_name" => $result['contact_name'],
+            "topic" => $result['topic'],
+            "detail" => $result['detail'],
             "file_attach" => $result['file_attach'],
             "status" => $result['status']);
     }
@@ -38,10 +36,10 @@ if ($_POST["action"] === 'GET_DATA') {
 
 if ($_POST["action"] === 'SEARCH') {
 
-    if ($_POST["category_id"] !== '') {
+    if ($_POST["doc_year"] !== '') {
 
-        $category_id = $_POST["category_id"];
-        $sql_find = "SELECT * FROM inventory_items WHERE category_id = '" . $category_id . "'";
+        $doc_year = $_POST["doc_year"];
+        $sql_find = "SELECT * FROM ims_document_contact WHERE doc_year = '" . $doc_year . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
             echo 2;
@@ -57,24 +55,26 @@ if ($_POST["action"] === 'ADD') {
     error_log("POST Data: " . print_r($_POST, true));
     error_log("FILES Data: " . print_r($_FILES, true));
 
-    if (!empty($_POST["category_id"])) {
+    if (!empty($_POST["doc_date"])) {
 
-        $category_id = $_POST["category_id"];
-        $brand_id = $_POST["brand_id"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
-        $model = $_POST["model"] ?? '-';
-        $details = $_POST["details"] ?? '-';
-        $received_date = $_POST["received_date"] ?? '-';
+        $doc_date = $_POST["doc_date"];
+        $doc_year = substr($doc_date,6,4);
+
+        $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
+        $topic = $_POST["topic"] ?? '-';
+        $detail = $_POST["detail"] ?? '-';
+        $file_attach = $_POST["file_attach"] ?? '-';
         $status = $_POST["status"] ?? '';
 
-        $table = "inventory_items";
-        $field = "item_code";
-        $cond = " WHERE category_id = '" . $category_id . "' ";
-        $item_code = $category_id . "-" . sprintf('%04s', LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond));
+        $table = "ims_document_contact";
+        $field = "doc_no";
+        $cond = " WHERE doc_year = '" . $doc_year . "' ";
+        $doc_no = $doc_year . "-" . sprintf('%04s', LAST_DOCUMENT_NUMBER($conn, $field, $table, $cond));
 
         $file_names = [];
 
         if (!empty($_FILES['file_attach']['name'][0])) {
-            $uploadDir = '../uploads/equipment/';
+            $uploadDir = '../uploads/document/';
             $uploadedOriginals = [];
 
             foreach ($_FILES['file_attach']['tmp_name'] as $key => $tmp_name) {
@@ -103,21 +103,20 @@ if ($_POST["action"] === 'ADD') {
         $file_attach = implode(',', $file_names);
 
         // เตรียม sql insert
-        $sql = "INSERT INTO inventory_items(item_name, item_code, category_id, brand_id, model, details, received_date, file_attach, status)
-                VALUES (:item_name, :item_code, :category_id, :brand_id, :model, :details, :received_date, :file_attach, :status)";
+        $sql = "INSERT INTO ims_document_contact(doc_date, doc_no, doc_year, contact_name, topic, detail, file_attach, status)
+                VALUES (:doc_date, :doc_no, :doc_year, :contact_name, :topic, :detail, :file_attach, :status)";
         $query = $conn->prepare($sql);
 
-        // *** ปัญหา: ตัวแปร $item_name ไม่ถูกกำหนด ***
-        // ต้องกำหนด $item_name ก่อน bindParam เช่น:
-        $item_name = $_POST["item_name"] ?? '';  // เพิ่มเติม ถ้ามีค่า item_name
+        // *** ปัญหา: ตัวแปร $doc_date ไม่ถูกกำหนด ***
+        // ต้องกำหนด $doc_date ก่อน bindParam เช่น:
+        $doc_date = $_POST["doc_date"] ?? '';  // เพิ่มเติม ถ้ามีค่า doc_date
 
-        $query->bindParam(':item_name', $item_name, PDO::PARAM_STR);
-        $query->bindParam(':item_code', $item_code, PDO::PARAM_STR);
-        $query->bindParam(':category_id', $category_id, PDO::PARAM_STR);
-        $query->bindParam(':brand_id', $brand_id, PDO::PARAM_STR);
-        $query->bindParam(':model', $model, PDO::PARAM_STR);
-        $query->bindParam(':details', $details, PDO::PARAM_STR);
-        $query->bindParam(':received_date', $received_date, PDO::PARAM_STR);
+        $query->bindParam(':doc_date', $doc_date, PDO::PARAM_STR);
+        $query->bindParam(':doc_no', $doc_no, PDO::PARAM_STR);
+        $query->bindParam(':doc_year', $doc_year, PDO::PARAM_STR);
+        $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
+        $query->bindParam(':topic', $topic, PDO::PARAM_STR);
+        $query->bindParam(':detail', $detail, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
 
@@ -132,28 +131,27 @@ if ($_POST["action"] === 'ADD') {
         }
 
     } else {
-        error_log("category_id is empty");
-        echo "Category ID is required.";
+        error_log("doc_date is empty");
+        echo "doc_date is required.";
     }
 }
 
 if ($_POST["action"] === 'UPDATE') {
 
-    if (!empty($_POST["category_id"])) {
+    if (!empty($_POST["doc_year"])) {
 
         $id = $_POST["id"];
-        $category_id = $_POST["category_id"];
-        $brand_id = $_POST["brand_id"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
-        $model = $_POST["model"] ?? '-';
-        $details = $_POST["details"] ?? '-';
-        $received_date = $_POST["received_date"] ?? '-';
+        $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
+        $topic = $_POST["topic"] ?? '-';
+        $detail = $_POST["detail"] ?? '-';
+        $file_attach = $_POST["file_attach"] ?? '-';
         $status = $_POST["status"] ?? '';
 
-        $uploadDir = '../uploads/equipment/';
+        $uploadDir = '../uploads/document/';
         $file_names = [];
 
         // ดึงชื่อไฟล์เก่าจาก DB
-        $stmt = $conn->prepare("SELECT file_attach FROM inventory_items WHERE id = :id");
+        $stmt = $conn->prepare("SELECT file_attach FROM ims_document_contact WHERE id = :id");
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         $oldFiles = $stmt->fetchColumn(); // เช่น "file1.jpg,file2.png"
@@ -188,7 +186,7 @@ if ($_POST["action"] === 'UPDATE') {
                 if (in_array($safeOriginalName, $remainingOldFiles) && file_exists($targetPath)) {
                     unlink($targetPath);
                     // เอาออกจากรายชื่อไฟล์เก่าที่เหลือ เพื่อเพิ่มไฟล์ใหม่แทน
-                    $remainingOldFiles = array_filter($remainingOldFiles, function($f) use ($safeOriginalName) {
+                    $remainingOldFiles = array_filter($remainingOldFiles, function ($f) use ($safeOriginalName) {
                         return $f !== $safeOriginalName;
                     });
                 }
@@ -211,22 +209,18 @@ if ($_POST["action"] === 'UPDATE') {
         $finalFileAttach = implode(',', $combinedFiles);
 
         // อัพเดตข้อมูลใน DB
-        $sql_update = "UPDATE inventory_items 
-            SET category_id = :category_id,
-                brand_id = :brand_id,
-                model = :model,
-                details = :details,
-                received_date = :received_date,                
+        $sql_update = "UPDATE ims_document_contact 
+            SET contact_name = :contact_name,
+                topic = :topic,
+                detail = :detail,                
                 status = :status,                
                 file_attach = :file_attach
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
-        $query->bindParam(':category_id', $category_id);
-        $query->bindParam(':brand_id', $brand_id);
-        $query->bindParam(':model', $model);
-        $query->bindParam(':details', $details);
-        $query->bindParam(':received_date', $received_date);
+        $query->bindParam(':contact_name', $contact_name);
+        $query->bindParam(':topic', $topic);
+        $query->bindParam(':detail', $detail);
         $query->bindParam(':status', $status);
         $query->bindParam(':file_attach', $finalFileAttach);
         $query->bindParam(':id', $id);
@@ -240,14 +234,14 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    $sql_find = "SELECT * FROM inventory_items WHERE id = " . $id;
+    $sql_find = "SELECT * FROM ims_document_contact WHERE id = " . $id;
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
-            $sql = "DELETE FROM inventory_items WHERE id = " . $id;
+            $sql = "DELETE FROM ims_document_contact WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
-            Reorder_Record($conn, "inventory_items");
+            Reorder_Record($conn, "ims_document_contact");
             echo $del_success;
         } catch (Exception $e) {
             echo 'Message: ' . $e->getMessage();
@@ -255,7 +249,7 @@ if ($_POST["action"] === 'DELETE') {
     }
 }
 
-if ($_POST["action"] === 'GET_INVENTORY') {
+if ($_POST["action"] === 'GET_DOCUMENT') {
 
 ## Read value
     $draw = $_POST['draw'];
@@ -271,26 +265,26 @@ if ($_POST["action"] === 'GET_INVENTORY') {
 ## Search
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (item_name LIKE :item_name) ";
+        $searchQuery = " AND (doc_date LIKE :doc_date) ";
         $searchArray = array(
-            'item_name' => "%$searchValue%"
+            'doc_date' => "%$searchValue%"
         );
     }
 
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM inventory_items ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_document_contact ");
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM inventory_items WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM ims_document_contact WHERE 1 " . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-    $stmt = $conn->prepare("SELECT * FROM v_inventory_items WHERE 1 " . $searchQuery
+    $stmt = $conn->prepare("SELECT * FROM ims_document_contact WHERE 1 " . $searchQuery
         . " ORDER BY id DESC LIMIT :limit,:offset");
 
 // Bind values
@@ -308,15 +302,14 @@ if ($_POST["action"] === 'GET_INVENTORY') {
         if ($_POST['sub_action'] === "GET_MASTER") {
 
             $data[] = array(
-                "item_code" => $row['item_code'],
-                "item_name" => $row['item_name'],
-                "category_id" => $row['category_id'],
-                "category_name" => $row['category_name'],
-                "brand_id" => $row['brand_id'],
-                "brand_name" => $row['brand_name'],
-                "model" => $row['model'],
-                "details" => $row['details'],
-                "received_date" => $row['received_date'],
+                "doc_no" => $row['doc_no'],
+                "doc_date" => $row['doc_date'],
+                "doc_year" => $row['doc_year'],
+                "doc_runno" => $row['doc_runno'],
+                "contact_name" => $row['contact_name'],
+                "topic" => $row['topic'],
+                "detail" => $row['detail'],
+                "file_attach" => $row['file_attach'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "status" => $row['status'] === 'Y' ? "<div class='text-success'>" . $row['status'] . "</div>" : "<div class='text-muted'> " . $row['status'] . "</div>"
@@ -324,9 +317,9 @@ if ($_POST["action"] === 'GET_INVENTORY') {
         } else {
             $data[] = array(
                 "id" => $row['id'],
-                "item_code" => $row['item_code'],
-                "item_name" => $row['item_name'],
-                "select" => "<button type='button' name='select' id='" . $row['item_code'] . "@" . $row['item_name'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
+                "doc_no" => $row['doc_no'],
+                "doc_date" => $row['doc_date'],
+                "select" => "<button type='button' name='select' id='" . $row['doc_no'] . "@" . $row['doc_date'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
 </button>",
             );
         }
