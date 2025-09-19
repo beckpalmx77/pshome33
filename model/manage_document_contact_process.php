@@ -24,6 +24,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "doc_date" => $result['doc_date'],
             "doc_year" => $result['doc_year'],
             "contact_name" => $result['contact_name'],
+            "actor" => $result['actor'],
             "topic" => $result['topic'],
             "detail" => $result['detail'],
             "process_detail" => $result['process_detail'],
@@ -59,10 +60,10 @@ if ($_POST["action"] === 'ADD') {
     if (!empty($_POST["doc_date"])) {
 
         $doc_date = $_POST["doc_date"];
-        $doc_year = substr($doc_date,6,4);
+        $doc_year = substr($doc_date, 6, 4);
 
         $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
-        $topic = $_POST["topic"] ?? '-';
+        $actor = $_POST["actor"] ?? '-';
         $detail = $_POST["detail"] ?? '-';
         $process_detail = $_POST["process_detail"] ?? '-';
         $file_attach = $_POST["file_attach"] ?? '-';
@@ -105,8 +106,8 @@ if ($_POST["action"] === 'ADD') {
         $file_attach = implode(',', $file_names);
 
         // เตรียม sql insert
-        $sql = "INSERT INTO ims_document_contact(doc_date, doc_no, doc_year, contact_name, topic, detail, process_detail, file_attach, status)
-                VALUES (:doc_date, :doc_no, :doc_year, :contact_name, :topic, :detail, :process_detail, :file_attach, :status)";
+        $sql = "INSERT INTO ims_document_contact(doc_date, doc_no, doc_year, contact_name, topic, detail, process_detail, file_attach, status, actor)
+                VALUES (:doc_date, :doc_no, :doc_year, :contact_name, :topic, :detail, :process_detail, :file_attach, :status, :actor)";
         $query = $conn->prepare($sql);
 
         // *** ปัญหา: ตัวแปร $doc_date ไม่ถูกกำหนด ***
@@ -122,6 +123,7 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':process_detail', $process_detail, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
+        $query->bindParam(':actor', $actor, PDO::PARAM_STR);
 
         if ($query->execute()) {
             $lastInsertId = $conn->lastInsertId();
@@ -145,6 +147,7 @@ if ($_POST["action"] === 'UPDATE') {
 
         $id = $_POST["id"];
         $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
+        $actor = $_POST["actor"] ?? '-';
         $topic = $_POST["topic"] ?? '-';
         $detail = $_POST["detail"] ?? '-';
         $process_detail = $_POST["process_detail"] ?? '-';
@@ -219,7 +222,8 @@ if ($_POST["action"] === 'UPDATE') {
                 detail = :detail,                
                 process_detail = :process_detail,
                 status = :status,                
-                file_attach = :file_attach
+                file_attach = :file_attach,
+                actor=:actor
             WHERE id = :id";
 
         $query = $conn->prepare($sql_update);
@@ -229,6 +233,7 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':process_detail', $process_detail, PDO::PARAM_STR);
         $query->bindParam(':status', $status);
         $query->bindParam(':file_attach', $finalFileAttach);
+        $query->bindParam(':actor', $actor);
         $query->bindParam(':id', $id);
         $query->execute();
 
@@ -313,6 +318,7 @@ if ($_POST["action"] === 'GET_DOCUMENT') {
                 "doc_year" => $row['doc_year'],
                 "doc_runno" => $row['doc_runno'],
                 "contact_name" => $row['contact_name'],
+                "actor" => $row['actor'],
                 "topic" => $row['topic'],
                 "detail" => $row['detail'],
                 "process_detail" => $row['process_detail'],

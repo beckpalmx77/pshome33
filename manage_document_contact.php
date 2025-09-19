@@ -59,6 +59,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>ปีเอกสาร</th>
                                                     <th>วันที่ติดต่อ</th>
                                                     <th>หน่วยงานที่ติดต่อ</th>
+                                                    <th>ผู้ดำเนินการ</th>
                                                     <th>เรื่องที่ติดต่อ</th>
                                                     <th>ความคืบหน้า/ผลการติดต่อ</th>
                                                     <th>Action</th>
@@ -70,6 +71,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>ปีเอกสาร</th>
                                                     <th>วันที่ติดต่อ</th>
                                                     <th>หน่วยงานที่ติดต่อ</th>
+                                                    <th>ผู้ดำเนินการ</th>
                                                     <th>เรื่องที่ติดต่อ</th>
                                                     <th>ความคืบหน้า/ผลการติดต่อ</th>
                                                     <th>Action</th>
@@ -131,12 +133,20 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             </div>
 
                                                             <div class="form-group row">
-                                                                <div class="col-sm-12">
+                                                                <div class="col-sm-6">
                                                                     <label for="contact_name"
                                                                            class="control-label">หน่วยงานที่ติดต่อ</label>
                                                                     <input type="text" class="form-control"
                                                                            id="contact_name"
                                                                            name="contact_name"
+                                                                           placeholder="">
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <label for="actor"
+                                                                           class="control-label">ผู้ดำเนินการ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="actor"
+                                                                           name="actor"
                                                                            placeholder="">
                                                                 </div>
                                                             </div>
@@ -384,6 +394,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     {data: 'doc_year'},
                     {data: 'doc_date'},
                     {data: 'contact_name'},
+                    {data: 'actor'},
                     {data: 'topic'},
                     {data: 'process_detail'},
                     {data: 'update'}
@@ -453,6 +464,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#doc_no').val("");
                 $('#doc_year').val("");
                 $('#contact_name').val("");
+                $('#actor').val("");
                 $('#topic').val("");
                 $('#detail').val("");
                 $('#process_detail').val("");
@@ -486,6 +498,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         let doc_date = response[i].doc_date;
                         let doc_year = response[i].doc_year;
                         let contact_name = response[i].contact_name;
+                        let actor = response[i].actor;
                         let topic = response[i].topic;
                         let detail = response[i].detail;
                         let process_detail = response[i].process_detail;
@@ -539,6 +552,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#doc_date').val(doc_date);
                         $('#doc_year').val(doc_year);
                         $('#contact_name').val(contact_name);
+                        $('#actor').val(actor);
                         $('#topic').val(topic);
                         $('#detail').val(detail);
                         $('#process_detail').val(process_detail);
