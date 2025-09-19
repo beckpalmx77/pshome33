@@ -60,7 +60,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>วันที่ติดต่อ</th>
                                                     <th>หน่วยงานที่ติดต่อ</th>
                                                     <th>เรื่องที่ติดต่อ</th>
-                                                    <th>Action</th>
+                                                    <th>ความคืบหน้า/ผลการติดต่อ</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -71,7 +71,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>วันที่ติดต่อ</th>
                                                     <th>หน่วยงานที่ติดต่อ</th>
                                                     <th>เรื่องที่ติดต่อ</th>
-                                                    <th>Action</th>
+                                                    <th>ความคืบหน้า/ผลการติดต่อ</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </tfoot>
@@ -161,6 +161,17 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                               name="detail"
                                                                               rows="3"
                                                                               placeholder=""></textarea>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12">
+                                                                    <label for="process_detail"
+                                                                           class="control-label">ความคืบหน้า/ผลการติดต่อ</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="process_detail"
+                                                                           name="process_detail"
+                                                                           placeholder="">
                                                                 </div>
                                                             </div>
 
@@ -374,8 +385,8 @@ if (strlen($_SESSION['alogin']) == "") {
                     {data: 'doc_date'},
                     {data: 'contact_name'},
                     {data: 'topic'},
-                    {data: 'update'},
-                    {data: 'delete'}
+                    {data: 'process_detail'},
+                    {data: 'update'}
                 ]
             });
         });
@@ -444,6 +455,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#contact_name').val("");
                 $('#topic').val("");
                 $('#detail').val("");
+                $('#process_detail').val("");
                 $('#file_attach').val("");
                 filesArray = [];
                 $('#previewList').html("");
@@ -476,6 +488,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         let contact_name = response[i].contact_name;
                         let topic = response[i].topic;
                         let detail = response[i].detail;
+                        let process_detail = response[i].process_detail;
                         let status = response[i].status;
                         let file_attach = response[i].file_attach;
 
@@ -528,6 +541,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#contact_name').val(contact_name);
                         $('#topic').val(topic);
                         $('#detail').val(detail);
+                        $('#process_detail').val(process_detail);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');

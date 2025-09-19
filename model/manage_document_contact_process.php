@@ -26,6 +26,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "contact_name" => $result['contact_name'],
             "topic" => $result['topic'],
             "detail" => $result['detail'],
+            "process_detail" => $result['process_detail'],
             "file_attach" => $result['file_attach'],
             "status" => $result['status']);
     }
@@ -63,6 +64,7 @@ if ($_POST["action"] === 'ADD') {
         $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
         $topic = $_POST["topic"] ?? '-';
         $detail = $_POST["detail"] ?? '-';
+        $process_detail = $_POST["process_detail"] ?? '-';
         $file_attach = $_POST["file_attach"] ?? '-';
         $status = $_POST["status"] ?? '';
 
@@ -103,8 +105,8 @@ if ($_POST["action"] === 'ADD') {
         $file_attach = implode(',', $file_names);
 
         // เตรียม sql insert
-        $sql = "INSERT INTO ims_document_contact(doc_date, doc_no, doc_year, contact_name, topic, detail, file_attach, status)
-                VALUES (:doc_date, :doc_no, :doc_year, :contact_name, :topic, :detail, :file_attach, :status)";
+        $sql = "INSERT INTO ims_document_contact(doc_date, doc_no, doc_year, contact_name, topic, detail, process_detail, file_attach, status)
+                VALUES (:doc_date, :doc_no, :doc_year, :contact_name, :topic, :detail, :process_detail, :file_attach, :status)";
         $query = $conn->prepare($sql);
 
         // *** ปัญหา: ตัวแปร $doc_date ไม่ถูกกำหนด ***
@@ -117,6 +119,7 @@ if ($_POST["action"] === 'ADD') {
         $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
         $query->bindParam(':topic', $topic, PDO::PARAM_STR);
         $query->bindParam(':detail', $detail, PDO::PARAM_STR);
+        $query->bindParam(':process_detail', $process_detail, PDO::PARAM_STR);
         $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
         $query->bindParam(':status', $status, PDO::PARAM_STR);
 
@@ -144,6 +147,7 @@ if ($_POST["action"] === 'UPDATE') {
         $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
         $topic = $_POST["topic"] ?? '-';
         $detail = $_POST["detail"] ?? '-';
+        $process_detail = $_POST["process_detail"] ?? '-';
         $file_attach = $_POST["file_attach"] ?? '-';
         $status = $_POST["status"] ?? '';
 
@@ -213,6 +217,7 @@ if ($_POST["action"] === 'UPDATE') {
             SET contact_name = :contact_name,
                 topic = :topic,
                 detail = :detail,                
+                process_detail = :process_detail,
                 status = :status,                
                 file_attach = :file_attach
             WHERE id = :id";
@@ -221,6 +226,7 @@ if ($_POST["action"] === 'UPDATE') {
         $query->bindParam(':contact_name', $contact_name);
         $query->bindParam(':topic', $topic);
         $query->bindParam(':detail', $detail);
+        $query->bindParam(':process_detail', $process_detail, PDO::PARAM_STR);
         $query->bindParam(':status', $status);
         $query->bindParam(':file_attach', $finalFileAttach);
         $query->bindParam(':id', $id);
@@ -309,6 +315,7 @@ if ($_POST["action"] === 'GET_DOCUMENT') {
                 "contact_name" => $row['contact_name'],
                 "topic" => $row['topic'],
                 "detail" => $row['detail'],
+                "process_detail" => $row['process_detail'],
                 "file_attach" => $row['file_attach'],
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
