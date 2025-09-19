@@ -61,7 +61,7 @@ if ($_POST["action"] === 'ADD') {
 
         $doc_date = $_POST["doc_date"];
         $doc_year = substr($doc_date, 6, 4);
-
+        $topic = $_POST["topic"] ?? '-';
         $contact_name = $_POST["contact_name"] ?? '-';   // ใช้ null coalescing กันกรณีไม่มี key
         $actor = $_POST["actor"] ?? '-';
         $detail = $_POST["detail"] ?? '-';
