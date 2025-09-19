@@ -276,9 +276,11 @@ if ($_POST["action"] === 'GET_DOCUMENT') {
 ## Search
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (doc_date LIKE :doc_date) ";
+        $searchQuery = " AND (doc_date LIKE :doc_date OR contact_name LIKE :contact_name OR topic LIKE :topic) ";
         $searchArray = array(
-            'doc_date' => "%$searchValue%"
+            'doc_date' => "%$searchValue%",
+            'contact_name' => "%$searchValue%",
+            'topic' => "%$searchValue%"
         );
     }
 
