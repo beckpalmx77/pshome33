@@ -163,7 +163,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             </div>
 
                                                             <div class="form-group row">
-                                                                <div class="col-sm-12">
+                                                                <div class="col-sm-6">
                                                                     <label for="detail"
                                                                            class="control-label">รายละเอียด</label>
                                                                     <textarea class="form-control"
@@ -172,16 +172,14 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                               rows="3"
                                                                               placeholder=""></textarea>
                                                                 </div>
-                                                            </div>
-
-                                                            <div class="form-group row">
-                                                                <div class="col-sm-12">
+                                                                <div class="col-sm-6">
                                                                     <label for="process_detail"
                                                                            class="control-label">ความคืบหน้า/ผลการติดต่อ</label>
-                                                                    <input type="text" class="form-control"
-                                                                           id="process_detail"
-                                                                           name="process_detail"
-                                                                           placeholder="">
+                                                                    <textarea class="form-control"
+                                                                              id="process_detail"
+                                                                              name="process_detail"
+                                                                              rows="3"
+                                                                              placeholder=""></textarea>
                                                                 </div>
                                                             </div>
 
