@@ -989,7 +989,7 @@ foreach ($BankCurr as $row_curr) {
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // อ้างอิงถึง Element ต่างๆ ที่เราจะใช้งาน
         const startMonthSelect = document.getElementById('period_month_start');
         const endMonthSelect = document.getElementById('period_month_to');
