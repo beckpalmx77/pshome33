@@ -306,18 +306,16 @@ if ($_POST["action"] === 'UPDATE') {
                             "contents" => [
                                 [
                                     "type" => "button",
-                                    "style" => "link",
+                                    "style" => "primary", // ✨ แก้ไขตรงนี้เป็น primary
+                                    "color" => "#1DB954", // (Optional) สามารถกำหนดสี Hex code ได้
                                     "height" => "sm",
                                     "action" => [
                                         "type" => "uri",
-                                        "label" => "Click เพื่อ ดูประวัติการชำระ",
-                                        "uri" => "https://liff.line.me/2007370141-13Wzad0L" // Replace with your actual URL
+                                        "label" => "ดูประวัติการชำระ", // แก้ไขข้อความให้สั้นลง
+                                        "uri" => "https://liff.line.me/2007370141-13Wzad0L"
                                     ]
-                                ],
-                                [
-                                    "type" => "spacer",
-                                    "size" => "sm"
                                 ]
+                                // ไม่จำเป็นต้องใช้ spacer แล้วก็ได้ถ้าต้องการให้ปุ่มเต็มความกว้าง
                             ],
                             "flex" => 0
                         ]

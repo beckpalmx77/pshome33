@@ -940,12 +940,13 @@ foreach ($BankCurr as $row_curr) {
                                             "contents": [
                                                 {
                                                     "type": "button",
-                                                    "style": "link",
+                                                    "style": "primary",
+                                                    "color": "#28a745",
                                                     "height": "sm",
                                                     "action": {
                                                         "type": "uri",
-                                                        "label": "Click เพื่อ ดูประวัติการชำระ",
-                                                        "uri": "https://liff.line.me/2007370141-13Wzad0L" // 👈 Change to your history page URL
+                                                        "label": "ดูประวัติการชำระ",
+                                                        "uri": "https://liff.line.me/2007370141-13Wzad0L"
                                                     }
                                                 }
                                             ],
