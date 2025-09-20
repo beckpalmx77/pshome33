@@ -941,7 +941,7 @@ foreach ($BankCurr as $row_curr) {
                                                 {
                                                     "type": "button",
                                                     "style": "primary",
-                                                    "color": "#28a745",
+                                                    "color": "#1DB954",
                                                     "height": "sm",
                                                     "action": {
                                                         "type": "uri",
