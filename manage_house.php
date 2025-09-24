@@ -357,9 +357,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'columns': [
                     {data: 'house_number'},
                     {data: 'alley'},
-                    { data: 'area_size', className: 'text-right' },
-                    { data: 'garbage_collection_fee', className: 'text-right' },
-                    { data: 'common_fee', className: 'text-right' },
+                    {data: 'area_size', className: 'text-right' },
+                    {data: 'garbage_collection_fee', className: 'text-right' },
+                    {data: 'common_fee', className: 'text-right' },
                     {data: 'contact_name'},
                     {data: 'phone_number'},
                     {
