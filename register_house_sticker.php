@@ -128,6 +128,9 @@ include('includes/Header.php');
 
                                     <button type="submit" class="btn btn-primary btn-block">บันทึกข้อมูล
                                     </button>
+                                    <button type="button" id="BackBtn" class="btn btn-danger btn-block">
+                                        กลับหน้าแรก
+                                    </button>
                                 </form>
 
                                 <div id="result"></div>
@@ -329,6 +332,17 @@ include('includes/Header.php');
         }
     });
 
+</script>
+
+<script>
+    $(document).ready(function() {
+
+        // When the "Sticker" button is clicked
+        $('#BackBtn').on('click', function() {
+            // Redirect to the sticker page URL
+            window.location.href = 'https://liff.line.me/2007370141-AxBy7eGD'; // <-- ‼️ **แก้ไข URL ของหน้าสติกเกอร์ที่นี่**
+        });
+    });
 </script>
 
 </body>
