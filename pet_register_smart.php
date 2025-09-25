@@ -93,7 +93,6 @@
                 <div class="card">
                     <div class="card-body">
                         <form method="post" id="recordForm" enctype="multipart/form-data">
-                            <h4>ข้อมูลบ้าน (ดึงจากโปรไฟล์ LINE)</h4>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -119,7 +118,7 @@
                             </div>
 
                             <hr>
-                            <h4>ข้อมูลสัตว์เลี้ยง (กรอกข้อมูลด้านล่าง)</h4>
+                            <h4>ข้อมูลสัตว์เลี้ยง</h4>
 
                             <?php for ($i = 1; $i <= 6; $i++): ?>
                                 <div class="row align-items-center border-bottom py-2">
@@ -194,7 +193,6 @@
 <script src="line_oa/house/jsconfig/config_pet_register.js"></script>
 
 <script>
-
     liff.init({liffId: LIFF_ID})
         .then(() => {
             if (!liff.isLoggedIn()) {
@@ -206,97 +204,73 @@
                     const displayName = profile.displayName;
 
                     $('#profilePic').attr('src', pictureUrl);
-                    $('#user-info-liff').text(`ผู้ใช้: ${displayName}`);
+                    $('#user-info-liff').text(`  ${displayName}`);
 
-                    // Fetch user's pet record data from backend
+                    // --- ขั้นตอนที่ 1: ดึงบ้านเลขที่ก่อน ---
                     $.ajax({
                         type: "POST",
-                        url: 'model/manage_pet_record_process.php', // ใช้ process เดิม
+                        url: 'model/get_house_line_user.php',
                         dataType: "json",
-                        data: {action: "GET_DATA_BY_LIFF", userId: userId},
-                        success: function (response) {
-                            if (response && response.length > 0) {
-                                let record = response[0];
-                                $('#id').val(record.id);
-                                $('#house_number').val(record.house_number);
-                                $('#contact_name').val(record.contact_name);
-                                $('#phone_number').val(record.phone_number);
+                        data: { userId: userId },
+                        success: function (houseResponse) {
+                            //  ✅ แก้ไขเงื่อนไข: ตรวจสอบว่ามี house_number และไม่เป็นค่าว่าง
+                            if (houseResponse && houseResponse.house_number) {
+                                let house_number = houseResponse.house_number;
+                                // ✅ แก้ไข: รวมชื่อ-นามสกุลจาก response โดยตรง
+                                let contact_name = houseResponse.f_name + " " + houseResponse.l_name;
 
-                                for (let i = 1; i <= 6; i++) {
-                                    $('#type_' + i).val(record['type_' + i]);
-                                    $('#pet_' + i).val(record['pet_' + i]);
+                                $('#house_number').val(house_number);
+                                $('#contact_name').val(contact_name);
+                                $('#phone_number').val(houseResponse.line_phone);
 
-                                    let picture_filename = record['picture_pet_' + i];
-                                    if (picture_filename) {
-                                        let imagePath = 'uploads/pet/' + picture_filename;
-                                        $('#preview_pet_' + i).attr('src', imagePath).show();
+                                // --- ขั้นตอนที่ 2: เมื่อได้บ้านเลขที่แล้ว จึงดึงข้อมูลสัตว์เลี้ยง ---
+                                $.ajax({
+                                    type: "POST",
+                                    url: 'model/manage_pet_record_process.php',
+                                    dataType: "json",
+                                    data: { action: "GET_DATA_BY_HOUSE_NUMBER", house_number: house_number },
+                                    success: function (petResponse) {
+                                        if (petResponse && petResponse.length > 0) {
+                                            let record = petResponse[0];
+                                            $('#id').val(record.id);
+
+                                            for (let i = 1; i <= 6; i++) {
+                                                $('#type_' + i).val(record['type_' + i]);
+                                                $('#pet_' + i).val(record['pet_' + i]);
+
+                                                let picture_filename = record['picture_pet_' + i];
+                                                if (picture_filename) {
+                                                    let imagePath = 'uploads/pet/' + picture_filename;
+                                                    $('#preview_pet_' + i).attr('src', imagePath).show();
+                                                }
+                                            }
+                                        } else {
+                                            // ไม่มีข้อมูลสัตว์เลี้ยง แต่มีบ้านเลขที่ ให้ผู้ใช้กรอกใหม่ได้
+                                            alertify.message('ไม่พบข้อมูลสัตว์เลี้ยงที่เคยลงทะเบียน ท่านสามารถกรอกข้อมูลใหม่ได้เลย');
+                                        }
+                                    },
+                                    error: function () {
+                                        alertify.error('เกิดข้อผิดพลาดในการดึงข้อมูลสัตว์เลี้ยง');
+                                        // liff.closeWindow(); // อาจจะไม่ต้องปิดทันที ให้ผู้ใช้เห็นข้อความก่อน
                                     }
-                                }
+                                });
+
                             } else {
-                                alert('ไม่พบบ้านเลขที่ของคุณในระบบ โปรดติดต่อผู้ดูแล');
-                                liff.closeWindow();
+                                // ✅ แก้ไข: นำ alert กลับมาใช้งาน
+                                alertify.alert('ไม่พบข้อมูล!', 'ไม่พบบ้านเลขที่ที่ผูกกับบัญชี LINE นี้ โปรดติดต่อผู้ดูแล', function(){
+                                    if(liff.isInClient()) {
+                                        liff.closeWindow();
+                                    }
+                                });
                             }
                         },
                         error: function () {
-                            alert('เกิดข้อผิดพลาดในการดึงข้อมูลบ้าน');
-                            liff.closeWindow();
+                            alertify.error('เกิดข้อผิดพลาดในการเชื่อมต่อเพื่อดึงบ้านเลขที่');
                         }
                     });
                 });
             }
         });
-</script>
-
-<script>
-    $(document).ready(function () {
-        // Image Preview Logic
-        for (let i = 1; i <= 6; i++) {
-            $('#picture_pet_' + i).on('change', function (event) {
-                const previewImage = $('#preview_pet_' + i);
-                if (event.target.files && event.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        previewImage.attr('src', e.target.result).show();
-                    }
-                    reader.readAsDataURL(event.target.files[0]);
-                } else {
-                    previewImage.hide().attr('src', '#');
-                }
-            });
-        }
-
-        // Form Submission Logic
-        $("#recordForm").on("submit", function (event) {
-            event.preventDefault();
-            $('#save').prop('disabled', true);
-            $("#loading").show();
-
-            let formData = new FormData(this);
-
-            $.ajax({
-                url: 'model/manage_pet_record_process.php',
-                method: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    $("#loading").hide();
-                    $('#save').prop('disabled', false);
-                    alertify.success("บันทึกข้อมูลสัตว์เลี้ยงเรียบร้อยแล้ว");
-                    setTimeout(() => {
-                        if (liff.isInClient()) {
-                            liff.closeWindow();
-                        }
-                    }, 1500); // Delay for 1.5 seconds before closing
-                },
-                error: function () {
-                    $("#loading").hide();
-                    $('#save').prop('disabled', false);
-                    alertify.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-                }
-            });
-        });
-    });
 </script>
 
 <script>

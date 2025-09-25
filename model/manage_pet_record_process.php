@@ -68,6 +68,29 @@ if ($_POST["action"] === 'GET_DATA') {
     echo json_encode($return_arr);
 }
 
+if ($_POST["action"] === 'GET_DATA_BY_HOUSE_NUMBER') {
+    $house_number = $_POST["house_number"];
+    $return_arr = array();
+    $sql_get = "SELECT * FROM ims_house_pet WHERE house_number = :house_number";
+    $stmt = $conn->prepare($sql_get);
+    $stmt->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($results as $result) {
+        $return_arr[] = array(
+            "id" => $result['id'], "house_number" => $result['house_number'], "contact_name" => $result['contact_name'],
+            "phone_number" => $result['phone_number'], "alley" => $result['alley'],
+            "type_1" => $result['type_1'], "pet_1" => $result['pet_1'], "picture_pet_1" => $result['picture_pet_1'],
+            "type_2" => $result['type_2'], "pet_2" => $result['pet_2'], "picture_pet_2" => $result['picture_pet_2'],
+            "type_3" => $result['type_3'], "pet_3" => $result['pet_3'], "picture_pet_3" => $result['picture_pet_3'],
+            "type_4" => $result['type_4'], "pet_4" => $result['pet_4'], "picture_pet_4" => $result['picture_pet_4'],
+            "type_5" => $result['type_5'], "pet_5" => $result['pet_5'], "picture_pet_5" => $result['picture_pet_5'],
+            "type_6" => $result['type_6'], "pet_6" => $result['pet_6'], "picture_pet_6" => $result['picture_pet_6']
+        );
+    }
+    echo json_encode($return_arr);
+    exit();
+}
 if ($_POST["action"] === 'ADD') {
     if ($_POST["house_number"] !== '') {
         $house_number = $_POST["house_number"];
@@ -142,24 +165,19 @@ if ($_POST["action"] === 'ADD') {
     }
 }
 
-
 if ($_POST["action"] === 'UPDATE') {
     if ($_POST["contact_name"] !== '') {
         $id = $_POST["id"];
         $house_number = $_POST["house_number"];
         $contact_name = $_POST["contact_name"];
         $phone_number = $_POST["phone_number"];
-        $alley = $_POST["alley"];
-        $pet_quantity = $_POST["pet_quantity"];
-        $update_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
+        $update_by = $_SESSION['first_name'] . " " . $_SESSION['last_name'] ?? 'LIFF_USER';
 
-        // ดึงข้อมูลเก่าเพื่อเช็คชื่อไฟล์รูปภาพเดิม
         $stmt_old = $conn->prepare("SELECT * FROM ims_house_pet WHERE id = :id");
         $stmt_old->bindParam(':id', $id);
         $stmt_old->execute();
         $old_data = $stmt_old->fetch(PDO::FETCH_ASSOC);
 
-        // === จัดการการอัปโหลดรูปภาพ 1-6 (ส่งชื่อไฟล์เดิมเข้าไปด้วย) ===
         $upload_dir = '../uploads/pet/';
         $picture_filenames = [];
         for ($i = 1; $i <= 6; $i++) {
@@ -167,39 +185,34 @@ if ($_POST["action"] === 'UPDATE') {
             $picture_filenames['picture_pet_' . $i] = handlePetPictureUpload('picture_pet_' . $i, $upload_dir, $existing_file);
         }
 
-        // ปรับปรุง: เพิ่ม field ของสัตว์เลี้ยงทั้งหมดลงในคำสั่ง UPDATE
+        // ✅ แก้ไข SQL: ลบ ; ที่อยู่ผิดที่ออก
         $sql_update = "UPDATE ims_house_pet SET 
-            house_number = :house_number, contact_name = :contact_name, alley = :alley, phone_number = :phone_number, update_by = :update_by,
+            house_number = :house_number, contact_name = :contact_name, phone_number = :phone_number, update_by = :update_by,
             type_1 = :type_1, pet_1 = :pet_1, picture_pet_1 = :picture_pet_1,
             type_2 = :type_2, pet_2 = :pet_2, picture_pet_2 = :picture_pet_2,
             type_3 = :type_3, pet_3 = :pet_3, picture_pet_3 = :picture_pet_3,
             type_4 = :type_4, pet_4 = :pet_4, picture_pet_4 = :picture_pet_4,
             type_5 = :type_5, pet_5 = :pet_5, picture_pet_5 = :picture_pet_5,
-            type_6 = :type_6, pet_6 = :pet_6, picture_pet_6 = :picture_pet_6,
-            pet_quantity = :pet_quantity;
-            WHERE id = :id";
+            type_6 = :type_6, pet_6 = :pet_6, picture_pet_6 = :picture_pet_6
+            WHERE id = :id"; // <-- แก้ไขตรงนี้
+
         $query = $conn->prepare($sql_update);
-        // Bind ข้อมูลหลัก
         $query->bindParam(':id', $id, PDO::PARAM_INT);
         $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
         $query->bindParam(':contact_name', $contact_name, PDO::PARAM_STR);
         $query->bindParam(':phone_number', $phone_number, PDO::PARAM_STR);
-        $query->bindParam(':alley', $alley, PDO::PARAM_STR);
         $query->bindParam(':update_by', $update_by, PDO::PARAM_STR);
 
-        // Bind ข้อมูลสัตว์เลี้ยงและรูปภาพ
         for ($i = 1; $i <= 6; $i++) {
             $query->bindParam(':type_' . $i, $_POST['type_' . $i], PDO::PARAM_STR);
             $query->bindParam(':pet_' . $i, $_POST['pet_' . $i], PDO::PARAM_STR);
             $query->bindParam(':picture_pet_' . $i, $picture_filenames['picture_pet_' . $i], PDO::PARAM_STR);
         }
 
-        $query->bindParam(':pet_quantity', $pet_quantity, PDO::PARAM_STR);
         $query->execute();
         echo $save_success;
     }
 }
-
 
 if ($_POST["action"] === 'GET_PET') {
 
