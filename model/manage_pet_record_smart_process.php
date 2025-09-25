@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(0); // ควรเปลี่ยนเป็น E_ALL สำหรับการพัฒนา
+error_reporting(1); // ควรเปลี่ยนเป็น E_ALL สำหรับการพัฒนา
 
 include('../config/connect_db.php');
 include('../config/lang.php');

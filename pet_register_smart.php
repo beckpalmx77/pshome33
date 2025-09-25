@@ -85,8 +85,16 @@
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h5 mb-0 text-gray-800">ลงทะเบียนข้อมูลสัตว์เลี้ยง</h1>
                     <div class="d-flex align-items-center gap-3">
-                        <img id="profilePic" src="" class="rounded-circle" width="50" height="50" alt="Profile Pic">
-                        <div class="text-sm text-muted" id="user-info-liff"></div>
+                        <!-- โปรไฟล์และข้อมูลผู้ใช้ -->
+                        <div class="d-flex align-items-center gap-3">
+                            <img id="profilePic"
+                                 src=""
+                                 class="rounded-circle"
+                                 width="50"
+                                 height="50"
+                                 alt="Profile Pic"
+                                 style="margin-right: 3rem;">  <div class="text-sm text-muted" id="user-info-liff"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -98,6 +106,11 @@
                                     <div class="form-group">
                                         <label for="house_number" class="control-label">บ้านเลขที่</label>
                                         <input type="text" class="form-control" id="house_number" name="house_number"
+                                               required readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="alley" class="control-label">ซอย</label>
+                                        <input type="text" class="form-control" id="alley" name="alley"
                                                required readonly>
                                     </div>
                                 </div>
@@ -112,6 +125,13 @@
                                     <div class="form-group">
                                         <label for="phone_number" class="control-label">หมายเลขโทรศัพท์</label>
                                         <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                               required placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="pet_quantity" class="control-label">จำนวนสัตว์เลี้ยง</label>
+                                        <input type="text" class="form-control" id="pet_quantity" name="pet_quantity"
                                                required placeholder="">
                                     </div>
                                 </div>
@@ -204,7 +224,7 @@
                     const displayName = profile.displayName;
 
                     $('#profilePic').attr('src', pictureUrl);
-                    $('#user-info-liff').text(`  ${displayName}`);
+                    $('#user-info-liff').text(`${displayName}`);
 
                     // --- ขั้นตอนที่ 1: ดึงบ้านเลขที่ก่อน ---
                     $.ajax({
@@ -222,17 +242,19 @@
                                 $('#house_number').val(house_number);
                                 $('#contact_name').val(contact_name);
                                 $('#phone_number').val(houseResponse.line_phone);
+                                $('#alley').val(houseResponse.alley);
 
                                 // --- ขั้นตอนที่ 2: เมื่อได้บ้านเลขที่แล้ว จึงดึงข้อมูลสัตว์เลี้ยง ---
                                 $.ajax({
                                     type: "POST",
-                                    url: 'model/manage_pet_record_process.php',
+                                    url: 'model/manage_pet_record_smart_process.php',
                                     dataType: "json",
                                     data: { action: "GET_DATA_BY_HOUSE_NUMBER", house_number: house_number },
                                     success: function (petResponse) {
                                         if (petResponse && petResponse.length > 0) {
                                             let record = petResponse[0];
                                             $('#id').val(record.id);
+                                            $('#pet_quantity').val(record.pet_quantity);
 
                                             for (let i = 1; i <= 6; i++) {
                                                 $('#type_' + i).val(record['type_' + i]);
@@ -271,6 +293,82 @@
                 });
             }
         });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // --- START: Save Function with Pre-check (ADD & UPDATE) ---
+
+        $("#recordForm").on("submit", function (event) {
+            event.preventDefault(); // ป้องกันการ submit แบบปกติ
+
+            $('#save').prop('disabled', true);
+            $("#loading").show();
+
+            // 1. ดึงบ้านเลขที่เพื่อทำการตรวจสอบ
+            let house_number_to_check = $('#house_number').val();
+            if (!house_number_to_check) {
+                alertify.error("ไม่พบบ้านเลขที่");
+                $('#save').prop('disabled', false);
+                $("#loading").hide();
+                return;
+            }
+
+            // 2. เรียก AJAX เพื่อเช็คว่ามีข้อมูลนี้ใน DB หรือไม่
+            $.ajax({
+                url: 'model/check_pet_record_exists.php',
+                method: 'POST',
+                dataType: 'json',
+                data: { house_number: house_number_to_check },
+                success: function(checkResponse) {
+                    // 3. เมื่อตรวจสอบเสร็จสิ้น กำหนด action แล้วจึงทำการส่งข้อมูลหลัก
+                    if (checkResponse.exists) {
+                        $('#action').val('UPDATE');
+                    } else {
+                        $('#action').val('ADD');
+                    }
+
+                    // 4. ส่งข้อมูลหลัก (เหมือนเดิม แต่ทำหลังจากเช็คเสร็จ)
+                    let formData = new FormData($("#recordForm")[0]);
+
+                    $.ajax({
+                        url: 'model/manage_pet_record_smart_process.php',
+                        method: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (saveResponse) {
+                            $("#loading").hide();
+                            if (saveResponse.includes("บันทึกข้อมูลเรียบร้อยแล้ว") || saveResponse.includes("success")) {
+                                alertify.success("บันทึกข้อมูลเรียบร้อยแล้ว");
+                                /* setTimeout(() => {
+                                    if (liff.isInClient()) {
+                                        liff.closeWindow();
+                                    }
+                                }, 2000); */
+                            } else {
+                                alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + saveResponse);
+                                $('#save').prop('disabled', false);
+                            }
+                        },
+                        error: function () {
+                            $("#loading").hide();
+                            $('#save').prop('disabled', false);
+                            alertify.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+                        }
+                    });
+
+                },
+                error: function() {
+                    // กรณีที่การเช็คข้อมูลล้มเหลว
+                    $("#loading").hide();
+                    $('#save').prop('disabled', false);
+                    alertify.error("เกิดข้อผิดพลาดในการตรวจสอบข้อมูลบ้าน");
+                }
+            });
+        });
+        // --- END: Save Function ---
+    });
 </script>
 
 <script>

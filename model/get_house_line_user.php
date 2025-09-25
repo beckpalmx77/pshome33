@@ -29,7 +29,8 @@ if (!empty($userId)) {
             h.car_no5, 
             h.status, 
             h.house_status, 
-            lhuser.line_phone
+            lhuser.line_phone,
+            h.alley
         FROM ims_house_line_user AS lhuser
         LEFT JOIN ims_house AS h 
             ON h.house_number = lhuser.house_number
@@ -48,7 +49,8 @@ if (!empty($userId)) {
             'line_phone'   => $row['line_phone'] ?? '',
             'house_status' => $row['house_status'] ?? '',
             'car_no1'      => $row['car_no1'] ?? '',
-            'car_no2'      => $row['car_no2'] ?? ''
+            'car_no2'      => $row['car_no2'] ?? '',
+            'alley'      => $row['alley'] ?? ''
         ]);
     }
 }
