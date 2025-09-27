@@ -238,6 +238,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $updateStmt->bindParam(':house_number', $house_number);
             $updateStmt->execute();
 
+            $updateSql_line = "UPDATE ims_house_payment SET line_picture_profile_show = :line_picture_profile_show WHERE house_number = :house_number AND line_user_id = :line_user_id ";
+            $updateStmt_line = $conn->prepare($updateSql_line);
+            $updateStmt_line->bindParam(':line_picture_profile_show', $pictureUrl);
+            $updateStmt_line->bindParam(':house_number', $house_number);
+            $updateStmt_line->bindParam(':line_user_id', $line_user_id);
+            $updateStmt_line->execute();
+
             // ======= ส่ง Flex Message ไป LINE =======
             $access_token = 'UeQDGaIitsNRqYib1mPUo1VjLZfY6lQYvLK1LguyO0hIEYYMZHABHfWEu9UvM4hK8QrGR1V5pUNu/SO+7kOvvLoLjecwTGAE9JsslpnkD1+4mpRtyJqDcZZyQa4/WCuDNHNE9fL1sqR1ujE+mXLnwgdB04t89/1O/w1cDnyilFU=';
 
