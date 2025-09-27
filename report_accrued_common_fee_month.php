@@ -27,6 +27,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     $sql = "
         SELECT
             m.house_number,
+            m.alley,
+            m.area_size,
+            m.common_fee,
             h.contact_name,
             h.phone_number
         FROM
@@ -136,6 +139,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tr>
                                                     <th class="text-center">ลำดับ</th>
                                                     <th>บ้านเลขที่</th>
+                                                    <th>ซอย</th>
+                                                    <th>พื้นที่ (ตรว)</th>
+                                                    <th>ค่าส่วนกลาง</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>เบอร์โทรศัพท์</th>
                                                 </tr>
@@ -153,6 +159,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <tr>
                                                             <td class="text-center"><?= $i++ ?></td>
                                                             <td><?= htmlspecialchars($row['house_number'] ?? '') ?></td>
+                                                            <td><?= htmlspecialchars($row['alley'] ?? '') ?></td>
+                                                            <td><?= htmlspecialchars($row['area_size'] ?? '') ?></td>
+                                                            <td><?= htmlspecialchars($row['common_fee'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['contact_name'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['phone_number'] ?? '') ?></td>
                                                         </tr>
