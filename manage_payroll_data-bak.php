@@ -2,7 +2,9 @@
 // manage_payroll_data.php - สำหรับจัดการข้อมูลเงินเดือนพนักงานรายวัน
 session_start();
 error_reporting(0); // ปิดการแสดง error ใน Production environment
-include('includes/Header.php');
+include('includes/Header.php'); // Only include it once
+
+// include('config/connect_db.php'); // ไม่ได้ใช้ PDO ตรงๆ ในหน้านี้ แต่จะเรียกใช้ใน process file
 
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
     header("Location: index.php");
@@ -56,23 +58,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 filter: invert(1);
             }
 
+            /* Fix for DataTables search input width */
             div.dataTables_wrapper div.dataTables_filter input {
                 width: auto;
                 margin-left: 0.5em;
-            }
-
-            .file-preview-box {
-                position: relative;
-                margin-bottom: 1rem;
-            }
-            .remove-btn {
-                position: absolute;
-                top: -5px;
-                right: 5px;
-                z-index: 10;
-                border-radius: 50%;
-                padding: 2px 6px;
-                font-size: 12px;
             }
         </style>
     </head>
@@ -204,7 +193,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                placeholder="" style="width: 200px;">
                                     </div>
                                 </div>
+
                             </div>
+
 
                             <hr>
 
@@ -241,17 +232,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             </div>
                             <br>
 
-                            <div class="mb-4">
-                                <h5 class="text-primary mb-2">ไฟล์แนบ</h5>
-                                <div id="existing-files-preview" class="row mt-2"></div>
-                                <hr>
-                                <div class="form-group mt-3">
-                                    <label for="file_attach_input" class="form-label fw-semibold">เพิ่มไฟล์ใหม่ (รูปภาพ/PDF):</label>
-                                    <input type="file" id="file_attach_input" class="form-control" multiple accept="image/*,application/pdf">
-                                </div>
-                                <div id="new-files-preview" class="row mt-2"></div>
-                            </div>
+                            <input type="file" id="pictures" multiple accept="image/*,application/pdf">
+                            <input type="hidden" id="picture_doc" name="picture_doc">
                             <input type="hidden" id="deleted_images" name="deleted_images" value="">
+                            <div id="preview-area" class="row mt-2"></div>
+                            <div id="imagePreview" class="mt-2 d-flex flex-wrap"></div>
 
                             <div class="modal-footer justify-content-end">
                                 <input type="hidden" name="action" id="action" value=""/>
@@ -342,25 +327,36 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
+
     <script src="js/modal/show_position_modal.js"></script>
     <script src="js/modal/show_worktime_modal.js"></script>
+
     <script src="js/util/calculate_datetime.js"></script>
+
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+
     <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
     <script src="js/modal/show_employee_payroll_modal.js"></script>
 
-    <script>
-        let detailItems = [];
-        let currentRowForSelection = null;
 
+    <script>
+        // Global variable to keep track of added detail items
+        let detailItems = [];
+        let currentRowForSelection = null; // To store the current row when selecting an income/deduction item
+
+        // Function to add a new detail row to the table
         function addNewDetailRow() {
+            // Check if it's the very first row being added
             const isFirstRow = $('#detailTable tbody tr').length === 0;
+
             const newRow = `
                 <tr>
                     <td>
@@ -399,75 +395,28 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             calculateTotalAmount();
         }
 
+        // START: ฟังก์ชันใหม่สำหรับคำนวณและแสดงจำนวนวันในเดือน
         function updateWorkDayMonth() {
             const selectedMonth = parseInt($('#payroll_month').val());
             const selectedYear = parseInt($('#payroll_year').val());
 
             if (!isNaN(selectedMonth) && !isNaN(selectedYear) && selectedMonth > 0 && selectedYear > 0) {
+                // Month in Date object is 0-indexed (0-11), so use selectedMonth directly for new Date(year, month, 0)
+                // new Date(year, month, 0) gives the last day of the *previous* month if 'month' is 0-indexed.
+                // To get the last day of the *selected* month, use selectedMonth (1-indexed) directly with day 0.
+                // For example, for July (7), new Date(2025, 7, 0) will give the last day of July.
                 const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
                 $('#work_day_month').val(daysInMonth);
             } else {
-                $('#work_day_month').val('');
+                $('#work_day_month').val(''); // Clear if month/year not selected or invalid
             }
         }
 
-        function loadPayrollMasterData(doc_no) {
-            $.ajax({
-                url: 'model/manage_payroll_data_detail_process.php',
-                method: 'POST',
-                data: { action: 'GET_DATA_BY_DOC_NO', doc_no: doc_no },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success' && response.data) {
-                        const masterData = response.data;
-                        const fileAttach = masterData.file_attach;
+        // END: ฟังก์ชันใหม่สำหรับคำนวณและแสดงจำนวนวันในเดือน
 
-                        if (fileAttach) {
-                            const files = fileAttach.split(',');
-                            const previewArea = $('#existing-files-preview');
-                            previewArea.empty();
-
-                            files.forEach(filename => {
-                                if (filename.trim() === '') return;
-
-                                const filePath = `uploads/payroll/${filename}`;
-                                const isPdf = filename.toLowerCase().endsWith('.pdf');
-                                let previewElement;
-
-                                if (isPdf) {
-                                    previewElement = `
-                                        <div class="col-md-2 file-preview-box" data-filename="${filename}">
-                                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-existing-img" data-filename="${filename}">&times;</button>
-                                            <a href="${filePath}" target="_blank" class="d-block p-2 text-center border rounded" style="height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                                <i class="fa fa-file-pdf fa-2x text-danger"></i>
-                                                <small style="word-break: break-word;">${filename}</small>
-                                            </a>
-                                        </div>
-                                    `;
-                                } else {
-                                    previewElement = `
-                                        <div class="col-md-2 file-preview-box" data-filename="${filename}">
-                                            <button type="button" class="btn btn-danger btn-sm remove-btn remove-existing-img" data-filename="${filename}">&times;</button>
-                                            <a href="${filePath}" target="_blank">
-                                                <img src="${filePath}" class="img-thumbnail" style="width:100%; height:120px; object-fit:cover;">
-                                            </a>
-                                        </div>
-                                    `;
-                                }
-                                previewArea.append(previewElement);
-                            });
-                        }
-                    } else {
-                        alertify.error("ไม่สามารถโหลดข้อมูลหลักได้: " + response.message);
-                    }
-                },
-                error: function() {
-                    alertify.error("เกิดข้อผิดพลาดในการเชื่อมต่อเพื่อโหลดข้อมูล");
-                }
-            });
-        }
 
         $(document).ready(function () {
+            // Initialize Datepicker
             $('#doc_date').datepicker({
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
@@ -475,19 +424,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 autoclose: true
             });
 
+            // Populate Payroll Month Dropdown
             const months = [
                 {value: 1, text: 'มกราคม'}, {value: 2, text: 'กุมภาพันธ์'}, {value: 3, text: 'มีนาคม'},
                 {value: 4, text: 'เมษายน'}, {value: 5, text: 'พฤษภาคม'}, {value: 6, text: 'มิถุนายน'},
                 {value: 7, text: 'กรกฎาคม'}, {value: 8, text: 'สิงหาคม'}, {value: 9, text: 'กันยายน'},
                 {value: 10, text: 'ตุลาคม'}, {value: 11, text: 'พฤศจิกายน'}, {value: 12, text: 'ธันวาคม'}
             ];
-            const currentMonth = new Date().getMonth() + 1;
+            const currentMonth = new Date().getMonth() + 1; // getMonth() is 0-indexed
             let monthOptions = '<option value="">-- เลือกเดือน --</option>';
             months.forEach(month => {
                 monthOptions += `<option value="${month.value}" ${month.value === currentMonth ? 'selected' : ''}>${month.text}</option>`;
             });
             $('#payroll_month').html(monthOptions);
 
+            // Populate Payroll Year Dropdown
             const currentYear = new Date().getFullYear();
             let yearOptions = '<option value="">-- เลือกปี --</option>';
             for (let i = currentYear - 1; i <= currentYear + 5; i++) {
@@ -495,24 +446,30 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             }
             $('#payroll_year').html(yearOptions);
 
+            // Parse URL parameters
             let urlParams = new URLSearchParams(window.location.search);
             $("#sub_menu").html(urlParams.get("sub_menu") || "");
             $("#main_menu").html(urlParams.get("main_menu") || "");
             $('#action').val(urlParams.get("action"));
+
             $('#doc_no').val(urlParams.get("doc_no"));
             $('#doc_date').val(urlParams.get("doc_date"));
             $('#emp_id').val(urlParams.get("emp_id"));
             $('#employee_fullname').val(urlParams.get("employee_fullname"));
 
             const paymentMethodFromDB = urlParams.get("payment_method");
-            $('#payment_method').val(paymentMethodFromDB);
+            $('#payment_method').val(paymentMethodFromDB); // Set hidden field
+
             if (paymentMethodFromDB === 'โอนเงิน') {
-                $('#method_transfer').prop('checked', true);
-            } else {
-                $('#method_cash').prop('checked', true);
+                $('#method_transfer').prop('checked', true); // Check 'โอนเงิน' radio
+            } else { // Default to 'เงินสด' if not 'โอนเงิน' or if value is 'เงินสด'
+                $('#method_cash').prop('checked', true); // Check 'เงินสด' radio
             }
 
             $('#bank_no').val(urlParams.get("bank_no"));
+
+
+            // Set salary_type and salary from URL params
             const salaryTypeUrl = urlParams.get("salary_type");
             const salaryValue = urlParams.get("salary");
 
@@ -527,35 +484,50 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#salary').val(parseFloat(salaryValue).toFixed(2));
             }
 
+            // *** START OF MODIFICATION: Set payroll_month and payroll_year from URL params ***
             const payrollMonthUrl = urlParams.get("payroll_month");
             const payrollYearUrl = urlParams.get("payroll_year");
-            if (payrollMonthUrl) $('#payroll_month').val(payrollMonthUrl);
-            if (payrollYearUrl) $('#payroll_year').val(payrollYearUrl);
 
+            if (payrollMonthUrl) {
+                $('#payroll_month').val(payrollMonthUrl);
+            }
+            if (payrollYearUrl) {
+                $('#payroll_year').val(payrollYearUrl);
+            }
+            // *** END OF MODIFICATION ***
+
+
+            // Check action from URL parameters
             const action = urlParams.get("action");
             const docNo = urlParams.get("doc_no");
 
             if (action === 'ADD') {
                 addNewDetailRow();
-            } else if (docNo) {
-                loadPayrollMasterData(docNo);
+            } else if (docNo) { // ถ้ามี docNo แสดงว่าเป็นโหมดแก้ไข
                 loadPayrollData(docNo);
             }
 
+            // START: เรียกใช้ฟังก์ชันอัปเดตจำนวนวันในเดือนเมื่อโหลดหน้าเว็บ
             updateWorkDayMonth();
+
+            // START: เพิ่ม event listener เมื่อมีการเปลี่ยนเดือนหรือปี
             $('#payroll_month, #payroll_year').on('change', function () {
                 updateWorkDayMonth();
             });
+            // END: เพิ่ม event listener
 
+            // Add new row to detail table (button click handler)
             $('#addRow').on('click', function () {
                 addNewDetailRow();
             });
 
+            // Remove detail row
             $(document).on('click', '.remove-row', function () {
                 $(this).closest('tr').remove();
                 calculateTotalAmount();
             });
 
+            // Calculate item total and grand total on quantity/amount per unit change
             $(document).on('input', '.item-quantity, .item-amount-per-unit', function () {
                 const row = $(this).closest('tr');
                 const quantity = parseFloat(row.find('.item-quantity').val()) || 0;
@@ -565,16 +537,34 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 calculateTotalAmount();
             });
 
+            // Handle selection from Employee Modal
+            // This part is handled by show_employee_payroll_modal.js,
+            // so we only need to listen for the event it triggers.
+            // The show_employee_payroll_modal.js file already updates #emp_id, #employee_fullname, #salary_type, #salary
+            // upon selection, and hides the modal.
+
+            // Initialize DataTables for modals
+            let employeeDataTable; // This will now be managed by show_employee_payroll_modal.js
             let incomeDeductDataTable;
+
+            // Initialize Employee DataTable when modal is shown (This part is primarily for reference,
+            // the actual DataTable logic for employees is in show_employee_payroll_modal.js)
+            $('#SearchEmployeeModal').on('shown.bs.modal', function () {
+                // The DataTable for employees is initialized and managed by show_employee_payroll_modal.js
+                // We don't need to re-initialize or reload it here, as show_employee_payroll_modal.js handles it.
+                // However, ensure the script is loaded and functions correctly.
+            });
+
+            // Initialize Income/Deduct DataTable when modal is shown
             $('#itemModal').on('shown.bs.modal', function () {
                 if (!incomeDeductDataTable) {
                     incomeDeductDataTable = $('#incomedeductTable').DataTable({
                         "processing": true,
-                        "serverSide": false,
+                        "serverSide": false, // Usually, income/deduct types are not that many, so client-side is fine
                         "ajax": {
-                            "url": "model/get_income_deduct.php",
+                            "url": "model/get_income_deduct.php", // Your API to fetch income/deduct data
                             "type": "GET",
-                            "dataSrc": ""
+                            "dataSrc": "" // Assuming your PHP returns a direct array of objects
                         },
                         "columns": [
                             {"data": "icd_type_id"},
@@ -588,6 +578,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             }
                         ],
                         "createdRow": function (row, data, dataIndex) {
+                            // Add data attributes to the select button for easy retrieval
                             $(row).find('.select-this').attr({
                                 'data-code': data.icd_type_id,
                                 'data-desc': data.icd_type_desc,
@@ -597,28 +588,30 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         }
                     });
                 } else {
-                    incomeDeductDataTable.ajax.reload(null, false);
+                    incomeDeductDataTable.ajax.reload(null, false); // Reload data if already initialized
                 }
             });
-        });
 
+        }); // End of document.ready
+
+        // Function to calculate total amount
         function calculateTotalAmount() {
             let total = 0;
             $('#detailTable tbody tr').each(function () {
                 const amount = parseFloat($(this).find('.item-total-amount').val()) || 0;
-                const sign = $(this).find('.icd_type_sign').val();
+                const sign = $(this).find('.icd_type_sign').val(); // Get the sign ('+' or '-')
 
                 if (sign === '+') {
-                    total += amount;
+                    total += amount; // Add for income
                 } else if (sign === '-') {
-                    total -= amount;
+                    total -= amount; // Subtract for deduction
                 }
             });
             $('#total_amount').val(total.toFixed(2));
         }
 
+        // Function to load existing payroll data for editing
         function loadPayrollData(doc_no) {
-            // This function now only needs to load the detail table
             $.ajax({
                 url: 'model/manage_payroll_detail_process.php',
                 method: 'POST',
@@ -631,83 +624,89 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         $('#detailTable tbody').empty();
                         details.forEach(item => {
                             const newRow = `
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <input type="text" class="form-control icd_type_desc" value="${item.icd_type_desc || ''}" readonly style="flex: 1;">
-                                            <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;" title="เลือกรายการ"><i class="fa fa-search"></i></a>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="hidden" class="form-control icd_type_id" value="${item.icd_type_id || ''}" readonly>
-                                        <input type="hidden" class="form-control icd_type_sign" value="${item.icd_type_sign || ''}" readonly>
-                                        <input type="text" class="form-control icd_type_sign_desc" value="${item.icd_type_sign_desc || ''}" readonly style="flex: 1;">
-                                    </td>
-                                    <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity || 0}" required></td>
-                                    <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit || 0}" required></td>
-                                    <td><input type="number" class="form-control text-right item-total-amount" value="${(item.amount || 0).toFixed(2)}" readonly></td>
-                                    <td><input type="text" class="form-control item-remark" value="${item.remark || ''}" placeholder=""></td>
-                                    <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
-                                </tr>
-                            `;
+                        <tr>
+                            <td>
+                                <div class="d-flex">
+                                    <input type="text" class="form-control icd_type_desc" value="${item.icd_type_desc || ''}" readonly style="flex: 1;">
+                                    <a href="#itemModal" data-toggle="modal" class="btn btn-primary ml-2 btn-select-icd_type" style="white-space: nowrap;" title="เลือกรายการ">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="hidden" class="form-control icd_type_id" value="${item.icd_type_id || ''}" readonly>
+                                <input type="hidden" class="form-control icd_type_sign" value="${item.icd_type_sign || ''}" readonly>
+                                <input type="text" class="form-control icd_type_sign_desc" value="${item.icd_type_sign_desc || ''}" readonly style="flex: 1;">
+                            </td>
+                            <td><input type="number" class="form-control text-right item-quantity" min="0" step="0.01" value="${item.quantity || 0}" required></td>
+                            <td><input type="number" class="form-control text-right item-amount-per-unit" min="0" step="0.01" value="${item.amount_per_unit || 0}" required></td>
+                            <td><input type="number" class="form-control text-right item-total-amount" value="${(item.amount || 0).toFixed(2)}" readonly></td>
+                            <td><input type="text" class="form-control item-remark" value="${item.remark || ''}" placeholder=""></td> <td class="text-center"><button class="btn btn-danger btn-sm rounded-circle remove-row" type="button" title="ลบรายการนี้"><i class="fas fa-trash-alt"></i></button></td>
+                        </tr>
+                    `;
                             $('#detailTable tbody').append(newRow);
                         });
                         calculateTotalAmount();
+                        updateWorkDayMonth(); // อัปเดตจำนวนวันเมื่อโหลดข้อมูล
                     } else {
-                        alertify.error("ไม่พบข้อมูลรายการเงินเดือน: " + response.message);
+                        alertify.error("ไม่พบข้อมูลเงินเดือน: " + response.message);
                     }
                 },
-                error: function () {
-                    alertify.error("ไม่สามารถโหลดข้อมูลรายการเงินเดือนได้");
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error loading payroll data:", status, error);
+                    alertify.error("ไม่สามารถโหลดข้อมูลเงินเดือนได้");
                 }
             });
         }
 
-        $('#save').on('click', async function (e) {
+        // Save Button Handler
+        $('#save').on('click', function (e) {
             e.preventDefault();
+
+            // Basic Validation
             if (!$('#doc_date').val() || !$('#emp_id').val() || !$('#payroll_month').val() || !$('#payroll_year').val()) {
-                alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
+                alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน (วันที่, พนักงาน, เดือน/ปีเงินเดือน)');
                 return;
             }
+
             const details = [];
             let isValidDetails = true;
             $('#detailTable tbody tr').each(function () {
                 const icd_type_id = $(this).find('.icd_type_id').val();
-                if (!icd_type_id) {
+                const icd_type_desc = $(this).find('.icd_type_desc').val();
+                const icd_type_sign = $(this).find('.icd_type_sign').val();
+                const icd_type_sign_desc = $(this).find('.icd_type_sign_desc').val();
+                const quantity = parseFloat($(this).find('.item-quantity').val());
+                const amount_per_unit = parseFloat($(this).find('.item-amount-per-unit').val());
+                const total_amount = parseFloat($(this).find('.item-total-amount').val());
+                const remark = $(this).find('.item-remark').val(); // ดึงค่า remark
+
+                if (!icd_type_id || !icd_type_desc || isNaN(quantity) || quantity < 0 || isNaN(amount_per_unit) || amount_per_unit < 0 || isNaN(total_amount) || total_amount < 0) {
                     isValidDetails = false;
-                    return false;
+                    alertify.error("กรุณากรอกข้อมูลรายการเงินเดือน/หักให้ครบถ้วนและถูกต้อง");
+                    return false; // Break .each loop
                 }
                 details.push({
                     icd_type_id: icd_type_id,
-                    icd_type_desc: $(this).find('.icd_type_desc').val(),
-                    icd_type_sign: $(this).find('.icd_type_sign').val(),
-                    icd_type_sign_desc: $(this).find('.icd_type_sign_desc').val(),
-                    quantity: parseFloat($(this).find('.item-quantity').val()),
-                    amount_per_unit: parseFloat($(this).find('.item-amount-per-unit').val()),
-                    amount: parseFloat($(this).find('.item-total-amount').val()),
-                    remark: $(this).find('.item-remark').val()
+                    icd_type_desc: icd_type_desc,
+                    icd_type_sign: icd_type_sign,
+                    icd_type_sign_desc: icd_type_sign_desc,
+                    quantity: quantity,
+                    amount_per_unit: amount_per_unit,
+                    amount: total_amount, // Use total_amount as the final amount
+                    remark: remark // เพิ่ม remark ใน object ที่จะส่ง
                 });
             });
-            if (!isValidDetails) {
-                alertify.error("กรุณากรอกข้อมูลรายการเงินเดือน/หักให้ครบถ้วน");
+
+            if (!isValidDetails || details.length === 0) {
+                alertify.error("กรุณาเพิ่มอย่างน้อย 1 รายการเงินเดือน/หัก");
                 return;
             }
-            $('#save').prop('disabled', true);
-            let newlyUploadedFiles = [];
-            try {
-                newlyUploadedFiles = await uploadImages();
-            } catch (error) {
-                alertify.error('เกิดข้อผิดพลาดในการอัปโหลดไฟล์ใหม่: ' + error.message);
-                $('#save').prop('disabled', false);
-                return;
-            }
-            let existingFilesKept = [];
-            $('#existing-files-preview .file-preview-box').each(function() {
-                existingFilesKept.push($(this).data('filename'));
-            });
-            const allFiles = [...existingFilesKept, ...newlyUploadedFiles];
+
+            $('#save').prop('disabled', true); // Disable button to prevent multiple submissions
+
             const payload = {
-                action: $('#action').val(),
+                action: $('#action').val(), // 'ADD' or 'UPDATE'
                 doc_no: $('#doc_no').val(),
                 doc_date: $('#doc_date').val(),
                 emp_id: $('#emp_id').val(),
@@ -716,159 +715,226 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 payroll_year: $('#payroll_year').val(),
                 payment_method: $('#payment_method').val(),
                 bank_no: $('#bank_no').val(),
-                work_day_month: $('#work_day_month').val(),
-                file_attach: allFiles.join(','),
-                deleted_files: $('#deleted_images').val(),
+                work_day_month: $('#work_day_month').val(), // *** เพิ่มค่าจำนวนวันในเดือนที่นี่ ***
                 details: details
             };
+
             $.ajax({
                 url: 'model/manage_payroll_data_detail_process.php',
                 method: 'POST',
-                contentType: 'application/json',
+                contentType: 'application/json', // Send data as JSON
                 data: JSON.stringify(payload),
                 dataType: 'json',
                 success: function (response) {
                     if (response.status === 'success') {
                         alertify.success(response.message);
-                        if (response.doc_no) $('#doc_no').val(response.doc_no);
+                        // Optional: update doc_no if it was newly generated on ADD
+                        if (response.doc_no) {
+                            $('#doc_no').val(response.doc_no);
+                        }
+                        //closeAndReload();
                     } else {
                         alertify.error('ข้อผิดพลาด: ' + response.message);
                     }
-                    $('#save').prop('disabled', false);
+                    $('#save').prop('disabled', false); // Re-enable button
                 },
-                error: function () {
-                    alertify.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-                    $('#save').prop('disabled', false);
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
+                    alertify.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error);
+                    $('#save').prop('disabled', false); // Re-enable button
                 }
             });
         });
 
+        // Event listener for selecting item from modal
+        // Note: The event delegation is important for dynamically added rows
         $(document).on('click', '.btn-select-icd_type', function () {
             currentRowForSelection = $(this).closest('tr');
+            // The itemModal will be shown via data-toggle="modal"
+            // No need to call $('#itemModal').modal('show'); explicitly here.
         });
 
+
+        // Handle selection from Income/Deduct Modal
         $(document).on('click', '#incomedeductTable .select-this', function () {
             const code = $(this).data('code');
             const desc = $(this).data('desc');
             const sign = $(this).data('sign');
             const sign_desc = $(this).data('sign_desc');
+
             if (currentRowForSelection) {
                 currentRowForSelection.find('.icd_type_id').val(code);
                 currentRowForSelection.find('.icd_type_desc').val(desc);
                 currentRowForSelection.find('.icd_type_sign').val(sign);
                 currentRowForSelection.find('.icd_type_sign_desc').val(sign_desc);
+                // Re-calculate row total if quantity/amount per unit were already entered
                 const quantity = parseFloat(currentRowForSelection.find('.item-quantity').val()) || 0;
                 const amountPerUnit = parseFloat(currentRowForSelection.find('.item-amount-per-unit').val()) || 0;
-                currentRowForSelection.find('.item-total-amount').val((quantity * amountPerUnit).toFixed(2));
-                calculateTotalAmount();
+                const totalAmount = quantity * amountPerUnit;
+                currentRowForSelection.find('.item-total-amount').val(totalAmount.toFixed(2));
+                calculateTotalAmount(); // Update grand total
             }
+
             $('#itemModal').modal('hide');
         });
 
+        // Function to close current page and reload previous page (assuming it's a list page)
         function closeAndReload() {
+            // Check if opener exists and has reload function
             if (window.opener && window.opener.location) {
                 window.opener.location.reload();
             }
-            window.close();
+            window.close(); // Close the current window
         }
 
+    </script>
+
+    <script>
         $('#printSlipBtn').on('click', function () {
             const doc_no = $('#doc_no').val();
-            if(doc_no) window.open("print_slip_pdf?doc_no=" + encodeURIComponent(doc_no), "_blank");
+            let url = "print_slip_pdf?doc_no=";
+            window.open(url + encodeURIComponent(doc_no), "_blank");
         });
+    </script>
 
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const radioButtons = document.querySelectorAll('input[name="payment_method_radio"]');
             const paymentMethodInput = document.getElementById('payment_method');
+
+            // Function to update the text input based on radio selection
             function updatePaymentMethodInput() {
                 radioButtons.forEach(radio => {
                     if (radio.checked) {
                         paymentMethodInput.value = radio.value;
-                        paymentMethodInput.setAttribute('readonly', true);
+                        if (radio.value === 'เงินสด' || radio.value === 'โอนเงิน') {
+                            paymentMethodInput.setAttribute('readonly', true);
+                        } else {
+                            paymentMethodInput.removeAttribute('readonly');
+                            paymentMethodInput.focus(); // Focus on the input if "Other" is selected
+                        }
                     }
                 });
             }
-            radioButtons.forEach(radio => radio.addEventListener('change', updatePaymentMethodInput));
+
+            // Add event listeners to radio buttons
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', updatePaymentMethodInput);
+            });
+
+            // Initialize on page load (e.g., if "เงินสด" is checked by default)
             updatePaymentMethodInput();
         });
+    </script>
 
-        let newUploadedImages = [];
-        $('#file_attach_input').on('change', function (e) {
+
+    <script>
+        let uploadedImages = [];
+        document.getElementById('pictures').addEventListener('change', function (e) {
             const files = Array.from(e.target.files);
-            const previewArea = $('#new-files-preview');
-            previewArea.empty();
-            newUploadedImages = [];
+            const previewArea = document.getElementById('preview-area');
+
             files.forEach((file) => {
-                const fileIndex = newUploadedImages.push(file) - 1;
+                const fileIndex = uploadedImages.push(file) - 1;
+
                 const filePreviewBox = document.createElement('div');
-                filePreviewBox.className = 'col-md-2 file-preview-box';
+                filePreviewBox.classList.add('col-md-2', 'position-relative', 'mb-2');
+
                 const removeButton = document.createElement('button');
-                removeButton.type = 'button';
-                removeButton.className = 'btn btn-danger btn-sm remove-btn remove-new-img';
+                removeButton.setAttribute('type', 'button');
+                removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'position-absolute', 'top-0', 'end-0', 'remove-new-img');
                 removeButton.setAttribute('data-file-index', fileIndex);
                 removeButton.innerHTML = '&times;';
-                filePreviewBox.appendChild(removeButton);
+                removeButton.style.cssText = 'z-index: 2; padding: 2px 6px; border-radius: 50%;';
 
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        const imgLink = document.createElement('a');
-                        imgLink.href = e.target.result;
-                        imgLink.target = '_blank';
                         const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'img-thumbnail';
+                        img.setAttribute('src', e.target.result);
+                        img.classList.add('img-thumbnail');
                         img.style.cssText = 'width:100%; height:120px; object-fit:cover;';
-                        imgLink.appendChild(img);
-                        filePreviewBox.appendChild(imgLink);
+
+                        const imgLink = document.createElement('a'); // New: Create anchor tag
+                        imgLink.setAttribute('href', e.target.result); // Link to the full image
+                        imgLink.setAttribute('target', '_blank');     // Open in new tab
+                        imgLink.appendChild(img);                     // Append image to anchor
+
+                        filePreviewBox.appendChild(imgLink);          // Append anchor to box
+                        filePreviewBox.appendChild(removeButton);
+                        previewArea.appendChild(filePreviewBox);
                     };
                     reader.readAsDataURL(file);
                 } else if (file.type === 'application/pdf') {
-                    const pdfPlaceholder = document.createElement('a');
-                    pdfPlaceholder.href = URL.createObjectURL(file);
-                    pdfPlaceholder.target = '_blank';
-                    pdfPlaceholder.className = 'd-block p-2 text-center border rounded';
-                    pdfPlaceholder.style.cssText = 'height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: inherit;';
-                    pdfPlaceholder.innerHTML = `<i class="fa fa-file-pdf fa-2x text-danger"></i><small style="word-break: break-word;">${file.name}</small>`;
+                    const pdfPlaceholder = document.createElement('div');
+                    pdfPlaceholder.style.cssText = 'width:100%; height:120px; background-color: #f0f0f0; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden;';
+
+                    const pdfText = document.createElement('p');
+                    pdfText.textContent = 'PDF File';
+                    pdfText.style.cssText = 'font-weight: bold; margin-bottom: 5px;';
+
+                    const fileNameShort = document.createElement('p');
+                    fileNameShort.textContent = file.name;
+                    fileNameShort.style.cssText = 'font-size: 0.7em; word-break: break-all; padding: 0 5px;';
+
+                    const viewLink = document.createElement('a');
+                    viewLink.setAttribute('href', URL.createObjectURL(file));
+                    viewLink.setAttribute('target', '_blank');
+                    viewLink.textContent = 'View';
+                    viewLink.classList.add('btn', 'btn-sm', 'btn-primary', 'mt-1');
+
+                    pdfPlaceholder.appendChild(pdfText);
+                    pdfPlaceholder.appendChild(fileNameShort);
+                    pdfPlaceholder.appendChild(viewLink);
                     filePreviewBox.appendChild(pdfPlaceholder);
+                    filePreviewBox.appendChild(removeButton);
+                    previewArea.appendChild(filePreviewBox);
                 }
-                previewArea.append(filePreviewBox);
             });
         });
 
-        $('#new-files-preview').on('click', '.remove-new-img', function () {
-            const fileIndex = parseInt($(this).attr('data-file-index'));
-            newUploadedImages.splice(fileIndex, 1, null); // Replace with null to not mess up indices
-            $(this).closest('.file-preview-box').remove();
-        });
+        document.getElementById('preview-area').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-new-img')) {
+                const fileIndex = parseInt(e.target.getAttribute('data-file-index'));
+                uploadedImages.splice(fileIndex, 1);
+                e.target.parentElement.remove();
 
-        $(document).on('click', '.remove-existing-img', function() {
-            const filename = $(this).data('filename');
-            const hiddenInput = $('#deleted_images');
-            let currentDeleted = hiddenInput.val();
-            hiddenInput.val(currentDeleted ? `${currentDeleted},${filename}` : filename);
-            $(this).closest('.file-preview-box').remove();
+                $('#preview-area .remove-new-img').each(function (i) {
+                    $(this).attr('data-file-index', i);
+                });
+            }
         });
 
         async function uploadImages() {
             const formData = new FormData();
-            const validFiles = newUploadedImages.filter(f => f); // Filter out null values
-            if (validFiles.length === 0) return Promise.resolve([]);
+            uploadedImages.forEach(file => formData.append('images[]', file)); // The server-side script will need to handle file types
 
-            validFiles.forEach(file => formData.append('images[]', file));
+            if (uploadedImages.length === 0) {
+                return Promise.resolve([]);
+            }
 
-            const response = await fetch('upload_img_payroll.php', { method: 'POST', body: formData });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const response = await fetch('upload_img_doc.php', { // Assuming upload_img_doc.php can handle PDFs
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
             const result = await response.json();
-            if (result.status === 'success') return result.filenames;
-
-            throw new Error(result.message || 'Image upload failed on server.');
+            if (result.status === 'success') {
+                return result.filenames;
+            } else {
+                throw new Error(result.message || 'Image upload failed on server.');
+            }
         }
     </script>
+
+
     </body>
     </html>
 
     <?php
-}
+} // end else session check
 ?>
