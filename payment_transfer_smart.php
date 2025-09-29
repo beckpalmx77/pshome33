@@ -914,7 +914,7 @@ foreach ($BankCurr as $row_curr) {
                                                             "contents": [
                                                                 {
                                                                     "type": "text",
-                                                                    "text": "วันที่ทำรายการ:",
+                                                                    "text": "วันที่รายการ:",
                                                                     "color": "#aaaaaa",
                                                                     "size": "sm",
                                                                     "flex": 4
