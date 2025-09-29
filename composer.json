@@ -8,6 +8,7 @@
         "tecnickcom/tcpdf": "^6.8",
         "tecnickcom/tc-lib-pdf": "^8.0",
         "thiagoalessio/tesseract_ocr": "^2.13",
-        "linecorp/line-bot-sdk": "^11.3"
+        "linecorp/line-bot-sdk": "^11.3",
+        "vlucas/phpdotenv": "^5.6"
     }
 }
