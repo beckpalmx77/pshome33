@@ -158,7 +158,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group has-success">
                                                                             <label for="type_1" class="control-label">ประเภทสัตว์เลี้ยง</label>
                                                                             <select name="type_1" id="type_1"
-                                                                                    class="form-control" required>
+                                                                                    class="form-control">
                                                                                 <option value="-">-</option>
                                                                                 <option value="D">สุนัข</option>
                                                                                 <option value="C">แมว</option>
@@ -203,7 +203,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group has-success">
                                                                             <label for="type_2" class="control-label">ประเภทสัตว์เลี้ยง</label>
                                                                             <select name="type_2" id="type_2"
-                                                                                    class="form-control" required>
+                                                                                    class="form-control">
                                                                                 <option value="-">-</option>
                                                                                 <option value="D">สุนัข</option>
                                                                                 <option value="C">แมว</option>
@@ -248,7 +248,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group has-success">
                                                                             <label for="type_3" class="control-label">ประเภทสัตว์เลี้ยง</label>
                                                                             <select name="type_3" id="type_3"
-                                                                                    class="form-control" required>
+                                                                                    class="form-control">
                                                                                 <option value="-">-</option>
                                                                                 <option value="D">สุนัข</option>
                                                                                 <option value="C">แมว</option>
@@ -293,7 +293,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group has-success">
                                                                             <label for="type_4" class="control-label">ประเภทสัตว์เลี้ยง</label>
                                                                             <select name="type_4" id="type_4"
-                                                                                    class="form-control" required>
+                                                                                    class="form-control">
                                                                                 <option value="-">-</option>
                                                                                 <option value="D">สุนัข</option>
                                                                                 <option value="C">แมว</option>
@@ -338,7 +338,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group has-success">
                                                                             <label for="type_5" class="control-label">ประเภทสัตว์เลี้ยง</label>
                                                                             <select name="type_5" id="type_5"
-                                                                                    class="form-control" required>
+                                                                                    class="form-control">
                                                                                 <option value="-">-</option>
                                                                                 <option value="D">สุนัข</option>
                                                                                 <option value="C">แมว</option>
@@ -383,7 +383,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group has-success">
                                                                             <label for="type_6" class="control-label">ประเภทสัตว์เลี้ยง</label>
                                                                             <select name="type_6" id="type_6"
-                                                                                    class="form-control" required>
+                                                                                    class="form-control">
                                                                                 <option value="-">-</option>
                                                                                 <option value="D">สุนัข</option>
                                                                                 <option value="C">แมว</option>
