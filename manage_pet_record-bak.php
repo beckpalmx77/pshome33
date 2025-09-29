@@ -178,7 +178,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="picture_pet_1"
+                                                                            <label for="picture3"
                                                                                    class="control-label">เลือก
                                                                                 รูปภาพสัตว์เลี้ยง
                                                                                 1</label>
@@ -190,9 +190,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label class="control-label"></label>
+                                                                            <label for="picture3"
+                                                                                   class="control-label"></label>
                                                                             <img id="preview_pet_1" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview" class="img-thumbnail"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -223,7 +224,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="picture_pet_2"
+                                                                            <label for="picture3"
                                                                                    class="control-label">เลือก
                                                                                 รูปภาพสัตว์เลี้ยง
                                                                                 2</label>
@@ -235,9 +236,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label class="control-label"></label>
+                                                                            <label for="picture3"
+                                                                                   class="control-label"></label>
                                                                             <img id="preview_pet_2" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview" class="img-thumbnail"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -268,7 +270,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="picture_pet_3"
+                                                                            <label for="picture3"
                                                                                    class="control-label">เลือก
                                                                                 รูปภาพสัตว์เลี้ยง
                                                                                 3</label>
@@ -280,9 +282,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label class="control-label"></label>
+                                                                            <label for="picture3"
+                                                                                   class="control-label"></label>
                                                                             <img id="preview_pet_3" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview" class="img-thumbnail"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -313,7 +316,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="picture_pet_4"
+                                                                            <label for="picture3"
                                                                                    class="control-label">เลือก
                                                                                 รูปภาพสัตว์เลี้ยง
                                                                                 4</label>
@@ -325,9 +328,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label class="control-label"></label>
+                                                                            <label for="picture3"
+                                                                                   class="control-label"></label>
                                                                             <img id="preview_pet_4" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview" class="img-thumbnail"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -358,7 +362,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="picture_pet_5"
+                                                                            <label for="picture3"
                                                                                    class="control-label">เลือก
                                                                                 รูปภาพสัตว์เลี้ยง
                                                                                 5</label>
@@ -370,9 +374,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label class="control-label"></label>
+                                                                            <label for="picture3"
+                                                                                   class="control-label"></label>
                                                                             <img id="preview_pet_5" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview" class="img-thumbnail"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -403,7 +408,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label for="picture_pet_6"
+                                                                            <label for="picture3"
                                                                                    class="control-label">เลือก
                                                                                 รูปภาพสัตว์เลี้ยง
                                                                                 6</label>
@@ -415,9 +420,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                                                     <div class="col-md-4">
                                                                         <div class="form-group">
-                                                                            <label class="control-label"></label>
+                                                                            <label for="picture3"
+                                                                                   class="control-label"></label>
                                                                             <img id="preview_pet_6" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview" class="img-thumbnail"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -457,17 +463,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <?php
     include('includes/Modal-Logout.php');
+    //include('includes/Footer.php');
     ?>
 
-    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <img src="" id="modalImage" class="img-fluid" alt="ขยายรูปภาพ">
-                </div>
-            </div>
-        </div>
-    </div>
+
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
@@ -484,6 +483,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
     <style>
+
         .icon-input-btn {
             display: inline-block;
             position: relative;
@@ -499,22 +499,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             left: 0.65em;
             top: 30%;
         }
-
-        /* --- NEW: CSS FOR IMAGE ZOOM --- */
-        .pet-preview-image {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .pet-preview-image:hover {
-            transform: scale(1.05);
-        }
-
-        #modalImage {
-            max-height: 80vh;
-        }
-        /* --- END NEW CSS --- */
-
     </style>
     <script>
         $(document).ready(function () {
@@ -527,8 +511,30 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </script>
 
     <script>
-        $(document).ready(function () {
 
+        $("#contact_name").blur(function () {
+            let method = $('#action').val();
+            if (method === "ADD") {
+                let house_number = $('#house_number').val();
+                let contact_name = $('#contact_name').val();
+                let formData = {action: "SEARCH", house_number: house_number, contact_name: contact_name};
+                $.ajax({
+                    url: 'model/manage_pet_record_process.php',
+                    method: "POST",
+                    data: formData,
+                    success: function (data) {
+                        if (data == 2) {
+                            alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
+                        }
+                    }
+                })
+            }
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
             let formData = {action: "GET_PET", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100, 500, 621], [5, 10, 20, 50, 100, 500, 621]],
@@ -565,107 +571,168 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 ]
             });
 
+            /*
+
+                        $("#recordModal---bak").on('submit', '#recordForm', function (event) {
+                            event.preventDefault();
+                            $('#save').attr('disabled', 'disabled');
+                            let formData = $(this).serialize();
+                            //alert(formData);
+                            $.ajax({
+                                url: 'model/manage_pet_record_process.php',
+                                method: "POST",
+                                data: formData,
+                                success: function (data) {
+                                    alertify.success(data);
+                                    $('#recordForm')[0].reset();
+                                    $('#recordModal').modal('hide');
+                                    $('#save').attr('disabled', false);
+                                    dataRecords.ajax.reload();
+                                }
+                            })
+                        });
+             */
+
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
             $("#btnAdd").click(function () {
                 $('#recordModal').modal('show');
-                $('#recordForm')[0].reset();
-                for (let i = 1; i <= 6; i++) {
-                    $('#preview_pet_' + i).hide().attr('src', '#');
-                }
+                $('#id').val("");
+                $('#house_number').val("");
+                $('#contact_name').val("");
+                $('#phone_number').val("");
+                $('#alley').val("");
+                $('#remark').val("");
+
+                $('#type_1').val("-");
+                $('#type_2').val("-");
+                $('#type_3').val("-");
+                $('#type_4').val("-");
+                $('#type_5').val("-");
+                $('#type_6').val("-");
+
+                $('#pet_1').val();
+                $('#pet_2').val();
+                $('#pet_3').val();
+                $('#pet_4').val();
+                $('#pet_5').val();
+                $('#pet_6').val();
+
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
             });
+        });
+    </script>
 
-            $("#TableRecordList").on('click', '.update', function () {
-                let id = $(this).attr("id");
-                let formData = {action: "GET_DATA", id: id};
-                $.ajax({
-                    type: "POST",
-                    url: 'model/manage_pet_record_process.php',
-                    dataType: "json",
-                    data: formData,
-                    success: function (response) {
-                        let len = response.length;
-                        if (len > 0) {
-                            let record = response[0];
+    <script>
+        $("#TableRecordList").on('click', '.update', function () {
+            let id = $(this).attr("id");
+            let formData = {action: "GET_DATA", id: id};
+            $.ajax({
+                type: "POST",
+                url: 'model/manage_pet_record_process.php',
+                dataType: "json",
+                data: formData,
+                success: function (response) {
+                    let len = response.length;
+                    if (len > 0) {
+                        let record = response[0]; // ใช้ object แรกโดยตรง
 
-                            $('#recordModal').modal('show');
-                            $('#id').val(record.id);
-                            $('#house_number').val(record.house_number);
-                            $('#contact_name').val(record.contact_name);
-                            $('#phone_number').val(record.phone_number);
-                            $('#alley').val(record.alley);
-                            $('#pet_quantity').val(record.pet_quantity);
+                        $('#recordModal').modal('show');
+                        $('#id').val(record.id);
+                        $('#house_number').val(record.house_number);
+                        $('#contact_name').val(record.contact_name);
+                        $('#phone_number').val(record.phone_number);
+                        $('#alley').val(record.alley);
+                        $('#pet_quantity').val(record.pet_quantity);
 
-                            for (let i = 1; i <= 6; i++) {
-                                let type = record['type_' + i];
-                                let pet_name = record['pet_' + i];
-                                let picture_filename = record['picture_pet_' + i];
+                        // --- START: ส่วนแสดงรูปภาพ Preview ตอนกดแก้ไข ---
 
-                                $('#type_' + i).val(type);
-                                $('#pet_' + i).val(pet_name);
+                        // วน Loop 6 ครั้งสำหรับสัตว์เลี้ยงแต่ละตัว
+                        for (let i = 1; i <= 6; i++) {
+                            let type = record['type_' + i];
+                            let pet_name = record['pet_' + i];
+                            let picture_filename = record['picture_pet_' + i];
 
-                                let previewImage = $('#preview_pet_' + i);
+                            // ตั้งค่าประเภทและชื่อ
+                            $('#type_' + i).val(type);
+                            $('#pet_' + i).val(pet_name);
 
-                                if (picture_filename) {
-                                    let imagePath = 'uploads/pet/' + picture_filename;
-                                    previewImage.attr('src', imagePath).show();
-                                } else {
-                                    previewImage.hide().attr('src', '#');
-                                }
+                            // เลือก element ของ image preview
+                            let previewImage = $('#preview_pet_' + i);
+
+                            // ตรวจสอบว่ามีชื่อไฟล์รูปภาพหรือไม่
+                            if (picture_filename) {
+                                // สร้าง path ไปยังรูปภาพ
+                                let imagePath = 'uploads/pet/' + picture_filename;
+
+                                // ตั้งค่า src และแสดงรูปภาพ
+                                previewImage.attr('src', imagePath).show();
+                            } else {
+                                // ถ้าไม่มีชื่อไฟล์ ให้ซ่อนรูปภาพ preview
+                                previewImage.hide().attr('src', '#');
                             }
-
-                            $('.modal-title').html("<i class='fa fa-edit'></i> Edit Record");
-                            $('#action').val('UPDATE');
-                            $('#save').val('Save');
                         }
-                    },
-                    error: function (response) {
-                        alertify.error("error : " + response);
+
+                        // --- END: ส่วนแสดงรูปภาพ Preview ตอนกดแก้ไข ---
+
+
+                        $('.modal-title').html("<i class='fa fa-edit'></i> Edit Record");
+                        $('#action').val('UPDATE');
+                        $('#save').val('Save');
                     }
-                });
-            });
-
-            $("#contact_name").blur(function () {
-                let method = $('#action').val();
-                if (method === "ADD") {
-                    let house_number = $('#house_number').val();
-                    let contact_name = $('#contact_name').val();
-                    let formData = {action: "SEARCH", house_number: house_number, contact_name: contact_name};
-                    $.ajax({
-                        url: 'model/manage_pet_record_process.php',
-                        method: "POST",
-                        data: formData,
-                        success: function (data) {
-                            if (data == 2) {
-                                alert("Duplicate มีข้อมูลนี้แล้วในระบบ กรุณาตรวจสอบ");
-                            }
-                        }
-                    })
+                },
+                error: function (response) {
+                    alertify.error("error : " + response);
                 }
             });
+        });
+    </script>
 
+    <script>
+        $(document).ready(function () {
+
+            // Function to handle image preview for pets 1 through 6
             function setupPetImagePreview(petNumber) {
+                // When a file is selected in the input for a specific pet
                 $('#picture_pet_' + petNumber).on('change', function (event) {
+
+                    // The corresponding image tag for preview
                     let previewImage = $('#preview_pet_' + petNumber);
+
+                    // Check if the user has selected a file
                     if (event.target.files && event.target.files[0]) {
                         let reader = new FileReader();
+
+                        // When the FileReader has finished reading the image
                         reader.onload = function (e) {
+                            // Set the src of the <img> to the image data
                             previewImage.attr('src', e.target.result);
+                            // Show the <img> tag
                             previewImage.show();
                         }
+
+                        // Start reading the selected file as a Data URL
                         reader.readAsDataURL(event.target.files[0]);
                     } else {
+                        // If the user cancels file selection, hide the preview
                         previewImage.hide();
                         previewImage.attr('src', '#');
                     }
                 });
             }
 
+            // Loop to set up the preview for all 6 pet image inputs
             for (let i = 1; i <= 6; i++) {
                 setupPetImagePreview(i);
             }
 
+            // Reset image previews when the modal is closed or form is submitted/cleared
             $('#recordModal').on('hidden.bs.modal', function () {
                 for (let i = 1; i <= 6; i++) {
                     $('#preview_pet_' + i).hide().attr('src', '#');
@@ -673,47 +740,49 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 $('#recordForm')[0].reset();
             });
 
-            $("#recordModal").on('submit', '#recordForm', function (event) {
-                event.preventDefault();
-                $('#save').attr('disabled', 'disabled');
-
-                let formData = new FormData(this);
-
-                $.ajax({
-                    url: 'model/manage_pet_record_process.php',
-                    method: "POST",
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (data) {
-                        alertify.success(data);
-                        $('#recordForm')[0].reset();
-                        for (let i = 1; i <= 6; i++) {
-                            $('#preview_pet_' + i).hide().attr('src', '#');
-                        }
-                        $('#recordModal').modal('hide');
-                        $('#save').attr('disabled', false);
-                        $('#TableRecordList').DataTable().ajax.reload();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        alertify.error("AJAX Error: " + textStatus + ' : ' + errorThrown);
-                        $('#save').attr('disabled', false);
-                    }
-                });
-            });
-
-            // --- NEW: JQUERY FOR IMAGE ZOOM ---
-            $(document).on('click', '.pet-preview-image', function() {
-                let imgSrc = $(this).attr('src');
-                if (imgSrc && imgSrc !== '#' && $(this).is(':visible')) {
-                    $('#modalImage').attr('src', imgSrc);
-                    $('#imageModal').modal('show');
+            // Also, ensure previews are cleared when clicking "btnAdd"
+            $("#btnAdd").click(function () {
+                for (let i = 1; i <= 6; i++) {
+                    $('#preview_pet_' + i).hide().attr('src', '#');
                 }
             });
-            // --- END NEW JQUERY ---
 
         });
+    </script>
 
+    <script>
+        $("#recordModal").on('submit', '#recordForm', function (event) {
+            event.preventDefault();
+            $('#save').attr('disabled', 'disabled');
+
+            // เปลี่ยนมาใช้ FormData เพื่อให้สามารถส่งไฟล์ได้
+            let formData = new FormData(this);
+
+            $.ajax({
+                url: 'model/manage_pet_record_process.php',
+                method: "POST",
+                data: formData,
+                // เพิ่ม 2 บรรทัดนี้ >> สำคัญมากสำหรับการอัปโหลดไฟล์
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    alertify.success(data);
+                    $('#recordForm')[0].reset();
+                    // เมื่อฟอร์มถูกรีเซ็ต ต้องซ่อนรูป preview ทั้งหมดด้วย
+                    for (let i = 1; i <= 6; i++) {
+                        $('#preview_pet_' + i).hide().attr('src', '#');
+                    }
+                    $('#recordModal').modal('hide');
+                    $('#save').attr('disabled', false);
+                    $('#TableRecordList').DataTable().ajax.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // เพิ่มส่วนจัดการ error เพื่อให้ดีบักง่ายขึ้น
+                    alertify.error("AJAX Error: " + textStatus + ' : ' + errorThrown);
+                    $('#save').attr('disabled', false);
+                }
+            });
+        });
     </script>
 
     </body>
