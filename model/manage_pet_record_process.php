@@ -224,6 +224,30 @@ if ($_POST["action"] === 'UPDATE') {
     }
 }
 
+// Delete data
+if ($_POST["action"] === 'DELETE') {
+    $id = $_POST["id"];
+    $sql_find = "SELECT COUNT(*) FROM ims_house_pet WHERE id = :id";
+    $stmt = $conn->prepare($sql_find);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $nRows = $stmt->fetchColumn();
+
+    if ($nRows > 0) {
+        try {
+            $sql = "DELETE FROM ims_house_pet WHERE id = :id";
+            $query = $conn->prepare($sql);
+            $query->bindParam(':id', $id, PDO::PARAM_INT);
+            $query->execute();
+            echo $del_success;
+        } catch (Exception $e) {
+            echo 'Message: ' . $e->getMessage();
+        }
+    }
+
+    exit;
+}
+
 if ($_POST["action"] === 'GET_PET') {
 
     ## Read value

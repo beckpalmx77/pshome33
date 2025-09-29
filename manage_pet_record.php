@@ -192,7 +192,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group">
                                                                             <label class="control-label"></label>
                                                                             <img id="preview_pet_1" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview"
+                                                                                 class="img-thumbnail pet-preview-image"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -237,7 +238,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group">
                                                                             <label class="control-label"></label>
                                                                             <img id="preview_pet_2" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview"
+                                                                                 class="img-thumbnail pet-preview-image"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -282,7 +284,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group">
                                                                             <label class="control-label"></label>
                                                                             <img id="preview_pet_3" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview"
+                                                                                 class="img-thumbnail pet-preview-image"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -327,7 +330,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group">
                                                                             <label class="control-label"></label>
                                                                             <img id="preview_pet_4" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview"
+                                                                                 class="img-thumbnail pet-preview-image"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -372,7 +376,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group">
                                                                             <label class="control-label"></label>
                                                                             <img id="preview_pet_5" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview"
+                                                                                 class="img-thumbnail pet-preview-image"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -417,7 +422,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <div class="form-group">
                                                                             <label class="control-label"></label>
                                                                             <img id="preview_pet_6" src="#"
-                                                                                 alt="Preview" class="img-thumbnail pet-preview-image"
+                                                                                 alt="Preview"
+                                                                                 class="img-thumbnail pet-preview-image"
                                                                                  style="display: none; max-height: 90px; margin-top: 10px;"/>
                                                                         </div>
                                                                     </div>
@@ -459,10 +465,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     include('includes/Modal-Logout.php');
     ?>
 
-    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-body text-center">
+                    <button type="button" class="close image-modal-close-button" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                     <img src="" id="modalImage" class="img-fluid" alt="ขยายรูปภาพ">
                 </div>
             </div>
@@ -471,6 +482,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+         aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
+                    <button type="button" class="close text-white"
+                            data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">ยกเลิก
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                            id="confirmDeleteBtn">ลบข้อมูล
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -513,6 +550,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         #modalImage {
             max-height: 80vh;
         }
+
         /* --- END NEW CSS --- */
 
     </style>
@@ -703,7 +741,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
 
             // --- NEW: JQUERY FOR IMAGE ZOOM ---
-            $(document).on('click', '.pet-preview-image', function() {
+            $(document).on('click', '.pet-preview-image', function () {
                 let imgSrc = $(this).attr('src');
                 if (imgSrc && imgSrc !== '#' && $(this).is(':visible')) {
                     $('#modalImage').attr('src', imgSrc);
@@ -714,6 +752,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
         });
 
+    </script>
+
+    <script>
+        let deleteId = null;
+        $("#TableRecordList").on('click', '.delete', function () {
+            deleteId = $(this).attr("id");
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        $("#confirmDeleteBtn").on("click", function () {
+            if (deleteId) {
+                $.ajax({
+                    url: "model/manage_pet_record_process.php",
+                    method: "POST",
+                    data: {id: deleteId, action: "DELETE"},
+                    success: function (response) {
+                        $("#confirmDeleteModal").modal("hide");
+                        $('#TableRecordList').DataTable().ajax.reload();
+                        alertify.success("ลบข้อมูลเรียบร้อยแล้ว");
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการลบข้อมูล");
+                    }
+                });
+            }
+        });
     </script>
 
     </body>
