@@ -475,6 +475,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $data = array();
 
     $isUser = $_SESSION['account_type'] === "user";
+    $isManager = $_SESSION['account_type'] === "manager";
     $isMaster = $_POST['sub_action'] === "GET_MASTER";
 
     $statusMeta = [
@@ -514,7 +515,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
                 "update" => $isUser ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
                     : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
-                "delete" => $isUser ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
+                "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
                     : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
                 "remark" => $row['remark']
             ];
