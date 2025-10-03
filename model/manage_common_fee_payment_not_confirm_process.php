@@ -78,6 +78,9 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
             $color = $isPaid ? "green" : "gray";
             $print_disabled = $isPaid ? "" : "disabled";
 
+            $isUser = $_SESSION['account_type'] === "user";
+            $isManager = $_SESSION['account_type'] === "manager";
+
             return [
                 "id" => $row['id'],
                 "doc_id" => $row['doc_id'],
@@ -105,7 +108,9 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' $print_disabled>Print</button>",
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
                 "update" => "<button type='button' class='btn btn-info btn-xs update' name='update' id='{$row['id']}' " . ($isUser ? "disabled" : "") . ">Update</button>",
-                "delete" => "<button type='button' class='btn btn-danger btn-xs delete' name='delete' id='{$row['id']}' " . ($isUser ? "disabled" : "") . ">Delete</button>",
+                //"delete" => "<button type='button' class='btn btn-danger btn-xs delete' name='delete' id='{$row['id']}' " . ($isUser ? "disabled" : "") . ">Delete</button>",
+                "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
+                    : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
                 "remark" => $row['remark']
             ];
         } else {

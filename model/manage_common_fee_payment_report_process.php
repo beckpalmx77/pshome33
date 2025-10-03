@@ -165,6 +165,9 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
             // "payment_status" => $row['payment_status'],
 
+            $isUser = $_SESSION['account_type'] === "user";
+            $isManager = $_SESSION['account_type'] === "manager";
+
             if ($payment_status == 'N') {
                 $message = "ยังไม่ยืนยันการชำระ";
                 $color = "gray";
@@ -190,7 +193,9 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "amount" => $row['amount'],
                 "payment_status" => '<span style="color: ' . $color . ';">' . $message . '</span>',
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
-                "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
+                //"delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
+                "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
+                    : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
                 "remark" => $row['remark']
             );
         } else {
