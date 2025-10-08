@@ -68,7 +68,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                         <button type="button" name="exitBtn" id="exitBtn" tabindex="4"
                                                 class="form-control btn btn-danger">
                                             <span>
-                                                <i class="fa fa-window-close" aria-hidden="true"></i>
+                                                <i class="fa fa-times" aria-hidden="true"></i>
                                                 ออกจากระบบ
                                             </span>
                                     </div>

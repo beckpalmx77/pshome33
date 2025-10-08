@@ -211,7 +211,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </button>
 
                                 <button type="button" class="btn btn-danger" onclick="closeAndReload()">
-                                    ปิด <i class="fa fa-window-close"></i>
+                                    ปิด <i class="fa fa-times"></i>
                                 </button>
                             </div>
                         </div>

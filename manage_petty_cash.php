@@ -167,7 +167,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                             </span>
                                                             <button type="button" class="btn btn-danger"
                                                                     data-dismiss="modal">Close <i
-                                                                        class="fa fa-window-close"></i>
+                                                                        class="fa fa-times"></i>
                                                             </button>
                                                         </div>
                                                     </form>

@@ -262,7 +262,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     พิมพ์สลิป <i class="fa fa-print"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger ml-2" onclick="closeAndReload()">
-                                    ปิด <i class="fa fa-window-close"></i>
+                                    ปิด <i class="fa fa-times"></i>
                                 </button>
                             </div>
 
