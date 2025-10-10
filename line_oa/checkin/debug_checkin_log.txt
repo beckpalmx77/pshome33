@@ -2368,3 +2368,624 @@
 [2025-09-06 08:58:56] 🔍 check_type ล่าสุด: OUT
 [2025-09-06 08:58:56] ✅ บันทึกรูป: checkin_68bb95605277c_IMG_9524.jpg
 [2025-09-06 08:58:56] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-24 18:04:48] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-24 18:04:48] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898413097498842 || 100.3665436339568
+[2025-09-24 18:04:48] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-24 18:04:48] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-24 18:04:48] 🔍 check_type ล่าสุด: IN
+[2025-09-24 18:04:48] ✅ บันทึกรูป: checkin_68d3d05071c47_IMG_0023.jpg
+[2025-09-24 18:04:48] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-24 18:11:41] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-24 18:11:41] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9020718 || 100.3672023
+[2025-09-24 18:11:41] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-24 18:11:41] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-24 18:11:41] 🔍 check_type ล่าสุด: IN
+[2025-09-24 18:11:41] ✅ บันทึกรูป: checkin_68d3d1ed9124c_1000062022.jpg
+[2025-09-24 18:11:41] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-25 06:08:57] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-25 06:08:57] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9024824 || 100.3672717
+[2025-09-25 06:08:57] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-25 06:08:57] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-25 06:08:57] 🔍 check_type ล่าสุด: OUT
+[2025-09-25 06:08:57] ✅ บันทึกรูป: checkin_68d47a090e4aa_1000062021.jpg
+[2025-09-25 06:08:57] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-25 09:00:11] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-25 09:00:11] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898570185466488 || 100.36656779658647
+[2025-09-25 09:00:12] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-25 09:00:12] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-25 09:00:12] 🔍 check_type ล่าสุด: OUT
+[2025-09-25 09:00:12] ✅ บันทึกรูป: checkin_68d4a22c0341f_IMG_0033.jpg
+[2025-09-25 09:00:12] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-25 09:03:19] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-25 09:03:19] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984181 || 100.3664751
+[2025-09-25 09:03:19] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-25 09:03:19] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-25 09:03:19] 🔍 check_type ล่าสุด: OUT
+[2025-09-25 09:03:19] ✅ บันทึกรูป: checkin_68d4a2e7426bc_1000007754.jpg
+[2025-09-25 09:03:19] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-25 18:03:50] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-25 18:03:50] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8984897 || 100.3664792
+[2025-09-25 18:03:50] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-25 18:03:50] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-25 18:03:50] 🔍 check_type ล่าสุด: IN
+[2025-09-25 18:03:51] ✅ บันทึกรูป: checkin_68d52196c0cac_1000007781.jpg
+[2025-09-25 18:03:51] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-25 18:07:47] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-25 18:07:47] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9021917 || 100.3672189
+[2025-09-25 18:07:47] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-25 18:07:47] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-25 18:07:47] 🔍 check_type ล่าสุด: IN
+[2025-09-25 18:07:47] ✅ บันทึกรูป: checkin_68d522837fc47_1000067168.jpg
+[2025-09-25 18:07:47] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-25 18:26:28] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-25 18:26:28] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898582054424416 || 100.36649934919294
+[2025-09-25 18:26:28] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-25 18:26:28] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-25 18:26:28] 🔍 check_type ล่าสุด: IN
+[2025-09-25 18:26:28] ✅ บันทึกรูป: checkin_68d526e41a5e0_IMG_0039.jpg
+[2025-09-25 18:26:28] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-26 06:15:22] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-26 06:15:22] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9021605 || 100.3672525
+[2025-09-26 06:15:22] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-26 06:15:22] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-26 06:15:22] 🔍 check_type ล่าสุด: OUT
+[2025-09-26 06:15:22] ✅ บันทึกรูป: checkin_68d5cd0a07239_1000062056.jpg
+[2025-09-26 06:15:22] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-26 06:15:23] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-26 06:15:23] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9021605 || 100.3672525
+[2025-09-26 06:15:23] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-26 06:15:23] 🔁 เช็คซ้ำภายใน 1 นาที: 1
+[2025-09-26 08:57:56] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-26 08:57:56] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984858 || 100.3664935
+[2025-09-26 08:57:56] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-26 08:57:56] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-26 08:57:56] 🔍 check_type ล่าสุด: OUT
+[2025-09-26 08:57:56] ✅ บันทึกรูป: checkin_68d5f324191f5_1000007805.jpg
+[2025-09-26 08:57:56] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-26 18:06:10] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-26 18:06:10] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9029477 || 100.3640349
+[2025-09-26 18:06:10] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-26 18:06:10] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-26 18:06:10] 🔍 check_type ล่าสุด: IN
+[2025-09-26 18:06:10] ✅ บันทึกรูป: checkin_68d673a2606c2_1000062021.jpg
+[2025-09-26 18:06:10] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-26 18:26:48] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-26 18:26:48] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8984775 || 100.3664863
+[2025-09-26 18:26:48] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-26 18:26:48] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-26 18:26:48] 🔍 check_type ล่าสุด: IN
+[2025-09-26 18:26:48] ✅ บันทึกรูป: checkin_68d678782f7f1_1000007815.jpg
+[2025-09-26 18:26:48] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 06:09:35] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 06:09:35] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9025325 || 100.3672471
+[2025-09-27 06:09:35] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-27 06:09:35] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 06:09:35] 🔍 check_type ล่าสุด: OUT
+[2025-09-27 06:09:35] ✅ บันทึกรูป: checkin_68d71d2f82ca1_1000062021.jpg
+[2025-09-27 06:09:35] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 08:57:40] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 08:57:40] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984953 || 100.3664848
+[2025-09-27 08:57:40] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-27 08:57:40] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 08:57:40] 🔍 check_type ล่าสุด: OUT
+[2025-09-27 08:57:40] ✅ บันทึกรูป: checkin_68d74494aa9f1_1000007828.jpg
+[2025-09-27 08:57:40] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 08:59:32] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 08:59:32] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.89843505787286 || 100.36652193194288
+[2025-09-27 08:59:32] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-27 08:59:32] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 08:59:32] 🔍 check_type ล่าสุด: OUT
+[2025-09-27 08:59:32] ✅ บันทึกรูป: checkin_68d7450480a43_IMG_0103.jpg
+[2025-09-27 08:59:32] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 18:03:16] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 18:03:16] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8985009 || 100.3665085
+[2025-09-27 18:03:16] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-27 18:03:16] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 18:03:16] 🔍 check_type ล่าสุด: IN
+[2025-09-27 18:03:17] ✅ บันทึกรูป: checkin_68d7c474dd773_1000007848.jpg
+[2025-09-27 18:03:17] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 18:06:17] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 18:06:17] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9024037 || 100.3662806
+[2025-09-27 18:06:17] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-27 18:06:17] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 18:06:17] 🔍 check_type ล่าสุด: IN
+[2025-09-27 18:06:17] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 18:06:38] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 18:06:38] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9024568 || 100.365511
+[2025-09-27 18:06:38] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-27 18:06:38] 🔁 เช็คซ้ำภายใน 1 นาที: 1
+[2025-09-27 18:07:06] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 18:07:06] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9025082 || 100.3645092
+[2025-09-27 18:07:06] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-27 18:07:06] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 18:07:06] 🔍 check_type ล่าสุด: OUT
+[2025-09-27 18:07:06] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-27 18:16:00] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-27 18:16:00] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.897574655460955 || 100.36571228796386
+[2025-09-27 18:16:00] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-27 18:16:00] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-27 18:16:00] 🔍 check_type ล่าสุด: IN
+[2025-09-27 18:16:00] ✅ บันทึกรูป: checkin_68d7c7707322e_IMG_0119.jpg
+[2025-09-27 18:16:00] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-28 06:10:18] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 06:10:18] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9024187 || 100.36725
+[2025-09-28 06:10:18] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-28 06:10:18] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 06:10:18] 🔍 check_type ล่าสุด: IN
+[2025-09-28 06:11:12] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 06:11:12] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.902145 || 100.3672438
+[2025-09-28 06:11:12] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-28 06:11:12] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 06:11:12] 🔍 check_type ล่าสุด: IN
+[2025-09-28 08:54:09] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 08:54:09] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984929 || 100.3664862
+[2025-09-28 08:54:09] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-28 08:54:09] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 08:54:09] 🔍 check_type ล่าสุด: OUT
+[2025-09-28 08:54:09] ✅ บันทึกรูป: checkin_68d895410e186_1000007857.jpg
+[2025-09-28 08:54:09] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-28 18:06:51] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:06:51] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=0 || 0
+[2025-09-28 18:06:51] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-28 18:06:51] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:06:51] 🔍 check_type ล่าสุด: IN
+[2025-09-28 18:06:51] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:06:51] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=0 || 0
+[2025-09-28 18:06:51] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-28 18:06:51] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:06:51] 🔍 check_type ล่าสุด: IN
+[2025-09-28 18:06:51] ✅ บันทึกรูป: checkin_68d916cb48162_1000069640.jpg
+[2025-09-28 18:06:51] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-28 18:06:51] ✅ บันทึกรูป: checkin_68d916cb74c7a_1000069640.jpg
+[2025-09-28 18:06:51] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-28 18:07:20] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:07:20] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.89845064842448 || 100.366586465482
+[2025-09-28 18:07:20] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-28 18:07:20] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:07:20] 🔍 check_type ล่าสุด: OUT
+[2025-09-28 18:07:47] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:07:47] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.89845064842448 || 100.366586465482
+[2025-09-28 18:07:47] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-28 18:07:47] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:07:47] 🔍 check_type ล่าสุด: OUT
+[2025-09-28 18:08:28] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:08:28] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898422676733784 || 100.36635775082974
+[2025-09-28 18:08:28] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-28 18:08:28] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:08:28] 🔍 check_type ล่าสุด: OUT
+[2025-09-28 18:09:01] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:09:01] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898472491368144 || 100.36653077291224
+[2025-09-28 18:09:01] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-28 18:09:01] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:09:01] 🔍 check_type ล่าสุด: OUT
+[2025-09-28 18:09:41] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:09:41] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8985063 || 100.3665082
+[2025-09-28 18:09:41] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-28 18:09:41] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:09:41] 🔍 check_type ล่าสุด: IN
+[2025-09-28 18:09:42] ✅ บันทึกรูป: checkin_68d917759359b_1000007876.jpg
+[2025-09-28 18:09:42] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-28 18:11:16] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-28 18:11:16] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898366494117209 || 100.36643626177717
+[2025-09-28 18:11:16] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-28 18:11:16] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-28 18:11:16] 🔍 check_type ล่าสุด: OUT
+[2025-09-29 06:16:22] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-29 06:16:22] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9020819 || 100.3672205
+[2025-09-29 06:16:22] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-29 06:16:22] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-29 06:16:22] 🔍 check_type ล่าสุด: OUT
+[2025-09-29 06:16:23] ✅ บันทึกรูป: checkin_68d9c1c6ee0f5_1000067167.jpg
+[2025-09-29 06:16:23] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-29 08:53:07] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-29 08:53:07] 📥 รับข้อมูลจาก client: user_id=Uc2648cdcef0f0608ce5c835883488bc7, line_profile_url=https://profile.line-scdn.net/0h6WYaHrkMaXh0GHgF4EEXBwRIahJXaTBqWi10HhNLN0oefSwqUXh1GUZLYkxPfS0vD3pxGhIcYk94Cx4eak6VTHMoNElILiwpXX0mmA, display_name=หนุ่ม Dev IT, check_type=IN, location=13.943825034889848 || 100.42744585483449
+[2025-09-29 08:53:07] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Uc2648cdcef0f0608ce5c835883488bc7
+[2025-09-29 08:53:07] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-29 08:53:07] 🔍 check_type ล่าสุด: OUT
+[2025-09-29 08:53:07] ✅ บันทึกรูป: checkin_68d9e683b1e3c_IMG_6843.jpg
+[2025-09-29 08:53:07] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-29 08:56:15] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-29 08:56:15] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.898612 || 100.3663602
+[2025-09-29 08:56:15] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-29 08:56:15] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-29 08:56:15] 🔍 check_type ล่าสุด: OUT
+[2025-09-29 08:56:15] ✅ บันทึกรูป: checkin_68d9e73f31266_1000007877.jpg
+[2025-09-29 08:56:15] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-29 08:57:15] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-29 08:57:15] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898580735561705 || 100.36645210357416
+[2025-09-29 08:57:15] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-29 08:57:15] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-29 08:57:15] 🔍 check_type ล่าสุด: OUT
+[2025-09-29 08:57:15] ✅ บันทึกรูป: checkin_68d9e77b44acb_IMG_0144.jpg
+[2025-09-29 08:57:15] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-29 18:16:02] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-29 18:16:02] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.900582375949156 || 100.36664438443292
+[2025-09-29 18:16:02] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-29 18:16:02] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-29 18:16:02] 🔍 check_type ล่าสุด: IN
+[2025-09-29 18:16:02] ✅ บันทึกรูป: checkin_68da6a721e540_IMG_0181.jpg
+[2025-09-29 18:16:02] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-29 21:27:46] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-29 21:27:46] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8975218 || 100.3656938
+[2025-09-29 21:27:46] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-29 21:27:46] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-29 21:27:46] 🔍 check_type ล่าสุด: IN
+[2025-09-29 21:27:46] ✅ บันทึกรูป: checkin_68da97625458f_1000007877.jpg
+[2025-09-29 21:27:46] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-30 08:35:57] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 08:35:57] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984981 || 100.3664966
+[2025-09-30 08:35:57] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-30 08:35:57] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 08:35:57] 🔍 check_type ล่าสุด: OUT
+[2025-09-30 08:35:57] ✅ บันทึกรูป: checkin_68db33fdad3e2_1000007922.jpg
+[2025-09-30 08:35:57] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-30 08:57:31] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 08:57:31] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898443649993412 || 100.36657516972545
+[2025-09-30 08:57:31] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-30 08:57:31] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 08:57:31] 🔍 check_type ล่าสุด: OUT
+[2025-09-30 08:57:32] ✅ บันทึกรูป: checkin_68db390bf3d09_IMG_0185.jpg
+[2025-09-30 08:57:32] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-30 18:02:27] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 18:02:27] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9022001 || 100.3672391
+[2025-09-30 18:02:27] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-30 18:02:27] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 18:02:27] 🔍 check_type ล่าสุด: IN
+[2025-09-30 18:02:27] ✅ บันทึกรูป: checkin_68dbb8c33e4a1_1000070177.jpg
+[2025-09-30 18:02:27] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-30 18:08:48] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 18:08:48] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898597498235276 || 100.36644913204066
+[2025-09-30 18:08:48] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-09-30 18:08:48] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 18:08:48] 🔍 check_type ล่าสุด: IN
+[2025-09-30 18:08:48] ✅ บันทึกรูป: checkin_68dbba402c266_image.jpg
+[2025-09-30 18:08:48] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-30 18:09:15] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 18:09:15] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8983789 || 100.3663495
+[2025-09-30 18:09:15] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-09-30 18:09:15] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 18:09:15] 🔍 check_type ล่าสุด: IN
+[2025-09-30 18:09:16] ✅ บันทึกรูป: checkin_68dbba5bed668_1000007994.jpg
+[2025-09-30 18:09:16] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-09-30 18:10:17] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 18:10:17] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9020746 || 100.3610092
+[2025-09-30 18:10:17] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-30 18:10:17] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 18:10:17] 🔍 check_type ล่าสุด: OUT
+[2025-09-30 18:10:17] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 18:10:17] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9020746 || 100.3610092
+[2025-09-30 18:10:17] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-30 18:10:17] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 18:10:17] 🔍 check_type ล่าสุด: OUT
+[2025-09-30 18:10:51] 🔧 เริ่มต้นประมวลผล check-in
+[2025-09-30 18:10:51] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9022838 || 100.3589374
+[2025-09-30 18:10:51] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-09-30 18:10:51] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-09-30 18:10:51] 🔍 check_type ล่าสุด: OUT
+[2025-10-01 08:49:12] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-01 08:49:12] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898512716417468 || 100.36652561286498
+[2025-10-01 08:49:12] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-01 08:49:12] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-01 08:49:12] 🔍 check_type ล่าสุด: OUT
+[2025-10-01 08:49:12] ✅ บันทึกรูป: checkin_68dc889882725_IMG_0193.jpg
+[2025-10-01 08:49:12] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-01 08:55:47] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-01 08:55:47] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI70VC0MUZkTi_jjSRPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.9008866 || 100.3672833
+[2025-10-01 08:55:47] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-01 08:55:47] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-01 08:55:47] 🔍 check_type ล่าสุด: OUT
+[2025-10-01 08:55:47] ✅ บันทึกรูป: checkin_68dc8a23a383f_1000007922.jpg
+[2025-10-01 08:55:47] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-01 18:08:02] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-01 18:08:02] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9021301 || 100.3672105
+[2025-10-01 18:08:02] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-01 18:08:02] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-01 18:08:02] 🔍 check_type ล่าสุด: OUT
+[2025-10-01 18:08:02] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-01 18:08:02] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9021301 || 100.3672105
+[2025-10-01 18:08:02] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-01 18:08:02] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-01 18:08:02] 🔍 check_type ล่าสุด: OUT
+[2025-10-01 18:08:02] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-01 18:08:02] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9021301 || 100.3672105
+[2025-10-01 18:08:02] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-01 18:08:02] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-01 18:08:02] 🔍 check_type ล่าสุด: OUT
+[2025-10-01 19:05:47] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-01 19:05:47] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898391646860553 || 100.36649571830817
+[2025-10-01 19:05:47] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-01 19:05:47] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-01 19:05:47] 🔍 check_type ล่าสุด: IN
+[2025-10-01 19:05:47] ✅ บันทึกรูป: checkin_68dd191b41b9b_IMG_0201.jpg
+[2025-10-01 19:05:47] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-02 08:58:53] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-02 08:58:53] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898505046976062 || 100.36650700503994
+[2025-10-02 08:58:53] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-02 08:58:53] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-02 08:58:53] 🔍 check_type ล่าสุด: OUT
+[2025-10-02 08:58:53] ✅ บันทึกรูป: checkin_68dddc5d8de8a_IMG_0211.jpg
+[2025-10-02 08:58:53] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-02 18:44:13] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-02 18:44:13] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898398973991428 || 100.36657053986598
+[2025-10-02 18:44:13] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-02 18:44:13] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-02 18:44:13] 🔍 check_type ล่าสุด: IN
+[2025-10-02 18:44:13] ✅ บันทึกรูป: checkin_68de658d7290b_IMG_0222.jpg
+[2025-10-02 18:44:13] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-03 06:09:34] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-03 06:09:34] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9020277 || 100.3671608
+[2025-10-03 06:09:34] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-03 06:09:34] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-03 06:09:34] 🔍 check_type ล่าสุด: OUT
+[2025-10-03 06:09:34] ✅ บันทึกรูป: checkin_68df062e0dd30_1000070179.jpg
+[2025-10-03 06:09:34] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-03 09:04:27] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-03 09:04:27] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7-saoMUZkTi__T_ZPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984974 || 100.3664873
+[2025-10-03 09:04:27] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-03 09:04:27] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-03 09:04:27] 🔍 check_type ล่าสุด: IN
+[2025-10-03 17:59:56] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-03 17:59:56] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8986519 || 100.3664377
+[2025-10-03 17:59:56] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-03 17:59:56] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-03 17:59:56] 🔍 check_type ล่าสุด: IN
+[2025-10-03 17:59:56] ✅ บันทึกรูป: checkin_68dfacac99f3c_1000008460.jpg
+[2025-10-03 17:59:56] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-03 18:09:37] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-03 18:09:37] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.902146 || 100.367218
+[2025-10-03 18:09:37] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-03 18:09:37] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-03 18:09:37] 🔍 check_type ล่าสุด: IN
+[2025-10-03 18:09:37] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-03 18:09:37] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.902146 || 100.367218
+[2025-10-03 18:09:37] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-03 18:09:37] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-03 18:09:37] 🔍 check_type ล่าสุด: IN
+[2025-10-03 18:09:37] ✅ บันทึกรูป: checkin_68dfaef194ad3_1000070179.jpg
+[2025-10-03 18:09:37] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-03 18:09:38] ✅ บันทึกรูป: checkin_68dfaef1a26b5_1000070179.jpg
+[2025-10-03 18:09:38] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-04 06:17:21] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-04 06:17:21] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9021017 || 100.3672245
+[2025-10-04 06:17:21] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-04 06:17:21] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-04 06:17:21] 🔍 check_type ล่าสุด: OUT
+[2025-10-04 06:17:21] ✅ บันทึกรูป: checkin_68e059819fddf_1000062022.jpg
+[2025-10-04 06:17:21] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-04 08:52:45] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-04 08:52:45] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.89846151425038 || 100.36644601845839
+[2025-10-04 08:52:45] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-04 08:52:45] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-04 08:52:45] 🔍 check_type ล่าสุด: OUT
+[2025-10-04 08:52:45] ✅ บันทึกรูป: checkin_68e07ded2a785_IMG_0244.jpg
+[2025-10-04 08:52:45] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-04 09:02:57] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-04 09:02:57] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984897 || 100.3664918
+[2025-10-04 09:02:57] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-04 09:02:57] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-04 09:02:57] 🔍 check_type ล่าสุด: OUT
+[2025-10-04 09:02:57] ✅ บันทึกรูป: checkin_68e080515e730_1000008456.jpg
+[2025-10-04 09:02:57] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-04 18:07:17] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-04 18:07:17] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898361758341348 || 100.36648940304327
+[2025-10-04 18:07:17] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-04 18:07:17] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-04 18:07:17] 🔍 check_type ล่าสุด: IN
+[2025-10-04 18:07:18] ✅ บันทึกรูป: checkin_68e0ffe5de6dc_IMG_0254.jpg
+[2025-10-04 18:07:18] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-04 18:10:49] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-04 18:10:49] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9022431 || 100.3672892
+[2025-10-04 18:10:49] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-04 18:10:49] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-04 18:10:49] 🔍 check_type ล่าสุด: IN
+[2025-10-04 18:10:49] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-04 18:10:49] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=13.9022431 || 100.3672892
+[2025-10-04 18:10:49] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-04 18:10:49] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-04 18:10:49] 🔍 check_type ล่าสุด: IN
+[2025-10-04 18:10:50] ✅ บันทึกรูป: checkin_68e100b9c6486_1000062056.jpg
+[2025-10-04 18:10:50] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-04 18:10:50] ✅ บันทึกรูป: checkin_68e100b9d240b_1000062056.jpg
+[2025-10-04 18:10:50] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-05 06:13:40] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-05 06:13:40] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9020077 || 100.3671372
+[2025-10-05 06:13:40] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-05 06:13:40] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-05 06:13:40] 🔍 check_type ล่าสุด: OUT
+[2025-10-05 06:13:40] ✅ บันทึกรูป: checkin_68e1aa243764a_1000062018.jpg
+[2025-10-05 06:13:40] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-05 08:55:15] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-05 08:55:15] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898501275119637 || 100.3665142972957
+[2025-10-05 08:55:15] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-05 08:55:15] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-05 08:55:15] 🔍 check_type ล่าสุด: OUT
+[2025-10-05 08:55:15] ✅ บันทึกรูป: checkin_68e1d003748c7_IMG_0268.jpg
+[2025-10-05 08:55:15] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-05 09:04:22] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-05 09:04:22] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984899 || 100.3665099
+[2025-10-05 09:04:22] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-05 09:04:22] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-05 09:04:22] 🔍 check_type ล่าสุด: IN
+[2025-10-05 18:09:56] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-05 18:09:56] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8984948 || 100.3664874
+[2025-10-05 18:09:56] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-05 18:09:56] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-05 18:09:56] 🔍 check_type ล่าสุด: IN
+[2025-10-05 18:09:57] ✅ บันทึกรูป: checkin_68e25204b9c33_1000008539.jpg
+[2025-10-05 18:09:57] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-05 18:09:57] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-05 18:09:57] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8984948 || 100.3664874
+[2025-10-05 18:09:57] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-05 18:09:57] 🔁 เช็คซ้ำภายใน 1 นาที: 1
+[2025-10-05 18:12:35] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-05 18:12:35] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898406234960769 || 100.36650135237238
+[2025-10-05 18:12:35] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-05 18:12:35] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-05 18:12:35] 🔍 check_type ล่าสุด: IN
+[2025-10-05 18:12:35] ✅ บันทึกรูป: checkin_68e252a31b67b_IMG_0288.jpg
+[2025-10-05 18:12:35] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-06 06:15:41] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 06:15:41] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9022599 || 100.3673517
+[2025-10-06 06:15:41] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-06 06:15:41] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 06:15:41] 🔍 check_type ล่าสุด: IN
+[2025-10-06 06:15:41] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 06:15:41] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9022599 || 100.3673517
+[2025-10-06 06:15:41] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-06 06:15:41] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 06:15:41] 🔍 check_type ล่าสุด: IN
+[2025-10-06 06:16:43] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 06:16:43] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9020233 || 100.367149
+[2025-10-06 06:16:43] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-06 06:16:43] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 06:16:43] 🔍 check_type ล่าสุด: IN
+[2025-10-06 08:58:38] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 08:58:38] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898258850790125 || 100.36635750945864
+[2025-10-06 08:58:38] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-06 08:58:38] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 08:58:38] 🔍 check_type ล่าสุด: OUT
+[2025-10-06 08:58:38] ✅ บันทึกรูป: checkin_68e3224e7c376_IMG_0308.jpg
+[2025-10-06 08:58:38] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-06 09:02:50] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 09:02:50] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984926 || 100.366491
+[2025-10-06 09:02:50] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-06 09:02:50] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 09:02:50] 🔍 check_type ล่าสุด: OUT
+[2025-10-06 09:02:51] ✅ บันทึกรูป: checkin_68e3234ac1207_1000008546.jpg
+[2025-10-06 09:02:51] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-06 09:03:19] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 09:03:19] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984926 || 100.366491
+[2025-10-06 09:03:19] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-06 09:03:19] 🔁 เช็คซ้ำภายใน 1 นาที: 1
+[2025-10-06 18:14:07] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 18:14:07] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.89852897731019 || 100.36654480742324
+[2025-10-06 18:14:07] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-06 18:14:07] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 18:14:07] 🔍 check_type ล่าสุด: IN
+[2025-10-06 18:14:07] ✅ บันทึกรูป: checkin_68e3a47f7d203_IMG_0351.jpg
+[2025-10-06 18:14:07] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-06 18:20:43] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-06 18:20:43] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.8984911 || 100.3665006
+[2025-10-06 18:20:43] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-06 18:20:43] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-06 18:20:43] 🔍 check_type ล่าสุด: IN
+[2025-10-07 06:19:00] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 06:19:00] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9020165 || 100.3671634
+[2025-10-07 06:19:00] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 06:19:00] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=13.9020165 || 100.3671634
+[2025-10-07 06:19:00] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-07 06:19:00] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-07 06:19:01] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 06:19:01] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 06:19:01] 🔍 check_type ล่าสุด: IN
+[2025-10-07 06:19:01] 🔍 check_type ล่าสุด: IN
+[2025-10-07 08:50:48] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 08:50:48] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI7Ue8TMUZkTi_--stPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.9008835 || 100.3672789
+[2025-10-07 08:50:48] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-07 08:50:48] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 08:50:48] 🔍 check_type ล่าสุด: IN
+[2025-10-07 09:00:23] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 09:00:23] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898470136349356 || 100.3665862140249
+[2025-10-07 09:00:23] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-07 09:00:23] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 09:00:23] 🔍 check_type ล่าสุด: OUT
+[2025-10-07 09:00:23] ✅ บันทึกรูป: checkin_68e4743752abf_IMG_0354.jpg
+[2025-10-07 09:00:23] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-07 18:02:01] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 18:02:01] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=0 || 0
+[2025-10-07 18:02:01] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-07 18:02:01] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 18:02:01] 🔍 check_type ล่าสุด: IN
+[2025-10-07 18:02:01] ✅ บันทึกรูป: checkin_68e4f32939d75_1000062021.jpg
+[2025-10-07 18:02:01] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-07 18:02:02] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 18:02:02] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=OUT, location=0 || 0
+[2025-10-07 18:02:02] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-07 18:02:02] 🔁 เช็คซ้ำภายใน 1 นาที: 1
+[2025-10-07 18:07:43] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 18:07:43] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI71KbbMUZkTi_FqEdPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8987835 || 100.3663556
+[2025-10-07 18:07:43] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-07 18:07:43] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 18:07:43] 🔍 check_type ล่าสุด: IN
+[2025-10-07 18:07:43] ✅ บันทึกรูป: checkin_68e4f47fa072c_1000008593.jpg
+[2025-10-07 18:07:43] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-07 18:08:58] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-07 18:08:58] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898367835221716 || 100.36662787208367
+[2025-10-07 18:08:58] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-07 18:08:58] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-07 18:08:58] 🔍 check_type ล่าสุด: IN
+[2025-10-07 18:08:59] ✅ บันทึกรูป: checkin_68e4f4cada810_IMG_0360.jpg
+[2025-10-07 18:08:59] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-08 08:57:47] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-08 08:57:47] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898455384199771 || 100.36655821846831
+[2025-10-08 08:57:47] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-08 08:57:47] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-08 08:57:47] 🔍 check_type ล่าสุด: OUT
+[2025-10-08 08:57:47] ✅ บันทึกรูป: checkin_68e5c51bae4d1_IMG_0379.jpg
+[2025-10-08 08:57:47] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-08 09:00:42] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-08 09:00:42] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI71KbbMUZkTi_FqEdPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.900834 || 100.3672041
+[2025-10-08 09:00:42] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-08 09:00:42] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-08 09:00:42] 🔍 check_type ล่าสุด: OUT
+[2025-10-08 09:00:42] ✅ บันทึกรูป: checkin_68e5c5ca699fc_1000008609.jpg
+[2025-10-08 09:00:42] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-08 18:03:37] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-08 18:03:37] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI71KbbMUZkTi_FqEdPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8984733 || 100.3665326
+[2025-10-08 18:03:37] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-08 18:03:37] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-08 18:03:37] 🔍 check_type ล่าสุด: IN
+[2025-10-08 18:03:37] ✅ บันทึกรูป: checkin_68e6450953de2_1000008657.jpg
+[2025-10-08 18:03:37] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-08 18:29:06] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-08 18:29:06] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898421353672896 || 100.36642829896915
+[2025-10-08 18:29:06] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-08 18:29:06] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-08 18:29:06] 🔍 check_type ล่าสุด: IN
+[2025-10-08 18:29:07] ✅ บันทึกรูป: checkin_68e64b02ee2b0_IMG_0450.jpg
+[2025-10-08 18:29:07] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-09 06:14:19] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-09 06:14:19] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=0 || 0
+[2025-10-09 06:14:19] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-09 06:14:19] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-09 06:14:19] 🔍 check_type ล่าสุด: OUT
+[2025-10-09 06:14:19] ✅ บันทึกรูป: checkin_68e6f04b1264e_1000075014.jpg
+[2025-10-09 06:14:19] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-09 08:43:47] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-09 08:43:47] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.898550770257865 || 100.36640256652642
+[2025-10-09 08:43:47] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-09 08:43:47] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-09 08:43:47] 🔍 check_type ล่าสุด: OUT
+[2025-10-09 08:43:47] ✅ บันทึกรูป: checkin_68e7135317f27_IMG_0454.jpg
+[2025-10-09 08:43:47] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-09 18:02:09] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-09 18:02:09] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=OUT, location=13.898541684317824 || 100.36650793478259
+[2025-10-09 18:02:09] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-09 18:02:09] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-09 18:02:09] 🔍 check_type ล่าสุด: IN
+[2025-10-09 18:02:09] ✅ บันทึกรูป: checkin_68e796314c90f_IMG_0539.jpg
+[2025-10-09 18:02:09] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-09 18:02:38] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-09 18:02:38] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI71KbbMUZkTi_FqEdPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=OUT, location=13.8985381 || 100.3665025
+[2025-10-09 18:02:38] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-09 18:02:38] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-09 18:02:38] 🔍 check_type ล่าสุด: OUT
+[2025-10-10 06:15:46] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-10 06:15:46] 📥 รับข้อมูลจาก client: user_id=U2c11430e6f4768a9a09c8c494185592e, line_profile_url=https://profile.line-scdn.net/0hBAJ1qJGhHW5nSAMaWxhjUBcYHgREOUR8TS4CW1VAF1oJLA06SCtbXVBPQV8Jf1s5GXkGWFdBQ15FPF1LP34mdFpBOV4CGiFkTmdVSSFMJlcTMwYxKC0BcQs4Ai4CLCx4EV5UDRo7NAwHHFM8Ei4iQAYbCi4fcDtnOR9xOGJ6c-0ISmo7Si9UClVNQF7c, display_name=De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎, check_type=IN, location=0 || 0
+[2025-10-10 06:15:46] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U2c11430e6f4768a9a09c8c494185592e
+[2025-10-10 06:15:46] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-10 06:15:46] 🔍 check_type ล่าสุด: IN
+[2025-10-10 08:53:36] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-10 08:53:36] 📥 รับข้อมูลจาก client: user_id=U9a053209c4dc04ed4f1ad166ac98fc22, line_profile_url=https://profile.line-scdn.net/0hniI71KbbMUZkTi_FqEdPeBQeMixHP2hUTH14J1NHaSZbKX4YQHgqJgZPb3UJf34ZQSl3IlEZPX9GKABMGkg2ZigUBDciOXJgN1d4ZAkTZzEyIClVCHw1fCg7JyAAHClrN1gaIhMFMDY5ATBJNTR_ezA5LSBeOyxVPxldEGF8X8ULTEYTSSl4IlZLbHbf, display_name=🌈iQYl(^.^)(^.^)(^.^🌈, check_type=IN, location=13.9008192 || 100.3672091
+[2025-10-10 08:53:36] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: U9a053209c4dc04ed4f1ad166ac98fc22
+[2025-10-10 08:53:36] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-10 08:53:36] 🔍 check_type ล่าสุด: OUT
+[2025-10-10 08:53:36] ✅ บันทึกรูป: checkin_68e8672090eb2_1000008660.jpg
+[2025-10-10 08:53:36] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
+[2025-10-10 08:56:03] 🔧 เริ่มต้นประมวลผล check-in
+[2025-10-10 08:56:03] 📥 รับข้อมูลจาก client: user_id=Ua0108dbfb1cdf794aabd054c334da723, line_profile_url=https://profile.line-scdn.net/0hGSDYhd1HGHxpIAnv2HJmAxlwGxZKUUFuFUVSElkmRRwAF1guEBYDHVkoREwHRVZ_RRICSgspFkhlM28ad3bkSG4QRU1VFl0tQEVXnA, display_name=Dow💋789, check_type=IN, location=13.89847659502904 || 100.36643946302115
+[2025-10-10 08:56:03] ✅ อัปเดต line_picture_profile สำเร็จสำหรับ user_id: Ua0108dbfb1cdf794aabd054c334da723
+[2025-10-10 08:56:03] 🔁 เช็คซ้ำภายใน 1 นาที: 0
+[2025-10-10 08:56:03] 🔍 check_type ล่าสุด: OUT
+[2025-10-10 08:56:03] ✅ บันทึกรูป: checkin_68e867b3480a3_IMG_0542.jpg
+[2025-10-10 08:56:03] 📝 INSERT ข้อมูลเช็คอินลงฐานข้อมูลเรียบร้อย
