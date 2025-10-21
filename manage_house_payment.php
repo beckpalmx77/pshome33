@@ -133,7 +133,8 @@ if (strlen($_SESSION['alogin']) == "") {
                     let sub_menu = document.getElementById("sub_menu").value;
                     let url = "manage_house_payment_data.php?title=รายการข้อมูลการชำระค่าส่วนกลาง"
                         + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
-                        + '&payment_date=' + info.event.id;
+                        + '&payment_date=' + info.event.id
+                        + '&total_amount=' + info.event.total_amount ;
                     window.open(url, "", "");
                 }
             });

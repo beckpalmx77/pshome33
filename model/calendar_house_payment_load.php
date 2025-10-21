@@ -19,7 +19,7 @@ foreach($result as $row)
     $data[] = array(
         'id'   => $row["payment_date"],
         'title'   => "จำนวนเงิน " . number_format($row["total_amount"],0) . " บาท",
-        'description'   => $row["total_amount"],
+        'total_amount'   => $row["total_amount"],
         'payment_date'   => $row["payment_date"],
         'start'   => $row["payment_date_start"],
         'end'   => $row["payment_date_end"]

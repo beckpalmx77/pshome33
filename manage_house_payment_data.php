@@ -271,7 +271,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 }
             }
 
-            let title = queryString["title"] + " :  " + queryString["payment_date"];
+            let title = queryString["title"] + " :  " + queryString["payment_date"] +  " จำนวนเงินทั้งหมด " + queryString["total_amount"] + " บาท " ;
             let data = "<b>" + title + "</b>";
             $("#title").html(data);
             $("#main_menu").html(queryString["main_menu"]);
