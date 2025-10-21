@@ -94,6 +94,13 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <th>สถานะ</th>
                                                         </tr>
                                                         </thead>
+                                                        <tfoot>
+                                                        <tr>
+                                                            <th colspan="6" style="text-align:right">ยอดรวม:</th>
+                                                            <th></th> <th></th>
+                                                            <th></th>
+                                                        </tr>
+                                                        </tfoot>
                                                     </table>
 
                                                     <input type="hidden" id="status" name="status" value="">
@@ -271,7 +278,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 }
             }
 
-            let title = queryString["title"] + " :  " + queryString["payment_date"] +  " จำนวนเงินทั้งหมด " + queryString["total_amount"] + " บาท " ;
+            let title = queryString["title"] + " :  " + queryString["payment_date"];
             let data = "<b>" + title + "</b>";
             $("#title").html(data);
             $("#main_menu").html(queryString["main_menu"]);
@@ -282,7 +289,7 @@ if (strlen($_SESSION['alogin']) == "") {
         });
     </script>
 
-    <script>
+    <!--script>
         function Load_Data_Detail(payment_date, table_name) {
 
             let formData = {
@@ -327,6 +334,82 @@ if (strlen($_SESSION['alogin']) == "") {
                     {data: 'slip', width: '80px'},
                     {data: 'payment_status_desc', width: '100px'}
                 ]
+            });
+        }
+    </script-->
+
+    <script>
+        function Load_Data_Detail(payment_date, table_name) {
+
+            let formData = {
+                action: "GET_HOUSE_PAYMENT_DETAIL",
+                sub_action: "GET_MASTER",
+                payment_date: payment_date,
+                table_name: table_name
+            };
+            let dataRecords = $('#TableRecordList').DataTable({
+                "paging": true,
+                "ordering": true,
+                'info': true,
+                "searching": true,
+                'lengthMenu': [[10, 15, 24, 50, 100], [10, 15, 24, 50, 100]],
+                'language': {
+                    search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
+                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+                    infoEmpty: 'ไม่มีข้อมูล',
+                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+                    paginate: {
+                        previous: 'ก่อนหน้า',
+                        last: 'สุดท้าย',
+                        next: 'ต่อไป'
+                    }
+                },
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url': 'model/manage_house_payment_calendar_process.php',
+                    'data': formData
+                },
+                'columns': [
+                    {data: 'payment_date', width: '200px'},
+                    {data: 'house_number', width: '100px'},
+                    {data: 'alley', width: '100px'},
+                    {data: 'detail', width: '200px'},
+                    {data: 'month_name_period', width: '120px'},
+                    {data: 'period_year', width: '100px'},
+                    {data: 'amount', className: 'dt-body-right', width: '120px'}, // คอลัมน์ 6 (นับจาก 0)
+                    {data: 'slip', width: '80px'},
+                    {data: 'payment_status_desc', width: '100px'}
+                ],
+                // >>> เพิ่ม footerCallback ที่นี่ <<<
+                'footerCallback': function ( row, data, start, end, display ) {
+                    var api = this.api();
+
+                    // กำหนดตัวเลขคอลัมน์ของ 'amount' (คอลัมน์ที่ 6)
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // คำนวณผลรวมสำหรับ 'amount' ในหน้าที่แสดงผล
+                    total = api
+                        .column( 6, { page: 'current'} ) // ใช้คอลัมน์ที่ 6
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+                    // แสดงผลรวมในช่อง footer ของคอลัมน์ที่ 6
+                    // ใช้ .toFixed(2) เพื่อแสดงทศนิยม 2 ตำแหน่ง และ .toLocaleString() เพื่อจัดรูปแบบตัวเลข
+                    $( api.column( 6 ).footer() ).html(
+                        total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' บาท'
+                    );
+                }
+                // >>> สิ้นสุด footerCallback <<<
             });
         }
     </script>
