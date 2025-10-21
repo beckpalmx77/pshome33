@@ -132,6 +132,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         </div>
 
                     </div>
+
+
                     <!--Row-->
 
                     <!-- Row -->
@@ -140,6 +142,21 @@ if (strlen($_SESSION['alogin']) == "") {
 
                 <!---Container Fluid-->
 
+            </div>
+
+            <!-- Modal ดูสลิป -->
+            <div class="modal fade" id="slipModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">สลิปการชำระเงิน</h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img id="slipImage" src="" style="max-width:100%; height:auto;">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <?php
@@ -321,7 +338,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $.ajax({
                     url: "display_slip.php",
                     type: "GET",
-                    data: { id: id },
+                    data: {id: id},
                     dataType: "json",
                     success: function (response) {
                         if (response.status === 1) {

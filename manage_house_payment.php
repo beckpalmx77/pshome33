@@ -118,7 +118,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 locale: initialLocaleCode,
                 initialView: 'dayGridMonth',
                 height: 550,
-                events: 'model/calendar_job_load.php',
+                events: 'model/calendar_house_payment_load.php',
                 editable: true,
                 selectable: true,
 
