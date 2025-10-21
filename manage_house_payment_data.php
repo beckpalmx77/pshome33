@@ -289,55 +289,6 @@ if (strlen($_SESSION['alogin']) == "") {
         });
     </script>
 
-    <!--script>
-        function Load_Data_Detail(payment_date, table_name) {
-
-            let formData = {
-                action: "GET_HOUSE_PAYMENT_DETAIL",
-                sub_action: "GET_MASTER",
-                payment_date: payment_date,
-                table_name: table_name
-            };
-            let dataRecords = $('#TableRecordList').DataTable({
-                "paging": true,
-                "ordering": true,
-                'info': true,
-                "searching": true,
-                'lengthMenu': [[10, 15, 24, 50, 100], [10, 15, 24, 50, 100]],
-                'language': {
-                    search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
-                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
-                    infoEmpty: 'ไม่มีข้อมูล',
-                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
-                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
-                    paginate: {
-                        previous: 'ก่อนหน้า',
-                        last: 'สุดท้าย',
-                        next: 'ต่อไป'
-                    }
-                },
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url': 'model/manage_house_payment_calendar_process.php',
-                    'data': formData
-                },
-                'columns': [
-                    {data: 'payment_date', width: '200px'},
-                    {data: 'house_number', width: '100px'},
-                    {data: 'alley', width: '100px'},
-                    {data: 'detail', width: '200px'},
-                    {data: 'month_name_period', width: '120px'},
-                    {data: 'period_year', width: '100px'},
-                    {data: 'amount', className: 'dt-body-right', width: '120px'},
-                    {data: 'slip', width: '80px'},
-                    {data: 'payment_status_desc', width: '100px'}
-                ]
-            });
-        }
-    </script-->
-
     <script>
         function Load_Data_Detail(payment_date, table_name) {
 
