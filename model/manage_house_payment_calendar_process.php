@@ -50,7 +50,7 @@ if ($_POST["action"] === 'GET_HOUSE_PAYMENT_DETAIL') {
 
 ## Fetch records
     $sql_get_load = "SELECT * FROM v_ims_house_payment WHERE payment_date = '" . $payment_date . "' " . $searchQuery
-        . " ORDER BY alley LIMIT :limit,:offset";
+        . " ORDER BY CAST(alley AS SIGNED) LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_get_load);
 
