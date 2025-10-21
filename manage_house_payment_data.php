@@ -375,9 +375,9 @@ if (strlen($_SESSION['alogin']) == "") {
                 'columns': [
                     {data: 'payment_date', width: '200px'},
                     {data: 'house_number', width: '100px'},
-                    {data: 'alley', width: '100px'},
+                    {data: 'alley', width: '50px'},
                     {data: 'detail', width: '200px'},
-                    {data: 'month_name_period', width: '120px'},
+                    {data: 'month_name_period', width: '200px'},
                     {data: 'period_year', width: '100px'},
                     {data: 'amount', className: 'dt-body-right', width: '120px'}, // คอลัมน์ 6 (นับจาก 0)
                     {data: 'slip', width: '80px'},
