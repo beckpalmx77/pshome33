@@ -1,0 +1,14 @@
+{
+    "require": {
+        "mobiledetect/mobiledetectlib": "^3.74",
+        "mpdf/mpdf": "^8.2",
+        "php-amqplib/php-amqplib": "^3.7",
+        "phpoffice/phpspreadsheet": "^2.0",
+        "dompdf/dompdf": "^3.1",
+        "tecnickcom/tcpdf": "^6.8",
+        "tecnickcom/tc-lib-pdf": "^8.0",
+        "thiagoalessio/tesseract_ocr": "^2.13",
+        "linecorp/line-bot-sdk": "^11.3",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}

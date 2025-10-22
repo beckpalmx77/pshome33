@@ -1,0 +1,29 @@
+curl -v -X POST https://api.line.me/v2/bot/message/push \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {IpR8udFWN6A9z5H+ZmMHSWnkM49C4+eJWmmaXlqwH01rYSkwHlPZMSN5cNekLldYqeMP2Vj0Ez3ZEbpXeSZyylPEa2sYD8bEIb0gDo/iaOVCtMFb0UE2Mz87K0zpiqkhfRNn9Icy/6PMhSfPgcLwAgdB04t89/1O/w1cDnyilFU=}" \
+  -d '{
+    "to": "Ud1fd8997daa1c3cec0782276245591b8",
+    "messages": [
+      {
+        "type": "flex",
+        "altText": "This is a Flex Message",
+        "contents": {
+          "type": "bubble",
+          "body": {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "Hello,"
+              },
+              {
+                "type": "text",
+                "text": "World!"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }'
