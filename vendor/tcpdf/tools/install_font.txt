@@ -1,2 +1,0 @@
-php tcpdf_addfont.php -b -t TrueTypeUnicode -i "Prompt-Medium.ttf"
-php tcpdf_addfont.php -b -t TrueTypeUnicode -i "Prompt-Thin.ttf"
