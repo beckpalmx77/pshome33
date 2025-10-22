@@ -104,6 +104,8 @@ if ($_POST["action"] === 'GET_HOUSE_PAYMENT_DETAIL') {
                 "payment_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
                 "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
                 "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
+                "slip_update" => $isUser || $isManager ? "<button type='button' class='btn btn-warning btn-xs slip_update' disabled>แก้ไขสลิป</button>"
+                    : "<button type='button' name='slip_update' id='{$row['id']}' class='btn btn-warning btn-xs slip_update'>แก้ไขสลิป</button>",
                 "update" => $isUser ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
                     : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
                 "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"

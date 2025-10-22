@@ -91,13 +91,15 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <th>ปี</th>
                                                             <th>จำนวนเงิน</th>
                                                             <th>สลิป</th>
+                                                            <th>แก้ไขสลิป</th>
                                                             <th>สถานะ</th>
                                                         </tr>
                                                         </thead>
                                                         <tfoot>
                                                         <tr>
                                                             <th colspan="6" style="text-align:right">ยอดรวม:</th>
-                                                            <th></th> <th></th>
+                                                            <th></th>
+                                                            <th></th>
                                                             <th></th>
                                                         </tr>
                                                         </tfoot>
@@ -162,6 +164,36 @@ if (strlen($_SESSION['alogin']) == "") {
                         <div class="modal-body text-center">
                             <img id="slipImage" src="" style="max-width:100%; height:auto;">
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal แก้ไขสลิป -->
+            <div class="modal fade" id="editSlipModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form id="formUpdateSlip" enctype="multipart/form-data">
+                            <div class="modal-header">
+                                <h5 class="modal-title">อัปโหลดสลิปใหม่</h5>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="payment_id" id="payment_id">
+                                <div class="form-group">
+                                    <label>เลือกสลิปใหม่ (ไฟล์ภาพ)</label>
+                                    <input type="file" name="new_slip" id="new_slip" accept="image/*"
+                                           class="form-control" required>
+                                </div>
+                                <div class="text-center">
+                                    <img id="previewSlip" src=""
+                                         style="max-width:100%;display:none;border:1px solid #ddd;padding:5px;">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">บันทึก</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -329,34 +361,35 @@ if (strlen($_SESSION['alogin']) == "") {
                     {data: 'alley', width: '50px'},
                     {data: 'detail', width: '200px'},
                     {data: 'month_name_period', width: '200px'},
-                    {data: 'period_year', width: '100px'},
+                    {data: 'period_year', width: '80px'},
                     {data: 'amount', className: 'dt-body-right', width: '120px'}, // คอลัมน์ 6 (นับจาก 0)
                     {data: 'slip', width: '80px'},
-                    {data: 'payment_status_desc', width: '100px'}
+                    {data: 'slip_update', width: '80px'},
+                    {data: 'payment_status_desc', width: '150px'}
                 ],
                 // >>> เพิ่ม footerCallback ที่นี่ <<<
-                'footerCallback': function ( row, data, start, end, display ) {
+                'footerCallback': function (row, data, start, end, display) {
                     var api = this.api();
 
                     // กำหนดตัวเลขคอลัมน์ของ 'amount' (คอลัมน์ที่ 6)
-                    var intVal = function ( i ) {
+                    var intVal = function (i) {
                         return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '')*1 :
+                            i.replace(/[\$,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                     };
 
                     // คำนวณผลรวมสำหรับ 'amount' ในหน้าที่แสดงผล
                     total = api
-                        .column( 6, { page: 'current'} ) // ใช้คอลัมน์ที่ 6
+                        .column(6, {page: 'current'}) // ใช้คอลัมน์ที่ 6
                         .data()
-                        .reduce( function (a, b) {
+                        .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
-                        }, 0 );
+                        }, 0);
 
                     // แสดงผลรวมในช่อง footer ของคอลัมน์ที่ 6
                     // ใช้ .toFixed(2) เพื่อแสดงทศนิยม 2 ตำแหน่ง และ .toLocaleString() เพื่อจัดรูปแบบตัวเลข
-                    $( api.column( 6 ).footer() ).html(
+                    $(api.column(6).footer()).html(
                         total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' บาท'
                     );
                 }
@@ -386,6 +419,52 @@ if (strlen($_SESSION['alogin']) == "") {
                         alert("เกิดข้อผิดพลาดในการโหลดรูปภาพ");
                     }
                 });
+            });
+        });
+    </script>
+
+    <script>
+        // คลิกปุ่ม แก้ไขสลิป
+        $("#TableRecordList").on('click', '.slip_update', function () {
+            let id = $(this).attr("id");
+            $("#payment_id").val(id);
+            $("#new_slip").val("");
+            $("#previewSlip").hide();
+            $("#editSlipModal").modal('show');
+        });
+
+        // Preview รูปทันทีที่เลือกไฟล์
+        $("#new_slip").change(function () {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                $("#previewSlip").attr("src", e.target.result).show();
+            }
+            reader.readAsDataURL(this.files[0]);
+        });
+    </script>
+
+    <script>
+        $("#formUpdateSlip").on('submit', function (e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+            formData.append("action", "UPDATE_SLIP");
+
+            $.ajax({
+                url: "model/update_slip.php",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response === "success") {
+                        alert("อัปเดตสลิปเรียบร้อย");
+                        $('#editSlipModal').modal('hide');
+                        $('#TableRecordList').DataTable().ajax.reload();
+                    } else {
+                        alert("เกิดข้อผิดพลาด: " + response);
+                    }
+                }
             });
         });
     </script>
