@@ -80,7 +80,7 @@ if (strlen($_SESSION['alogin']) == "") {
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.4/index.global.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.19/index.global.js'></script>
     <script src="js/popup.js"></script>
 
 
