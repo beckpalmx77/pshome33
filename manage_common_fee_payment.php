@@ -378,6 +378,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">ปิด
                                                         </button>
+                                                        <button type="button" class="btn btn-primary" id="printSlipButton">
+                                                            <i class="fa fa-print"></i> พิมพ์สลิป
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -631,6 +634,35 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         alert("เกิดข้อผิดพลาดในการโหลดรูปภาพ");
                     }
                 });
+            });
+
+            // **เพิ่มฟังก์ชันสำหรับปุ่มพิมพ์สลิป**
+            $("#printSlipButton").on('click', function() {
+                let imageUrl = $("#slipImage").attr("src");
+
+                // ตรวจสอบว่ามี URL รูปภาพหรือไม่
+                if (!imageUrl || imageUrl === '#') {
+                    alert('ไม่พบรูปภาพสลิปที่จะพิมพ์');
+                    return;
+                }
+
+                // สร้างหน้าต่างใหม่เพื่อแสดงรูปภาพและสั่งพิมพ์
+                let printWindow = window.open('', '_blank');
+                printWindow.document.write('<html><head><title>พิมพ์สลิป</title>');
+                // CSS สำหรับรูปภาพเพื่อให้แสดงผลดีเมื่อพิมพ์
+                // printWindow.document.write('<style>body{margin: 0; padding: 0;} img{width: 100%; height: auto; display: block;}</style>');
+                printWindow.document.write('<style>body{margin: 0; padding: 0;} img{max-width: 100mm; height: auto; display: block; margin: 20px auto;}</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write('<img src="' + imageUrl + '" alt="Slip Image for Print">');
+                printWindow.document.write('</body></html>');
+
+                printWindow.document.close();
+
+                // สั่งพิมพ์เมื่อหน้าต่างโหลดเสร็จ
+                printWindow.onload = function() {
+                    printWindow.print();
+                    // printWindow.close(); // เลือกว่าจะปิดหน้าต่างทันทีหรือไม่
+                };
             });
 
             let deleteId = null;
