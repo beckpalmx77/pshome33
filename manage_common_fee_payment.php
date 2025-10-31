@@ -375,11 +375,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                              class="img-fluid rounded shadow-sm">
                                                     </div>
                                                     <div class="modal-footer justify-content-between">
+                                                        <button type="button" class="btn btn-primary"
+                                                                id="printSlipButton">
+                                                            <i class="fa fa-print"></i> พิมพ์สลิป
+                                                        </button>
                                                         <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">ปิด
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary" id="printSlipButton">
-                                                            <i class="fa fa-print"></i> พิมพ์สลิป
                                                         </button>
                                                     </div>
                                                 </div>
@@ -499,9 +500,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'delete', width: '80px'},
                 ],
                 'autoWidth': false,
-                'preXhr': function (xhr, data) {},
-                'xhr': function (data) {},
-                'initComplete': function (settings, json) {}
+                'preXhr': function (xhr, data) {
+                },
+                'xhr': function (data) {
+                },
+                'initComplete': function (settings, json) {
+                }
             });
 
             $('#saveButton').on('click', function (event) {
@@ -637,7 +641,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
 
             // **เพิ่มฟังก์ชันสำหรับปุ่มพิมพ์สลิป**
-            $("#printSlipButton").on('click', function() {
+            $("#printSlipButton").on('click', function () {
                 let imageUrl = $("#slipImage").attr("src");
 
                 // ตรวจสอบว่ามี URL รูปภาพหรือไม่
@@ -659,7 +663,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 printWindow.document.close();
 
                 // สั่งพิมพ์เมื่อหน้าต่างโหลดเสร็จ
-                printWindow.onload = function() {
+                printWindow.onload = function () {
                     printWindow.print();
                     // printWindow.close(); // เลือกว่าจะปิดหน้าต่างทันทีหรือไม่
                 };
