@@ -54,6 +54,7 @@ if (strlen($_SESSION['alogin']) == "") {
             .month-radio input {
                 margin-right: 5px;
             }
+
             /* Style สำหรับข้อความแจ้งเตือน */
             .alert-fixed {
                 position: fixed;
@@ -136,32 +137,33 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 </div>
 
                                                 <br>
+                                                <div class="col-sm-3">
+                                                    <label for="payroll_year">เลือกปี (Payroll Year) :</label>
+                                                    <select name="payroll_year" id="payroll_year" class="form-control"
+                                                            required>
+                                                        <?php foreach ($YearRecords as $row) {
+                                                            $selected = ($row["period_year"] == $current_year) ? 'selected' : '';
+                                                            ?>
+                                                            <option value="<?php echo $row["period_year"]; ?>" <?php echo $selected; ?>>
+                                                                <?php echo $row["period_year"]; ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <div>
+                                                        <br>
 
-                                                <label for="payroll_year">เลือกปี (Payroll Year) :</label>
-                                                <select name="payroll_year" id="payroll_year" class="form-control"
-                                                        required>
-                                                    <?php foreach ($YearRecords as $row) {
-                                                        $selected = ($row["period_year"] == $current_year) ? 'selected' : '';
-                                                        ?>
-                                                        <option value="<?php echo $row["period_year"]; ?>" <?php echo $selected; ?>>
-                                                            <?php echo $row["period_year"]; ?>
-                                                        </option>
-                                                    <?php } ?>
-                                                </select>
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <button type="button" class="btn btn-primary"
+                                                                        id="btnGenerate">
+                                                                    สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i
+                                                                            class="fas fa-magic"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
 
-                                                <br>
-
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <button type="button" class="btn btn-primary" id="btnGenerate">
-                                                            สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i
-                                                                    class="fas fa-magic"></i>
-                                                        </button>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -176,7 +178,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-bordered" id="employeeDataTable" width="100%" cellspacing="0">
+                                        <table class="table table-bordered" id="employeeDataTable" width="100%"
+                                               cellspacing="0">
                                             <thead>
                                             <tr>
                                                 <th>รหัสพนักงาน</th>
@@ -283,7 +286,7 @@ if (strlen($_SESSION['alogin']) == "") {
                             console.error("AJAX Error: ", textStatus, errorThrown, jqXHR.responseText);
                             showAlert("เกิดข้อผิดพลาดในการเชื่อมต่อหรือประมวลผล: " + errorThrown + " (" + textStatus + ")", 'error');
                         },
-                        complete: function() {
+                        complete: function () {
                             // 5. คืนค่าปุ่ม
                             button.attr('disabled', false).html('สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i class="fas fa-magic"></i>');
                         }
@@ -310,7 +313,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     {"data": "start_work_date"}      // วันที่เริ่มงาน
                 ],
                 "columnDefs": [
-                    { "orderable": false, "targets": [3, 4] } // กำหนดคอลัมน์ที่ไม่ให้เรียง
+                    {"orderable": false, "targets": [3, 4]} // กำหนดคอลัมน์ที่ไม่ให้เรียง
                 ],
                 "order": [[0, 'asc']], // เรียงตามรหัสพนักงาน
                 "language": {
