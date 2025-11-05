@@ -10,14 +10,14 @@ if (strlen($_SESSION['alogin']) == "") {
     exit();
 } else {
     // 2. การเชื่อมต่อฐานข้อมูลและการเตรียมข้อมูล
-    include("config/connect_db.php");
+    include("config/connect_db.php"); // ไฟล์เชื่อมต่อฐานข้อมูล
 
     // 2.1 ดึงข้อมูลเดือน (สมมติว่ามีตาราง ims_month)
     $month_num = ltrim(date('m'), '0'); // เดือนปัจจุบัน (ไม่มี 0 นำหน้า)
     $sql_month = "SELECT * FROM ims_month ORDER BY month ASC";
     $stmt_month = $conn->prepare($sql_month);
     $stmt_month->execute();
-    $MonthRecords = $stmt_month->fetchAll();
+    $MonthRecords = $stmt_month->fetchAll(PDO::FETCH_ASSOC);
 
     // 2.2 เตรียมข้อมูลปี
     $current_year = date('Y');
@@ -42,6 +42,7 @@ if (strlen($_SESSION['alogin']) == "") {
         <title><?php echo $sub_menu_name; ?></title>
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
         <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
         <style>
             /* CSS ที่กำหนดเอง */
             .month-radio {
@@ -91,9 +92,10 @@ if (strlen($_SESSION['alogin']) == "") {
 
                     <div id="alert_area" class="alert-fixed">
                     </div>
+
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="card mb-12">
+                            <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">
                                         กำหนดเงื่อนไขการสร้างข้อมูลเงินเดือน</h6>
@@ -165,7 +167,34 @@ if (strlen($_SESSION['alogin']) == "") {
                             </div>
                         </div>
                     </div>
-
+                    <div class="row mt-4">
+                        <div class="col-lg-12">
+                            <div class="card mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        พนักงานทั้งหมดที่พร้อมสำหรับสร้างเงินเดือน</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="employeeDataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>รหัสพนักงาน</th>
+                                                <th>ชื่อ-นามสกุล</th>
+                                                <th>ตำแหน่ง</th>
+                                                <th>สถานะ</th>
+                                                <th>ฐานเงินเดือน</th>
+                                                <th>วันที่เริ่มงาน</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <?php
                 // 3. โครงสร้างหลัก: Modal Logout และ Footer
@@ -185,7 +214,8 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
 
-
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script>
         // ฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlert(message, type) {
@@ -241,7 +271,6 @@ if (strlen($_SESSION['alogin']) == "") {
                     // 2. ส่งข้อมูลผ่าน Ajax
                     $.ajax({
                         type: 'POST',
-                        // *** โปรดตรวจสอบ Path ของไฟล์ generate_payroll_process.php อีกครั้งว่าถูกต้องตามโครงสร้างหรือไม่ ***
                         url: 'model/generate_payroll_process.php',
                         data: formData,
                         dataType: 'json',
@@ -261,6 +290,35 @@ if (strlen($_SESSION['alogin']) == "") {
                     });
                 }
             });
+
+            // *** การตั้งค่า Datatable สำหรับตารางพนักงาน (Server-side) ***
+            $('#employeeDataTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    // ต้องสร้างไฟล์นี้เพื่อดึงข้อมูลพนักงานทั้งหมด
+                    "url": "model/get_employees_for_datatable.php",
+                    "type": "POST"
+                },
+                "columns": [
+                    // ชื่อคอลัมน์ (data) ต้องตรงกับ Key ใน JSON ที่ส่งมาจาก get_employees_for_datatable.php
+                    {"data": "emp_id"},         // รหัสพนักงาน
+                    {"data": "full_name"},      // ชื่อ-นามสกุล
+                    {"data": "position_desc"},// ตำแหน่ง
+                    {"data": "status"},         // สถานะ (เช่น Active)
+                    {"data": "salary", "className": "text-right"}, // ฐานเงินเดือน (กำหนดให้ชิดขวา)
+                    {"data": "start_work_date"}      // วันที่เริ่มงาน
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": [3, 4] } // กำหนดคอลัมน์ที่ไม่ให้เรียง
+                ],
+                "order": [[0, 'asc']], // เรียงตามรหัสพนักงาน
+                "language": {
+                    // ต้องมีไฟล์ภาษาไทย (thai.json) ใน path ที่กำหนด
+                    "url": "vendor/datatables/thai.json"
+                }
+            });
+            // **************************************************
         });
     </script>
 
