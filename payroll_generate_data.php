@@ -185,6 +185,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <th>รหัสพนักงาน</th>
                                                 <th>ชื่อ-นามสกุล</th>
                                                 <th>ตำแหน่ง</th>
+                                                <th>ประเภทพนักงาน</th>
                                                 <th>สถานะ</th>
                                                 <th>ฐานเงินเดือน</th>
                                                 <th>วันที่เริ่มงาน</th>
@@ -308,6 +309,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     {"data": "emp_id"},         // รหัสพนักงาน
                     {"data": "full_name"},      // ชื่อ-นามสกุล
                     {"data": "position_desc"},// ตำแหน่ง
+                    {"data": "salary_type"},// ประเภท
                     {"data": "status"},         // สถานะ (เช่น Active)
                     {"data": "salary", "className": "text-right"}, // ฐานเงินเดือน (กำหนดให้ชิดขวา)
                     {"data": "start_work_date"}      // วันที่เริ่มงาน

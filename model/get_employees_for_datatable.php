@@ -73,6 +73,7 @@ $sql = "
         e.position_desc,    
         e.status,        
         e.salary,
+        e.salary_type,
         e.start_work_date
     FROM v_memployee e
     WHERE status = 'Y' " . $searchQuery . "
