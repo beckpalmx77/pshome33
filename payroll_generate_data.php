@@ -200,12 +200,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         </div>
                     </div>
                 </div>
-                <?php
-                // 3. โครงสร้างหลัก: Modal Logout และ Footer
-                include('includes/Modal-Logout.php');
-                include('includes/Footer.php');
-                ?>
             </div>
+            <?php
+            // 3. โครงสร้างหลัก: Modal Logout และ Footer
+            include('includes/Modal-Logout.php');
+            include('includes/Footer.php');
+            ?>
         </div>
     </div>
 
