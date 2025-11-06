@@ -269,7 +269,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 // 1. รวบรวม Employee ID ที่ถูกเลือก
                 const selectedIDs = [];
                 // ใช้ employeeDataTable.$('input[name="emp_check"]:checked') เพื่อเข้าถึง Checkbox ที่ถูกเลือกในหน้าปัจจุบัน
-                $('#employeeDataTable input[name="emp_check"]:checked').each(function() {
+                $('#employeeDataTable input[name="emp_check"]:checked').each(function () {
                     selectedIDs.push($(this).val());
                 });
 
@@ -341,7 +341,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 },
                 "columns": [
                     // คอลัมน์ที่ 0: Checkbox
-                    { "data": "emp_id", "className": "text-center", "orderable": false },
+                    {"data": "emp_id", "className": "text-center", "orderable": false},
                     // คอลัมน์อื่นๆ (เลื่อน index ลงไป 1)
                     {"data": "emp_id"},         // คอลัมน์ที่ 1: รหัสพนักงาน
                     {"data": "full_name"},      // คอลัมน์ที่ 2: ชื่อ-นามสกุล
@@ -380,7 +380,7 @@ if (strlen($_SESSION['alogin']) == "") {
             });
 
             // ป้องกัน checkAll ค้างเมื่อมีการ Uncheck รายตัว
-            $('#employeeDataTable').on('change', 'input[name="emp_check"]', function() {
+            $('#employeeDataTable').on('change', 'input[name="emp_check"]', function () {
                 if (!this.checked) {
                     $('#checkAll').prop('checked', false);
                 }
