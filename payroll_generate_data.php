@@ -283,7 +283,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 // ส่งเป็น String ที่คั่นด้วย comma (เช่น "E001,E005,E010")
                 $('#selected_employees').val(selectedIDs.join(','));
 
-// 3. ยืนยันการทำงาน (ใช้ alertify.confirm แทน confirm ธรรมดา)
+                // 3. ยืนยันการทำงาน (ใช้ alertify.confirm แทน confirm ธรรมดา)
                 alertify.confirm(
                     'ยืนยันการทำงาน',
                     `ยืนยันการสร้างข้อมูลเงินเดือนสำหรับพนักงานที่เลือก (${selectedIDs.length} คน) หรือไม่?`,
