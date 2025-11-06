@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // ----------------------------------------------------------------------
         // 4. ดึงข้อมูลพนักงานที่สถานะเป็น 'Y' (Active Employees)
         // ----------------------------------------------------------------------
-        $sql_emp = "SELECT emp_id, salary_type, salary FROM memployee WHERE status = 'Y'";
+        $sql_emp = "SELECT emp_id, salary_type, salary FROM memployee WHERE status = 'Y' ORDER BY emp_id ";
         $stmt_emp = $conn->prepare($sql_emp);
         $stmt_emp->execute();
         $employees = $stmt_emp->fetchAll(PDO::FETCH_ASSOC);

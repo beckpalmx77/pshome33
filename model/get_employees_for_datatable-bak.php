@@ -44,7 +44,7 @@ if ($searchValue != '') {
 }
 
 // 5. การนับจำนวน Total Records (ไม่รวม Filter)
-$stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee WHERE status = 'Y' ");
+$stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee");
 $stmt->execute();
 $records = $stmt->fetch(PDO::FETCH_ASSOC);
 $totalRecords = $records['allcount'];

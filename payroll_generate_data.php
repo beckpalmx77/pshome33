@@ -104,7 +104,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                 <div class="card-body">
                                     <form id="form_data" method="post">
                                         <input type="hidden" name="action" value="GENERATE_PAYROLL">
-
+                                        <input type="hidden" name="selected_employees" id="selected_employees">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div class="col-sm-3">
@@ -182,6 +182,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                cellspacing="0">
                                             <thead>
                                             <tr>
+                                                <th class="text-center" style="width: 50px;">
+                                                    <input type="checkbox" id="checkAll"/>
+                                                </th>
                                                 <th>รหัสพนักงาน</th>
                                                 <th>ชื่อ-นามสกุล</th>
                                                 <th>ตำแหน่ง</th>
@@ -262,33 +265,53 @@ if (strlen($_SESSION['alogin']) == "") {
 
             // การจัดการปุ่ม Generate ด้วย Ajax
             $('#btnGenerate').on('click', function (e) {
-                // 1. ยืนยันการทำงาน
-                if (confirm('ยืนยันการสร้างข้อมูลเงินเดือนสำหรับเดือนและปีที่เลือกหรือไม่? ข้อมูลที่มีอยู่แล้วจะไม่ถูกสร้างซ้ำ')) {
+                // 1. รวบรวม Employee ID ที่ถูกเลือก
+                const selectedIDs = [];
+                // ใช้ employeeDataTable.$('input[name="emp_check"]:checked') เพื่อเข้าถึง Checkbox ที่ถูกเลือกในหน้าปัจจุบัน
+                $('#employeeDataTable input[name="emp_check"]:checked').each(function() {
+                    selectedIDs.push($(this).val());
+                });
+
+                // ตรวจสอบว่ามีการเลือกพนักงานหรือไม่
+                if (selectedIDs.length === 0) {
+                    showAlert('กรุณาเลือกพนักงานอย่างน้อย 1 คนเพื่อดำเนินการสร้างเงินเดือน', 'error');
+                    return false; // หยุดการทำงาน
+                }
+
+                // 2. กำหนดค่าลงใน Hidden Input
+                // ส่งเป็น String ที่คั่นด้วย comma (เช่น "E001,E005,E010")
+                $('#selected_employees').val(selectedIDs.join(','));
+
+                // 3. ยืนยันการทำงาน
+                if (confirm(`ยืนยันการสร้างข้อมูลเงินเดือนสำหรับพนักงานที่เลือก (${selectedIDs.length} คน) หรือไม่?`)) {
 
                     const form = $('#form_data');
-                    const formData = form.serialize(); // รวบรวมข้อมูลฟอร์ม (รวมถึง input hidden "action")
+                    const formData = form.serialize();
                     const button = $(this);
 
                     // ปิดปุ่มและเปลี่ยนข้อความเพื่อแสดงสถานะกำลังโหลด
                     button.attr('disabled', true).html('กำลังสร้าง... <i class="fas fa-spinner fa-spin"></i>');
 
-                    // 2. ส่งข้อมูลผ่าน Ajax
+                    // 4. ส่งข้อมูลผ่าน Ajax
                     $.ajax({
                         type: 'POST',
                         url: 'model/generate_payroll_process.php',
                         data: formData,
                         dataType: 'json',
                         success: function (response) {
-                            // 3. จัดการผลลัพธ์
+                            // 5. จัดการผลลัพธ์
                             showAlert(response.message, response.status);
+                            // รีโหลดตาราง Datatable และล้างการเลือก Checkbox
+                            $('#employeeDataTable').DataTable().ajax.reload();
+                            $('#checkAll').prop('checked', false);
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            // 4. จัดการข้อผิดพลาด
+                            // 6. จัดการข้อผิดพลาด
                             console.error("AJAX Error: ", textStatus, errorThrown, jqXHR.responseText);
                             showAlert("เกิดข้อผิดพลาดในการเชื่อมต่อหรือประมวลผล: " + errorThrown + " (" + textStatus + ")", 'error');
                         },
                         complete: function () {
-                            // 5. คืนค่าปุ่ม
+                            // 7. คืนค่าปุ่ม
                             button.attr('disabled', false).html('สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i class="fas fa-magic"></i>');
                         }
                     });
@@ -296,7 +319,7 @@ if (strlen($_SESSION['alogin']) == "") {
             });
 
             // *** การตั้งค่า Datatable สำหรับตารางพนักงาน (Server-side) ***
-            $('#employeeDataTable').DataTable({
+            const employeeTable = $('#employeeDataTable').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -305,25 +328,51 @@ if (strlen($_SESSION['alogin']) == "") {
                     "type": "POST"
                 },
                 "columns": [
-                    // ชื่อคอลัมน์ (data) ต้องตรงกับ Key ใน JSON ที่ส่งมาจาก get_employees_for_datatable.php
-                    {"data": "emp_id"},         // รหัสพนักงาน
-                    {"data": "full_name"},      // ชื่อ-นามสกุล
-                    {"data": "position_desc"},// ตำแหน่ง
-                    {"data": "salary_type"},// ประเภท
-                    {"data": "salary", "className": "text-right"}, // ฐานเงินเดือน (กำหนดให้ชิดขวา)
-                    {"data": "start_work_date"},      // วันที่เริ่มงาน
-                    {"data": "status"}         // สถานะ (เช่น Active)
+                    // คอลัมน์ที่ 0: Checkbox
+                    { "data": "emp_id", "className": "text-center", "orderable": false },
+                    // คอลัมน์อื่นๆ (เลื่อน index ลงไป 1)
+                    {"data": "emp_id"},         // คอลัมน์ที่ 1: รหัสพนักงาน
+                    {"data": "full_name"},      // คอลัมน์ที่ 2: ชื่อ-นามสกุล
+                    {"data": "position_desc"},  // คอลัมน์ที่ 3: ตำแหน่ง
+                    {"data": "salary_type"},    // คอลัมน์ที่ 4: ประเภท
+                    {"data": "salary", "className": "text-right"}, // คอลัมน์ที่ 5: ฐานเงินเดือน
+                    {"data": "start_work_date"},// คอลัมน์ที่ 6: วันที่เริ่มงาน
+                    {"data": "status"}          // คอลัมน์ที่ 7: สถานะ
                 ],
                 "columnDefs": [
-                    {"orderable": false, "targets": [3, 4]} // กำหนดคอลัมน์ที่ไม่ให้เรียง
+                    {
+                        // กำหนดรูปแบบการแสดงผลของ Checkbox (คอลัมน์ 0)
+                        "targets": 0,
+                        "render": function (data, type, row, meta) {
+                            // data คือ emp_id
+                            return '<input type="checkbox" name="emp_check" value="' + data + '">';
+                        }
+                    },
+                    // ปรับ targets สำหรับ columnDefs ให้ตรงกับ index ใหม่
+                    {"orderable": false, "targets": [0, 4, 5, 6, 7]}
                 ],
-                "order": [[0, 'asc']], // เรียงตามรหัสพนักงาน
+                "order": [[1, 'asc']], // เรียงตามรหัสพนักงาน (คอลัมน์ที่ 1)
                 "language": {
                     // ต้องมีไฟล์ภาษาไทย (thai.json) ใน path ที่กำหนด
                     "url": "vendor/datatables/thai.json"
                 }
             });
             // **************************************************
+
+            // *** Logic สำหรับ Check All/Uncheck All ***
+            $('#checkAll').on('click', function () {
+                // เลือก Checkbox ทั้งหมดในหน้าปัจจุบันของ Datatable
+                const isChecked = $(this).prop('checked');
+                // ใช้ employeeTable.$('input[name="emp_check"]') เพื่อเข้าถึง Checkbox ที่กำลังแสดงบนหน้าจอ
+                employeeTable.$('input[name="emp_check"]').prop('checked', isChecked);
+            });
+
+            // ป้องกัน checkAll ค้างเมื่อมีการ Uncheck รายตัว
+            $('#employeeDataTable').on('change', 'input[name="emp_check"]', function() {
+                if (!this.checked) {
+                    $('#checkAll').prop('checked', false);
+                }
+            });
         });
     </script>
 
