@@ -15,8 +15,11 @@
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/myadmin.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="vendor/alertify/css/alertify.core.css"/>
-    <link rel="stylesheet" href="vendor/alertify/css/alertify.default.css"/>
+    <!--link rel="stylesheet" href="vendor/alertify/css/alertify.core.css"/>
+    <link rel="stylesheet" href="vendor/alertify/css/alertify.default.css"/-->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 
     <!--link rel="stylesheet" href="vendor/alertify/css/main.css"/-->
 

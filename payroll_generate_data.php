@@ -223,6 +223,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script src="vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
     <script>
         // ฟังก์ชันสำหรับแสดงข้อความแจ้งเตือน
         function showAlert(message, type) {
@@ -282,40 +283,51 @@ if (strlen($_SESSION['alogin']) == "") {
                 // ส่งเป็น String ที่คั่นด้วย comma (เช่น "E001,E005,E010")
                 $('#selected_employees').val(selectedIDs.join(','));
 
-                // 3. ยืนยันการทำงาน
-                if (confirm(`ยืนยันการสร้างข้อมูลเงินเดือนสำหรับพนักงานที่เลือก (${selectedIDs.length} คน) หรือไม่?`)) {
+// 3. ยืนยันการทำงาน (ใช้ alertify.confirm แทน confirm ธรรมดา)
+                alertify.confirm(
+                    'ยืนยันการทำงาน',
+                    `ยืนยันการสร้างข้อมูลเงินเดือนสำหรับพนักงานที่เลือก (${selectedIDs.length} คน) หรือไม่?`,
+                    function () {
+                        // ✅ ถ้าผู้ใช้กด "ตกลง"
+                        const form = $('#form_data');
+                        const formData = form.serialize();
+                        const button = $('.btn-generate'); // ปรับให้ตรงกับปุ่มจริงของคุณ เช่น id/class
 
-                    const form = $('#form_data');
-                    const formData = form.serialize();
-                    const button = $(this);
+                        // ปิดปุ่มและเปลี่ยนข้อความเพื่อแสดงสถานะกำลังโหลด
+                        button.attr('disabled', true).html('กำลังสร้าง... <i class="fas fa-spinner fa-spin"></i>');
 
-                    // ปิดปุ่มและเปลี่ยนข้อความเพื่อแสดงสถานะกำลังโหลด
-                    button.attr('disabled', true).html('กำลังสร้าง... <i class="fas fa-spinner fa-spin"></i>');
-
-                    // 4. ส่งข้อมูลผ่าน Ajax
-                    $.ajax({
-                        type: 'POST',
-                        url: 'model/generate_payroll_process.php',
-                        data: formData,
-                        dataType: 'json',
-                        success: function (response) {
-                            // 5. จัดการผลลัพธ์
-                            showAlert(response.message, response.status);
-                            // รีโหลดตาราง Datatable และล้างการเลือก Checkbox
-                            $('#employeeDataTable').DataTable().ajax.reload();
-                            $('#checkAll').prop('checked', false);
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            // 6. จัดการข้อผิดพลาด
-                            console.error("AJAX Error: ", textStatus, errorThrown, jqXHR.responseText);
-                            showAlert("เกิดข้อผิดพลาดในการเชื่อมต่อหรือประมวลผล: " + errorThrown + " (" + textStatus + ")", 'error');
-                        },
-                        complete: function () {
-                            // 7. คืนค่าปุ่ม
-                            button.attr('disabled', false).html('สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i class="fas fa-magic"></i>');
-                        }
-                    });
-                }
+                        // 4. ส่งข้อมูลผ่าน Ajax
+                        $.ajax({
+                            type: 'POST',
+                            url: 'model/generate_payroll_process.php',
+                            data: formData,
+                            dataType: 'json',
+                            success: function (response) {
+                                // 5. จัดการผลลัพธ์
+                                showAlert(response.message, response.status);
+                                // รีโหลดตาราง Datatable และล้างการเลือก Checkbox
+                                $('#employeeDataTable').DataTable().ajax.reload();
+                                $('#checkAll').prop('checked', false);
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                // 6. จัดการข้อผิดพลาด
+                                console.error("AJAX Error: ", textStatus, errorThrown, jqXHR.responseText);
+                                showAlert(
+                                    "เกิดข้อผิดพลาดในการเชื่อมต่อหรือประมวลผล: " + errorThrown + " (" + textStatus + ")",
+                                    'error'
+                                );
+                            },
+                            complete: function () {
+                                // 7. คืนค่าปุ่ม
+                                button.attr('disabled', false).html('สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i class="fas fa-magic"></i>');
+                            }
+                        });
+                    },
+                    function () {
+                        // ❌ ถ้าผู้ใช้กด "ยกเลิก"
+                        alertify.message('ยกเลิกการสร้างข้อมูลเงินเดือน');
+                    }
+                ).set('labels', {ok: 'ตกลง', cancel: 'ยกเลิก'});
             });
 
             // *** การตั้งค่า Datatable สำหรับตารางพนักงาน (Server-side) ***
