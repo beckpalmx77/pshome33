@@ -595,6 +595,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         let start_w_date = start_work_date.substr(3, 2) + "/" + start_work_date.substr(0, 2) + "/" + start_work_date.substr(6, 10);
                         let image = response[i].image;
                         work_age = getAge(start_w_date);
+                        let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -615,6 +616,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         $('#salary').val(salary);
                         $('#week_holiday').val(week_holiday);
                         $('#work_age').val(work_age);
+                        $('#status').val(status);
 
                         if (image) {
                             $('#preview-image').attr('src', 'uploads/employees/' + image).show();

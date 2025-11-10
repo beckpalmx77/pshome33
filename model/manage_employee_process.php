@@ -189,11 +189,7 @@ if ($_POST["action"] === 'UPDATE') {
         if (!$success) {
             file_put_contents("upload_error.txt", "ไม่สามารถอัปโหลดรูปได้: " . print_r($_FILES['image'], true));
         }
-/*
-        $myfile = fopen("a-permission.txt", "w") or die("Unable to open file!");
-        fwrite($myfile, " Row file_name = " . $image_filename);
-        fclose($myfile);
-*/
+
         // ตรวจสอบว่ามี emp_id ซ้ำแต่ไม่ใช่ record ตัวเอง
         $sql_find = "SELECT COUNT(*) FROM memployee WHERE emp_id = :emp_id AND id != :id";
         $stmt_check = $conn->prepare($sql_find);
@@ -221,7 +217,8 @@ if ($_POST["action"] === 'UPDATE') {
                     phone = :phone,
                     image = :image,
                     salary_type = :salary_type,
-                    salary = :salary
+                    salary = :salary,
+                    status = :status
                     WHERE id = :id";
 
             $query = $conn->prepare($sql);
@@ -241,9 +238,16 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':image', $image_filename);
             $query->bindParam(':salary_type', $salary_type);
             $query->bindParam(':salary', $salary);
+            $query->bindParam(':status', $status);
             $query->bindParam(':id', $id);
 
             $query->execute();
+            
+/*
+            $myfile = fopen("a-permission.txt", "w") or die("Unable to open file!");
+            fwrite($myfile, " Row sql = " . $sql);
+            fclose($myfile);
+*/
 
             if ($query->rowCount() > 0) {
                 echo $save_success; // กำหนดข้อความ เช่น `$save_success = "บันทึกสำเร็จ";`
