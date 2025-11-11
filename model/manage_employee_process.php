@@ -242,7 +242,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':id', $id);
 
             $query->execute();
-            
+
 /*
             $myfile = fopen("a-permission.txt", "w") or die("Unable to open file!");
             fwrite($myfile, " Row sql = " . $sql);
