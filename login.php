@@ -1,114 +1,55 @@
+<?php
+// login.php
+
+// ----------------------------------------------------------------------
+// 1. PHP Logic & Security Checks
+// ----------------------------------------------------------------------
+
+// ตรวจสอบและดึงค่าจาก Cookie พร้อมทำ Security Escaping เพื่อป้องกัน XSS
+// **สำคัญ: เราจะไม่ดึงรหัสผ่านจาก Cookie เด็ดขาด**
+$username_cookie = isset($_COOKIE["username"]) ? htmlspecialchars($_COOKIE["username"], ENT_QUOTES, 'UTF-8') : '';
+$remember_chk_cookie = isset($_COOKIE["remember_chk"]) ? htmlspecialchars($_COOKIE["remember_chk"], ENT_QUOTES, 'UTF-8') : '';
+
+// สมมติว่า includes/Header.php และ includes/CheckDevice.php มีอยู่จริง
+include('includes/Header.php');
+include('includes/CheckDevice.php');
+
+// สมมติว่า $_SESSION['deviceType'] ถูกกำหนดใน CheckDevice.php
+$device_class = (isset($_SESSION['deviceType']) && $_SESSION['deviceType'] == 'computer') ? 'color-blue' : 'color-red';
+
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 
-<?php
-include('includes/Header.php');
-include('includes/CheckDevice.php');
-?>
-
-<style>
-    body {
-        font-family: 'Prompt', sans-serif;
-    }
-</style>
-
-<style type="text/css">
-    /* แก้ไขตรงนี้: ลบ float และ margin-top ออก เพื่อให้ position: absolute ทำงานได้อย่างถูกต้อง */
-    .toggleeye {
-        position: relative; /* ยังคงไว้เผื่อการใช้งานอื่นๆ แต่ไม่ส่งผลต่อการจัดตำแหน่งในที่นี้ */
-        z-index: 2;
-        color: darkgrey;
-    }
-</style>
-
-
-<script>
-
-    $(document).ready(function () {
-        let username = '<?php if (isset($_COOKIE["username"])) {
-            echo $_COOKIE["username"];
-        } ?>';
-        let password = '<?php if (isset($_COOKIE["password"])) {
-            echo $_COOKIE["password"];
-        } ?>';
-        let remember_chk = '<?php echo $_COOKIE["remember_chk"]?>';
-
-        $("#username").val(username);
-        $("#password").val(password);
-
-        if (remember_chk === "check") {
-            $("#remember").prop('checked', true); // Checked
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ระบบบริหารงานนิติบุคคลหมู่บ้าน</title>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
         }
-
-    });
-
-</script>
-
-<script>
-    $(document).ready(function () {
-        $("button").click(function () {
-            check_login();
-        });
-    });
-
-</script>
-
-<script>
-    function check_login() {
-        let username = $("#username").val();
-        let password = $("#password").val();
-        let remember = "";
-
-        if ($("#remember").prop("checked")) {
-            remember = $("#remember").val();
+        /* Custom CSS Classes */
+        .color-blue {
+            color: blue;
         }
-
-        if (username != "" && password != "") {
-            $.ajax
-            ({
-                type: 'post',
-                url: 'login_process.php',
-                data: {
-                    username: username,
-                    password: password,
-                    remember: remember,
-                },
-                success: function (response) {
-                    if (response !== "0") {
-                        window.location.href = response;
-                    } else {
-                        alert("เข้าระบบไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
-                        window.location.href = "login.php";
-                    }
-                }
-            });
-        } else {
-            alert("Please Fill All The Details");
+        .color-red {
+            color: red;
         }
-
-        return false;
-    }
-</script>
-
-
-<script type='text/javascript'>
-    $(document).ready(function () {
-        $('#togglePassword').click(function () {
-            //alert($(this).is(':checked'));
-            $('#password').attr('type') === 'password' ? $('#password').attr('type', 'text') : $('#password').attr('type', 'password');
-        });
-    });
-</script>
-
-<script>
-    $(document).keyup(function(event) {
-        if (event.which === 13) {
-            check_login();
+        .toggleeye {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            z-index: 2;
+            color: darkgrey;
         }
-    });
-</script>
+    </style>
+</head>
 
-<body class="bg-gradient-login">
+<body>
 <div class="container-login">
     <div class="row justify-content-center">
         <div class="col-xl-6 col-lg-12 col-md-9">
@@ -136,8 +77,7 @@ include('includes/CheckDevice.php');
                                         <input type="password" class="form-control" id="password"
                                                value=""
                                                placeholder="Password">
-                                        <span class="far fa-eye toggleeye" id="togglePassword"
-                                              style="cursor: pointer; position: absolute; top: 50%; right: 10px; transform: translateY(-50%);"></span>
+                                        <span class="far fa-eye toggleeye" id="togglePassword"></span>
                                     </div>
                                 </div>
 
@@ -145,14 +85,10 @@ include('includes/CheckDevice.php');
                                 <div class="form-group row">
                                     <div class="col-sm-12">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="on" id="remember"
+                                            <input class="form-check-input" type="checkbox" value="check" id="remember"
                                                    name="remember">
                                             <label class="form-check-label" for="remember">
-                                                <?php  if ($_SESSION['deviceType']=='computer') {?>
-                                                    <p style="color:blue;">Remember Me 30 Days</p>
-                                                <?php } else { ?>
-                                                    <p style="color:red;">Remember Me 30 Days</p>
-                                                <?php } ?>
+                                                <p class="<?php echo $device_class; ?>">Remember Me 30 Days</p>
                                             </label>
                                         </div>
                                     </div>
@@ -163,6 +99,7 @@ include('includes/CheckDevice.php');
                                             class="form-control btn btn-primary">
                                             <span class="spinner">
                                                 <i class="icon-spin icon-refresh" id="spinner"></i></span> Log In
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -172,6 +109,89 @@ include('includes/CheckDevice.php');
         </div>
     </div>
 </div>
+
+<script>
+    // ฟังก์ชันหลักสำหรับตรวจสอบและส่งข้อมูล Login
+    function check_login() {
+        let username = $("#username").val();
+        let password = $("#password").val();
+        let remember = "";
+
+        if ($("#remember").prop("checked")) {
+            remember = $("#remember").val();
+        }
+
+        if (username !== "" && password !== "") {
+            $.ajax
+            ({
+                type: 'post',
+                url: 'login_process.php',
+                data: {
+                    username: username,
+                    password: password, // ส่งรหัสผ่านไป Server เพื่อ HASH และตรวจสอบ
+                    remember: remember,
+                },
+                success: function (response) {
+                    if (response !== "0") {
+                        // Login สำเร็จ - Redirect ไปหน้าตามที่ Server ระบุ
+                        window.location.href = response;
+                    } else {
+                        // Login ไม่สำเร็จ
+                        alert("เข้าระบบไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+                        $("#password").val(""); // เคลียร์ช่องรหัสผ่าน
+                        // ไม่ต้อง Redirect ซ้ำไปหน้า login.php
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // จัดการข้อผิดพลาดเมื่อเกิดปัญหาในการเชื่อมต่อ AJAX
+                    alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error);
+                }
+            });
+        } else {
+            alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+        }
+
+        return false;
+    }
+
+    // รวม Event Handlers ทั้งหมดไว้ใน $(document).ready() เดียว
+    $(document).ready(function () {
+        // 1. กำหนดค่าเริ่มต้นจาก Cookie
+        let username = '<?php echo $username_cookie; ?>';
+        let remember_chk = '<?php echo $remember_chk_cookie; ?>';
+
+        $("#username").val(username);
+        if (remember_chk === "check") {
+            $("#remember").prop('checked', true);
+        }
+
+        // 2. ผูก Event กับปุ่ม Login (เมื่อคลิก)
+        $("#login-submit").click(function () {
+            check_login();
+        });
+
+        // 3. ผูก Event กด Enter (Key Up)
+        $(document).keyup(function(event) {
+            if (event.which === 13) {
+                check_login();
+            }
+        });
+
+        // 4. Toggle Password (ซ่อน/แสดงรหัสผ่าน)
+        $('#togglePassword').click(function () {
+            let passwordField = $('#password');
+            let fieldType = passwordField.attr('type');
+
+            if (fieldType === 'password') {
+                passwordField.attr('type', 'text');
+                $(this).removeClass('far fa-eye').addClass('far fa-eye-slash');
+            } else {
+                passwordField.attr('type', 'password');
+                $(this).removeClass('far fa-eye-slash').addClass('far fa-eye');
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

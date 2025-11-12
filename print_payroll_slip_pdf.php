@@ -1,6 +1,6 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 error_reporting(E_ALL & ~E_DEPRECATED); // Hides deprecated warnings. For production, consider 'error_reporting(0);'
-
 session_start();
 require_once('vendor/tecnickcom/tcpdf/tcpdf.php');
 include 'config/connect_db.php';
