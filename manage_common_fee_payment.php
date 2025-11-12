@@ -254,7 +254,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                required="required"
                                                                                placeholder="">
                                                                     </div>
-                                                                    <div class="col-sm-4">
+                                                                    <!--div class="col-sm-4">
                                                                         <label for="payment_method"
                                                                                class="control-label">วิธีการชำระ</label>
                                                                         <input type="text" class="form-control"
@@ -262,6 +262,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                name="payment_method"
                                                                                readonly="true"
                                                                                placeholder="">
+                                                                    </div-->
+                                                                    <div class="col-sm-4">
+                                                                        <label for="payment_method"
+                                                                               class="control-label">วิธีการชำระ</label>
+                                                                        <select class="form-control"
+                                                                                id="payment_method"
+                                                                                name="payment_method"
+                                                                                required> <option value="-" disabled selected>กรุณาเลือกวิธีการชำระ</option>
+                                                                            <option value="โอนเงิน">โอนเงิน</option>
+                                                                            <option value="เงินสด">เงินสด</option>
+                                                                        </select>
                                                                     </div>
                                                                     <div class="col-sm-4">
                                                                         <label for="payment_status_desc"

@@ -75,7 +75,14 @@ if ($_POST["action"] === 'UPDATE') {
         $period_month_to = $_POST["period_month_to"];
         $period_year = $_POST["period_year"];
         $amount = $_POST["amount"];
+        $payment_method = $_POST["payment_method"];
 
+/*
+        $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
+        fwrite($myfile, $payment_status  . " | " . $payment_method);
+        fclose($myfile);
+*/
+        
         // ตรวจสอบเงื่อนไข: ถ้าเลือกเดือนมกราคมถึงธันวาคม (1 ถึง 12)
         if ($period_month_start == 1 && $period_month_to == 12) {
             // กำหนดค่า payment_type เป็น 12 ทันที
@@ -126,7 +133,8 @@ if ($_POST["action"] === 'UPDATE') {
                 period_year = :period_year,
                 payment_type = :payment_type,  
                 amount = :amount, 
-                update_count = :new_update_count 
+                update_count = :new_update_count,
+                payment_method = :payment_method   
             WHERE id = :id";
 
             $query = $conn->prepare($sql_update);
@@ -138,6 +146,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':payment_type', $payment_type, PDO::PARAM_STR);
             $query->bindParam(':amount', $amount, PDO::PARAM_STR);
             $query->bindParam(':new_update_count', $new_update_count, PDO::PARAM_INT);
+            $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
 
