@@ -82,7 +82,7 @@ if ($_POST["action"] === 'UPDATE') {
         fwrite($myfile, $payment_status  . " | " . $payment_method);
         fclose($myfile);
 */
-        
+
         // ตรวจสอบเงื่อนไข: ถ้าเลือกเดือนมกราคมถึงธันวาคม (1 ถึง 12)
         if ($period_month_start == 1 && $period_month_to == 12) {
             // กำหนดค่า payment_type เป็น 12 ทันที

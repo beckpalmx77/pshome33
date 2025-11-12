@@ -269,7 +269,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                         <select class="form-control"
                                                                                 id="payment_method"
                                                                                 name="payment_method"
-                                                                                required> <option value="-" disabled selected>กรุณาเลือกวิธีการชำระ</option>
+                                                                                required>
                                                                             <option value="โอนเงิน">โอนเงิน</option>
                                                                             <option value="เงินสด">เงินสด</option>
                                                                         </select>
