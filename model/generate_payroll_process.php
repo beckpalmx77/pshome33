@@ -71,12 +71,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $employees = $stmt_emp->fetchAll(PDO::FETCH_ASSOC);
 
         // ----------------------------------------------------------------------
+        // *** คำนวณจำนวนวันในเดือน (ใช้สำหรับพนักงานรายวัน) ***
+        $target_date_str = $payroll_year . '-' . $month_str . '-01'; // สร้างวันที่ 1 ของเดือนเป้าหมาย
+        $days_in_month = date('t', strtotime($target_date_str)); // 't' คือฟอร์แมตสำหรับจำนวนวันในเดือน
+        // ***************************************************************
+
         // 5. วนลูปเพื่อตรวจสอบและ INSERT ข้อมูล
         // ----------------------------------------------------------------------
         $conn->beginTransaction();
 
         foreach ($employees as $emp) {
             $emp_id = $emp['emp_id'];
+            $salary_type = $emp['salary_type']; // ดึงประเภทเงินเดือนมาใช้
             $salary = (float)$emp['salary'];
 
             // 5.1 ตรวจสอบ Key ซ้ำ
@@ -89,10 +95,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $count = $stmt_check->fetchColumn();
 
             if ($count == 0) {
-                // 5.2 INSERT
+                // 5.2 INSERT ims_payroll (Header)
                 $doc_no = $doc_no_prefix . str_pad($next_running, 4, '0', STR_PAD_LEFT);
                 $total_amount = $salary;
-                $work_day_month = 30.00;
+
+                // กำหนด work_day_month ใน ims_payroll ให้สอดคล้อง
+                $work_day_month = ($salary_type == 'D') ? (float)$days_in_month : 30.00; // หากเป็นรายวัน ให้ใช้จำนวนวันในเดือน, รายเดือนใช้ 30
 
                 $sql_insert = "INSERT INTO ims_payroll 
                                 (doc_no, doc_date, emp_id, payroll_month, payroll_year, work_day_month, total_amount, payment_method, bank_no, print_slip_status)
@@ -113,6 +121,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ]);
 
                 if ($result) {
+                    // ----------------------------------------------------------------------
+                    // 5.3 กำหนดค่าสำหรับ ims_payroll_detail ตาม salary_type
+                    // ----------------------------------------------------------------------
+                    $icd_type_id = 'IC-0001';
+                    $icd_type_sign = '+';
+                    $total_detail_amount = $salary;
+
+                    if ($salary_type == 'D') {
+                        // **กรณี รายวัน (D): Quantity = จำนวนวันในเดือน**
+                        $quantity = (float)$days_in_month;
+                        $amount_per_unit = $salary; // เงินเดือนต่อวัน
+                        $remark = 'ค่าแรง/เงินเดือนพื้นฐาน (รายวัน)';
+                    } else {
+                        // **กรณี รายเดือน (M): Quantity = 1**
+                        $quantity = 1.00;
+                        $amount_per_unit = $salary; // เงินเดือนเต็ม
+                        $remark = 'เงินเดือนพื้นฐาน (รายเดือน)';
+                    }
+
+                    $sql_insert_detail = "INSERT INTO ims_payroll_detail 
+                                            (doc_no, doc_date, emp_id, payroll_month, payroll_year, icd_type_id, icd_type_sign, quantity, amount_per_unit, total_amount, remark)
+                                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+                    $stmt_insert_detail = $conn->prepare($sql_insert_detail);
+                    $stmt_insert_detail->execute([
+                        $doc_no,
+                        $doc_date_db_format,
+                        $emp_id,
+                        $payroll_month,
+                        $payroll_year,
+                        $icd_type_id,
+                        $icd_type_sign,
+                        $quantity,
+                        $amount_per_unit,
+                        $total_detail_amount,
+                        $remark
+                    ]);
+
                     $inserted_count++;
                     $next_running++;
                 }

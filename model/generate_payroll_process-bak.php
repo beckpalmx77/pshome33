@@ -18,6 +18,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $payroll_month = (int)$_POST['payroll_month'];
         $payroll_year = (int)$_POST['payroll_year'];
 
+        // *** รับค่าพนักงานที่ถูกเลือกและเตรียมสำหรับ SQL IN Clause ***
+        $selected_employees_string = $_POST['selected_employees']; // "E001,E005,E010"
+        if (empty($selected_employees_string)) {
+            echo json_encode(['status' => 'error', 'message' => 'ไม่พบข้อมูลพนักงานที่ถูกเลือก']);
+            exit();
+        }
+        $selected_employees_array = explode(',', $selected_employees_string);
+        // สร้าง Placeholders: ?, ?, ?
+        $placeholders = rtrim(str_repeat('?,', count($selected_employees_array)), ',');
+        // ***************************************************************
+
         // แปลง doc_date เป็น DD-MM-YYYY เพื่อบันทึกในฐานข้อมูล
         list($d, $m, $y) = explode('/', $doc_date_raw);
         $doc_date_db_format = $d . '-' . $m . '-' . $y;
@@ -44,10 +55,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         // ----------------------------------------------------------------------
-        // 4. ดึงข้อมูลพนักงานที่สถานะเป็น 'Y' (Active Employees)
+        // 4. ดึงข้อมูลพนักงานที่ถูกเลือกและสถานะเป็น 'Y' (Active Employees)
         // ----------------------------------------------------------------------
-        $sql_emp = "SELECT emp_id, salary_type, salary FROM memployee WHERE status = 'Y' ORDER BY emp_id ";
+        $sql_emp = "SELECT emp_id, salary_type, salary FROM memployee 
+                    WHERE status = 'Y' AND emp_id IN ({$placeholders}) 
+                    ORDER BY emp_id ";
         $stmt_emp = $conn->prepare($sql_emp);
+
+        // Bind ค่า emp_id ทีละตัว
+        for ($i = 0; $i < count($selected_employees_array); $i++) {
+            $stmt_emp->bindParam($i + 1, $selected_employees_array[$i]);
+        }
+
         $stmt_emp->execute();
         $employees = $stmt_emp->fetchAll(PDO::FETCH_ASSOC);
 
@@ -111,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $response = [
                 'status' => 'info',
-                'message' => "ไม่มีรายการเงินเดือนที่ถูกสร้างใหม่ สำหรับเดือน {$payroll_month} ปี {$payroll_year} (อาจมีข้อมูลอยู่แล้ว)"
+                'message' => "ไม่มีรายการเงินเดือนที่ถูกสร้างใหม่ สำหรับพนักงานที่เลือก (อาจมีข้อมูลอยู่แล้ว หรือพนักงานไม่อยู่ในสถานะ Active)"
             ];
         }
 
