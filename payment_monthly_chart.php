@@ -52,7 +52,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                             <div class="col-auto">
                                                 <button type='button' name='btnLoadChart' id='btnLoadChart'
-                                                        class='btn btn-success'>แสดงกราฟ
+                                                        class='btn btn-success'>แสดงกราฟ (Reload Data)
                                                     <i class="fa fa-chart-bar"></i>
                                                 </button>
                                             </div>
