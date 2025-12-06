@@ -19,13 +19,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <h1 class="h3 mb-0 text-gray-800">รายงานสรุปยอดรวมค่าส่วนกลางรายเดือน</h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
-                            </li>
-                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
-                            <li class="breadcrumb-item active"
-                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
+                            <li class="breadcrumb-item">รายงาน</li>
+                            <li class="breadcrumb-item active" aria-current="page">กราฟรายเดือน</li>
                         </ol>
                     </div>
 
@@ -44,8 +42,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <label for="selectYear" class="control-label"><b>ปี พ.ศ.</b></label>
                                                 <select id="selectYear" class="form-control" style="min-width: 120px;">
                                                     <?php
-                                                    // สร้างตัวเลือกปี พ.ศ. ปัจจุบันและย้อนหลัง 5 ปี
-                                                    // (ตัวแปร $current_year_en ต้องถูกกำหนดไว้ใน PHP ด้านบน)
                                                     for ($y = $current_year_en + 543; $y >= $current_year_en + 543 - 5; $y--) {
                                                         $selected = ($y - 543 == $current_year_en) ? 'selected' : '';
                                                         echo "<option value='".($y - 543)."' $selected>$y</option>";
@@ -61,6 +57,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 </button>
                                             </div>
                                         </div>
+
                                         <hr/>
 
                                         <div class="row">
@@ -98,7 +95,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script src="js/myadmin.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script> <script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <script>
         let myBarChart = null; // ตัวแปรสำหรับเก็บ Object กราฟ
 
         /**
@@ -118,8 +117,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             // แสดงสถานะกำลังโหลด
             chartTitle.textContent = 'กำลังโหลดข้อมูล...';
 
-            // ดึงข้อมูลจาก PHP-Backend (ใช้ GET method เพื่อส่งปี)
-            // *** ต้องแน่ใจว่า payment_summary_json.php อยู่ใน path ที่ถูกต้อง ***
+            // ดึงข้อมูลจาก PHP-Backend
+            // *** PATH ที่ถูกต้อง: 'model/generate_graph_payment_monthly.php' ***
             fetch('model/generate_graph_payment_monthly.php?year=' + selectedYear)
                 .then(response => {
                     if (!response.ok) {
@@ -135,7 +134,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     }
 
                     // --- เตรียมข้อมูลสำหรับ Chart.js ---
-                    const labels = data.data.map(item => item.month_name); // ชื่อเดือน (ม.ค. YYYY)
+                    const labels = data.data.map(item => item.month_name); // ชื่อเดือน (ม.ค. 2568)
                     const amounts = data.data.map(item => item.total_amount); // ยอดรวม
 
                     chartTitle.textContent = data.report_title;
@@ -155,19 +154,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         },
                         options: {
                             responsive: true,
-                            maintainAspectRatio: false, // เพื่อให้ทำงานกับ height:40vh ได้ดี
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: {
                                     display: false
                                 },
-                                // ตั้งค่า DataLabels (ถ้าใช้)
-                                // datalabels: {
-                                //     anchor: 'end',
-                                //     align: 'top',
-                                //     formatter: (value) => {
-                                //         return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); // จัดรูปแบบตัวเลข
-                                //     }
-                                // }
                             },
                             scales: {
                                 y: {
@@ -189,10 +180,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
         // ผูก Event Listener
         $(document).ready(function() {
-            // โหลดกราฟครั้งแรก
+            // 1. โหลดกราฟครั้งแรกเมื่อเข้าหน้า
             loadChart();
-            // เมื่อคลิกปุ่มแสดงกราฟ
+
+            // 2. เมื่อคลิกปุ่มแสดงกราฟ
             $("#btnLoadChart").click(loadChart);
+
+            // 3. เมื่อค่าใน dropdown ปีมีการเปลี่ยนแปลง (โหลดอัตโนมัติ)
+            $("#selectYear").change(loadChart);
         });
     </script>
 
