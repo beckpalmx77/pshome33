@@ -608,9 +608,9 @@ if (strlen($_SESSION['alogin']) === "") {
 
             if (showPopup) {
                 // Use a slight delay to ensure Bootstrap's JS is fully loaded
-                setTimeout(function () {
-                    $('#promotionModal').modal('show');
-                }, 500); // 500ms delay
+                // setTimeout(function () {
+                    // $('#promotionModal').modal('show');
+                // }, 500); // 500ms delay
 
                 // Set month_year_calculator to 11 for the discount if promotion is active
                 $("#month_year_calculator").val(11);
