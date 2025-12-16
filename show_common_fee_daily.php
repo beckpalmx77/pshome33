@@ -234,7 +234,7 @@ function exportToCSV($data, $start_date, $end_date)
         $('#PaymentTable').DataTable({
             responsive: false, // ปิด responsive เพื่อบังคับให้แสดงครบและมี scroll แนวนอนแทน (เหมาะกับ report)
             scrollX: true,     // เปิด Scroll แนวนอน
-            pageLength: 20,
+            pageLength: 10,
             lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
             order: [[0, 'asc']], // เรียงตามลำดับ # (index 0)
             language: {
