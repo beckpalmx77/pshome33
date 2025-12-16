@@ -85,3 +85,6 @@
 [SUCCESS] 2025-11-30 16:43:40 | UserID: U512dcde88d011d3a73113284903b91ca | Name: MON
 [SUCCESS] 2025-12-02 16:40:43 | UserID: Ubff699babe8d57c8b17bba83f0d03005 | Name: wiw....
 [SUCCESS] 2025-12-04 16:24:31 | UserID: Ua8f1112b041a82b71689174f7954e354 | Name: แอล-Devil
+[SUCCESS] 2025-12-05 15:48:14 | UserID: Uf26e2cb66cefb9bea82e4b6c639359a2 | Name: Leew 🌿 Ton🕊Leew 🦉🧲💰
+[SUCCESS] 2025-12-05 16:52:28 | UserID: Uf1152398acbd699ef92f17a72ae8f073 | Name: Maprang ข้าวผัด🥕🥒
+[SUCCESS] 2025-12-10 10:50:02 | UserID: U6a6104f2c0df20c12bbb8342da1b55a3 | Name: ตั้ม

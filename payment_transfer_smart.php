@@ -497,7 +497,9 @@ foreach ($BankCurr as $row_curr) {
                                 window.initWithCommonFeeInput();
 
                                 // NOW, re-apply promotion logic to override defaults if promo is active
-                                applyPromotionLogic(); // ADDED THIS LINE
+
+                                // ปิดใช้งานก่อน รอสรุป 15-12-2025
+                                //applyPromotionLogic(); // ADDED THIS LINE
 
                                 //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
                                 document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
@@ -702,10 +704,12 @@ foreach ($BankCurr as $row_curr) {
         }
 
         if (showPopup) {
+
+            // ปิดใช้งานก่อน รอสรุป 15-12-2025
             // Use a slight delay to ensure Bootstrap's JS is fully loaded
-            setTimeout(function () {
-                $('#promotionModal').modal('show');
-            }, 500); // 500ms delay
+            //setTimeout(function () {
+                //$('#promotionModal').modal('show');
+            //}, 500); // 500ms delay
 
             // Set month_year_calculator to 11 for the discount if promotion is active
             $("#month_year_calculator").val(11);
@@ -731,9 +735,11 @@ foreach ($BankCurr as $row_curr) {
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        applyPromotionLogic(); // Call on DOMContentLoaded
-    });
+    // ปิดใช้งานก่อน รอสรุป 15-12-2025
+    //document.addEventListener('DOMContentLoaded', function () {
+        //applyPromotionLogic(); // Call on DOMContentLoaded
+    //});
+
 </script>
 <script>
     $(document).ready(function () {
