@@ -148,7 +148,7 @@ function exportToCSV($data, $start_date, $end_date)
                 <input type="hidden" name="payment_method" value="<?php echo isset($_POST["payment_method"]) ? htmlentities($_POST["payment_method"]) : 'all'; ?>">
 
                 <button type="submit" name="export" value="1" class="btn btn-success">
-                    <i class="fa fa-file-excel-o"></i> Export CSV
+                    <i class="fa fa-file-excel-o"></i> Export Excel
                 </button>
 
                 <button type="button" class="btn btn-primary" onclick="openPrintWindow()">
