@@ -60,7 +60,7 @@ function exportToCSV($data, $start_date, $end_date)
     $output = fopen('php://output', 'w');
 
     // Header
-    fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'สถานะ', 'วิธีชำระ']);
+    fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'สถานะ', 'ผู้สร้างรายการ', 'วิธีชำระ']);
 
     $sum_amount = 0; // ตัวแปรเก็บยอดรวม
 
@@ -84,6 +84,7 @@ function exportToCSV($data, $start_date, $end_date)
             $row->payment_type,
             number_format($amount, 2), // รูปแบบ 2 ตำแหน่งทศนิยม
             $payment_status_desc,
+            $row->create_by,
             $row->payment_method
         ]);
     }
@@ -203,6 +204,7 @@ function exportToCSV($data, $start_date, $end_date)
                     <th>จำนวนงวด</th>
                     <th>จำนวนเงินที่ชำระ</th>
                     <th>สถานะ</th>
+                    <th>ผู้สร้างรายการ</th>
                     <th>วิธีชำระ</th>
                 </tr>
                 </thead>
@@ -234,6 +236,7 @@ function exportToCSV($data, $start_date, $end_date)
                         <td><?php echo htmlentities($row_house_payment->payment_type); ?></td>
                         <td><?php echo htmlentities($row_house_payment->amount); ?></td>
                         <td><?php echo $payment_status_desc; ?></td>
+                        <td><?php echo htmlentities($row_house_payment->create_by); ?></td>
                         <td><?php echo htmlentities($row_house_payment->payment_method); ?></td>
                     </tr>
                 <?php endforeach; ?>
