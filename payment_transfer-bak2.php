@@ -26,13 +26,14 @@ if (strlen($_SESSION['alogin']) === "") {
         $l_name = $_SESSION['last_name'];
         $phone_number = $_SESSION['phone_number'];
 
-        $sql_house_master = " SELECT * FROM ims_house_master where house_number = '" . $house_number . "'";
+        $sql_house_master = " SELECT * FROM v_ims_house where house_number = '" . $house_number . "'";
         $stmt_house_master = $conn->prepare($sql_house_master);
         $stmt_house_master->execute();
         $hmCurr = $stmt_house_master->fetchAll();
         foreach ($hmCurr as $hm_curr) {
             $area_size = $hm_curr["area_size"];
             $common_fee = $hm_curr["common_fee"];
+            $phone_number = $hm_curr["phone_number"];
         }
 
     } else {
@@ -135,7 +136,8 @@ if (strlen($_SESSION['alogin']) === "") {
                                                                value="1">
                                                     </div>
                                                 </div>
-                                                <input type="hidden" id="month_year_calculator" name="month_year_calculator" value="12">
+                                                <input type="hidden" id="month_year_calculator"
+                                                       name="month_year_calculator" value="12">
                                             </div>
                                         </div>
 
@@ -184,7 +186,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                         style="background-color: #0dcaf0" required>
                                                     <?php
                                                     $currentYear = date('Y'); // ดึงปีปัจจุบัน
-                                                    $startYear = $currentYear - 1; // 1 ปีก่อนหน้า
+                                                    $startYear = $currentYear - 20; // 20 ปีก่อนหน้า
                                                     $endYear = $currentYear + 1;  // 1 ปีข้างหน้า
 
                                                     for ($year = $startYear; $year <= $endYear; $year++) {
@@ -328,13 +330,15 @@ if (strlen($_SESSION['alogin']) === "") {
                         </div>
                     </div>
 
-                    <div class="modal fade" id="promotionModal" tabindex="-1" role="dialog" aria-labelledby="promotionModalLabel"
+                    <div class="modal fade" id="promotionModal" tabindex="-1" role="dialog"
+                         aria-labelledby="promotionModalLabel"
                          aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header bg-success text-white">
                                     <h5 class="modal-title" id="promotionModalLabel">📣 ประชาสัมพันธ์</h5>
-                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close text-white" data-dismiss="modal"
+                                            aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -342,7 +346,8 @@ if (strlen($_SESSION['alogin']) === "") {
                                     <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า</p>
                                     <p class="h6 text-primary">รับส่วนลดทันที 1 เดือน (ชำระเพียง 11 เดือน)</p>
                                     <p class="h6 text-danger">โปรโมชั่นนี้มีผลถึงวันที่ 31 มกราคม</p>
-                                    <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3" style="max-width: 100%; height: auto;">
+                                    <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3"
+                                         style="max-width: 100%; height: auto;">
                                 </div>
                                 <div class="modal-footer justify-content-center">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
@@ -488,6 +493,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 // Clear existing values immediately
                 document.getElementById("common_fee").value = '';
                 document.getElementById("area_size").value = '';
+                document.getElementById("phone_number").value = '';
                 document.getElementById("detail").value = ''; // Clear contact_name too, as it's related
                 document.getElementById("amount").value = '';
 
@@ -499,13 +505,12 @@ if (strlen($_SESSION['alogin']) === "") {
                                 document.getElementById("common_fee").value = data.common_fee;
                                 document.getElementById("area_size").value = data.area_size;
                                 document.getElementById("detail").value = data.contact_name;
+                                document.getElementById("phone_number").value = data.phone_number;
 
                                 // Recalculate amount after house info is loaded, based on current options
                                 $('#common_fee').trigger('input'); // This calls calculateAmount()
 
-                                // Apply promotion logic again after house info is loaded
-                                applyPromotionLogic(); // ADDED THIS LINE
-
+                                // Removed: applyPromotionLogic(); // Removed call to not show popup on house_number input
                             } else {
                                 // Already cleared, just show alert if not found
                                 //alert("ไม่พบข้อมูลบ้านเลขที่นี้");
@@ -554,7 +559,6 @@ if (strlen($_SESSION['alogin']) === "") {
                 } else { // Monthly payment
                     const months = parseInt($("#payment_type").val()) || 0;
                     $("#amount").prop("readonly", true); // Make amount readonly for monthly
-                    // ^^^^^^^^^^^ CHANGED HERE
 
                     if (commonFee > 0 && months > 0) {
                         const amount = commonFee * months;
@@ -567,7 +571,25 @@ if (strlen($_SESSION['alogin']) === "") {
 
             // Call when data changes
             $("#common_fee, #payment_type").on("input change", calculateAmount);
-            $("input[name='payment_option']").on("change", calculateAmount);
+            // เมื่อคลิกเปลี่ยนประเภทการจ่ายเงิน ให้คำนวณเงินใหม่ และ เปลี่ยนข้อความ Remark
+            $("input[name='payment_option']").on("change", function() {
+                // เช็ค Logic Remark ทันทีที่กด
+                if (this.value === 'yearly') {
+                    if (isPromotionPeriod()) {
+                        $("#month_year_calculator").val(11);
+                        $("#remark").val("มีส่วนลดชำระ 11 เดือน");
+                    } else {
+                        $("#month_year_calculator").val(12);
+                        $("#remark").val("-");
+                    }
+                } else {
+                    // ถ้าเลือกรายเดือน
+                    $("#remark").val("-");
+                }
+                // คำนวณยอดเงินใหม่
+                calculateAmount();
+            });
+
             $("#period_year").on("change", calculateAmount); // Also re-calculate if year changes
             $("#month_year_calculator").on("change", calculateAmount); // Trigger calculation on month_year_calculator change
 
@@ -577,64 +599,65 @@ if (strlen($_SESSION['alogin']) === "") {
     </script>
 
     <script>
-        // Moved the promotion logic into a named function
-        function applyPromotionLogic() {
+        // ฟังก์ชันเช็คช่วงเวลาโปรโมชั่น (แยกออกมาเพื่อให้เรียกใช้ซ้ำได้ง่าย)
+        function isPromotionPeriod() {
             const currentDate = new Date();
-            const currentYear = currentDate.getFullYear();
-            const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
+            const currentMonth = currentDate.getMonth() + 1;
             const currentDay = currentDate.getDate();
 
-            // Define the promotion period for popup (Dec 15 of current year to Jan 31 of next year)
-            const promoStartMonthPrevYear = 6; // December
+            const promoStartMonthPrevYear = 12; // December
             const promoStartDayPrevYear = 15;
-
-            const promoEndMonthCurrentYear = 7; // January
+            const promoEndMonthCurrentYear = 1; // January
             const promoEndDayCurrentYear = 31;
 
-            let showPopup = false;
-
-            // Condition 1: From Dec 15 of current year
+            // Condition 1: From Dec 15
             if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
-                showPopup = true;
+                return true;
             }
-            // Condition 2: To Jan 31 of next year
+            // Condition 2: To Jan 31
             else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
-                showPopup = true;
+                return true;
             }
+            return false;
+        }
 
-            if (showPopup) {
-                // Use a slight delay to ensure Bootstrap's JS is fully loaded
-                setTimeout(function() {
+        // Logic หลักสำหรับโปรโมชั่นตอนโหลดหน้า
+        function applyPromotionLogic() {
+            const isInPromo = isPromotionPeriod();
+
+            if (isInPromo) {
+                // Show Popup
+                setTimeout(function () {
                     $('#promotionModal').modal('show');
-                }, 500); // 500ms delay
+                }, 500);
 
-                // Set month_year_calculator to 11 for the discount if promotion is active
+                // Set Discount
                 $("#month_year_calculator").val(11);
+                // ** แก้ไขจุดที่ผิด: ต้องมีเครื่องหมายคำพูด "" **
+                $("#remark").val("มีส่วนลดชำระ 11 เดือน");
 
-                // Also, pre-select the "yearly" option if within the promotion period
+                // Select Yearly
                 document.getElementById('option_yearly').checked = true;
                 document.getElementById('option_monthly').checked = false;
-                // Trigger change event to update related fields and recalculate amount
+
+                // Trigger change to update UI
                 const event = new Event('change');
                 document.getElementById('option_yearly').dispatchEvent(event);
             }
-            // If not in promotion period, ensure month_year_calculator is reset to default 12 for yearly
             else {
-                // Check if 'option_yearly' is checked, and if so, set calculator back to 12
-                // This ensures that if user manually selects yearly outside promo, they pay for 12 months
+                // No Promo
                 if (document.getElementById('option_yearly').checked) {
                     $("#month_year_calculator").val(12);
-                    // Also ensure monthly is not checked and yearly is checked
-                    document.getElementById('option_monthly').checked = false;
-                    document.getElementById('option_yearly').checked = true;
-                    // Trigger change to recalculate if yearly was already selected and promo expired/not active
+                    // ** แก้ไขจุดที่ผิด: ต้องมีเครื่องหมายคำพูด "" **
+                    $("#remark").val("-");
+
                     const event = new Event('change');
                     document.getElementById('option_yearly').dispatchEvent(event);
                 }
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             applyPromotionLogic(); // Call on DOMContentLoaded
         });
     </script>
@@ -645,7 +668,9 @@ if (strlen($_SESSION['alogin']) === "") {
                 event.preventDefault();
 
                 // ตรวจสอบว่าได้มีการเลือกไฟล์รูปภาพหรือไม่
-                if ($("#picture_payment").get(0).files.length === 0) {
+                const paymentMethod = $("#payment_method").val(); // Get the selected payment method
+
+                if (paymentMethod !== "เงินสด" && $("#picture_payment").get(0).files.length === 0) {
                     alertify.error("กรุณาแนบ Slip/ใบโอนเงิน/ใบเสร็จ ก่อนบันทึกข้อมูล");
                     return; // หยุดการทำงานของฟังก์ชัน submit
                 }
@@ -654,7 +679,13 @@ if (strlen($_SESSION['alogin']) === "") {
                 let period_month_to = parseInt($("#period_month_to").val());
                 let period_year = parseInt($("#period_year").val()); // ดึงค่า period_year มาใช้งาน
                 let amount = parseFloat($("#amount").val()) || 0;
-                let house_number = $("#house_number").val();
+
+                let house_number = document.getElementById("house_number").value;
+
+                if (house_number === null || house_number.trim() === "") {
+                    alertify.error("กรุณาใส่บ้านเลขที่");
+                    return; // Stops the function from running further
+                }
 
                 // ต้องมั่นใจว่า monthNames ถูกกำหนดไว้แล้ว ตัวอย่างเช่น:
                 const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
@@ -692,6 +723,9 @@ if (strlen($_SESSION['alogin']) === "") {
                 formData.append('phone_number', $("#phone_number").val());
                 // **ส่งค่า amount ที่จัดรูปแบบแล้วไปหลังบ้าน**
                 formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
+                // ส่ง Remark ไปด้วย
+                formData.append('remark', $("#remark").val());
+
 
                 $.ajax({
                     url: "model/manage_payment_transfer.php",
@@ -707,32 +741,6 @@ if (strlen($_SESSION['alogin']) === "") {
                             $("#transfer_form")[0].reset();
                             $("#preview_image").hide().attr("src", "");
                             $("#submit_btn").prop("disabled", true);
-
-                            // The LIFF logic below is commented out as this file is not specifically for LIFF.
-                            // If this file is meant to be accessed via LIFF, then the LIFF SDK init and sendMessages should be uncommented/added.
-                            /*
-                            if (liff.isInClient()) {
-                                liff.getProfile().then(profile => {
-                                    const message = `\n📤 แจ้งการโอนเงินเรียบร้อยแล้ว!\n💰 จำนวน ${amount} บาท\n🏡 บ้านเลขที่: ${house_number}
-                                    \n📅 เดือน: ${period_month_start_name} - ${period_month_to_name} ปี: ${period_year}
-                                    \n🕔 วันที่ทำรายการ: ${date_time}
-                                    \n💖 ขอขอบคุณ และ โปรดตรวจสอบรายการในประวัติการชำระค่าส่วนกลาง`;
-                                    liff.sendMessages([{type: "text", text: message}])
-                                        .then(() => {
-                                            setTimeout(() => {
-                                                liff.closeWindow();
-                                            }, 2000);
-                                        })
-                                        .catch(err => {
-                                            console.error("ส่งข้อความล้มเหลว:", err);
-                                            alertify.error("ส่งข้อความกลับ LINE ไม่สำเร็จ");
-                                            liff.closeWindow();
-                                        });
-                                });
-                            } else {
-                                alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
-                            }
-                            */
                         } else if (response == 2) {
                             // ปรับข้อความแจ้งเตือนให้แสดงปีด้วย
                             alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);
@@ -751,6 +759,48 @@ if (strlen($_SESSION['alogin']) === "") {
             });
         });
 
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // อ้างอิงถึง Element ต่างๆ ที่เราจะใช้งาน
+            const startMonthSelect = document.getElementById('period_month_start');
+            const endMonthSelect = document.getElementById('period_month_to');
+            const paymentTypeInput = document.getElementById('payment_type');
+            const periodYearSelect = document.getElementById('period_year');
+
+            // ฟังก์ชันสำหรับคำนวณและอัปเดตค่า
+            function calculateAndSetMonths() {
+                const startMonth = parseInt(startMonthSelect.value);
+                const endMonth = parseInt(endMonthSelect.value);
+                const year = parseInt(periodYearSelect.value);
+
+                // ตรวจสอบว่าได้เลือกเดือนเริ่มต้นและสิ้นสุดแล้ว
+                if (startMonth && endMonth) {
+                    // ตรวจสอบเงื่อนไข: period_month_start ต้องไม่น้อยกว่า period_month_to
+                    if (startMonth > endMonth) {
+                        alert('ต้องเลือกเดือน "เริ่มงวด" ให้น้อยกว่าหรือเท่ากับเดือน "ถึงงวด" กรุณาเลือกใหม่ให้ถูกต้อง');
+                        // ตั้งค่า payment_type กลับไปที่ค่าเริ่มต้น
+                        paymentTypeInput.value = 1;
+                        return; // หยุดการทำงานของฟังก์ชัน
+                    }
+
+                    // คำนวณจำนวนเดือน
+                    const numberOfMonths = endMonth - startMonth + 1;
+
+                    // อัปเดตค่าในช่อง payment_type
+                    paymentTypeInput.value = numberOfMonths;
+                } else {
+                    // ถ้ายังไม่ได้เลือกเดือนใดเดือนหนึ่ง ให้ค่าเป็น 1
+                    paymentTypeInput.value = 1;
+                }
+            }
+
+            // เพิ่ม Event Listener เพื่อเรียกฟังก์ชันเมื่อค่ามีการเปลี่ยนแปลง
+            startMonthSelect.addEventListener('change', calculateAndSetMonths);
+            endMonthSelect.addEventListener('change', calculateAndSetMonths);
+            periodYearSelect.addEventListener('change', calculateAndSetMonths);
+        });
     </script>
 
 
