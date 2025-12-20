@@ -30,9 +30,17 @@ $(document).ready(function () {
     });
 });
 
+// *** ส่วนที่แก้ไข: ดึงค่า Address จาก data-attribute โดยตรง ***
 $("#TableSupplierList").on('click', '.select', function () {
-    let data = this.id.split('@');
-    $('#supplier_id').val(data[0]);
-    $('#supplier_name').val(data[1]);
+    // ใช้ .attr() หรือ .data() ดึงค่าที่ส่งมาจาก PHP
+    let id = $(this).attr('data-id');
+    let name = $(this).attr('data-name');
+    let address = $(this).attr('data-address');
+
+    // นำค่าไปใส่ใน Input Form
+    $('#supplier_id').val(id);
+    $('#supplier_name').val(name);
+    $('#address').val(address);
+
     $('#SearchSupModal').modal('hide');
 });

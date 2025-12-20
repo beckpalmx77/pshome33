@@ -12,25 +12,26 @@ if (!$data) {
 
 $action = $data['action'] ?? '';
 $doc_no = $data['doc_no'] ?? ''; // This is ims_payment_voucher's doc_no
-$doc_date = $data['date'] ?? ''; // Format from frontend might be D-M-Y or Y-M-D, ensure strtotime can parse it
+$doc_date = $data['date'] ?? ''; // Format from frontend might be D-M-Y or Y-M-D
 $requester = $data['requester'] ?? '';
 $supplier_id = $data['supplier_id'] ?? '';
 $supplier_name = $data['supplier_name'] ?? '';
+$address = $data['address'] ?? '-';
+$supplier_phone = $data['supplier_phone'] ?? '-'; // เพิ่มรับค่าเบอร์โทรศัพท์
 $purpose = $data['purpose'] ?? '';
 $details = $data['details'] ?? [];
-$picture_doc = $data['picture_doc'] ?? ''; // NOT NULL in ims_expenses, ensure it's not null/empty string if no file
+$picture_doc = $data['picture_doc'] ?? '';
 
-$payment_method = $data['payment_method'] ?? ''; // NOT NULL in ims_expenses, has default '-'
+$payment_method = $data['payment_method'] ?? '';
 $create_name = $data['create_name'] ?? '';
 $checker_name = $data['checker_name'] ?? '';
 
-//$receipt_name = $data['receipt_name'] ?? ''; // NOT NULL in ims_expenses, has default '-'
 $receipt_name = ($supplier_name === null || $supplier_name === '') ? '-' : $supplier_name;
 
 $approve_name = $data['approve_name'] ?? '';
-$approve_status = $data['approve_status'] ?? 'N'; // New: Get approve_status from data, default to 'N'
+$approve_status = $data['approve_status'] ?? 'N';
 
-$bank_account = $data['bank_account'] ?? ''; // Bank account number
+$bank_account = $data['bank_account'] ?? '';
 
 // ตรวจสอบค่าที่จำเป็น
 if (!in_array($action, ['ADD', 'UPDATE'])) {
@@ -43,50 +44,53 @@ if (!$doc_date || !$supplier_name || empty($details)) {
     exit;
 }
 
-// ตรวจสอบและกำหนดค่าเริ่มต้นสำหรับ NOT NULL ที่ไม่มี DEFAULT (หรือต้องการควบคุมค่า)
-$picture_doc = $picture_doc === null ? '' : $picture_doc; // Ensure it's an empty string if null, as it's NOT NULL TEXT
-$receipt_name = $receipt_name === null ? '-' : $receipt_name; // Ensure it's '-' if null
-$payment_method = $payment_method === null ? '-' : $payment_method; // Ensure it's '-' if null
+// ตรวจสอบและกำหนดค่าเริ่มต้นสำหรับ NOT NULL ที่ไม่มี DEFAULT
+$picture_doc = $picture_doc === null ? '' : $picture_doc;
+$receipt_name = $receipt_name === null ? '-' : $receipt_name;
+$payment_method = $payment_method === null ? '-' : $payment_method;
 
 
 try {
     $conn->beginTransaction();
 
-    // --- Start Supplier Handling ---
+    // --- Start Supplier Handling (Insert or Update) ---
     // Check if supplier_name exists in ims_supplier
     $stmtCheckSupplier = $conn->prepare("SELECT supplier_id, supplier_name FROM ims_supplier WHERE supplier_name = ?");
     $stmtCheckSupplier->execute([$supplier_name]);
     $existingSupplier = $stmtCheckSupplier->fetch(PDO::FETCH_ASSOC);
 
     if ($existingSupplier) {
-        // Supplier exists, use its supplier_id
+        // Supplier exists: Use ID and UPDATE info (Address/Phone)
         $supplier_id = $existingSupplier['supplier_id'];
+
+        // เพิ่ม: อัปเดตข้อมูล Supplier เดิมให้เป็นปัจจุบัน
+        $stmtUpdateSupplier = $conn->prepare("UPDATE ims_supplier SET address = ?, phone = ? WHERE supplier_id = ?");
+        if (!$stmtUpdateSupplier->execute([$address, $supplier_phone, $supplier_id])) {
+            $errorInfo = $stmtUpdateSupplier->errorInfo();
+            throw new Exception("Update existing supplier info failed: " . $errorInfo[2]);
+        }
+
     } else {
-        // Supplier does not exist, create a new supplier_id and insert
+        // Supplier does not exist: Create NEW ID and INSERT
         $stmtGetLastSupplierId = $conn->prepare("SELECT MAX(supplier_id) AS last_supplier_id FROM ims_supplier WHERE supplier_id LIKE 'S%'");
         $stmtGetLastSupplierId->execute();
         $last_supplier_id = $stmtGetLastSupplierId->fetchColumn();
 
         $next_supplier_sequence = 1;
         if ($last_supplier_id) {
-            // Extract the numeric part and increment
             $numeric_part = (int)substr($last_supplier_id, 1);
             $next_supplier_sequence = $numeric_part + 1;
         }
-        $new_supplier_id = 'S' . sprintf('%05d', $next_supplier_sequence); // Format as S00001, S00002, etc.
+        $new_supplier_id = 'S' . sprintf('%05d', $next_supplier_sequence);
 
-        // Insert new supplier into ims_supplier table
+        // Insert new supplier
         $stmtInsertSupplier = $conn->prepare("INSERT INTO ims_supplier (supplier_id, supplier_name, address, phone, status) VALUES (?, ?, ?, ?, 'Active')");
-        // For 'address' and 'phone', you might need to get them from the input $data or set a default.
-        // For now, setting them to empty string as per ims_supplier.sql schema 'NOT NULL'
-        $default_address = $data['supplier_address'] ?? '-';
-        $default_phone = $data['supplier_phone'] ?? '-';
 
-        if (!$stmtInsertSupplier->execute([$new_supplier_id, $supplier_name, $default_address, $default_phone])) {
+        if (!$stmtInsertSupplier->execute([$new_supplier_id, $supplier_name, $address, $supplier_phone])) {
             $errorInfo = $stmtInsertSupplier->errorInfo();
             throw new Exception("Insert new supplier failed: " . $errorInfo[2]);
         }
-        $supplier_id = $new_supplier_id; // Use the newly generated supplier_id
+        $supplier_id = $new_supplier_id;
     }
     // --- End Supplier Handling ---
 
@@ -94,31 +98,29 @@ try {
 
     // Fetch next runno for ADD action (for ims_payment_voucher)
     if ($action === 'ADD') {
-        // Generate doc_no for ims_payment_voucher
         $stmt_pv_runno = $conn->prepare("SELECT MAX(doc_runno) AS last_runno FROM ims_payment_voucher WHERE doc_year = ?");
-        $stmt_pv_runno->execute([date('Y', strtotime($doc_date))]); // Use doc_date year for consistency
+        $stmt_pv_runno->execute([date('Y', strtotime($doc_date))]);
         $last_pv_runno = $stmt_pv_runno->fetchColumn();
         $next_pv_runno = ($last_pv_runno ? $last_pv_runno : 0) + 1;
-        $doc_no = "PV-" . date('Y', strtotime($doc_date)). date('m', strtotime($doc_date)) . "-" . sprintf('%04d', $next_pv_runno); // Use doc_date year
+        $doc_no = "PV-" . date('Y', strtotime($doc_date)). date('m', strtotime($doc_date)) . "-" . sprintf('%04d', $next_pv_runno);
     }
 
     // Prepare header statement for ims_payment_voucher
     if ($action === 'ADD') {
-        $stmtHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status)
+        $stmtHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status, address)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     } else { // UPDATE
-        $stmtHeader = $conn->prepare("UPDATE ims_payment_voucher SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?, payment_method = ?, bank_no = ?, total_amount = ?, picture_doc = ?, create_name = ?, checker_name = ?, receipt_name = ?, approve_name = ?, approve_status = ?
+        $stmtHeader = $conn->prepare("UPDATE ims_payment_voucher SET doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?, payment_method = ?, bank_no = ?, total_amount = ?, picture_doc = ?, create_name = ?, checker_name = ?, receipt_name = ?, approve_name = ?, approve_status = ?, address = ?
             WHERE doc_no = ?");
 
-        // Delete existing detail items for UPDATE action from ims_payment_voucher_items
+        // Delete existing detail items for UPDATE action
         $stmtDeleteDetailPV = $conn->prepare("DELETE FROM ims_payment_voucher_items WHERE doc_no = ?");
         if (!$stmtDeleteDetailPV->execute([$doc_no])) {
             $errorInfo = $stmtDeleteDetailPV->errorInfo();
             throw new Exception("Delete existing ims_payment_voucher_items detail failed: " . $errorInfo[2]);
         }
 
-        // ลบข้อมูล ims_expenses ที่เกี่ยวข้องกับ doc_no ของ payment voucher นี้
-        // doc_ref จะเก็บค่า doc_no ของ ims_payment_voucher
+        // Delete existing expenses related to this doc_no
         $stmtDeleteExistingExpenses = $conn->prepare("DELETE FROM ims_expenses WHERE doc_ref = ?");
         if (!$stmtDeleteExistingExpenses->execute([$doc_no])) {
             $errorInfo = $stmtDeleteExistingExpenses->errorInfo();
@@ -126,18 +128,11 @@ try {
         }
     }
 
-    // Prepare detail statement for ims_payment_voucher_items (Re-added doc_date based on schema)
-    // NOTE: If 'remark' is intended for this table, its column must exist in the database and be added here.
-    // Based on the provided 'manage_voucher_detail_process.php' snippet, 'ims_payment_voucher_items' does not seem to have a 'remark' column.
-    // === START MODIFICATION FOR REMARK FIELD ===
+    // Prepare detail statement
     $stmtDetailPV = $conn->prepare("INSERT INTO ims_payment_voucher_items (doc_no, doc_date, line_no, product_id, product_name, inv, quantity, price, unit_id, unit_name, remark)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    // === END MODIFICATION FOR REMARK FIELD ===
 
-    // Prepare statements for ims_expenses (INSERT and UPDATE)
-    // **สำคัญมาก:** 'doc_ref' ถูกเพิ่มเข้ามาใน schema ของ ims_expenses ตามคำขอ
-    // โปรดตรวจสอบให้แน่ใจว่าตาราง 'ims_expenses' ของคุณมีคอลัมน์ 'doc_ref' (เช่น VARCHAR(255)) แล้วในฐานข้อมูล
-    // ตัวอย่าง SQL: ALTER TABLE ims_expenses ADD COLUMN doc_ref VARCHAR(255) NULL DEFAULT NULL AFTER doc_id;
+    // Prepare statements for ims_expenses
     $stmtInsertExpense = $conn->prepare("INSERT INTO ims_expenses (runno, doc_id, doc_ref, receipt_name, expense_date, exp_month, exp_year, inv, category_id, description, qty, unit_id, amount, remark, approve_status, file_attach, payment_method, price_per_unit)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -160,18 +155,16 @@ try {
     $stmtInsertCategory = $conn->prepare("INSERT INTO ims_category (category_id, category_name, status) VALUES (?, ?, 'Active')");
     $stmtUpdateCategory = $conn->prepare("UPDATE ims_category SET category_name = ? WHERE category_id = ?");
 
-    // For UPDATE action on ims_expenses, fetch existing records to determine what to update, insert, or delete
-    $existing_expenses_map = []; // Map to store existing expenses for easy lookup
-    $expense_ids_to_keep = [];   // List of IDs of expenses that are matched/updated
+    // For UPDATE action on ims_expenses
+    $existing_expenses_map = [];
+    $expense_ids_to_keep = [];
 
     if ($action === 'UPDATE') {
-        // ดึงข้อมูล expenses ที่มีอยู่ซึ่งเชื่อมโยงกับ doc_ref (ซึ่งก็คือ doc_no ของ PV)
         $stmtFetchExistingExpenses = $conn->prepare("SELECT id, inv, doc_id FROM ims_expenses WHERE doc_ref = ?");
         $stmtFetchExistingExpenses->execute([$doc_no]);
         $temp_existing_expenses = $stmtFetchExistingExpenses->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($temp_existing_expenses as $exp) {
-            // เก็บ id และ doc_id เดิมไว้เพื่อการอัปเดตหรือลบ
             if (!isset($existing_expenses_map[$exp['inv']])) {
                 $existing_expenses_map[$exp['inv']] = [];
             }
@@ -181,23 +174,20 @@ try {
 
     $line_no = 1;
 
-    // Fetch next general runno for ims_expenses (annual scope, used for the 'runno' column)
+    // Fetch next general runno for ims_expenses
     $stmt_expense_global_runno = $conn->prepare("SELECT MAX(runno) AS last_runno FROM ims_expenses WHERE exp_year = ?");
     $stmt_expense_global_runno->execute([date('Y', strtotime($doc_date))]);
     $last_expense_global_runno = $stmt_expense_global_runno->fetchColumn();
     $next_expense_global_runno = ($last_expense_global_runno ? $last_expense_global_runno : 0);
 
-    // เตรียมการสร้างเลขที่เอกสาร EXP-YYYY-MM-XXXXX
+    // Prepare expense doc_id
     $exp_month_for_doc_id = date('m', strtotime($doc_date));
     $exp_year_for_doc_id = date('Y', strtotime($doc_date));
     $next_expense_monthly_sequence = 0;
 
-    // หาเลขรันสูงสุดสำหรับเดือน/ปีปัจจุบันสำหรับ doc_id ของ EXP
-    // !!! แก้ไขตรงนี้: เปลี่ยน SUBSTRING(doc_id, 12) เป็น SUBSTRING(doc_id, 13)
     $stmt_max_exp_doc_id = $conn->prepare("SELECT MAX(CAST(SUBSTRING(doc_id, 13) AS UNSIGNED)) FROM ims_expenses WHERE exp_year = ? AND exp_month = ? AND doc_id LIKE 'EXP-%'");
     $stmt_max_exp_doc_id->execute([$exp_year_for_doc_id, $exp_month_for_doc_id]);
     $last_exp_doc_id_sequence = $stmt_max_exp_doc_id->fetchColumn();
-    // ถ้าไม่มีเลขรันเดิมในเดือนนั้น ให้เริ่มต้นจาก 0 เพื่อให้ได้ 1 ในครั้งแรก
     $next_expense_monthly_sequence = ($last_exp_doc_id_sequence ? $last_exp_doc_id_sequence : 0);
 
 
@@ -206,7 +196,7 @@ try {
         $current_product_name = $item['product_name'] ?? null;
         $current_unit_id = $item['unit_id'] ?? null;
         $current_unit_name = $item['unit_name'] ?? null;
-        $current_inv = $item['inv'] ?? '-'; // Default to '-' if null, per DB schema
+        $current_inv = $item['inv'] ?? '-';
 
         if (empty($current_product_name) || !isset($item['quantity']) || !is_numeric($item['quantity']) || !isset($item['price']) || !is_numeric($item['price'])) {
             throw new Exception("Missing or invalid product name, quantity, or price for line " . $line_no);
@@ -215,7 +205,7 @@ try {
         $item_total = (float)$item['quantity'] * (float)$item['price'];
         $total_amount_header += $item_total;
 
-        // --- Handle ims_products table (Create/Update if necessary) ---
+        // --- Handle ims_products table ---
         $existingProduct = null;
         if (!empty($current_product_id)) {
             $stmtCheckProductById->execute([$current_product_id]);
@@ -226,19 +216,19 @@ try {
             $stmtCheckProductByName->execute([$current_product_name]);
             $existingProduct = $stmtCheckProductByName->fetch(PDO::FETCH_ASSOC);
             if ($existingProduct) {
-                $current_product_id = $existingProduct['product_id']; // Use existing product_id if found by name
+                $current_product_id = $existingProduct['product_id'];
             }
         }
 
         $pgroup_id_for_product = null;
 
         if ($existingProduct) {
-            $current_product_id = $existingProduct['product_id']; // Ensure we use the found product ID
+            $current_product_id = $existingProduct['product_id'];
             $pgroup_id_for_product = $existingProduct['pgroup_id'];
-            // Update product name, pgroup_id, unit_id if different or missing
+
             if ($existingProduct['product_name'] !== $current_product_name || empty($existingProduct['pgroup_id']) || empty($current_unit_id)) {
                 if (empty($pgroup_id_for_product)) {
-                    $pgroup_id_for_product = 'UNKNOWN_PGROUP'; // Fallback if no group found
+                    $pgroup_id_for_product = 'UNKNOWN_PGROUP';
                 }
                 if (!$stmtUpdateProduct->execute([$current_product_name, $pgroup_id_for_product, $current_unit_id, $current_product_id])) {
                     $errorInfo = $stmtUpdateProduct->errorInfo();
@@ -246,8 +236,6 @@ try {
                 }
             }
         } else {
-            // Product does not exist, insert new product
-            // Generate a new product_id if not provided or found
             if (empty($current_product_id)) {
                 $stmtGetLastProductId->execute();
                 $last_product_id = $stmtGetLastProductId->fetchColumn();
@@ -257,10 +245,10 @@ try {
                     $numeric_part = (int)substr($last_product_id, 1);
                     $next_product_sequence = $numeric_part + 1;
                 }
-                $current_product_id = 'P' . sprintf('%05d', $next_product_sequence); // Format as P00001, P00002, etc.
+                $current_product_id = 'P' . sprintf('%05d', $next_product_sequence);
             }
 
-            $pgroup_id_for_product = 'DEFAULT_PGROUP'; // Default for new products
+            $pgroup_id_for_product = 'DEFAULT_PGROUP';
             if (isset($item['pgroup_id']) && !empty($item['pgroup_id'])) {
                 $pgroup_id_for_product = $item['pgroup_id'];
             }
@@ -270,8 +258,7 @@ try {
             }
         }
 
-        // --- Handle ims_category (sync with ims_pgroup) ---
-        // Ensure that the category_id for ims_expenses exists in ims_category
+        // --- Handle ims_category ---
         if (!empty($pgroup_id_for_product)) {
             $pgroup_name_from_ims_pgroup = null;
             $stmtGetPgroupName->execute([$pgroup_id_for_product]);
@@ -280,16 +267,13 @@ try {
             if ($pgroup_data) {
                 $pgroup_name_from_ims_pgroup = $pgroup_data['pgroup_name'];
             } else {
-                // If pgroup_id is not found in ims_pgroup, use a fallback name
                 $pgroup_name_from_ims_pgroup = "Group " . $pgroup_id_for_product;
             }
 
-            // Sync to ims_category
             $stmtCheckCategory->execute([$pgroup_id_for_product]);
             $existingCategory = $stmtCheckCategory->fetch(PDO::FETCH_ASSOC);
 
             if ($existingCategory) {
-                // Category exists, update its name if different
                 if ($existingCategory['category_name'] !== $pgroup_name_from_ims_pgroup) {
                     if (!$stmtUpdateCategory->execute([$pgroup_name_from_ims_pgroup, $pgroup_id_for_product])) {
                         $errorInfo = $stmtUpdateCategory->errorInfo();
@@ -297,7 +281,6 @@ try {
                     }
                 }
             } else {
-                // Category does not exist, insert new category
                 if (!$stmtInsertCategory->execute([$pgroup_id_for_product, $pgroup_name_from_ims_pgroup])) {
                     $errorInfo = $stmtInsertCategory->errorInfo();
                     throw new Exception("Insert new category failed: " . $errorInfo[2]);
@@ -306,10 +289,9 @@ try {
         }
 
         // Insert into ims_payment_voucher_items
-        // === START MODIFICATION FOR REMARK FIELD ===
         if (!$stmtDetailPV->execute([
-            $doc_no, // This is the PV doc_no
-            date('Y-m-d', strtotime($doc_date)), // Use doc_date from header for detail items
+            $doc_no,
+            date('Y-m-d', strtotime($doc_date)),
             $line_no++,
             $current_product_id,
             $current_product_name,
@@ -318,36 +300,33 @@ try {
             (float)$item['price'],
             $current_unit_id,
             $current_unit_name,
-            $item['remark'] ?? '', // Add remark here
+            $item['remark'] ?? '',
         ])) {
-            // === END MODIFICATION FOR REMARK FIELD ===
             $errorInfo = $stmtDetailPV->errorInfo();
             throw new Exception("Insert detail into ims_payment_voucher_items failed: " . $errorInfo[2]);
         }
 
         // --- Handle ims_expenses (UPDATE/INSERT logic) ---
-        $expense_date_formatted = date('Y-m-d', strtotime($doc_date)); // Changed to Y-m-d for database consistency
+        $expense_date_formatted = date('Y-m-d', strtotime($doc_date));
         $exp_month = date('m', strtotime($doc_date));
         $exp_year = date('Y', strtotime($doc_date));
         $expense_description = $current_product_name;
-        $expense_remark = $item['remark'] ?? ''; // !!! Corrected: Use line item remark from $item array !!!
+        $expense_remark = $item['remark'] ?? '';
 
-        $found_existing_expense_info = null; // Stores ['id' => ..., 'doc_id' => ...]
-        $generated_expense_doc_id = null; // Variable to store the new EXP doc_id
+        $found_existing_expense_info = null;
+        $generated_expense_doc_id = null;
 
-        // พยายามหา record expense ที่มีอยู่แล้วโดยใช้ doc_ref (doc_no ของ PV) และ inv
         if ($action === 'UPDATE' && isset($existing_expenses_map[$current_inv]) && !empty($existing_expenses_map[$current_inv])) {
-            $found_existing_expense_info = array_shift($existing_expenses_map[$current_inv]); // "Consume" one entry from the map
+            $found_existing_expense_info = array_shift($existing_expenses_map[$current_inv]);
         }
 
         if ($found_existing_expense_info) {
             // UPDATE existing ims_expenses record
-            // ใช้ doc_id เดิมของ record ที่พบ
             $generated_expense_doc_id = $found_existing_expense_info['doc_id'];
 
             if (!$stmtUpdateExpense->execute([
-                $generated_expense_doc_id,  // EXP-YYYY-MM-XXXXX (ใช้ค่าเดิม)
-                $doc_no,                    // PV doc_no สำหรับ doc_ref
+                $generated_expense_doc_id,
+                $doc_no,
                 $receipt_name,
                 $expense_date_formatted,
                 $exp_month,
@@ -358,48 +337,48 @@ try {
                 (float)$item['quantity'],
                 $current_unit_id,
                 $item_total,
-                $expense_remark, // ใช้ค่า remark ที่ถูกต้องจาก $item
-                'N', // Approve status for expense, usually starts as 'N'
+                $expense_remark,
+                'N',
                 $picture_doc,
                 $payment_method,
                 (float)$item['price'],
-                $found_existing_expense_info['id'] // ID ของ record ที่จะอัปเดต
+                $found_existing_expense_info['id']
             ])) {
                 $errorInfo = $stmtUpdateExpense->errorInfo();
                 throw new Exception("Update ims_expenses failed for ID {$found_existing_expense_info['id']}: " . $errorInfo[2]);
             }
-            $expense_ids_to_keep[] = $found_existing_expense_info['id']; // เพิ่ม ID ที่อัปเดตแล้วเข้าไปในรายการที่จะเก็บ
+            $expense_ids_to_keep[] = $found_existing_expense_info['id'];
 
         } else {
             // INSERT new ims_expenses record
-            $next_expense_global_runno++; // เพิ่ม runno ประจำปีสำหรับแต่ละรายการ expense
-            $next_expense_monthly_sequence++; // เพิ่มเลขรันรายเดือนสำหรับ doc_id ของ EXP
+            $next_expense_global_runno++;
+            $next_expense_monthly_sequence++;
             $generated_expense_doc_id = "EXP-" . $exp_year_for_doc_id . "-" . $exp_month_for_doc_id . "-" . sprintf('%04d', $next_expense_monthly_sequence);
 
             if (!$stmtInsertExpense->execute([
-                $next_expense_global_runno, // Annual runno
-                $generated_expense_doc_id,  // EXP-YYYY-MM-XXXXX
-                $doc_no,                    // PV doc_no สำหรับ doc_ref
+                $next_expense_global_runno,
+                $generated_expense_doc_id,
+                $doc_no,
                 $receipt_name,
                 $expense_date_formatted,
                 $exp_month,
                 $exp_year,
                 $current_inv,
-                $pgroup_id_for_product, // ใช้ product group เป็น category_id ใน ims_expenses
+                $pgroup_id_for_product,
                 $expense_description,
                 (float)$item['quantity'],
                 $current_unit_id,
-                $item_total, // ยอดรวมสำหรับรายการ expense นี้
-                $expense_remark, // ใช้ค่า remark ที่ถูกต้องจาก $item
-                'N', // Default approve_status สำหรับ expense
-                $picture_doc, // File attach จาก header
-                $payment_method, // Payment method จาก header
+                $item_total,
+                $expense_remark,
+                'N',
+                $picture_doc,
+                $payment_method,
                 (float)$item['price']
             ])) {
                 $errorInfo = $stmtInsertExpense->errorInfo();
                 throw new Exception("Insert into ims_expenses failed: " . $errorInfo[2]);
             }
-            $expense_ids_to_keep[] = $conn->lastInsertId(); // เพิ่ม ID ที่เพิ่ง insert เข้าไปในรายการที่จะเก็บ
+            $expense_ids_to_keep[] = $conn->lastInsertId();
         }
     } // End foreach ($details as $item)
 
@@ -427,11 +406,11 @@ try {
         if (!$stmtHeader->execute([
             $doc_no,
             $doc_date,
-            date('m', strtotime($doc_date)), // Use doc_date month for consistency
-            date('Y', strtotime($doc_date)), // Use doc_date year for consistency
+            date('m', strtotime($doc_date)),
+            date('Y', strtotime($doc_date)),
             $next_pv_runno,
             $requester,
-            $supplier_id, // Use the (potentially new) supplier_id
+            $supplier_id,
             $supplier_name,
             $purpose,
             $payment_method,
@@ -442,17 +421,19 @@ try {
             $checker_name,
             $receipt_name,
             $approve_name,
-            'N', // Default approve_status
-            'Active' // Default status
+            'N',
+            'Active',
+            $address
         ])) {
             $errorInfo = $stmtHeader->errorInfo();
             throw new Exception("Insert header into ims_payment_voucher failed: " . $errorInfo[2]);
         }
     } else { // UPDATE
+        // ** ตรวจสอบลำดับ Address และ Doc_no ที่ถูกต้องแล้ว **
         if (!$stmtHeader->execute([
             $doc_date,
             $requester,
-            $supplier_id, // Use the (potentially new) supplier_id
+            $supplier_id,
             $supplier_name,
             $purpose,
             $payment_method,
@@ -463,8 +444,9 @@ try {
             $checker_name,
             $receipt_name,
             $approve_name,
-            $approve_status, // ใช้ค่า approve_status แบบ dynamic
-            $doc_no
+            $approve_status,
+            $address, // ตำแหน่งที่ถูกต้องสำหรับ SET address = ?
+            $doc_no   // ตำแหน่งที่ถูกต้องสำหรับ WHERE doc_no = ?
         ])) {
             $errorInfo = $stmtHeader->errorInfo();
             throw new Exception("Update header in ims_payment_voucher failed: " . $errorInfo[2]);
@@ -476,7 +458,6 @@ try {
 
 } catch (Exception $e) {
     $conn->rollBack();
-    // Return specific error message for debugging
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
