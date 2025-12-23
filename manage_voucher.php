@@ -241,6 +241,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                             let requester = response[i].requester;
                             let supplier_id = response[i].supplier_id;
                             let supplier_name = response[i].supplier_name;
+                            let address = response[i].address;
                             let purpose = response[i].purpose;
                             let total_amount = response[i].total_amount;
                             let picture_doc = response[i].picture_doc;
@@ -267,6 +268,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                 + '&requester=' + requester
                                 + '&supplier_id=' + supplier_id
                                 + '&supplier_name=' + supplier_name
+                                + '&address=' + address
                                 + '&total_amount=' + total_amount
                                 + '&create_name=' + create_name
                                 + '&checker_name=' + checker_name

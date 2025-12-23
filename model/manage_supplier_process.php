@@ -40,36 +40,29 @@ if ($_POST["action"] === 'SEARCH') {
 }
 
 if ($_POST["action"] === 'ADD') {
-    // 1. ตรวจสอบว่ามีการส่งค่าที่จำเป็นสำหรับผู้จัดจำหน่ายมาหรือไม่
-    // ใช้ isset() สำหรับสถานะที่อาจจะเป็น 0
     if (!empty($_POST["supplier_name"]) && !empty($_POST["address"]) && !empty($_POST["phone"]) && isset($_POST["status"])) {
 
-        $supplier_name = trim($_POST["supplier_name"]); // ใช้ trim เพื่อลบช่องว่างหัวท้าย
+        $supplier_name = trim($_POST["supplier_name"]);
         $address = $_POST["address"];
         $phone = $_POST["phone"];
         $status = $_POST["status"];
 
         try {
-            // 2. ตรวจสอบว่า supplier_name ซ้ำกันหรือไม่
             $stmtCheckSupplier = $conn->prepare("SELECT supplier_id FROM ims_supplier WHERE supplier_name = :supplier_name");
             $stmtCheckSupplier->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
             $stmtCheckSupplier->execute();
             $existing_supplier_id = $stmtCheckSupplier->fetchColumn();
 
             if ($existing_supplier_id) {
-                // ถ้า supplier_name ซ้ำกัน ให้แจ้งว่ามีข้อมูลแล้ว
                 echo $dup;
             } else {
-                // 3. ถ้า supplier_name ไม่ซ้ำกัน ให้สร้าง supplier_id ใหม่
                 $stmtMaxID = $conn->prepare("SELECT supplier_id FROM ims_supplier WHERE supplier_id LIKE 'S%' ORDER BY supplier_id DESC LIMIT 1");
                 $stmtMaxID->execute();
                 $lastSupplierID = $stmtMaxID->fetchColumn();
 
-                // แปลงตัวเลขจาก 'S0000X' และเพิ่มค่า
                 $newNumber = $lastSupplierID ? ((int)substr($lastSupplierID, 1)) + 1 : 1;
                 $new_supplier_id = sprintf("S%05d", $newNumber);
 
-                // 4. ทำการ INSERT ข้อมูลผู้จัดจำหน่ายใหม่ทั้งหมด
                 $sql = "INSERT INTO ims_supplier (supplier_id, supplier_name, address, phone, status)
                         VALUES (:supplier_id, :supplier_name, :address, :phone, :status)";
                 $query = $conn->prepare($sql);
@@ -80,27 +73,23 @@ if ($_POST["action"] === 'ADD') {
                 $query->bindParam(':status', $status, PDO::PARAM_STR);
                 $query->execute();
 
-                // ตรวจสอบว่าการแทรกข้อมูลสำเร็จหรือไม่
-                if ($query->rowCount()) { // ใช้ rowCount() แทน lastInsertId() สำหรับ INSERT ปกติ
+                if ($query->rowCount()) {
                     echo $save_success;
                 } else {
-                    echo $error; // อาจจะเกิดข้อผิดพลาดในการ execute แต่ไม่มี Exception
+                    echo $error;
                 }
             }
 
         } catch (PDOException $e) {
-            // ดักจับข้อผิดพลาดที่เกิดจากการดำเนินการฐานข้อมูล
-            error_log("Error adding supplier: " . $e->getMessage()); // บันทึกใน log
-            echo $error; // แจ้งผู้ใช้ด้วยข้อความทั่วไป
+            error_log("Error adding supplier: " . $e->getMessage());
+            echo $error;
         } catch (Exception $e) {
-            // ดักจับข้อผิดพลาดทั่วไปอื่นๆ
-            error_log("General error adding supplier: " . $e->getMessage()); // บันทึกใน log
+            error_log("General error adding supplier: " . $e->getMessage());
             echo $error;
         }
 
     } else {
-        // กรณีที่ข้อมูลที่จำเป็นไม่ครบถ้วน
-        echo $error; // หรือข้อความว่า "กรุณากรอกข้อมูลผู้จัดจำหน่ายให้ครบถ้วน"
+        echo $error;
     }
 }
 
@@ -211,12 +200,16 @@ if ($_POST["action"] === 'GET_SUPPLIER') {
                 "status" => $row['status'] === 'Active' ? "<div class='text-success'>" . $row['status'] . "</div>" : "<div class='text-muted'> " . $row['status'] . "</div>"
             );
         } else {
+            // *** ส่วนที่แก้ไข: ปรับปรุงการส่งค่า address ***
+            // 1. ส่งค่า address ผ่าน array key ปกติ
+            // 2. ในปุ่ม select: ลบ address ออกจาก id (เพื่อป้องกัน error) และให้ดึงจาก data-address แทน
+            // 3. ใช้ htmlspecialchars ครอบ data-address เพื่อป้องกันปัญหากรณีมีเครื่องหมายคำพูดในที่อยู่
             $data[] = array(
                 "id" => $row['id'],
                 "supplier_id" => $row['supplier_id'],
+                "address" => $row['address'],
                 "supplier_name" => $row['supplier_name'],
-                "select" => "<button type='button' name='select' id='" . $row['supplier_id'] . "@" . $row['supplier_name'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
-</button>",
+                "select" => "<button type='button' name='select' id='" . $row['supplier_id'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select' data-id='" . $row['supplier_id'] . "' data-name='" . htmlspecialchars($row['supplier_name']) . "' data-address='" . htmlspecialchars($row['address']) . "'>select <i class='fa fa-check' aria-hidden='true'></i></button>",
             );
         }
 
@@ -231,4 +224,4 @@ if ($_POST["action"] === 'GET_SUPPLIER') {
     );
     echo json_encode($response);
 }
-
+?>

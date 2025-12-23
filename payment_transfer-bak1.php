@@ -571,25 +571,7 @@ if (strlen($_SESSION['alogin']) === "") {
 
             // Call when data changes
             $("#common_fee, #payment_type").on("input change", calculateAmount);
-            // เมื่อคลิกเปลี่ยนประเภทการจ่ายเงิน ให้คำนวณเงินใหม่ และ เปลี่ยนข้อความ Remark
-            $("input[name='payment_option']").on("change", function() {
-                // เช็ค Logic Remark ทันทีที่กด
-                if (this.value === 'yearly') {
-                    if (isPromotionPeriod()) {
-                        $("#month_year_calculator").val(11);
-                        $("#remark").val("มีส่วนลดชำระ 11 เดือน");
-                    } else {
-                        $("#month_year_calculator").val(12);
-                        $("#remark").val("-");
-                    }
-                } else {
-                    // ถ้าเลือกรายเดือน
-                    $("#remark").val("-");
-                }
-                // คำนวณยอดเงินใหม่
-                calculateAmount();
-            });
-
+            $("input[name='payment_option']").on("change", calculateAmount);
             $("#period_year").on("change", calculateAmount); // Also re-calculate if year changes
             $("#month_year_calculator").on("change", calculateAmount); // Trigger calculation on month_year_calculator change
 
@@ -599,58 +581,59 @@ if (strlen($_SESSION['alogin']) === "") {
     </script>
 
     <script>
-        // ฟังก์ชันเช็คช่วงเวลาโปรโมชั่น (แยกออกมาเพื่อให้เรียกใช้ซ้ำได้ง่าย)
-        function isPromotionPeriod() {
+        // Moved the promotion logic into a named function
+        function applyPromotionLogic() {
             const currentDate = new Date();
-            const currentMonth = currentDate.getMonth() + 1;
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
             const currentDay = currentDate.getDate();
 
+            // Define the promotion period for popup (Dec 15 of current year to Jan 31 of next year)
             const promoStartMonthPrevYear = 12; // December
             const promoStartDayPrevYear = 15;
+
             const promoEndMonthCurrentYear = 1; // January
             const promoEndDayCurrentYear = 31;
 
-            // Condition 1: From Dec 15
+            let showPopup = false;
+
+            // Condition 1: From Dec 15 of current year
             if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
-                return true;
+                showPopup = true;
             }
-            // Condition 2: To Jan 31
+            // Condition 2: To Jan 31 of next year
             else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
-                return true;
+                showPopup = true;
             }
-            return false;
-        }
 
-        // Logic หลักสำหรับโปรโมชั่นตอนโหลดหน้า
-        function applyPromotionLogic() {
-            const isInPromo = isPromotionPeriod();
-
-            if (isInPromo) {
-                // Show Popup
+            if (showPopup) {
+                // Use a slight delay to ensure Bootstrap's JS is fully loaded
                 setTimeout(function () {
                     $('#promotionModal').modal('show');
-                }, 500);
+                 }, 500); // 500ms delay
 
-                // Set Discount
+                // Set month_year_calculator to 11 for the discount if promotion is active
                 $("#month_year_calculator").val(11);
-                // ** แก้ไขจุดที่ผิด: ต้องมีเครื่องหมายคำพูด "" **
-                $("#remark").val("มีส่วนลดชำระ 11 เดือน");
+                $("#remark").val(มีส่วนลดชำระ 11 เดือน);
 
-                // Select Yearly
+                // Also, pre-select the "yearly" option if within the promotion period
                 document.getElementById('option_yearly').checked = true;
                 document.getElementById('option_monthly').checked = false;
-
-                // Trigger change to update UI
+                // Trigger change event to update related fields and recalculate amount
                 const event = new Event('change');
                 document.getElementById('option_yearly').dispatchEvent(event);
             }
+            // If not in promotion period, ensure month_year_calculator is reset to default 12 for yearly
             else {
-                // No Promo
+                // Check if 'option_yearly' is checked, and if so, set calculator back to 12
+                // This ensures that if user manually selects yearly outside promo, they pay for 12 months
                 if (document.getElementById('option_yearly').checked) {
                     $("#month_year_calculator").val(12);
-                    // ** แก้ไขจุดที่ผิด: ต้องมีเครื่องหมายคำพูด "" **
-                    $("#remark").val("-");
-
+                    $("#remark").val(-);
+                    // Also ensure monthly is not checked and yearly is checked
+                    document.getElementById('option_monthly').checked = false;
+                    document.getElementById('option_yearly').checked = true;
+                    // Trigger change to recalculate if yearly was already selected and promo expired/not active
                     const event = new Event('change');
                     document.getElementById('option_yearly').dispatchEvent(event);
                 }
@@ -723,9 +706,6 @@ if (strlen($_SESSION['alogin']) === "") {
                 formData.append('phone_number', $("#phone_number").val());
                 // **ส่งค่า amount ที่จัดรูปแบบแล้วไปหลังบ้าน**
                 formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
-                // ส่ง Remark ไปด้วย
-                formData.append('remark', $("#remark").val());
-
 
                 $.ajax({
                     url: "model/manage_payment_transfer.php",

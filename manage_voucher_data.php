@@ -101,13 +101,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                          style="z-index: 1000;"></div>
                                 </div>
 
-                                <div class="col-md-1 d-flex flex-column justify-content-end">
+                                <!--div class="col-md-1 d-flex flex-column justify-content-end">
                                     <label class="control-label" style="visibility: hidden;">เลือก</label>
                                     <a data-toggle="modal" href="#SearchSupModal" class="btn btn-primary w-100">
                                         Click <i class="fa fa-search" aria-hidden="true"></i>
                                     </a>
+                                </div-->
+                                <div class="col-md-7">
+                                    <label for="address" class="control-label">ที่อยู่</label>
+                                    <input type="text" class="form-control" name="address" id="address" placeholder="">
                                 </div>
-
                                 <div class="col-md-7">
                                     <label for="purpose" class="control-label">จ่ายเพื่อ</label>
                                     <input type="text" class="form-control" name="purpose" id="purpose" placeholder="">
@@ -326,6 +329,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#requester').val(queryString["requester"]);
                 $('#supplier_id').val(queryString["supplier_id"]);
                 $('#supplier_name').val(queryString["supplier_name"]);
+                $('#address').val(queryString["address"]);
                 $('#picture_doc').val(queryString["picture_doc"]);
                 $('#totalAmount').val(queryString["total_amount"]);
 
@@ -716,6 +720,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         requester: $('#requester').val(),
                         supplier_id: $('#supplier_id').val(),
                         supplier_name: $('#supplier_name').val(),
+                        address: $('#address').val(),
                         create_name: $('#create_name').val(),
                         checker_name: $('#checker_name').val(),
                         approve_name: $('#approve_name').val(),
@@ -777,9 +782,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
             $(document).on('click', '.supplier-item', function () {
                 let name = $(this).data('name');
+                let address = $(this).data('address');
                 let id = $(this).data('id');
 
                 $('#supplier_name').val(name);
+                $('#address').val(address);
                 $('#supplier_id').val(id);
                 $('#supplier_list').fadeOut();
             });

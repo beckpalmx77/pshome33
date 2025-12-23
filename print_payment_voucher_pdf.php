@@ -128,8 +128,9 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
             <td align="right" width="50%"><b>วันที่:</b> ' . date('d/m/Y', strtotime($voucher_header['doc_date'])) . '</td>
         </tr>
         <tr>
-            <td width="50%"><b>จ่ายให้แก่:</b> ' . htmlspecialchars($voucher_header['supplier_name'] ?? ' - ') . '</td>
-            <td width="50%"><b>จ่ายเพื่อ:</b> ' . htmlspecialchars($voucher_header['purpose']) . '</td>
+            <td width="30%"><b>จ่ายให้แก่:</b> ' . htmlspecialchars($voucher_header['supplier_name'] ?? ' - ') . '</td>
+            <td width="40%"><b>ที่อยู่:</b> ' . htmlspecialchars($voucher_header['address']) . '</td>
+            <td width="30%"><b>จ่ายเพื่อ:</b> ' . htmlspecialchars($voucher_header['purpose']) . '</td>
         </tr>
         <tr>
             <td width="50%">

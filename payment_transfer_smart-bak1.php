@@ -149,8 +149,8 @@ foreach ($BankCurr as $row_curr) {
                                                     style="background-color: #0dcaf0" required>
                                                 <?php
                                                 $currentYear = date('Y'); // ดึงปีปัจจุบัน
-                                                $startYear = $currentYear - 10; // ย้อนหลัง 10 ปีพอ
-                                                $endYear = $currentYear + 2;  // ล่วงหน้า 2 ปี
+                                                $startYear = $currentYear - 20; // 20 ปีก่อนหน้า
+                                                $endYear = $currentYear + 1;  // 1 ปีข้างหน้า
 
                                                 for ($year = $startYear; $year <= $endYear; $year++) {
                                                     $selected = ($year == $currentYear) ? 'selected' : '';
@@ -251,9 +251,9 @@ foreach ($BankCurr as $row_curr) {
                                 </button>
                             </div>
                             <div class="modal-body text-center">
-                                <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า</p>
+                                <p class="h5 text-success">ชำระค่าส่วนกลางรายปีล่วงหน้า รายปี </p>
                                 <p class="h6 text-primary">รับส่วนลดทันที 1 เดือน (ชำระเพียง 11 เดือน)</p>
-                                <p class="h6 text-danger">สำหรับการชำระของปีถัดไปเท่านั้น</p>
+                                <p class="h6 text-danger">โปรโมชั่นนี้มีผลถึงวันที่ 31 มกราคม</p>
                                 <img src="img/promotion_banner.png" alt="Promotion Banner" class="img-fluid mt-3"
                                      style="max-width: 50%; height: auto;">
                             </div>
@@ -304,36 +304,36 @@ foreach ($BankCurr as $row_curr) {
     }
 
     .container-fluid {
-        background-color: rgba(230, 255, 240, 0.95);
+        background-color: rgba(230, 255, 240, 0.95); /* soft green with transparency */
         padding: 1rem;
         margin: 0.5rem;
         border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.3);
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.3); /* light green shadow */
     }
 
     .card {
         border: none;
         border-radius: 12px;
-        background-color: #eafff0;
+        background-color: #eafff0; /* very light mint green */
         box-shadow: 0 0 10px rgba(152, 251, 152, 0.3);
         margin-bottom: 1rem;
     }
 
     label, .form-check-label {
         font-weight: 500;
-        color: #2e7d32;
+        color: #2e7d32; /* darker green for contrast */
     }
 
     .form-control {
         border-radius: 10px;
-        border: 1px solid #a8d5ba;
+        border: 1px solid #a8d5ba; /* light sage green */
         padding: 0.5rem 0.75rem;
         background-color: #ffffff;
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .btn-primary {
-        background-color: #90ee90;
+        background-color: #90ee90; /* light green */
         border-color: #90ee90;
         color: #2e7d32;
         font-weight: bold;
@@ -355,6 +355,21 @@ foreach ($BankCurr as $row_curr) {
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .profile-info {
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+    }
+</style>
+
+<style>
     html, body {
         height: 100%;
         margin: 0;
@@ -370,13 +385,54 @@ foreach ($BankCurr as $row_curr) {
 
 <script>
     function cleanHouseNumber(value) {
+        // ลบช่องว่างทั้งหมด และอักขระที่ไม่ใช่ตัวเลขหรือ /
         return value.replace(/\s+/g, '').replace(/[^0-9\/]/g, '');
     }
 
     const houseNumberInput = document.getElementById("house_number");
-    houseNumberInput.addEventListener("input", function () { this.value = cleanHouseNumber(this.value); });
-    houseNumberInput.addEventListener("change", function () { this.value = cleanHouseNumber(this.value); });
-    houseNumberInput.addEventListener("blur", function () { this.value = cleanHouseNumber(this.value); });
+
+    // กรองตอนพิมพ์
+    houseNumberInput.addEventListener("input", function () {
+        this.value = cleanHouseNumber(this.value);
+    });
+
+    // ตรวจสอบอีกครั้งเมื่อเปลี่ยนค่า (เช่น copy/paste แล้วคลิกออก)
+    houseNumberInput.addEventListener("change", function () {
+        this.value = cleanHouseNumber(this.value);
+    });
+
+    // ตรวจสอบอีกครั้งเมื่อ focus หลุด (leave field)
+    houseNumberInput.addEventListener("blur", function () {
+        this.value = cleanHouseNumber(this.value);
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        function toggleFields() {
+            const currentMonth = new Date().getMonth() + 1; // ดึงเลขเดือนปัจจุบัน (1-12)
+
+            if ($("#option_monthly").is(":checked")) {
+                $("#period_month_start").prop("disabled", false).val(currentMonth); // กำหนดเป็น เดือนปัจจุบัน
+                $("#period_month_to").prop("disabled", false).val(currentMonth);   // กำหนดเป็น เดือนปัจจุบัน
+                $("#period_year").prop("disabled", false);
+                $("#payment_type").prop("disabled", false);
+                $("#payment_type").val(1);
+            } else if ($("#option_yearly").is(":checked")) {
+                $("#period_month_start").prop("disabled", true).val(1); // กำหนดเป็น มกราคม
+                $("#period_month_to").prop("disabled", true).val(12);   // กำหนดเป็น ธันวาคม
+                $("#period_year").prop("disabled", false);
+                $("#payment_type").prop("disabled", true);
+                $("#payment_type").val(12);
+            }
+        }
+
+        // Initial toggle state
+        toggleFields();
+
+        // Update on radio button change
+        $("input[name='payment_option']").on("change", toggleFields);
+    });
 </script>
 
 <script>
@@ -389,179 +445,19 @@ foreach ($BankCurr as $row_curr) {
                 if (!isNaN(startMonth) && !isNaN(paymentMonths)) {
                     let endMonth = startMonth + paymentMonths - 1;
                     if (endMonth > 12) {
-                        endMonth = ((endMonth - 1) % 12) + 1;
+                        endMonth = ((endMonth - 1) % 12) + 1; // Correctly wraps around for months
                     }
                     $("#period_month_to").val(endMonth);
                 }
-            } else {
-                // ถ้าเป็นรายปี ให้ lock เดือนไว้
-                $("#period_month_start").val(1);
-                $("#period_month_to").val(12);
             }
         }
 
-        $("#payment_type, #period_month_start, #option_monthly").on("input change", updatePeriodMonthTo);
+        $("#payment_type, #period_month_start").on("input change", updatePeriodMonthTo);
     });
+
 </script>
 
-<script>
-    // 1. ฟังก์ชันเช็คช่วงเวลาโปรโมชั่น (15 ธ.ค. - 31 ม.ค.)
-    function isPromotionPeriod() {
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1; // 1-12
-        const currentDay = currentDate.getDate();
-
-        // เงื่อนไขโปรโมชั่น: เริ่ม 15 ธ.ค. ถึง 31 ม.ค.
-        const promoStartMonthPrevYear = 12;
-        const promoStartDayPrevYear = 15;
-        const promoEndMonthCurrentYear = 1;
-        const promoEndDayCurrentYear = 31;
-
-        if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
-            return true;
-        }
-        else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
-            return true;
-        }
-        return false;
-    }
-
-    // 2. ฟังก์ชันหลักสำหรับ Logic การคำนวณเงินและส่วนลด
-    document.addEventListener('DOMContentLoaded', function () {
-        const paymentTypeInput = document.getElementById('payment_type');
-        const commonFeeInput = document.getElementById('common_fee');
-        const amountInput = document.getElementById('amount');
-        const paymentOptionInputs = document.querySelectorAll('input[name="payment_option"]');
-        const periodYearInput = document.getElementById('period_year');
-        const monthYearCalculatorInput = document.getElementById('month_year_calculator');
-        const remarkInput = document.getElementById('remark');
-
-        function calculateAmount() {
-            const commonFee = parseFloat(commonFeeInput.value) || 0;
-            const isYearly = document.getElementById('option_yearly').checked;
-            let calculatedAmount = 0;
-
-            if (!isYearly) {
-                const paymentMonths = parseInt(paymentTypeInput.value) || 0;
-                calculatedAmount = commonFee * paymentMonths;
-            } else {
-                const monthsToCharge = parseFloat(monthYearCalculatorInput.value) || 12;
-                calculatedAmount = commonFee * monthsToCharge;
-            }
-
-            amountInput.value = calculatedAmount.toFixed(2);
-        }
-
-        // --- ฟังก์ชันสำคัญ: จัดการเงื่อนไขโปรโมชั่นและการ Lock ปี ---
-        function updatePaymentLogic() {
-            const isYearly = document.getElementById('option_yearly').checked;
-            const currentDate = new Date();
-            const currentRealYear = currentDate.getFullYear();
-            const currentMonth = currentDate.getMonth() + 1;
-
-            const selectedYear = parseInt(periodYearInput.value) || currentRealYear;
-            const isPromo = isPromotionPeriod();
-
-            // *** Logic สำคัญ: ตรวจสอบปีที่เข้าเงื่อนไข ***
-            let isEligibleYear = false;
-
-            if (isPromo) {
-                // กรณี 1: อยู่ในช่วงเดือนธันวาคม (12) -> ต้องเลือกปีหน้า (Next Year) ถึงจะได้ส่วนลด
-                if (currentMonth === 12 && selectedYear > currentRealYear) {
-                    isEligibleYear = true;
-                }
-                // กรณี 2: อยู่ในช่วงเดือนมกราคม (1) -> เลือกปีนี้ (Current Year) หรือปีหน้าก็ได้
-                else if (currentMonth === 1 && selectedYear >= currentRealYear) {
-                    isEligibleYear = true;
-                }
-            }
-
-            if (isYearly) {
-                if (isEligibleYear) {
-                    // เข้าเงื่อนไขส่วนลด
-                    $("#month_year_calculator").val(11);
-                    $(remarkInput).val("ชำระรายปีล่วงหน้า (ส่วนลด 1 เดือน)");
-                } else {
-                    // ไม่เข้าเงื่อนไข (เช่น จ่ายย้อนหลัง หรือ จ่ายปีปัจจุบันตอนเดือน ธ.ค. หรือ หมดโปร)
-                    $("#month_year_calculator").val(12);
-
-                    if (isPromo && !isEligibleYear) {
-                        // แจ้งเตือน: อยู่ในช่วงโปร แต่เลือกปีผิด (เช่น ธ.ค. 2025 แต่เลือกจ่าย 2025)
-                        $(remarkInput).val("ชำระรายปี (ปีปัจจุบัน/ย้อนหลัง - ไม่เข้าเงื่อนไขส่วนลด)");
-                    } else {
-                        $(remarkInput).val("-");
-                    }
-                }
-
-                // Lock fields สำหรับรายปี
-                $("#period_month_start").prop("disabled", true).val(1);
-                $("#period_month_to").prop("disabled", true).val(12);
-                $("#payment_type").prop("disabled", true).val(12);
-
-                amountInput.readOnly = false;
-                calculateAmount();
-
-            } else {
-                // กรณีเลือกจ่ายรายเดือน
-                $(remarkInput).val("-");
-                $("#period_month_start").prop("disabled", false);
-                $("#period_month_to").prop("disabled", false);
-                $("#payment_type").prop("disabled", false).val(1);
-
-                amountInput.readOnly = true;
-                calculateAmount();
-            }
-        }
-
-        // Event Listeners
-        paymentTypeInput.addEventListener('input', calculateAmount);
-        commonFeeInput.addEventListener('input', () => {
-            if (commonFeeInput.value !== '') {
-                commonFeeInput.value = parseFloat(commonFeeInput.value).toFixed(2);
-            }
-            calculateAmount();
-        });
-
-        paymentOptionInputs.forEach(el =>
-            el.addEventListener('change', updatePaymentLogic)
-        );
-
-        // *** เมื่อเปลี่ยนปี (Dropdown) ให้คำนวณโปรโมชั่นใหม่ทันที ***
-        periodYearInput.addEventListener('change', updatePaymentLogic);
-
-        monthYearCalculatorInput.addEventListener('change', calculateAmount);
-
-        // ฟังก์ชัน Init (เรียกใช้หลังจาก LIFF ดึงข้อมูลเสร็จ)
-        window.initWithCommonFeeInput = function () {
-            const currentDate = new Date();
-            const currentRealYear = currentDate.getFullYear();
-            const currentMonth = currentDate.getMonth() + 1;
-
-            if (isPromotionPeriod()) {
-                // ถ้ามีโปร ให้เลือกรายปีไว้ก่อน
-                document.getElementById('option_yearly').checked = true;
-
-                // *** Logic เลือกปีเริ่มต้นให้อัตโนมัติ ***
-                if (currentMonth === 12) {
-                    // ถ้าเป็น ธ.ค. ให้เลือกปีหน้า
-                    $("#period_year").val(currentRealYear + 1);
-                } else {
-                    // ถ้าเป็น ม.ค. ให้เลือกปีปัจจุบัน
-                    $("#period_year").val(currentRealYear);
-                }
-
-                setTimeout(function () { $('#promotionModal').modal('show'); }, 500);
-
-                // เรียกคำนวณทันที
-                updatePaymentLogic();
-            } else {
-                // ถ้าไม่มีโปร ให้เลือกรายเดือนปกติ
-                document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
-                updatePaymentLogic();
-            }
-        };
-    });
-</script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 <script>
     liff.init({liffId: LIFF_ID})
@@ -595,24 +491,30 @@ foreach ($BankCurr as $row_curr) {
                                 document.getElementById('displayName').value = displayName;
                                 document.getElementById('house_number').value = data.house_number || '';
                                 document.getElementById('detail').value = (data.f_name || '') + ' ' + (data.l_name || '');
-
+                                // **แก้ไขตรงนี้: กำหนดค่า common_fee ให้เป็นทศนิยม 2 ตำแหน่ง**
                                 document.getElementById('common_fee').value = parseFloat(data.common_fee).toFixed(2);
-
-                                // เรียกฟังก์ชัน Init เพื่อเช็คโปรโมชั่นและตั้งค่าเริ่มต้น
+                                // Initialize and calculate amount after common_fee is loaded
                                 window.initWithCommonFeeInput();
 
+                                // NOW, re-apply promotion logic to override defaults if promo is active
+
+                                // ปิดใช้งานก่อน รอสรุป 15-12-2025
+                                applyPromotionLogic(); // ADDED THIS LINE
+
+                                //document.getElementById('user-info-liff1').innerText = `บ้านเลขที่: ${data.house_number}`;
                                 document.getElementById('user-info-liff2').innerText = `ชื่อ : ${data.f_name} ${data.l_name}`;
                                 $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
 
+
                             } else {
                                 alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
-                                liff.closeWindow();
+                                liff.closeWindow(); // กลับไปที่ LINE OA
                             }
                         })
                         .catch(error => {
                             console.error('เกิดข้อผิดพลาด:', error);
                             alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
-                            liff.closeWindow();
+                            liff.closeWindow(); // ปิดหน้าจอเมื่อ error ก็ได้
                         });
                 });
             }
@@ -653,12 +555,14 @@ foreach ($BankCurr as $row_curr) {
                     type: "image/jpeg",
                 });
 
+                // แสดง preview
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     $("#preview_image").attr("src", e.target.result).show();
                 };
                 reader.readAsDataURL(newFile);
 
+                // ใส่ไฟล์ใหม่แทนใน input (จำลองด้วย DataTransfer)
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(newFile);
                 fileInput.files = dataTransfer.files;
@@ -669,6 +573,7 @@ foreach ($BankCurr as $row_curr) {
             }
 
         } else {
+            // Preview ปกติ
             const reader = new FileReader();
             reader.onload = function (e) {
                 $("#preview_image").attr("src", e.target.result).show();
@@ -676,8 +581,167 @@ foreach ($BankCurr as $row_curr) {
             reader.readAsDataURL(file);
         }
     });
+
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const paymentTypeInput = document.getElementById('payment_type');
+        const commonFeeInput = document.getElementById('common_fee');
+        const amountInput = document.getElementById('amount');
+        const paymentOptionInputs = document.querySelectorAll('input[name="payment_option"]');
+        const periodYearInput = document.getElementById('period_year');
+        const monthYearCalculatorInput = document.getElementById('month_year_calculator'); // รับค่า month_year_calculator
+
+        function getSelectedPaymentOption() {
+            for (const el of paymentOptionInputs) {
+                if (el.checked) return el.value;
+            }
+            return null;
+        }
+
+        function calculateAmount() {
+            const commonFee = parseFloat(commonFeeInput.value) || 0;
+            const paymentOption = getSelectedPaymentOption();
+            let calculatedAmount = 0;
+
+            if (paymentOption === 'monthly') {
+                const paymentMonths = parseInt(paymentTypeInput.value) || 0;
+                calculatedAmount = commonFee * paymentMonths;
+            } else if (paymentOption === 'yearly') {
+                // ใช้ค่าจาก month_year_calculator สำหรับการคำนวณรายปี
+                const monthsToCharge = parseFloat(monthYearCalculatorInput.value) || 12; // ใช้ค่าจาก hidden input
+                calculatedAmount = commonFee * monthsToCharge;
+            }
+            // **แก้ไขตรงนี้: จัดรูปแบบ calculatedAmount ให้เป็นทศนิยม 2 ตำแหน่ง**
+            amountInput.value = calculatedAmount.toFixed(2);
+
+            // debug log
+            console.log('[calculateAmount]');
+            console.log('commonFee:', commonFee);
+            console.log('paymentOption:', paymentOption);
+            console.log('calculatedAmount:', amountInput.value);
+            console.log('monthYearCalculator:', monthYearCalculatorInput.value);
+        }
+
+        function handlePaymentOptionChange() {
+            const selectedOption = getSelectedPaymentOption();
+
+            console.log('[handlePaymentOptionChange] selectedOption:', selectedOption);
+
+            if (selectedOption === 'yearly') {
+                paymentTypeInput.value = 12; // Default to 12 for yearly display, actual calculation uses month_year_calculator
+                amountInput.readOnly = false; // Allow editing if needed, though calculation will override
+                // Ensure month_year_calculator is correctly set when yearly is selected
+                // If promo script already ran, it's 11. Otherwise, default to 12.
+                // Re-trigger calculateAmount to reflect potential changes from month_year_calculator
+                calculateAmount();
+            } else if (selectedOption === 'monthly') {
+                paymentTypeInput.value = 1;
+                amountInput.readOnly = true; // Make amount readonly for monthly
+                calculateAmount();
+            }
+        }
+
+        paymentTypeInput.addEventListener('input', () => {
+            console.log('[paymentTypeInput input] value:', paymentTypeInput.value);
+            calculateAmount();
+        });
+        commonFeeInput.addEventListener('input', () => {
+            console.log('[commonFeeInput input] value:', commonFeeInput.value);
+            // เมื่อ common_fee เปลี่ยน ให้จัดรูปแบบเป็น 2 ตำแหน่งทันที
+            if (commonFeeInput.value !== '') {
+                commonFeeInput.value = parseFloat(commonFeeInput.value).toFixed(2);
+            }
+            calculateAmount();
+        });
+        paymentOptionInputs.forEach(el =>
+            el.addEventListener('change', handlePaymentOptionChange)
+        );
+        periodYearInput.addEventListener('change', calculateAmount); // Recalculate if period year changes
+        // เพิ่ม listener สำหรับ month_year_calculator input
+        monthYearCalculatorInput.addEventListener('change', calculateAmount);
+
+
+        // ✅ เรียกหลังจากได้ data.common_fee แล้ว
+        window.initWithCommonFeeInput = function () {
+            // ตั้งค่ารายเดือนเป็น default (หากไม่มีโปรโมชั่นหรือต้องการให้เริ่มต้นเป็นรายเดือน)
+            document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
+            paymentTypeInput.value = 1;
+            amountInput.readOnly = true;
+            monthYearCalculatorInput.value = 12; // Ensure default is 12 if no promo applies initially
+
+            console.log('[initWithCommonFeeInput] init default monthly');
+            calculateAmount(); // เรียก calculateAmount เพื่อคำนวณจำนวนเงินเริ่มต้น
+        };
+    });
+</script>
+
+<script>
+    // Moved the promotion logic into a named function
+    function applyPromotionLogic() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
+        const currentDay = currentDate.getDate();
+
+        // Define the promotion period
+        const promoStartMonthPrevYear = 12; // December
+        const promoStartDayPrevYear = 15;
+
+        const promoEndMonthCurrentYear = 1; // January
+        const promoEndDayCurrentYear = 31;
+
+        let showPopup = false;
+
+        // Condition 1: From Dec 15 of current year
+        if (currentMonth === promoStartMonthPrevYear && currentDay >= promoStartDayPrevYear) {
+            showPopup = true;
+        }
+        // Condition 2: To Jan 31 of next year
+        else if (currentMonth === promoEndMonthCurrentYear && currentDay <= promoEndDayCurrentYear) {
+            showPopup = true;
+        }
+
+        if (showPopup) {
+
+            // ปิดใช้งานก่อน รอสรุป 15-12-2025
+            // Use a slight delay to ensure Bootstrap's JS is fully loaded
+            setTimeout(function () {
+                $('#promotionModal').modal('show');
+            }, 500); // 500ms delay
+
+            // Set month_year_calculator to 11 for the discount if promotion is active
+            $("#month_year_calculator").val(11);
+            $("#remark").val('มีส่วนลดชำระ 11 เดือน');
+            // Also, pre-select the "yearly" option if within the promotion period
+            document.getElementById('option_yearly').checked = true;
+            document.getElementById('option_monthly').checked = false;
+            // Trigger change event to update related fields and recalculate amount
+            const event = new Event('change');
+            document.getElementById('option_yearly').dispatchEvent(event);
+        }
+        // If not in promotion period, ensure month_year_calculator is reset to default 12 for yearly
+        else {
+            // Check if 'option_yearly' is checked, and if so, set calculator back to 12
+            // This ensures that if user manually selects yearly outside promo, they pay for 12 months
+            if (document.getElementById('option_yearly').checked) {
+                $("#month_year_calculator").val(12);
+                $("#remark").val('-');
+                document.getElementById('option_monthly').checked = false; // Ensure monthly is not checked
+                document.getElementById('option_yearly').checked = true; // Explicitly keep yearly checked
+                const event = new Event('change');
+                document.getElementById('option_yearly').dispatchEvent(event);
+            }
+        }
+    }
+
+    // ปิดใช้งานก่อน รอสรุป 15-12-2025
+    document.addEventListener('DOMContentLoaded', function () {
+        applyPromotionLogic(); // Call on DOMContentLoaded
+    });
+
+</script>
 <script>
     $(document).ready(function () {
         $("#transfer_form").on("submit", function (event) {
@@ -697,7 +761,7 @@ foreach ($BankCurr as $row_curr) {
 
             if (house_number === null || house_number.trim() === "") {
                 alertify.error("กรุณาใส่บ้านเลขที่");
-                return;
+                return; // Stops the function from running further
             }
 
             const monthNames = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
@@ -731,8 +795,6 @@ foreach ($BankCurr as $row_curr) {
             formData.append('period_month_to', $("#period_month_to").val());
             formData.append('payment_type', $("#payment_type").val());
             formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
-            formData.append('remark', $("#remark").val());
-
 
             $.ajax({
                 url: "model/manage_payment_transfer_smart.php",
@@ -763,7 +825,7 @@ foreach ($BankCurr as $row_curr) {
                                             "contents": [
                                                 {
                                                     "type": "image",
-                                                    "url": "https://ps33home.com/img/logo/niti_ps33_header200.png",
+                                                    "url": "https://ps33home.com/img/logo/niti_ps33_header200.png", // 👈 **URL โลโก้ของคุณ**
                                                     "size": "sm",
                                                     "aspectRatio": "200:85",
                                                     "aspectMode": "fit",
@@ -934,30 +996,44 @@ foreach ($BankCurr as $row_curr) {
 </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        // อ้างอิงถึง Element ต่างๆ ที่เราจะใช้งาน
         const startMonthSelect = document.getElementById('period_month_start');
         const endMonthSelect = document.getElementById('period_month_to');
         const paymentTypeInput = document.getElementById('payment_type');
+        const periodYearSelect = document.getElementById('period_year');
 
+        // ฟังก์ชันสำหรับคำนวณและอัปเดตค่า
         function calculateAndSetMonths() {
             const startMonth = parseInt(startMonthSelect.value);
             const endMonth = parseInt(endMonthSelect.value);
+            const year = parseInt(periodYearSelect.value);
 
+            // ตรวจสอบว่าได้เลือกเดือนเริ่มต้นและสิ้นสุดแล้ว
             if (startMonth && endMonth) {
+                // ตรวจสอบเงื่อนไข: period_month_start ต้องไม่น้อยกว่า period_month_to
                 if (startMonth > endMonth) {
                     alert('ต้องเลือกเดือน "เริ่มงวด" ให้น้อยกว่าหรือเท่ากับเดือน "ถึงงวด" กรุณาเลือกใหม่ให้ถูกต้อง');
+                    // ตั้งค่า payment_type กลับไปที่ค่าเริ่มต้น
                     paymentTypeInput.value = 1;
-                    return;
+                    return; // หยุดการทำงานของฟังก์ชัน
                 }
+
+                // คำนวณจำนวนเดือน
                 const numberOfMonths = endMonth - startMonth + 1;
+
+                // อัปเดตค่าในช่อง payment_type
                 paymentTypeInput.value = numberOfMonths;
             } else {
+                // ถ้ายังไม่ได้เลือกเดือนใดเดือนหนึ่ง ให้ค่าเป็น 1
                 paymentTypeInput.value = 1;
             }
         }
 
+        // เพิ่ม Event Listener เพื่อเรียกฟังก์ชันเมื่อค่ามีการเปลี่ยนแปลง
         startMonthSelect.addEventListener('change', calculateAndSetMonths);
         endMonthSelect.addEventListener('change', calculateAndSetMonths);
+        periodYearSelect.addEventListener('change', calculateAndSetMonths);
     });
 </script>
 

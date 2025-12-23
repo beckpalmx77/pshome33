@@ -30,6 +30,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "requester" => $result['requester'],
             "supplier_id" => $result['supplier_id'],
             "supplier_name" => $result['supplier_name'],
+            "address" => $result['address'],
             "purpose" => $result['purpose'],
             "total_amount" => $result['total_amount'],
             "picture_doc" => $result['picture_doc'],
