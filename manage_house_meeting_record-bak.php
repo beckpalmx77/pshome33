@@ -207,7 +207,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 'lengthMenu': [[10, 20, 50, 100, -1], [10, 20, 50, 100, "แสดงทั้งหมด"]],
                 'buttons': [
                     // ปุ่มเดิม (Excel)
-/*
+
                     {
                         extend: 'excel',
                         text: '<i class="fa fa-file-excel"></i> Export Excel',
@@ -221,8 +221,6 @@ if (strlen($_SESSION['alogin']) == "") {
                         className: 'btn btn-info btn-sm',
                         exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
                     },
-                    
- */
 
 
                     // *** ปุ่มใหม่: พิมพ์ใบเซ็นชื่อตามแบบฟอร์ม ***
