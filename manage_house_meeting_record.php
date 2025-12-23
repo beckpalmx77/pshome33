@@ -225,11 +225,11 @@ if (strlen($_SESSION['alogin']) == "") {
 
                     // *** ปุ่มใหม่: พิมพ์ใบเซ็นชื่อตามแบบฟอร์ม ***
                     {
-                        text: '<i class="fa fa-file-signature"></i> พิมพ์ใบเซ็นชื่อ (แยกซอย)',
+                        text: '<i class="fa fa-print"></i> พิมพ์ใบเซ็นชื่อ (แยกซอย)',
                         className: 'btn btn-custom-print btn-sm',
                         action: function ( e, dt, node, config ) {
                             // ดึงค่าปีที่เลือก
-                            var year = $('#filter_year').val();
+                            let year = $('#filter_year').val();
                             if(year === "") {
                                 alert("กรุณาเลือกปีก่อนพิมพ์ใบเซ็นชื่อ");
                                 return;
