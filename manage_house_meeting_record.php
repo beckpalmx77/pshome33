@@ -206,37 +206,30 @@ if (strlen($_SESSION['alogin']) == "") {
                 'dom': 'Blfrtip',
                 'lengthMenu': [[10, 20, 50, 100, -1], [10, 20, 50, 100, "แสดงทั้งหมด"]],
                 'buttons': [
-                    // ปุ่มเดิม (Excel)
-/*
+                    // --- ปุ่มใหม่: Export Excel ผ่าน Backend ---
                     {
-                        extend: 'excel',
-                        text: '<i class="fa fa-file-excel"></i> Export Excel',
+                        text: '<i class="fa fa-file-excel"></i> Export Excel (All Data)',
                         className: 'btn btn-success btn-sm',
-                        exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
-                    },
-                    // ปุ่ม Print เดิม (พิมพ์หน้าจอ)
-                    {
-                        extend: 'print',
-                        text: '<i class="fa fa-print"></i> Print View',
-                        className: 'btn btn-info btn-sm',
-                        exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
-                    },
-                    
- */
+                        action: function ( e, dt, node, config ) {
+                            // 1. ดึงค่าปีจาก Dropdown
+                            let year = $('#filter_year').val();
 
+                            // 2. เรียกไฟล์ PHP Backend เพื่อ Download
+                            // ส่งค่า year ไปด้วย ถ้าเป็นค่าว่าง Backend จะดึงทั้งหมดเอง
+                            window.location.href = 'export_process/export_meeting_excel_process.php?meeting_year=' + year;
+                        }
+                    },
 
-                    // *** ปุ่มใหม่: พิมพ์ใบเซ็นชื่อตามแบบฟอร์ม ***
+                    // --- ปุ่มเดิม: พิมพ์ใบเซ็นชื่อ ---
                     {
                         text: '<i class="fa fa-print"></i> พิมพ์ใบเซ็นชื่อ (แยกซอย)',
                         className: 'btn btn-custom-print btn-sm',
                         action: function ( e, dt, node, config ) {
-                            // ดึงค่าปีที่เลือก
                             let year = $('#filter_year').val();
                             if(year === "") {
                                 alert("กรุณาเลือกปีก่อนพิมพ์ใบเซ็นชื่อ");
                                 return;
                             }
-                            // เปิดหน้าต่างใหม่ไปที่ไฟล์ print_meeting_form.php
                             window.open('print_meeting_form.php?meeting_year=' + year, '_blank');
                         }
                     }
@@ -292,7 +285,6 @@ if (strlen($_SESSION['alogin']) == "") {
 
             dataRecords.buttons().container().appendTo('#buttons_container');
 
-            // (ส่วน JS อื่นๆ คงเดิม)
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
