@@ -17,6 +17,7 @@ $action = isset($_POST['action']) ? $_POST['action'] : '';
 // 1. GET_MEETING_LIST : สำหรับแสดงผลใน DataTables (Server-side)
 // --------------------------------------------------------------------------
 if ($action == 'GET_MEETING_LIST') {
+    // รับ Parameter จาก DataTables
     $draw = $_POST['draw'];
     $row = $_POST['start'];
     $rowperpage = $_POST['length'];
@@ -25,21 +26,27 @@ if ($action == 'GET_MEETING_LIST') {
     $columnSortOrder = $_POST['order'][0]['dir'];
     $searchValue = $_POST['search']['value'];
 
+    // --- ส่วนที่เพิ่ม: รับค่าปีการประชุม ---
+    $meeting_year_filter = isset($_POST['meeting_year']) ? $_POST['meeting_year'] : '';
+
     $columns = array(
         0 => 'house_number',
-        1 => 'meeting_date',
-        2 => 'meeting_name',
-        3 => 'attendance_name',
-        4 => 'meeting_status',
-        5 => 'id',
+        1 => 'alley', // เพิ่ม mapping ให้ตรง
+        2 => 'meeting_date',
+        3 => 'meeting_name',
+        4 => 'attendance_name',
+        5 => 'meeting_status',
+        6 => 'id',
     );
 
+    // กำหนด Column ที่จะ Sort (ถ้าไม่ได้ fix ไว้)
     if (isset($columns[$columnIndex])) {
         $sortColumn = $columns[$columnIndex];
     } else {
         $sortColumn = 'house_number';
     }
 
+    // สร้างเงื่อนไขการค้นหา (Search)
     $searchQuery = " ";
     if ($searchValue != '') {
         $searchQuery = " AND (house_number LIKE :search 
@@ -48,14 +55,28 @@ if ($action == 'GET_MEETING_LIST') {
                           OR meeting_year LIKE :search ) ";
     }
 
-    // นับจำนวนทั้งหมด
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 ");
+    // --- สร้างเงื่อนไขกรองปี (Year Filter) ---
+    $yearQuery = " ";
+    if ($meeting_year_filter != '') {
+        $yearQuery = " AND meeting_year = :meeting_year ";
+    }
+
+    // 1. นับจำนวนทั้งหมด (Total Records) - ตาม Scope ปีที่เลือก
+    $sql_count = "SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $yearQuery;
+    $stmt = $conn->prepare($sql_count);
+    if ($meeting_year_filter != '') {
+        $stmt->bindValue(':meeting_year', $meeting_year_filter, PDO::PARAM_STR);
+    }
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
-    // นับจำนวนแบบมี Filter
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $searchQuery);
+    // 2. นับจำนวนแบบมี Search (Filtered Records)
+    $sql_count_filter = "SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $yearQuery . $searchQuery;
+    $stmt = $conn->prepare($sql_count_filter);
+    if ($meeting_year_filter != '') {
+        $stmt->bindValue(':meeting_year', $meeting_year_filter, PDO::PARAM_STR);
+    }
     if ($searchValue != '') {
         $stmt->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
     }
@@ -63,15 +84,24 @@ if ($action == 'GET_MEETING_LIST') {
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
-    // --- จุดที่แก้ไข: สลับตำแหน่ง :offset ขึ้นก่อน :limit ---
-    $sql = "SELECT * FROM v_ims_house_meeting WHERE 1=1 " . $searchQuery . " ORDER BY cast(alley as unsigned) " . " LIMIT :offset, :limit";
+    // 3. ดึงข้อมูล (Select Data)
+    // หมายเหตุ: ตรง ORDER BY cast(alley as unsigned) ถ้าต้องการให้คลิกหัวตารางเปลี่ยนการเรียงได้
+    // ควรเปลี่ยนเป็น " ORDER BY " . $sortColumn . " " . $columnSortOrder
+    // แต่ถ้าต้องการ Fix การเรียงตามซอยตัวเลข ให้ใช้โค้ดเดิมด้านล่างนี้ครับ
+    $sql = "SELECT * FROM v_ims_house_meeting WHERE 1=1 " . $yearQuery . $searchQuery .
+        " ORDER BY cast(alley as unsigned) ASC, house_number ASC " .
+        " LIMIT :offset, :limit";
+
     $stmt = $conn->prepare($sql);
 
+    // Bind Parameters
+    if ($meeting_year_filter != '') {
+        $stmt->bindValue(':meeting_year', $meeting_year_filter, PDO::PARAM_STR);
+    }
     if ($searchValue != '') {
         $stmt->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
     }
 
-    // Bind ค่า (บรรทัดนี้ถูกต้องแล้ว แค่ SQL ข้างบนเขียนสลับกัน)
     $stmt->bindValue(':limit', (int)$rowperpage, PDO::PARAM_INT);
     $stmt->bindValue(':offset', (int)$row, PDO::PARAM_INT);
 
@@ -133,7 +163,9 @@ if ($action == 'UPDATE_ATTENDANCE') {
     }
 
     try {
-        $sql = "UPDATE v_ims_house_meeting 
+        // *** แก้ไข: Update ที่ Table จริง (ims_house_meeting) แทน View (v_ims_house_meeting) ***
+        // เพื่อป้องกัน Error: Target table ... is not updatable
+        $sql = "UPDATE ims_house_meeting 
                 SET attendance_name = :attendance_name, 
                     meeting_status = :meeting_status 
                 WHERE id = :id";

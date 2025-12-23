@@ -3,10 +3,20 @@ include('includes/Header.php');
 if (strlen($_SESSION['alogin']) == "") {
     header("Location: index.php");
 } else {
+    include("config/connect_db.php");
+
+    $current_year = date('Y');
+    $YearRecords = [];
+    for ($y = $current_year + 1; $y >= $current_year - 0; $y--) {
+        $YearRecords[] = $y;
+    }
     ?>
 
     <!DOCTYPE html>
     <html lang="th">
+    <head>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"/>
+    </head>
     <body id="page-top">
     <div id="wrapper">
         <?php include('includes/Side-Bar.php'); ?>
@@ -27,23 +37,33 @@ if (strlen($_SESSION['alogin']) == "") {
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
 
-                                        <div class="col-md-12 col-md-offset-2">
-                                            <table id='TableRecordList' class='display dataTable'>
+                                        <div class="row mb-3 align-items-end">
+                                            <div class="col-md-4">
+                                                <div class="form-group mb-0">
+                                                    <label for="filter_year" class="font-weight-bold">เลือกปีการประชุม (Year):</label>
+                                                    <select class="form-control" id="filter_year">
+                                                        <option value="">-- แสดงทั้งหมด (All Years) --</option>
+                                                        <?php foreach ($YearRecords as $year) {
+                                                            $selected = ($year == $current_year) ? 'selected' : '';
+                                                            ?>
+                                                            <option value="<?php echo $year; ?>" <?php echo $selected; ?>>
+                                                                <?php echo $year; ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 text-right">
+                                                <div id="buttons_container"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <table id='TableRecordList' class='display dataTable table table-bordered table-striped' style="width:100%">
                                                 <thead>
-                                                <tr>
-                                                    <th>บ้านเลขที่</th>
-                                                    <th>ซอย</th>
-                                                    <th>ปี / วันที่</th>
-                                                    <th>ชื่อการประชุม</th>
-                                                    <th>ผู้เข้าร่วมประชุม</th> <th>สถานะการเข้า</th> <th>จัดการ</th>
-                                                </tr>
-                                                </thead>
-                                                <tfoot>
                                                 <tr>
                                                     <th>บ้านเลขที่</th>
                                                     <th>ซอย</th>
@@ -53,7 +73,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>สถานะการเข้า</th>
                                                     <th>จัดการ</th>
                                                 </tr>
-                                                </tfoot>
+                                                </thead>
                                             </table>
                                             <div id="result"></div>
                                         </div>
@@ -139,10 +159,15 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
 
-    <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
 
@@ -150,11 +175,25 @@ if (strlen($_SESSION['alogin']) == "") {
         .icon-input-btn { display: inline-block; position: relative; }
         .icon-input-btn input[type="submit"] { padding-left: 2em; }
         .icon-input-btn .fa { display: inline-block; position: absolute; left: 0.65em; top: 30%; }
+        .dt-buttons .dt-button {
+            background-color: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 15px;
+            margin-right: 5px;
+        }
+        .dt-buttons .dt-button:hover {
+            background-color: #2e59d9;
+        }
+        /* สีปุ่มพิมพ์ใบเซ็นชื่อ */
+        .btn-custom-print {
+            background-color: #1cc88a !important;
+        }
     </style>
 
     <script>
         $(document).ready(function () {
-            // Checkbox Logic
             $('#chk_meeting_status').change(function() {
                 if($(this).is(":checked")) {
                     $('#meeting_status').val('Y');
@@ -163,10 +202,43 @@ if (strlen($_SESSION['alogin']) == "") {
                 }
             });
 
-            // *** แก้ไข URL ให้ตรงกับไฟล์ Backend (_record_process.php) ***
-            let formData = {action: "GET_MEETING_LIST"};
             let dataRecords = $('#TableRecordList').DataTable({
-                'lengthMenu': [[10, 20, 50, 100], [10, 20, 50, 100]],
+                'dom': 'Blfrtip',
+                'lengthMenu': [[10, 20, 50, 100, -1], [10, 20, 50, 100, "แสดงทั้งหมด"]],
+                'buttons': [
+                    // ปุ่มเดิม (Excel)
+
+                    {
+                        extend: 'excel',
+                        text: '<i class="fa fa-file-excel"></i> Export Excel',
+                        className: 'btn btn-success btn-sm',
+                        exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
+                    },
+                    // ปุ่ม Print เดิม (พิมพ์หน้าจอ)
+                    {
+                        extend: 'print',
+                        text: '<i class="fa fa-print"></i> Print View',
+                        className: 'btn btn-info btn-sm',
+                        exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
+                    },
+
+
+                    // *** ปุ่มใหม่: พิมพ์ใบเซ็นชื่อตามแบบฟอร์ม ***
+                    {
+                        text: '<i class="fa fa-file-signature"></i> พิมพ์ใบเซ็นชื่อ (แยกซอย)',
+                        className: 'btn btn-custom-print btn-sm',
+                        action: function ( e, dt, node, config ) {
+                            // ดึงค่าปีที่เลือก
+                            var year = $('#filter_year').val();
+                            if(year === "") {
+                                alert("กรุณาเลือกปีก่อนพิมพ์ใบเซ็นชื่อ");
+                                return;
+                            }
+                            // เปิดหน้าต่างใหม่ไปที่ไฟล์ print_meeting_form.php
+                            window.open('print_meeting_form.php?meeting_year=' + year, '_blank');
+                        }
+                    }
+                ],
                 'language': {
                     search: 'ค้นหา:', lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
@@ -178,12 +250,15 @@ if (strlen($_SESSION['alogin']) == "") {
                 'serverSide': true,
                 'serverMethod': 'post',
                 'ajax': {
-                    'url': 'model/manage_house_meeting_record_process.php', // แก้ไขชื่อไฟล์
-                    'data': formData
+                    'url': 'model/manage_house_meeting_record_process.php',
+                    'data': function(d) {
+                        d.action = "GET_MEETING_LIST";
+                        d.meeting_year = $('#filter_year').val();
+                    }
                 },
                 'columns': [
                     {data: 'house_number'},
-                    {data: 'alley'},
+                    {data: 'alley', defaultContent: '-'},
                     {
                         data: 'meeting_date',
                         render: function (data, type, row) {
@@ -195,11 +270,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     {
                         data: 'meeting_status',
                         render: function (data, type, row) {
-                            if (data === 'Y') {
-                                return '<span class="badge badge-success"><i class="fa fa-check"></i> เข้าร่วม</span>';
-                            } else {
-                                return '<span class="badge badge-secondary"><i class="fa fa-times"></i> ไม่เข้าร่วม</span>';
-                            }
+                            return (data === 'Y') ? '<span class="badge badge-success"><i class="fa fa-check"></i> เข้าร่วม</span>' : '<span class="badge badge-secondary"><i class="fa fa-times"></i> ไม่เข้าร่วม</span>';
                         },
                         className: "text-center"
                     },
@@ -213,16 +284,22 @@ if (strlen($_SESSION['alogin']) == "") {
                 ]
             });
 
-            // *** SUBMIT FORM (Save Update) ***
+            $('#filter_year').change(function() {
+                dataRecords.ajax.reload();
+            });
+
+            dataRecords.buttons().container().appendTo('#buttons_container');
+
+            // (ส่วน JS อื่นๆ คงเดิม)
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
                 let formData = $(this).serialize();
                 $.ajax({
-                    url: 'model/manage_house_meeting_record_process.php', // แก้ไขชื่อไฟล์
+                    url: 'model/manage_house_meeting_record_process.php',
                     method: "POST",
                     data: formData,
-                    dataType: "json", // คาดหวัง JSON กลับมา
+                    dataType: "json",
                     success: function (data) {
                         if (data.status === 'success') {
                             alertify.success(data.message);
@@ -234,22 +311,17 @@ if (strlen($_SESSION['alogin']) == "") {
                         }
                         $('#save').attr('disabled', false);
                     },
-                    error: function() {
-                        alertify.error("เกิดข้อผิดพลาดในการเชื่อมต่อ");
-                        $('#save').attr('disabled', false);
-                    }
+                    error: function() { alertify.error("เชื่อมต่อผิดพลาด"); $('#save').attr('disabled', false); }
                 })
             });
 
-            // *** Click Update Button ***
             $("#TableRecordList").on('click', '.update', function () {
                 let id = $(this).attr("id");
-                let formData = {action: "GET_DATA", id: id};
                 $.ajax({
                     type: "POST",
-                    url: 'model/manage_house_meeting_record_process.php', // แก้ไขชื่อไฟล์
+                    url: 'model/manage_house_meeting_record_process.php',
                     dataType: "json",
-                    data: formData,
+                    data: {action: "GET_DATA", id: id},
                     success: function (response) {
                         let data = response[0] || response;
                         $('#recordModal').modal('show');
@@ -258,7 +330,6 @@ if (strlen($_SESSION['alogin']) == "") {
                         $('#meeting_date_show').val(data.meeting_date + ' (' + data.meeting_year + ')');
                         $('#meeting_name').val(data.meeting_name);
                         $('#attendance_name').val(data.attendance_name);
-
                         if (data.meeting_status === 'Y') {
                             $('#chk_meeting_status').prop('checked', true);
                             $('#meeting_status').val('Y');
@@ -266,20 +337,13 @@ if (strlen($_SESSION['alogin']) == "") {
                             $('#chk_meeting_status').prop('checked', false);
                             $('#meeting_status').val('N');
                         }
-
-                        $('.modal-title').html("<i class='fa fa-edit'></i> บันทึกผลการเข้าร่วมประชุม");
                         $('#action').val('UPDATE_ATTENDANCE');
-                        $('#save').val('บันทึกข้อมูล');
                     },
-                    error: function (response) {
-                        alertify.error("ไม่สามารถดึงข้อมูลได้");
-                    }
+                    error: function () { alertify.error("ดึงข้อมูลไม่ได้"); }
                 });
             });
         });
     </script>
-
     </body>
     </html>
-
 <?php } ?>
