@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // วันที่ปัจจุบันสำหรับเช็คข้อมูลซ้ำ
     $current_date  = date('Y-m-d');
+    $meeting_detail = "การประชุมวันที่ : " . $current_date;
 
     try {
         // ---------------------------------------------------------
@@ -47,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // 2. ถ้าไม่ซ้ำ: บันทึกข้อมูลใหม่
             // ---------------------------------------------------------
             $sql = "INSERT INTO ims_register_meeting 
-                    (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr, meeting_date) 
+                    (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr, meeting_date, meeting_detail) 
                     VALUES 
-                    (:fullname, :house_number, :phone_number, :checkin_point, :lat_addr, :long_addr, :meeting_date)";
+                    (:fullname, :house_number, :phone_number, :checkin_point, :lat_addr, :long_addr, :meeting_date, :meeting_detail)";
 
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':fullname', $fullname);
@@ -58,7 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':checkin_point', $checkin_point);
             $stmt->bindParam(':lat_addr', $lat_addr);
             $stmt->bindParam(':long_addr', $long_addr);
+            $stmt->bindParam(':meeting_detail', $meeting_detail);
             $stmt->bindParam(':meeting_date', $current_date);
+            $stmt->bindParam(':meeting_detail', $meeting_detail);
 
             if ($stmt->execute()) {
                 // --- บันทึกสำเร็จ ---
