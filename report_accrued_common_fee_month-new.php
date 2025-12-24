@@ -3,21 +3,29 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// 1. เรียกใช้ Header
 include('includes/Header.php');
 
+// 2. ตรวจสอบ Session
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == "") {
     header("Location: index.php");
 } else {
+
+    // 3. เรียกใช้ไฟล์เชื่อมต่อฐานข้อมูล
     include('config/connect_db.php');
 
-    // 1. รับค่าตัวแปร
+    // 4. ส่วนประมวลผล PHP (รับค่าช่วงเวลา)
     $selected_year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+
+    // กำหนดค่าเริ่มต้นเป็นเดือนปัจจุบัน
     $start_month = isset($_GET['start_month']) ? (int)$_GET['start_month'] : date('n');
     $end_month   = isset($_GET['end_month']) ? (int)$_GET['end_month'] : date('n');
 
-    // สลับค่าถ้าเดือนเริ่มมากกว่าเดือนจบ
+    // Logic: ถ้า user เลือกเดือนเริ่ม มากกว่า เดือนสิ้นสุด ให้สลับค่ากันอัตโนมัติ
     if ($start_month > $end_month) {
-        $temp = $start_month; $start_month = $end_month; $end_month = $temp;
+        $temp = $start_month;
+        $start_month = $end_month;
+        $end_month = $temp;
     }
 
     $thai_months = [
@@ -25,80 +33,57 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
 
-    // ข้อความหัวตาราง
+    // สร้างข้อความชื่อเดือนไทย หรือ ช่วงเดือนไทย
     if ($start_month == $end_month) {
         $display_range_name = $thai_months[$start_month - 1];
     } else {
         $display_range_name = $thai_months[$start_month - 1] . " - " . $thai_months[$end_month - 1];
     }
 
-    // ---------------------------------------------------------
-    // STEP 1: ดึงข้อมูลบ้านทั้งหมด (Master Data)
-    // ---------------------------------------------------------
-    $sql_house = "SELECT m.house_number, m.alley, m.area_size, m.common_fee, h.contact_name, h.phone_number 
-                  FROM ims_house_master AS m 
-                  LEFT JOIN ims_house AS h ON m.house_number = h.house_number
-                  WHERE m.status = 'Y' AND m.house_number LIKE '6%' 
-                  ORDER BY m.house_number ASC";
-    $stmt_house = $conn->prepare($sql_house);
-    $stmt_house->execute();
-    $all_houses = $stmt_house->fetchAll(PDO::FETCH_ASSOC);
+    // สร้างตัวแปรสำหรับแสดงในตาราง
+    $col_year_thai = $selected_year + 543;
+    $col_month_thai = $display_range_name;
 
-    // ---------------------------------------------------------
-    // STEP 2: ดึงประวัติการจ่ายเงินทั้งหมดของปีที่เลือก มาพักไว้ใน Array
-    // ---------------------------------------------------------
-    $sql_pay = "SELECT house_number, period_month_start, period_month_to 
-                FROM ims_house_payment 
-                WHERE period_year = :year AND payment_status = 'Y'";
-    $stmt_pay = $conn->prepare($sql_pay);
-    $stmt_pay->bindParam(':year', $selected_year, PDO::PARAM_INT);
-    $stmt_pay->execute();
-    $raw_payments = $stmt_pay->fetchAll(PDO::FETCH_ASSOC);
+    // === SQL QUERY สำหรับเช็คช่วงเวลา ===
+    // หลักการ: หาบ้านที่ "ไม่มี" (p.id IS NULL) การชำระเงินที่ครอบคลุมช่วงเวลาที่เลือก
+    $sql = "
+        SELECT
+            m.house_number,
+            m.alley,
+            m.area_size,
+            m.common_fee,
+            h.contact_name,
+            h.phone_number
+        FROM
+            ims_house_master AS m
+        LEFT JOIN
+            ims_house AS h ON m.house_number = h.house_number
+        LEFT JOIN
+            ims_house_payment AS p ON m.house_number = p.house_number
+            AND p.period_year = :year
+            AND p.payment_status = 'Y'
+            AND p.period_month_start <= :start_month 
+            AND p.period_month_to >= :end_month
+        WHERE
+            p.id IS NULL
+            AND m.status = 'Y'
+            AND m.house_number LIKE '6%'
+        ORDER BY
+            m.house_number;
+    ";
 
-    // จัดกลุ่ม Payment ตามบ้านเลขที่ เพื่อให้ค้นหาง่าย
-    $payments_by_house = [];
-    foreach ($raw_payments as $pay) {
-        $payments_by_house[$pay['house_number']][] = [
-            'start' => (int)$pay['period_month_start'],
-            'end'   => (int)$pay['period_month_to']
-        ];
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':year', $selected_year, PDO::PARAM_INT);
+    $stmt->bindParam(':start_month', $start_month, PDO::PARAM_INT);
+    $stmt->bindParam(':end_month', $end_month, PDO::PARAM_INT);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $keyed_results = [];
+    foreach ($results as $result) {
+        $keyed_results[$result['house_number']] = $result;
     }
 
-    // ---------------------------------------------------------
-    // STEP 3: Process Loop (ระเบิดรายการตามเดือน)
-    // ---------------------------------------------------------
-    $final_report_data = [];
-
-    foreach ($all_houses as $house) {
-        $h_num = $house['house_number'];
-
-        // วนลูปตรวจสอบทีละเดือน (ตามช่วงที่ User เลือก)
-        for ($m = $start_month; $m <= $end_month; $m++) {
-
-            $is_paid = false;
-
-            // เช็คว่าเดือน $m นี้ จ่ายหรือยัง?
-            if (isset($payments_by_house[$h_num])) {
-                foreach ($payments_by_house[$h_num] as $p_range) {
-                    // ถ้าเดือนปัจจุบัน อยู่ในช่วงที่จ่ายแล้ว (Start <= m <= End)
-                    if ($m >= $p_range['start'] && $m <= $p_range['end']) {
-                        $is_paid = true;
-                        break; // เจอแล้วว่าจ่าย ก็หยุดเช็คเดือนนี้
-                    }
-                }
-            }
-
-            // ถ้ายังไม่จ่าย ($is_paid == false) ให้เพิ่มลงในรายงาน
-            if (!$is_paid) {
-                $row = $house; // เอาข้อมูลบ้านมาตั้งต้น
-                $row['owing_month_num'] = $m; // เก็บเลขเดือน
-                $row['owing_month_name'] = $thai_months[$m - 1]; // เก็บชื่อเดือน
-                $row['owing_year'] = $selected_year + 543; // เก็บปี
-
-                $final_report_data[] = $row;
-            }
-        }
-    }
     ?>
 
     <!DOCTYPE html>
@@ -114,9 +99,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s'] ?? 'รายงานบ้านที่ค้างชำระ') ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m'] ?? 'รายงาน') ?></li>
-                            <li class="breadcrumb-item active" aria-current="page"><?php echo urldecode($_GET['s'] ?? 'รายงานบ้านที่ค้างชำระ') ?></li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page"><?php echo urldecode($_GET['s'] ?? 'รายงานบ้านที่ค้างชำระ') ?></li>
                         </ol>
                     </div>
 
@@ -124,7 +111,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         <div class="col-lg-12">
                             <div class="card mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">ตัวเลือกการค้นหา (ตรวจสอบรายเดือน)</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        ตัวเลือกการค้นหา (ช่วงเวลา)</h6>
                                 </div>
                                 <div class="card-body">
                                     <form action="" method="GET" class="row g-3 align-items-end mb-4">
@@ -167,10 +155,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                         </div>
 
                                         <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> ค้นหา</button>
+                                            <button type="submit" class="btn btn-primary w-100"><i
+                                                        class="bi bi-search"></i> ค้นหา
+                                            </button>
                                         </div>
+
                                         <div class="col-md-2">
-                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>" class="btn btn-outline-secondary w-100"><i class="bi bi-arrow-clockwise"></i> ค่าปัจจุบัน</a>
+                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>"
+                                               class="btn btn-outline-secondary w-100"><i
+                                                        class="bi bi-arrow-clockwise"></i> เดือนปัจจุบัน</a>
                                         </div>
                                     </form>
 
@@ -178,12 +171,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                     <div class="mt-4">
                                         <h5><i class="bi bi-file-earmark-text-fill"></i> ผลการค้นหา:
-                                            รายการค้างชำระช่วง <span class="text-danger font-weight-bold"><?= htmlspecialchars($display_range_name) ?></span>
-                                            ปี <strong><?= $selected_year + 543 ?></strong>
+                                            บ้านที่ค้างชำระประจำเดือน
+                                            <span class="text-danger font-weight-bold"><?= htmlspecialchars($col_month_thai) ?></span>
+                                            ปี <strong><?= $col_year_thai ?></strong>
                                         </h5>
 
                                         <div class="table-responsive mt-3">
-                                            <table id="reportTable" class="table table-striped table-bordered" style="width:100%">
+                                            <table id="reportTable" class="table table-striped table-bordered"
+                                                   style="width:100%">
                                                 <thead class="thead-light">
                                                 <tr>
                                                     <th class="text-center">ลำดับ</th>
@@ -198,17 +193,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <?php if (empty($final_report_data)): ?>
+                                                <?php if (empty($keyed_results)): ?>
                                                     <tr>
-                                                        <td colspan="9" class="text-center text-muted">- ไม่พบรายการค้างชำระในช่วงเวลาที่เลือก -</td>
+                                                        <td colspan="9" class="text-center">
+                                                            ไม่พบข้อมูลบ้านที่ค้างชำระในช่วงเวลาที่เลือก
+                                                        </td>
                                                     </tr>
                                                 <?php else: ?>
                                                     <?php $i = 1; ?>
-                                                    <?php foreach ($final_report_data as $row): ?>
+                                                    <?php foreach ($keyed_results as $house_number => $row): ?>
                                                         <tr>
                                                             <td class="text-center"><?= $i++ ?></td>
-                                                            <td class="text-center"><?= $row['owing_year'] ?></td>
-                                                            <td class="text-center text-danger font-weight-bold"><?= $row['owing_month_name'] ?></td>
+
+                                                            <td class="text-center"><?= $col_year_thai ?></td>
+                                                            <td class="text-center text-primary"><?= $col_month_thai ?></td>
+
                                                             <td><?= htmlspecialchars($row['house_number'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['alley'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['area_size'] ?? '') ?></td>
@@ -233,6 +232,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </div>
 
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
     <?php include('includes/Modal-Logout.php'); ?>
 
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -246,11 +246,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.js"></script>
+
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.bootstrap5.css">
 
     <script>
         $(document).ready(function () {
+            // ตั้งค่าฟอนต์ภาษาไทยสำหรับ PDF Export
             pdfMake.fonts = {
                 Sarabun: {
                     normal: 'https://fonts.gstatic.com/s/sarabun/v13/DtVjJx26TKEr37c9aAFJn2ok.ttf',
@@ -263,7 +265,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             $('#reportTable').DataTable({
                 language: {url: "//cdn.datatables.net/plug-ins/2.0.8/i18n/th.json"},
                 responsive: true,
-                pageLength: 20,
+                pageLength: 5,
                 lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
@@ -274,8 +276,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         extend: 'excelHtml5',
                         text: '<i class="bi bi-file-earmark-excel"></i> Export to Excel',
                         className: 'btn btn-success btn-sm',
-                        // ชื่อไฟล์จะระบุช่วงเดือนที่เลือก
-                        title: 'รายการค้างชำระแยกเดือน-<?= $display_range_name ?>-<?= $selected_year + 543 ?>'
+                        // ชื่อไฟล์ Excel จะเปลี่ยนไปตามช่วงเวลาที่เลือก
+                        title: 'รายงานค้างชำระ-<?= $display_range_name ?>-<?= $selected_year + 543 ?>'
                     }
                 ]
             });
@@ -283,4 +285,5 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </script>
     </body>
     </html>
+
 <?php } ?>

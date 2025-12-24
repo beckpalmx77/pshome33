@@ -23,25 +23,32 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     ];
     $display_month_name = $thai_months[$selected_month - 1];
 
+    // === UPDATED SQL QUERY ===
     $sql = "
         SELECT
-            h.house_number,
+            m.house_number,
+            m.alley,
+            m.area_size,
+            m.common_fee,
             h.contact_name,
             h.phone_number
         FROM
-            ims_house AS h
+            ims_house_master AS m
         LEFT JOIN
-            ims_house_payment AS p ON h.house_number = p.house_number
+            ims_house AS h ON m.house_number = h.house_number
+        LEFT JOIN
+            ims_house_payment AS p ON m.house_number = p.house_number
             AND p.period_year = :year
             AND :month BETWEEN p.period_month_start AND p.period_month_to
             AND p.payment_status = 'Y'
         WHERE
             p.id IS NULL
-            AND h.house_status = 'Y'
-            AND h.house_number like '6%'            
+            AND m.status = 'Y'
+            AND m.house_number LIKE '6%'
         ORDER BY
-            h.house_number;
+            m.house_number;
     ";
+    // === END UPDATED SQL QUERY ===
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':year', $selected_year, PDO::PARAM_INT);
@@ -132,6 +139,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tr>
                                                     <th class="text-center">ลำดับ</th>
                                                     <th>บ้านเลขที่</th>
+                                                    <th>ซอย</th>
+                                                    <th>พื้นที่ (ตรว)</th>
+                                                    <th>ค่าส่วนกลาง</th>
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>เบอร์โทรศัพท์</th>
                                                 </tr>
@@ -149,6 +159,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <tr>
                                                             <td class="text-center"><?= $i++ ?></td>
                                                             <td><?= htmlspecialchars($row['house_number'] ?? '') ?></td>
+                                                            <td><?= htmlspecialchars($row['alley'] ?? '') ?></td>
+                                                            <td><?= htmlspecialchars($row['area_size'] ?? '') ?></td>
+                                                            <td><?= htmlspecialchars($row['common_fee'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['contact_name'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['phone_number'] ?? '') ?></td>
                                                         </tr>
