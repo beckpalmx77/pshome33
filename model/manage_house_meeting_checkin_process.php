@@ -118,7 +118,8 @@ if ($action == 'GET_MEETING_LIST') {
             "meeting_detail" => $row['meeting_detail'],
             "checkin_point" => $row['checkin_point'],
             "lat_addr" => $row['lat_addr'],
-            "long_addr" => $row['long_addr']
+            "long_addr" => $row['long_addr'],
+            "created_at" => $row['created_at']
         );
     }
 

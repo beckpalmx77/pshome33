@@ -242,13 +242,21 @@ if (strlen($_SESSION['alogin']) == "") {
                             return txt;
                         }
                     },
+                    {data: 'created_at'},
+/*
                     {
                         data: 'id',
                         render: function (data, type, row) {
+                            // --- ปิดการใช้งานปุ่ม Edit โดยการ comment ---
                             return '<button type="button" name="update" id="' + data + '" class="btn btn-warning btn-sm update" title="แก้ไขข้อมูล"><i class="fa fa-edit"></i> Edit</button>';
+
+                            return ''; // คืนค่าว่างเพื่อไม่ให้แสดงอะไร
                         },
                         className: "text-center"
                     }
+
+ */
+
                 ],
                 'order': [[ 6, 'desc' ]] // เรียงตาม ID ล่าสุดก่อน
             });
