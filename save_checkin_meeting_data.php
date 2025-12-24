@@ -1,9 +1,12 @@
 <?php
 // save_checkin_meeting_data.php
+
+// บอก Browser ว่าเป็น UTF-8 (เผื่อกรณี error จะได้อ่านออก)
+header('Content-Type: text/html; charset=utf-8');
+
 require_once 'config/connect_db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // รับค่าตัวแปร
     $fullname      = $_POST['fullname'] ?? '';
     $house_number  = $_POST['house_number'] ?? '';
     $phone_number  = $_POST['phone_number'] ?? '';
@@ -11,45 +14,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lat_addr      = $_POST['lat_addr'] ?? '';
     $long_addr     = $_POST['long_addr'] ?? '';
 
+    // วันที่ปัจจุบันสำหรับเช็คข้อมูลซ้ำ
+    $current_date  = date('Y-m-d');
+
     try {
-        $sql = "INSERT INTO ims_register_meeting 
-                (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr) 
-                VALUES 
-                (:fullname, :house_number, :phone_number, :checkin_point, :lat_addr, :long_addr)";
+        // ---------------------------------------------------------
+        // 1. ตรวจสอบข้อมูลซ้ำ (บ้านเลขที่ + เบอร์โทร + วันที่เดิม)
+        // ---------------------------------------------------------
+        $check_sql = "SELECT id FROM ims_register_meeting 
+                      WHERE house_number = :house_number 
+                      AND phone_number = :phone_number 
+                      AND meeting_date = :meeting_date 
+                      LIMIT 1";
 
-        $stmt = $conn->prepare($sql);
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bindParam(':house_number', $house_number);
+        $check_stmt->bindParam(':phone_number', $phone_number);
+        $check_stmt->bindParam(':meeting_date', $current_date);
+        $check_stmt->execute();
 
-        $stmt->bindParam(':fullname', $fullname);
-        $stmt->bindParam(':house_number', $house_number);
-        $stmt->bindParam(':phone_number', $phone_number);
-        $stmt->bindParam(':checkin_point', $checkin_point);
-        $stmt->bindParam(':lat_addr', $lat_addr);
-        $stmt->bindParam(':long_addr', $long_addr);
-
-        if ($stmt->execute()) {
-            // --- ส่วนที่แก้ไข ---
-
-            // แปลงข้อมูลให้ปลอดภัยสำหรับส่งผ่าน URL (เผื่อมีภาษาไทยหรืออักขระพิเศษ)
+        if ($check_stmt->rowCount() > 0) {
+            // --- กรณีซ้ำ: ไม่บันทึก ส่งไปหน้า Complete แบบ Duplicate ---
             $safe_fullname = urlencode($fullname);
             $safe_point = urlencode($checkin_point);
 
-            // สั่ง Redirect ไปยังหน้าสำเร็จ พร้อมส่งชื่อและจุดเช็คอินไปด้วย
-            header("Location: checkin_meeting_complete?name=$safe_fullname&point=$safe_point");
-            exit(); // จบการทำงานของ Script ทันทีหลังจากสั่ง Redirect
-
-            // --- จบส่วนที่แก้ไข ---
+            // ** แก้ไขชื่อไฟล์ตรงนี้ **
+            header("Location: checkin_meeting_complete.php?name=$safe_fullname&point=$safe_point&status=duplicate");
+            exit();
 
         } else {
-            // กรณี error เล็กน้อยอาจจะ echo ได้ แต่ถ้า production ควรทำหน้า error แยก
-            header('Content-Type: text/html; charset=utf-8');
-            echo "บันทึกข้อมูลไม่สำเร็จ";
+            // ---------------------------------------------------------
+            // 2. ถ้าไม่ซ้ำ: บันทึกข้อมูลใหม่
+            // ---------------------------------------------------------
+            $sql = "INSERT INTO ims_register_meeting 
+                    (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr, meeting_date) 
+                    VALUES 
+                    (:fullname, :house_number, :phone_number, :checkin_point, :lat_addr, :long_addr, :meeting_date)";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':fullname', $fullname);
+            $stmt->bindParam(':house_number', $house_number);
+            $stmt->bindParam(':phone_number', $phone_number);
+            $stmt->bindParam(':checkin_point', $checkin_point);
+            $stmt->bindParam(':lat_addr', $lat_addr);
+            $stmt->bindParam(':long_addr', $long_addr);
+            $stmt->bindParam(':meeting_date', $current_date);
+
+            if ($stmt->execute()) {
+                // --- บันทึกสำเร็จ ---
+                $safe_fullname = urlencode($fullname);
+                $safe_point = urlencode($checkin_point);
+
+                // ** แก้ไขชื่อไฟล์ตรงนี้ **
+                header("Location: checkin_meeting_complete?name=$safe_fullname&point=$safe_point&status=success");
+                exit();
+            } else {
+                echo "บันทึกข้อมูลไม่สำเร็จ";
+            }
         }
 
     } catch (PDOException $e) {
-        header('Content-Type: text/html; charset=utf-8');
         echo "Error: " . $e->getMessage();
     }
 } else {
-    header('Content-Type: text/html; charset=utf-8');
     echo "Invalid Request";
 }
