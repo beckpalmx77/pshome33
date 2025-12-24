@@ -8,7 +8,7 @@ if (strlen($_SESSION['alogin']) == "") {
     $current_year = date('Y');
     $YearRecords = [];
     // สร้าง Dropdown ปี ย้อนหลัง-ล่วงหน้า
-    for ($y = $current_year + 1; $y >= $current_year - 5; $y--) {
+    for ($y = $current_year + 1; $y >= $current_year - 1; $y--) {
         $YearRecords[] = $y;
     }
     ?>
