@@ -31,7 +31,7 @@ $point = isset($_GET['point']) ? $_GET['point'] : 'General';
                 (กรุณากด Allow/อนุญาต)
             </div>
 
-            <form action="save_checkin_meeting_data.php" method="POST">
+            <form action="save_checkin_meeting_data" method="POST">
 
                 <input type="hidden" name="checkin_point" value="<?php echo htmlspecialchars($point); ?>">
                 <input type="hidden" name="lat_addr" id="lat_addr" value="">

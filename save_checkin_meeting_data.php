@@ -1,6 +1,5 @@
 <?php
 // save_checkin_meeting_data.php
-header('Content-Type: text/html; charset=utf-8');
 require_once 'config/connect_db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $long_addr     = $_POST['long_addr'] ?? '';
 
     try {
-        // Insert ลงตาราง ims_register_meeting
         $sql = "INSERT INTO ims_register_meeting 
                 (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr) 
                 VALUES 
@@ -29,20 +27,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':long_addr', $long_addr);
 
         if ($stmt->execute()) {
-            echo "
-            <script>
-                alert('✅ ลงทะเบียนสำเร็จ!\\nขอบคุณคุณ $fullname');
-                // ส่งกลับไปหน้าเดิม (ชื่อไฟล์ใหม่)
-                // window.location.href = 'checkin_meeting_register.php?point=$checkin_point'; 
-            </script>
-            ";
+            // --- ส่วนที่แก้ไข ---
+
+            // แปลงข้อมูลให้ปลอดภัยสำหรับส่งผ่าน URL (เผื่อมีภาษาไทยหรืออักขระพิเศษ)
+            $safe_fullname = urlencode($fullname);
+            $safe_point = urlencode($checkin_point);
+
+            // สั่ง Redirect ไปยังหน้าสำเร็จ พร้อมส่งชื่อและจุดเช็คอินไปด้วย
+            header("Location: checkin_meeting_complete?name=$safe_fullname&point=$safe_point");
+            exit(); // จบการทำงานของ Script ทันทีหลังจากสั่ง Redirect
+
+            // --- จบส่วนที่แก้ไข ---
+
         } else {
+            // กรณี error เล็กน้อยอาจจะ echo ได้ แต่ถ้า production ควรทำหน้า error แยก
+            header('Content-Type: text/html; charset=utf-8');
             echo "บันทึกข้อมูลไม่สำเร็จ";
         }
 
     } catch (PDOException $e) {
+        header('Content-Type: text/html; charset=utf-8');
         echo "Error: " . $e->getMessage();
     }
 } else {
+    header('Content-Type: text/html; charset=utf-8');
     echo "Invalid Request";
 }
