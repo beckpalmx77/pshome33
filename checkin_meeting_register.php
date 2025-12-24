@@ -19,20 +19,19 @@ $point = isset($_GET['point']) ? $_GET['point'] : 'General';
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white text-center">
             <h5>📝 ลงทะเบียนเข้าร่วมประชุม</h5>
-            <!--small>จุดลงทะเบียน: <strong><?php echo htmlspecialchars($point); ?></strong></small-->
         </div>
         <div class="card-body">
 
             <div class="text-center mb-3">
                 <img src="img/logo/niti_ps33_header.png" alt="Company Logo" class="img-fluid" style="max-height: 70px;">
             </div>
+
             <div id="gps-status" class="alert alert-warning text-center p-2" style="font-size: 0.9rem;">
                 กำลังดึงพิกัด GPS... 🛰️ <br>
                 (กรุณากด Allow/อนุญาต)
             </div>
 
-            <form action="save_checkin_meeting_data" method="POST">
-
+            <form action="save_checkin_meeting_data.php" method="POST">
                 <input type="hidden" name="checkin_point" value="<?php echo htmlspecialchars($point); ?>">
                 <input type="hidden" name="lat_addr" id="lat_addr" value="">
                 <input type="hidden" name="long_addr" id="long_addr" value="">
@@ -69,12 +68,14 @@ $point = isset($_GET['point']) ? $_GET['point'] : 'General';
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition, showError, {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 5000, // ลดเวลา Timeout เหลือ 5 วินาที เพื่อไม่ให้รอนานเกินไป
                 maximumAge: 0
             });
         } else {
-            statusDiv.innerHTML = "❌ เครื่องนี้ไม่รองรับ GPS";
-            statusDiv.className = "alert alert-danger text-center";
+            // กรณี Browser ไม่รองรับ GPS
+            statusDiv.innerHTML = "⚠️ เครื่องนี้ไม่รองรับ GPS (บันทึกได้โดยไม่มีพิกัด)";
+            statusDiv.className = "alert alert-warning text-center p-2";
+            enableSubmitButton(); // เปิดปุ่มให้กดได้
         }
     }
 
@@ -86,19 +87,41 @@ $point = isset($_GET['point']) ? $_GET['point'] : 'General';
         statusDiv.innerHTML = "✅ พิกัด: " + position.coords.latitude.toFixed(5) + ", " + position.coords.longitude.toFixed(5);
         statusDiv.className = "alert alert-success text-center p-2";
 
-        const btnSubmit = document.getElementById('btnSubmit');
-        btnSubmit.disabled = false;
-        btnSubmit.className = "btn btn-success btn-lg";
-        btnSubmit.innerText = "บันทึกข้อมูล";
+        enableSubmitButton(); // เปิดปุ่มให้กดได้
     }
 
     function showError(error) {
         const statusDiv = document.getElementById('gps-status');
         let msg = "ไม่สามารถดึงพิกัดได้";
-        if(error.code == error.PERMISSION_DENIED) msg = "กรุณาอนุญาตการเข้าถึงตำแหน่ง (GPS)";
 
-        statusDiv.innerHTML = "❌ " + msg;
-        statusDiv.className = "alert alert-danger text-center p-2";
+        // แปลง Error เป็นข้อความภาษาไทย
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                msg = "ผู้ใช้ไม่อนุญาตให้เข้าถึงพิกัด";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                msg = "ข้อมูลตำแหน่งไม่พร้อมใช้งาน";
+                break;
+            case error.TIMEOUT:
+                msg = "หมดเวลาในการค้นหาพิกัด";
+                break;
+            default:
+                msg = "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+        }
+
+        // แจ้งเตือนแต่ยังให้บันทึกได้
+        statusDiv.innerHTML = "⚠️ " + msg + "<br>(สามารถกดบันทึกข้อมูลได้ตามปกติ)";
+        statusDiv.className = "alert alert-warning text-center p-2"; // ใช้สีเหลืองแทนสีแดงเพื่อให้ดู soft ลง
+
+        enableSubmitButton(); // *** จุดสำคัญ: เปิดปุ่มให้กดได้แม้ Error ***
+    }
+
+    // ฟังก์ชันสำหรับเปิดปุ่ม Submit
+    function enableSubmitButton() {
+        const btnSubmit = document.getElementById('btnSubmit');
+        btnSubmit.disabled = false;
+        btnSubmit.className = "btn btn-success btn-lg";
+        btnSubmit.innerText = "บันทึกข้อมูล";
     }
 
     window.onload = getLocation;
