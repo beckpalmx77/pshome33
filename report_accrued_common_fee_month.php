@@ -263,8 +263,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             $('#reportTable').DataTable({
                 language: {url: "//cdn.datatables.net/plug-ins/2.0.8/i18n/th.json"},
                 responsive: true,
-                pageLength: 20,
-                lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
+                pageLength: 5,
+                lengthMenu: [[5,10, 20, 50, 100, -1], [5,10, 20, 50, 100, "ทั้งหมด"]],
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
