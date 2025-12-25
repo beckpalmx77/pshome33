@@ -140,12 +140,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             <label for="year" class="form-label font-weight-bold">ประจำปี (พ.ศ.)</label>
                                             <select name="year" id="year" class="form-select">
                                                 <?php
-                                                $current_year = date('Y');
-                                                for ($y = $current_year - 5; $y <= $current_year + 1; $y++): ?>
-                                                    <option value="<?= $y ?>" <?= ($y == $selected_year) ? 'selected' : '' ?>>
+                                                // คำสั่ง SQL ดึงปีจากตาราง (ใช้ PDO เพื่อให้เข้ากับ $conn เดิม)
+                                                $sql_year = "SELECT DISTINCT period_year FROM ims_house_payment ORDER BY period_year DESC";
+                                                $stmt_year = $conn->prepare($sql_year);
+                                                $stmt_year->execute();
+
+                                                while ($row_y = $stmt_year->fetch(PDO::FETCH_ASSOC)) {
+                                                    $y = $row_y['period_year'];
+                                                    $is_selected = ($y == $selected_year) ? 'selected' : '';
+                                                    ?>
+                                                    <option value="<?= $y ?>" <?= $is_selected ?>>
                                                         <?= $y + 543 ?>
                                                     </option>
-                                                <?php endfor; ?>
+                                                <?php } ?>
                                             </select>
                                         </div>
 
@@ -288,7 +295,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         extend: 'excelHtml5',
                         text: '<i class="bi bi-file-earmark-excel"></i> Export to Excel',
                         className: 'btn btn-success btn-sm',
-                        // ชื่อไฟล์จะระบุช่วงเดือนที่เลือก
                         title: 'รายการค้างชำระแยกเดือน-<?= $display_range_name ?>-<?= $selected_year + 543 ?>'
                     }
                 ]
