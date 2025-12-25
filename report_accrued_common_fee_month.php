@@ -13,11 +13,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     // 1. รับค่าตัวแปร
     $selected_year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
     $start_month = isset($_GET['start_month']) ? (int)$_GET['start_month'] : date('n');
-    $end_month   = isset($_GET['end_month']) ? (int)$_GET['end_month'] : date('n');
+    $end_month = isset($_GET['end_month']) ? (int)$_GET['end_month'] : date('n');
 
     // สลับค่าถ้าเดือนเริ่มมากกว่าเดือนจบ
     if ($start_month > $end_month) {
-        $temp = $start_month; $start_month = $end_month; $end_month = $temp;
+        $temp = $start_month;
+        $start_month = $end_month;
+        $end_month = $temp;
     }
 
     $thai_months = [
@@ -60,7 +62,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     foreach ($raw_payments as $pay) {
         $payments_by_house[$pay['house_number']][] = [
             'start' => (int)$pay['period_month_start'],
-            'end'   => (int)$pay['period_month_to']
+            'end' => (int)$pay['period_month_to']
         ];
     }
 
@@ -114,9 +116,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s'] ?? 'รายงานบ้านที่ค้างชำระ') ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m'] ?? 'รายงาน') ?></li>
-                            <li class="breadcrumb-item active" aria-current="page"><?php echo urldecode($_GET['s'] ?? 'รายงานบ้านที่ค้างชำระ') ?></li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page"><?php echo urldecode($_GET['s'] ?? 'รายงานบ้านที่ค้างชำระ') ?></li>
                         </ol>
                     </div>
 
@@ -124,7 +128,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         <div class="col-lg-12">
                             <div class="card mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">ตัวเลือกการค้นหา (ตรวจสอบรายเดือน)</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">ตัวเลือกการค้นหา
+                                        (ตรวจสอบรายเดือน)</h6>
                                 </div>
                                 <div class="card-body">
                                     <form action="" method="GET" class="row g-3 align-items-end mb-4">
@@ -145,7 +150,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                         </div>
 
                                         <div class="col-md-3">
-                                            <label for="start_month" class="form-label font-weight-bold">ตั้งแต่เดือน</label>
+                                            <label for="start_month"
+                                                   class="form-label font-weight-bold">ตั้งแต่เดือน</label>
                                             <select name="start_month" id="start_month" class="form-select">
                                                 <?php for ($m = 1; $m <= 12; $m++): ?>
                                                     <option value="<?= $m ?>" <?= ($m == $start_month) ? 'selected' : '' ?>>
@@ -167,10 +173,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                         </div>
 
                                         <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> ค้นหา</button>
+                                            <button type="submit" class="btn btn-primary w-100"><i
+                                                        class="bi bi-search"></i> ค้นหา
+                                            </button>
                                         </div>
                                         <div class="col-md-2">
-                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>" class="btn btn-outline-secondary w-100"><i class="bi bi-arrow-clockwise"></i> ค่าปัจจุบัน</a>
+                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>"
+                                               class="btn btn-outline-secondary w-100"><i
+                                                        class="bi bi-arrow-clockwise"></i> ค่าปัจจุบัน</a>
                                         </div>
                                     </form>
 
@@ -178,12 +188,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                     <div class="mt-4">
                                         <h5><i class="bi bi-file-earmark-text-fill"></i> ผลการค้นหา:
-                                            รายการค้างชำระช่วง <span class="text-danger font-weight-bold"><?= htmlspecialchars($display_range_name) ?></span>
+                                            รายการค้างชำระช่วง <span
+                                                    class="text-danger font-weight-bold"><?= htmlspecialchars($display_range_name) ?></span>
                                             ปี <strong><?= $selected_year + 543 ?></strong>
                                         </h5>
 
                                         <div class="table-responsive mt-3">
-                                            <table id="reportTable" class="table table-striped table-bordered" style="width:100%">
+                                            <table id="reportTable" class="table table-striped table-bordered"
+                                                   style="width:100%">
                                                 <thead class="thead-light">
                                                 <tr>
                                                     <th class="text-center">ลำดับ</th>
@@ -200,7 +212,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tbody>
                                                 <?php if (empty($final_report_data)): ?>
                                                     <tr>
-                                                        <td colspan="9" class="text-center text-muted">- ไม่พบรายการค้างชำระในช่วงเวลาที่เลือก -</td>
+                                                        <td colspan="9" class="text-center text-muted">-
+                                                            ไม่พบรายการค้างชำระในช่วงเวลาที่เลือก -
+                                                        </td>
                                                     </tr>
                                                 <?php else: ?>
                                                     <?php $i = 1; ?>
@@ -264,7 +278,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 language: {url: "//cdn.datatables.net/plug-ins/2.0.8/i18n/th.json"},
                 responsive: true,
                 pageLength: 5,
-                lengthMenu: [[5,10, 20, 50, 100, -1], [5,10, 20, 50, 100, "ทั้งหมด"]],
+                lengthMenu: [[5, 10, 20, 50, 100, -1], [5, 10, 20, 50, 100, "ทั้งหมด"]],
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
