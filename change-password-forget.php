@@ -42,7 +42,7 @@ include('includes/Header.php');
                                                                 User Name</label>
 
                                                             <div class="">
-                                                                <input type="email" name="email"
+                                                                <input type="text" name="email"
                                                                        class="form-control"
                                                                        required="required" id="email">
                                                             </div>
