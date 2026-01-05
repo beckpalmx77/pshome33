@@ -130,55 +130,44 @@ if ($_POST["action"] === 'DELETE' && $_SESSION['account_type'] === 'admin') {
     }
 }
 
-
 if ($_POST["action"] === 'CHG') {
-    // 1. ประกาศตัวแปรเริ่มต้น (เพื่อป้องกัน Undefined Variable)
-    $result = 0;
-    $nRows = 0;
-    $username = $_POST["username"] ?? ''; // ป้องกันกรณีไม่ได้ส่งค่ามา
-    $new_password = $_POST['new_password'] ?? '';
+    try {
+        $result = 0;  // Default result value for failure
+        $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+        $email = $_POST["email"];
 
-    // ตรวจสอบว่าข้อมูลไม่ว่างเปล่า
-    if (!empty($username) && !empty($new_password)) {
-        try {
-            $password = password_hash($new_password, PASSWORD_DEFAULT);
+        // ตรวจสอบว่ามี username อยู่หรือไม่
+        $sql_find = "SELECT COUNT(id) FROM ims_user WHERE email = :email";
+        $query = $conn->prepare($sql_find);
+        $query->bindParam(':email', $email, PDO::PARAM_STR); // เปลี่ยนจาก PDO::PARAM_INT เป็น PDO::PARAM_STR
+        $query->execute();
+        $nRows = $query->fetchColumn(); // ใช้ fetchColumn() เพื่อดึงค่าจำนวนแถว
 
-            // 2. ตรวจสอบว่ามี username อยู่หรือไม่
-            $sql_find = "SELECT COUNT(id) FROM ims_user WHERE user_id = :username";
-            $query = $conn->prepare($sql_find);
-            $query->bindParam(':username', $username, PDO::PARAM_STR);
-            $query->execute();
-            $nRows = $query->fetchColumn();
+        if ($nRows > 0) {
+            try {
+                // Update password if user exists
+                $sql_update = "UPDATE ims_user SET password = :password WHERE email = :email";
+                $update_query = $conn->prepare($sql_update);
+                $update_query->bindParam(':password', $password, PDO::PARAM_STR);
+                $update_query->bindParam(':email', $email, PDO::PARAM_STR);
+                $update_query->execute();
 
-            if ($nRows > 0) {
-                try {
-                    // Update password
-                    $sql_update = "UPDATE ims_user SET password = :password WHERE user_id = :username";
-                    $update_query = $conn->prepare($sql_update);
-                    $update_query->bindParam(':password', $password, PDO::PARAM_STR);
-                    $update_query->bindParam(':username', $username, PDO::PARAM_STR);
-                    $update_query->execute();
-
-                    $result = 1;  // Success
-                } catch (Exception $e) {
-                    $result = 3;  // Error while updating
-                    // บันทึก Error จริงลง Log เพื่อให้รู้สาเหตุ
-                    //file_put_contents("error_log.txt", $e->getMessage() . "\n", FILE_APPEND);
-                }
-            } else {
-                $result = 2;  // User not found
+                $result = 1;  // Success
+            } catch (Exception $e) {
+                $result = 3;  // Error while updating password
             }
-        } catch (Exception $e) {
-            $result = 3;  // General error (เช่น Database connect ไม่ได้)
-            //file_put_contents("error_log.txt", $e->getMessage() . "\n", FILE_APPEND);
+        } else {
+            $result = 2;  // User not found
         }
-    } else {
-        $result = 0; // ข้อมูลไม่ครบ
+    } catch (Exception $e) {
+        $result = 3;  // General error
     }
 
-    // Log ผลลัพธ์
-    $logData = date('Y-m-d H:i:s') . " | Result: $result | Rows Found: $nRows | username: $username\n";
-    file_put_contents("chg-param.txt", $logData, FILE_APPEND);
+    // Log ผลลัพธ์เพื่อ debug
+    /*
+        $logData = "Result: $result | Rows Found: $nRows | Username: $username\n";
+        file_put_contents("chg-param.txt", $logData, FILE_APPEND); // ใช้ file_put_contents() แทน fopen() + fwrite() เพื่อให้โค้ดสั้นลง
+    */
 
     echo $result;
 }

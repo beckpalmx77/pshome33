@@ -1,6 +1,6 @@
 <?php
 include('includes/Header.php');
-if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
+if (strlen($_SESSION['alogin']) == "") {
     header("Location: index.php");
 } else {
     ?>
@@ -23,7 +23,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <h1 class="h4 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page']?>">Home</a></li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
@@ -47,12 +47,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                                         <form id="from_data">
 
                                                             <div class="form-group has-success">
-                                                                <label for="success" class="control-label">ชื่อผู้ใช้</label>
+                                                                <label for="success" class="control-label">ชื่อผู้ใช้
+                                                                    User
+                                                                    Name (Email Address)</label>
 
                                                                 <div class="">
-                                                                    <input type="text" name="username"
+                                                                    <input type="email" name="email"
                                                                            class="form-control"
-                                                                           required="required" id="username">
+                                                                           required="required" id="email">
                                                                 </div>
                                                             </div>
 
@@ -183,9 +185,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <script>
 
         $(document).ready(function () {
-            let username = '<?php echo $_SESSION['alogin']; ?>';
+            let email = '<?php echo $_SESSION['alogin']; ?>';
             let login_id = '<?php echo $_SESSION['login_id']; ?>';
-            $('#username').val(username);
+            $('#email').val(email);
             $('#login_id').val(login_id);
 
         });
