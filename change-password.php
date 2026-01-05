@@ -52,7 +52,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                     Name (Email Address)</label>
 
                                                                 <div class="">
-                                                                    <input type="email" name="email"
+                                                                    <input type="text" name="email"
                                                                            class="form-control"
                                                                            required="required" id="email">
                                                                 </div>
