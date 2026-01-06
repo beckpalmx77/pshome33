@@ -7,17 +7,12 @@ $sql_bank = " SELECT * FROM ims_company ";
 $stmt_bank = $conn->prepare($sql_bank);
 $stmt_bank->execute();
 $BankCurr = $stmt_bank->fetchAll();
-$bank_name = "";
-$bank_account_name = "";
-$bank_account_no = "";
 foreach ($BankCurr as $row_curr) {
     $bank_name = $row_curr["bank_name"];
     $bank_account_name = $row_curr["bank_account_name"];
     $bank_account_no = $row_curr["bank_account_no"];
 }
 
-// กำหนดค่า Default ป้องกัน Error กรณีไม่มีตัวแปร
-$house_number = isset($house_number) ? $house_number : '';
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +98,7 @@ $house_number = isset($house_number) ? $house_number : '';
                                                     <input type="number" name="payment_type" class="form-control"
                                                            required
                                                            id="payment_type"
-                                                           value="1" min="1" max="12">
+                                                           value="1">
                                                 </div>
                                             </div>
                                             <input type="hidden" id="month_year_calculator" name="month_year_calculator"
@@ -384,6 +379,30 @@ $house_number = isset($house_number) ? $house_number : '';
     houseNumberInput.addEventListener("blur", function () { this.value = cleanHouseNumber(this.value); });
 </script>
 
+<script>
+    $(document).ready(function () {
+        function updatePeriodMonthTo() {
+            if ($("#option_monthly").is(":checked")) {
+                const startMonth = parseInt($("#period_month_start").val());
+                const paymentMonths = parseInt($("#payment_type").val());
+
+                if (!isNaN(startMonth) && !isNaN(paymentMonths)) {
+                    let endMonth = startMonth + paymentMonths - 1;
+                    if (endMonth > 12) {
+                        endMonth = ((endMonth - 1) % 12) + 1;
+                    }
+                    $("#period_month_to").val(endMonth);
+                }
+            } else {
+                // ถ้าเป็นรายปี ให้ lock เดือนไว้
+                $("#period_month_start").val(1);
+                $("#period_month_to").val(12);
+            }
+        }
+
+        $("#payment_type, #period_month_start, #option_monthly").on("input change", updatePeriodMonthTo);
+    });
+</script>
 
 <script>
     // 1. ฟังก์ชันเช็คช่วงเวลาโปรโมชั่น (15 ธ.ค. - 31 ม.ค.)
@@ -489,11 +508,6 @@ $house_number = isset($house_number) ? $house_number : '';
                 $("#period_month_to").prop("disabled", false);
                 $("#payment_type").prop("disabled", false).val(1);
 
-                // รีเซ็ตค่าเดือนเริ่ม/สิ้นสุดเป็นเดือนปัจจุบันเมื่อสลับกลับมา
-                let thisMonth = new Date().getMonth() + 1;
-                if(!$("#period_month_start").val()) $("#period_month_start").val(thisMonth);
-                if(!$("#period_month_to").val()) $("#period_month_to").val(thisMonth);
-
                 amountInput.readOnly = true;
                 calculateAmount();
             }
@@ -546,81 +560,6 @@ $house_number = isset($house_number) ? $house_number : '';
                 updatePaymentLogic();
             }
         };
-    });
-</script>
-
-<script>
-    // ***************************************************************
-    // ส่วนจัดการ Logic เดือนและจำนวนเงิน (แก้ไขให้ไม่ตีกันและตรวจสอบเงื่อนไข)
-    // ***************************************************************
-    $(document).ready(function () {
-        const startSelect = $("#period_month_start");
-        const endSelect = $("#period_month_to");
-        const typeInput = $("#payment_type");
-        const monthlyOption = $("#option_monthly");
-
-        // ฟังก์ชันหลัก: คำนวณและตรวจสอบ
-        function updateMonthLogic(source) {
-            // ถ้าเลือกเป็นรายปี ไม่ต้องทำอะไร
-            if (!monthlyOption.is(":checked")) return;
-
-            let start = parseInt(startSelect.val());
-            let end = parseInt(endSelect.val());
-            let duration = parseInt(typeInput.val());
-
-            if (isNaN(start)) return; // ถ้ายังไม่ได้เลือกเดือนเริ่ม ก็ทำอะไรไม่ได้
-
-            if (source === 'range') {
-                // 1. กรณีผู้ใช้เปลี่ยน "เดือนเริ่ม" หรือ "เดือนสิ้นสุด" -> คำนวณ "จำนวนเดือน"
-                if (isNaN(end)) {
-                    // ถ้าเดือนจบว่าง ให้ตั้งค่าเท่ากับเดือนเริ่ม
-                    end = start;
-                    endSelect.val(end);
-                }
-
-                // *** ตรวจสอบเงื่อนไข Start ต้องไม่มากกว่า End ***
-                if (start > end) {
-                    alert('เดือนเริ่มต้น ต้องไม่มากกว่า เดือนสิ้นสุด');
-                    // Reset เดือนสิ้นสุดให้เท่ากับเดือนเริ่มต้น
-                    end = start;
-                    endSelect.val(end);
-                }
-
-                // คำนวณจำนวนเดือน
-                let newDuration = end - start + 1;
-                typeInput.val(newDuration);
-
-            } else if (source === 'duration') {
-                // 2. กรณีผู้ใช้เปลี่ยน "จำนวนเดือน" -> คำนวณ "เดือนสิ้นสุด"
-                if (isNaN(duration) || duration < 1) {
-                    duration = 1; // บังคับขั้นต่ำ 1 เดือน
-                }
-
-                let newEnd = start + duration - 1;
-
-                // ถ้าเกิน 12 (ธันวาคม) ให้ปัดกลับมาเป็น 12 และปรับ duration (เพราะจ่ายข้ามปีไม่ได้ในระบบนี้)
-                if (newEnd > 12) {
-                    newEnd = 12;
-                    duration = 12 - start + 1;
-                    typeInput.val(duration); // ปรับค่าใน Input ให้ตรงความจริง
-                    alert('ไม่สามารถเลือกข้ามปีได้ กรุณาทำรายการแยกปี');
-                }
-
-                endSelect.val(newEnd);
-            }
-
-            // Trigger ให้ calculateAmount ทำงานด้วย (เพื่ออัพเดทตัวเงิน)
-            typeInput.trigger('input');
-        }
-
-        // Bind Event Handlers
-        startSelect.on('change', function() { updateMonthLogic('range'); });
-        endSelect.on('change', function() { updateMonthLogic('range'); });
-
-        typeInput.on('input change', function() {
-            // หน่วงเวลาเล็กน้อยเพื่อให้ user พิมพ์เสร็จ (กรณีพิมพ์เลข)
-            updateMonthLogic('duration');
-        });
     });
 </script>
 
@@ -991,6 +930,34 @@ $house_number = isset($house_number) ? $house_number : '';
                 }
             });
         });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startMonthSelect = document.getElementById('period_month_start');
+        const endMonthSelect = document.getElementById('period_month_to');
+        const paymentTypeInput = document.getElementById('payment_type');
+
+        function calculateAndSetMonths() {
+            const startMonth = parseInt(startMonthSelect.value);
+            const endMonth = parseInt(endMonthSelect.value);
+
+            if (startMonth && endMonth) {
+                if (startMonth > endMonth) {
+                    alert('ต้องเลือกเดือน "เริ่มงวด" ให้น้อยกว่าหรือเท่ากับเดือน "ถึงงวด" กรุณาเลือกใหม่ให้ถูกต้อง');
+                    paymentTypeInput.value = 1;
+                    return;
+                }
+                const numberOfMonths = endMonth - startMonth + 1;
+                paymentTypeInput.value = numberOfMonths;
+            } else {
+                paymentTypeInput.value = 1;
+            }
+        }
+
+        startMonthSelect.addEventListener('change', calculateAndSetMonths);
+        endMonthSelect.addEventListener('change', calculateAndSetMonths);
     });
 </script>
 
