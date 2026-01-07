@@ -75,6 +75,7 @@ if ($_POST["action"] === 'UPDATE') {
         $period_month_to = $_POST["period_month_to"];
         $period_year = $_POST["period_year"];
         $amount = $_POST["amount"];
+        $remark = $_POST["remark"];
         $payment_method = $_POST["payment_method"];
 
 /*
@@ -134,7 +135,8 @@ if ($_POST["action"] === 'UPDATE') {
                 payment_type = :payment_type,  
                 amount = :amount, 
                 update_count = :new_update_count,
-                payment_method = :payment_method   
+                payment_method = :payment_method,
+                remark =:remark   
             WHERE id = :id";
 
             $query = $conn->prepare($sql_update);
@@ -147,6 +149,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':amount', $amount, PDO::PARAM_STR);
             $query->bindParam(':new_update_count', $new_update_count, PDO::PARAM_INT);
             $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
+            $query->bindParam(':remark', $remark, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
 

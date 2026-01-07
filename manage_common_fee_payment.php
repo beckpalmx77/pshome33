@@ -325,6 +325,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                readonly="true"
                                                                                placeholder="">
                                                                     </div>
+                                                                    <div class="col-sm-4">
+                                                                        <label for="remark"
+                                                                               class="control-label">หมายเหตุ
+                                                                            </label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="remark"
+                                                                               name="remark"
+                                                                               placeholder="">
+                                                                    </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-4">
@@ -574,6 +583,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             let image_path = 'uploads/slips/' + picture_payment;
                             let create_by = data.create_by;
                             let created_at = data.created_at;
+                            let remark = data.remark;
                             let approve_by = data.approve_by;
                             let updated_at = data.updated_at;
 
@@ -592,6 +602,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             $('#payment_method').val(payment_method);
                             $('#create_by').val(create_by);
                             $('#created_at').val(created_at);
+                            $('#remark').val(remark);
                             $('#approve_by').val(approve_by);
                             $('#updated_at').val(updated_at);
                             $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
