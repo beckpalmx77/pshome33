@@ -254,15 +254,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                                required="required"
                                                                                placeholder="">
                                                                     </div>
-                                                                    <!--div class="col-sm-4">
-                                                                        <label for="payment_method"
-                                                                               class="control-label">วิธีการชำระ</label>
-                                                                        <input type="text" class="form-control"
-                                                                               id="payment_method"
-                                                                               name="payment_method"
-                                                                               readonly="true"
-                                                                               placeholder="">
-                                                                    </div-->
                                                                     <div class="col-sm-4">
                                                                         <label for="payment_method"
                                                                                class="control-label">วิธีการชำระ</label>
@@ -328,7 +319,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     <div class="col-sm-4">
                                                                         <label for="remark"
                                                                                class="control-label">หมายเหตุ
-                                                                            </label>
+                                                                        </label>
                                                                         <input type="text" class="form-control"
                                                                                id="remark"
                                                                                name="remark"
@@ -530,6 +521,31 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
             $('#saveButton').on('click', function (event) {
                 event.preventDefault();
+
+                // ----------------------------------------------------------------
+                // START : ส่วนที่เพิ่มตรวจสอบ Period Month Start > Period Month To
+                // ----------------------------------------------------------------
+                let startMonth = parseInt($('#period_month_start').val());
+                let toMonth = parseInt($('#period_month_to').val());
+
+                // ตรวจสอบว่ามีการเลือกทั้งคู่และเป็นตัวเลข
+                if (!isNaN(startMonth) && !isNaN(toMonth)) {
+                    if (startMonth > toMonth) {
+                        // แจ้งเตือนผู้ใช้
+                        if (typeof alertify !== 'undefined') {
+                            alertify.error("งวดเดือนเริ่มต้น ต้องไม่มากกว่า งวดเดือนสิ้นสุด");
+                        } else {
+                            alert("งวดเดือนเริ่มต้น ต้องไม่มากกว่า งวดเดือนสิ้นสุด");
+                        }
+                        // โฟกัสไปที่ช่องที่ผิดเพื่อให้แก้ไข และหยุดการทำงาน
+                        $('#period_month_to').focus();
+                        return;
+                    }
+                }
+                // ----------------------------------------------------------------
+                // END : ส่วนที่เพิ่มตรวจสอบ
+                // ----------------------------------------------------------------
+
                 let recordForm = $('#recordForm');
                 let formData = recordForm.serialize();
                 $(this).attr('disabled', true);
