@@ -73,6 +73,12 @@ if ($query->rowCount() == 1) {
                 setcookie("remember_chk", "check", time() + (86400 * 10000), "/");
             }
 
+            $sql = "INSERT INTO ims_user_login_logs(user_id) VALUES (:user_id)";
+            $query = $conn->prepare($sql);
+            $query->bindParam(':user_id', $result->user_id, PDO::PARAM_STR);
+            $query->execute();
+            $lastInsertId = $conn->lastInsertId();
+
             //echo $result->dashboard_page;
 
             if ($_SESSION['deviceType']==='computer' || $_SESSION['deviceType']==='tablet') {
