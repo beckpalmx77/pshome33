@@ -239,6 +239,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                 </div>
 
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                        <label for="remark"
+                                                                               class="control-label">หมายเหตุ</label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="remark"
+                                                                               name="remark"
+                                                                               required="required"
+                                                                               placeholder="">
+                                                                    </div>
+                                                                </div>
+
                                                             </div>
                                                         </div>
 
@@ -534,6 +546,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         let period_month_to = data.period_month_to;
                         let period_year = data.period_year;
                         let amount = data.amount;
+                        let remark = data.remark;
                         let picture_payment = data.picture_payment;
                         let payment_status = data.payment_status;
                         let payment_method = data.payment_method;
@@ -561,6 +574,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#period_month_to').val(period_month_to);
                         $('#period_year').val(period_year);
                         $('#amount').val(amount);
+                        $('#remark').val(remark);
                         $('#payment_status').val(payment_status);
                         $('#payment_status_desc').val(payment_status_desc);
                         $('#payment_method').val(payment_method);
