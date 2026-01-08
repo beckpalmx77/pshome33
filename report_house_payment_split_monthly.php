@@ -37,6 +37,19 @@ if (strlen($_SESSION['alogin']) == "") {
                 background-color: #f8f9fc;
                 padding: 5px;
             }
+
+            /* --- เพิ่ม CSS จัดระเบียบปุ่ม Export และ ตัวเลือกจำนวนรายการ --- */
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dt-buttons {
+                display: inline-block; /* ให้แสดงผลในบรรทัดเดียวกัน */
+                vertical-align: middle;
+                margin-right: 10px; /* เว้นระยะห่าง */
+                margin-bottom: 10px;
+            }
+            /* ปรับตำแหน่งช่องค้นหา (Filter) ให้ชิดขวาเหมือนเดิม ถ้ามันตกบรรทัด */
+            .dataTables_wrapper .dataTables_filter {
+                float: right;
+            }
         </style>
     </head>
     <body id="page-top">
@@ -156,14 +169,11 @@ if (strlen($_SESSION['alogin']) == "") {
         $(document).ready(function () {
             let table;
 
-            // ฟังก์ชันสำหรับโหลดตาราง (เหมือนเดิม)
             function loadTable(year) {
-                // 1. Destroy ตารางเก่าถ้ามี
                 if ($.fn.DataTable.isDataTable('#dataTablePayment')) {
                     $('#dataTablePayment').DataTable().destroy();
                 }
 
-                // 2. จัดการเรื่อง Header Filter
                 $('#dataTablePayment thead tr.filter-row').remove();
                 $('#dataTablePayment thead tr').clone(true).addClass('filter-row').appendTo('#dataTablePayment thead');
 
@@ -181,7 +191,6 @@ if (strlen($_SESSION['alogin']) == "") {
                     }
                 });
 
-                // 3. เริ่มสร้าง DataTable
                 table = $('#dataTablePayment').DataTable({
                     "processing": true,
                     "serverSide": false,
@@ -211,7 +220,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         { "data": "total", render: $.fn.dataTable.render.number(',', '.', 2) }
                     ],
                     "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "ทั้งหมด"]],
-                    "dom": 'Blfrtip',
+
+                    // --- แก้ไขตรงนี้ครับ ---
+                    // เปลี่ยนจาก 'Blfrtip' เป็น 'lBfrtip'
+                    // (l = Length ขึ้นก่อน, B = Buttons ตามหลัง)
+                    "dom": 'lBfrtip',
+
                     "buttons": [
                         {
                             extend: 'excelHtml5',
@@ -250,11 +264,8 @@ if (strlen($_SESSION['alogin']) == "") {
                 });
             }
 
-            // ฟังก์ชันกลาง สำหรับเรียก Process และแสดงผล (ใช้ร่วมกันทั้ง Auto และ Manual)
             function processAndDisplay(selectedYear) {
                 let btn = $('#btnProcessAndView');
-
-                // แสดงสถานะที่ปุ่ม (User จะได้รู้ว่าระบบกำลังทำงานอยู่)
                 btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> กำลังประมวลผล...');
 
                 $.ajax({
@@ -264,7 +275,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     dataType: 'json',
                     success: function (response) {
                         if (response.status === 'success') {
-                            loadTable(selectedYear); // โหลดข้อมูลเมื่อคำนวณเสร็จ
+                            loadTable(selectedYear);
                         } else {
                             alert('เกิดข้อผิดพลาด: ' + response.message);
                         }
@@ -274,27 +285,21 @@ if (strlen($_SESSION['alogin']) == "") {
                         alert('เชื่อมต่อ Server ไม่ได้ (กรุณาดู Console)');
                     },
                     complete: function () {
-                        // คืนค่าปุ่ม
                         btn.prop('disabled', false).html('<i class="fas fa-sync-alt"></i> ประมวลผล & แสดงข้อมูล');
                     }
                 });
             }
 
-            // --- ส่วนการทำงานหลัก ---
-
-            // 1. เมื่อหน้าเว็บโหลดเสร็จ ให้ทำงานทันทีด้วยปี default ที่เลือกอยู่
             let initialYear = $('#select_year').val();
             if(initialYear) {
                 processAndDisplay(initialYear);
             }
 
-            // 2. เมื่อมีการเปลี่ยนปีใน Dropdown ให้ทำงานทันที
             $('#select_year').change(function() {
                 let newYear = $(this).val();
                 processAndDisplay(newYear);
             });
 
-            // 3. (Optional) ปุ่มกด Manual ก็ยังใช้งานได้ โดยเรียกฟังก์ชันเดียวกัน
             $('#btnProcessAndView').click(function (e) {
                 e.preventDefault();
                 let selectedYear = $('#select_year').val();
