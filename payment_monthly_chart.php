@@ -41,10 +41,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             <div class="col-auto">
                                                 <label for="selectYear" class="control-label"><b>ปี พ.ศ.</b></label>
                                                 <select id="selectYear" class="form-control" style="min-width: 120px;">
-                                                    <?php
+                                                    <!--?php
                                                     for ($y = $current_year_en + 543; $y >= $current_year_en + 543 - 5; $y--) {
                                                         $selected = ($y - 543 == $current_year_en) ? 'selected' : '';
                                                         echo "<option value='".($y - 543)."' $selected>$y</option>";
+                                                    }
+                                                    ?-->
+                                                    <?php
+                                                    for ($y = $current_year_en; $y >= $current_year_en - 5; $y--) {
+                                                        $selected = ($y == $current_year_en) ? 'selected' : '';
+                                                        echo "<option value='".($y)."' $selected>$y</option>";
                                                     }
                                                     ?>
                                                 </select>
