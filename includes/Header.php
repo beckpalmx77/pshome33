@@ -1,3 +1,8 @@
+<?php
+session_start();
+error_reporting(0);
+?>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -45,12 +50,6 @@
     <script type="text/javascript" charset="utf8" src="../js/clock_time.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.5.0/dist/heic2any.min.js"></script>
-
-
-    <?php
-    session_start();
-    error_reporting(0);
-    ?>
 
     <style>
         body, h1, h2, h3, h4, h5, h6 {
