@@ -23,6 +23,15 @@ if (strlen($_SESSION['alogin']) == "") {
             .btn-process {
                 min-width: 150px;
             }
+            /* ปรับแต่งช่องค้นหาในตาราง */
+            .filter-input {
+                width: 100%;
+                padding: 3px;
+                box-sizing: border-box;
+                font-size: 0.8rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
         </style>
     </head>
     <body id="page-top">
@@ -104,7 +113,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="13" style="text-align:right">ยอดรวมทั้งหมด:</th>
+                                            <th colspan="14" style="text-align:right">ยอดรวมทั้งหมด:</th>
                                             <th></th>
                                         </tr>
                                         </tfoot>
@@ -115,7 +124,10 @@ if (strlen($_SESSION['alogin']) == "") {
                     </div>
 
                 </div>
-                <?php include('includes/Footer.php'); ?>
+                <?php
+                    include('includes/Modal-Logout.php');
+                    include('includes/Footer.php');
+                ?>
             </div>
         </div>
     </div>
@@ -136,20 +148,53 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap4.min.js"></script>
 
     <script>
-        $(document).ready(function () { // แก้ไข: ใส่ ) หลัง document
+        $(document).ready(function () {
             let table;
 
-            // ฟังก์ชันโหลดข้อมูลเข้าตาราง
             function loadTable(year) {
+                // 1. Destroy ตารางเก่าถ้ามี
                 if ($.fn.DataTable.isDataTable('#dataTablePayment')) {
                     $('#dataTablePayment').DataTable().destroy();
                 }
 
+                // 2. จัดการเรื่อง Header Filter (ป้องกันการสร้างซ้ำซ้อน)
+                // ลบแถว filter เก่าออกก่อน (ถ้ามี)
+                $('#dataTablePayment thead tr.filter-row').remove();
+
+                // Clone แถว Header เพื่อสร้างเป็นช่อง Filter
+                $('#dataTablePayment thead tr').clone(true).addClass('filter-row').appendTo('#dataTablePayment thead');
+
+                // วนลูปสร้าง Input ในแถวที่ 2
+                $('#dataTablePayment thead tr:eq(1) th').each(function (i) {
+                    var title = $(this).text();
+
+                    // สร้าง Input เฉพาะคอลัมน์ บ้านเลขที่ (0) และ ซอย (1)
+                    if (i === 0 || i === 1) {
+                        $(this).html('<input type="text" class="filter-input" placeholder="ค้นหา ' + title + '" />');
+
+                        // ใส่ Event ให้ Input
+                        $('input', this).on('keyup change', function () {
+                            if (table.column(i).search() !== this.value) {
+                                table
+                                    .column(i)
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                    } else {
+                        // คอลัมน์อื่นๆ ไม่ต้องมีช่องค้นหา
+                        $(this).html('');
+                    }
+                });
+
+                // 3. เริ่มสร้าง DataTable
                 table = $('#dataTablePayment').DataTable({
                     "processing": true,
-                    "serverSide": false, // ปิด ServerSide เพราะเราโหลด JSON ก้อนเดียว
+                    "serverSide": false,
+                    "orderCellsTop": true, // สำคัญ: บอกให้ Sort ที่แถวบนสุดเท่านั้น (ไม่ยุ่งกับแถว Filter)
+                    "fixedHeader": true,
                     "ajax": {
-                        "url": "process/fetch_house_payment_data.php", // Path ไปยังไฟล์ Fetch
+                        "url": "process/fetch_house_payment_data.php",
                         "type": "POST",
                         "data": { year: year },
                         "dataSrc": "data"
@@ -186,10 +231,14 @@ if (strlen($_SESSION['alogin']) == "") {
                         let intVal = function (i) {
                             return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                         };
-                        let grandTotal = api.column(13).data().reduce(function (a, b) {
+
+                        // แก้ไข Index เป็น 14 (เพราะมี House(0) + Alley(1) + 12 Months)
+                        let grandTotal = api.column(14).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
-                        $(api.column(13).footer()).html(grandTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+
+                        // แสดงผลที่ Footer
+                        $(api.column(14).footer()).html(grandTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     },
                     "language": {
                         "emptyTable": "ไม่พบข้อมูล หรือยังไม่ได้กดประมวลผล",
@@ -199,23 +248,22 @@ if (strlen($_SESSION['alogin']) == "") {
                 });
             }
 
-            // เมื่อกดปุ่ม "ประมวลผล & แสดงข้อมูล"
+            // ปุ่มกด Process
             $('#btnProcessAndView').click(function (e) {
                 e.preventDefault();
                 let selectedYear = $('#select_year').val();
                 let btn = $(this);
 
-                // Disable ปุ่มและแสดง Loading
                 btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> กำลังประมวลผล...');
 
                 $.ajax({
-                    url: 'process/process_house_payment_year.php', // Path ไปยังไฟล์ Process
+                    url: 'process/process_house_payment_year.php',
                     type: 'POST',
                     data: { year: selectedYear },
                     dataType: 'json',
                     success: function (response) {
                         if (response.status === 'success') {
-                            loadTable(selectedYear); // โหลดตารางเมื่อ Process เสร็จ
+                            loadTable(selectedYear);
                         } else {
                             alert('เกิดข้อผิดพลาด: ' + response.message);
                         }
