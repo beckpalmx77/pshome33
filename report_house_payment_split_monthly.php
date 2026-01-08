@@ -156,44 +156,36 @@ if (strlen($_SESSION['alogin']) == "") {
         $(document).ready(function () {
             let table;
 
+            // ฟังก์ชันสำหรับโหลดตาราง (เหมือนเดิม)
             function loadTable(year) {
-                // 1. ถ้ามีตารางอยู่แล้ว ให้ล้างค่าเก่าทิ้งก่อน
+                // 1. Destroy ตารางเก่าถ้ามี
                 if ($.fn.DataTable.isDataTable('#dataTablePayment')) {
                     $('#dataTablePayment').DataTable().destroy();
                 }
 
-                // 2. สร้างแถว Filter (Input ค้นหา)
-                // ลบแถว Filter เก่าก่อน (ป้องกันการสร้างซ้ำ)
+                // 2. จัดการเรื่อง Header Filter
                 $('#dataTablePayment thead tr.filter-row').remove();
-
-                // Clone แถว Header มาเป็นแถว Filter
                 $('#dataTablePayment thead tr').clone(true).addClass('filter-row').appendTo('#dataTablePayment thead');
 
-                // วนลูปใส่ Input Box
                 $('#dataTablePayment thead tr:eq(1) th').each(function (i) {
                     var title = $(this).text();
-
-                    // สร้าง Input เฉพาะคอลัมน์ "บ้านเลขที่" (0) และ "ซอย" (1)
                     if (i === 0 || i === 1) {
                         $(this).html('<input type="text" class="filter-input" placeholder="ค้นหา ' + title + '" />');
-
-                        // Binding Event ค้นหา
                         $('input', this).on('keyup change', function () {
                             if (table.column(i).search() !== this.value) {
                                 table.column(i).search(this.value).draw();
                             }
                         });
                     } else {
-                        // คอลัมน์เดือนไม่ต้องมีช่องค้นหา
                         $(this).html('');
                     }
                 });
 
-                // 3. เริ่มต้น DataTables
+                // 3. เริ่มสร้าง DataTable
                 table = $('#dataTablePayment').DataTable({
                     "processing": true,
                     "serverSide": false,
-                    "orderCellsTop": true, // บอกให้ Sort เฉพาะแถวบนสุด (ไม่กระทบแถว Filter)
+                    "orderCellsTop": true,
                     "fixedHeader": true,
                     "ajax": {
                         "url": "process/fetch_house_payment_data.php",
@@ -218,12 +210,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         { "data": "amount_period_month_12", render: $.fn.dataTable.render.number(',', '.', 2) },
                         { "data": "total", render: $.fn.dataTable.render.number(',', '.', 2) }
                     ],
-                    // กำหนดตัวเลือกจำนวนรายการ (10, 25, 50, 100, ทั้งหมด)
                     "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "ทั้งหมด"]],
-
-                    // เพิ่ม 'l' (length) เข้าไปใน dom: B=Buttons, l=Length, f=Filter, r=Processing, t=Table, i=Info, p=Pagination
                     "dom": 'Blfrtip',
-
                     "buttons": [
                         {
                             extend: 'excelHtml5',
@@ -235,18 +223,12 @@ if (strlen($_SESSION['alogin']) == "") {
                     ],
                     "footerCallback": function (row, data, start, end, display) {
                         let api = this.api();
-
-                        // ฟังก์ชันแปลงค่า string เป็น float
                         let intVal = function (i) {
                             return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                         };
-
-                        // คำนวณยอดรวม (Column Index 14 คือช่อง Total)
                         let grandTotal = api.column(14, { page: 'current' }).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
-
-                        // แสดงผลที่ Footer
                         $(api.column(14).footer()).html(grandTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     },
                     "language": {
@@ -268,13 +250,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 });
             }
 
-            // ปุ่มกด Process
-            $('#btnProcessAndView').click(function (e) {
-                e.preventDefault();
-                let selectedYear = $('#select_year').val();
-                let btn = $(this);
+            // ฟังก์ชันกลาง สำหรับเรียก Process และแสดงผล (ใช้ร่วมกันทั้ง Auto และ Manual)
+            function processAndDisplay(selectedYear) {
+                let btn = $('#btnProcessAndView');
 
-                // Disable ปุ่มชั่วคราว
+                // แสดงสถานะที่ปุ่ม (User จะได้รู้ว่าระบบกำลังทำงานอยู่)
                 btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> กำลังประมวลผล...');
 
                 $.ajax({
@@ -284,8 +264,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     dataType: 'json',
                     success: function (response) {
                         if (response.status === 'success') {
-                            // ถ้า Process ผ่าน ให้โหลดตาราง
-                            loadTable(selectedYear);
+                            loadTable(selectedYear); // โหลดข้อมูลเมื่อคำนวณเสร็จ
                         } else {
                             alert('เกิดข้อผิดพลาด: ' + response.message);
                         }
@@ -299,7 +278,29 @@ if (strlen($_SESSION['alogin']) == "") {
                         btn.prop('disabled', false).html('<i class="fas fa-sync-alt"></i> ประมวลผล & แสดงข้อมูล');
                     }
                 });
+            }
+
+            // --- ส่วนการทำงานหลัก ---
+
+            // 1. เมื่อหน้าเว็บโหลดเสร็จ ให้ทำงานทันทีด้วยปี default ที่เลือกอยู่
+            let initialYear = $('#select_year').val();
+            if(initialYear) {
+                processAndDisplay(initialYear);
+            }
+
+            // 2. เมื่อมีการเปลี่ยนปีใน Dropdown ให้ทำงานทันที
+            $('#select_year').change(function() {
+                let newYear = $(this).val();
+                processAndDisplay(newYear);
             });
+
+            // 3. (Optional) ปุ่มกด Manual ก็ยังใช้งานได้ โดยเรียกฟังก์ชันเดียวกัน
+            $('#btnProcessAndView').click(function (e) {
+                e.preventDefault();
+                let selectedYear = $('#select_year').val();
+                processAndDisplay(selectedYear);
+            });
+
         });
     </script>
     </body>
