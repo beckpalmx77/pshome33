@@ -23,14 +23,19 @@ if (strlen($_SESSION['alogin']) == "") {
             .btn-process {
                 min-width: 150px;
             }
-            /* ปรับแต่งช่องค้นหาในตาราง */
+            /* Style สำหรับช่องค้นหาในตาราง */
             .filter-input {
                 width: 100%;
-                padding: 3px;
+                padding: 4px;
                 box-sizing: border-box;
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 border: 1px solid #ccc;
                 border-radius: 4px;
+            }
+            /* ปรับให้ Header Filter ดูสะอาดตา */
+            .filter-row th {
+                background-color: #f8f9fc;
+                padding: 5px;
             }
         </style>
     </head>
@@ -42,12 +47,16 @@ if (strlen($_SESSION['alogin']) == "") {
                 <?php include('includes/Top-Bar.php'); ?>
 
                 <div class="container-fluid" id="container-wrapper">
+                    <input type="hidden" id="main_menu" name="main_menu" value="<?php echo urldecode($_GET['m']) ?>">
+                    <input type="hidden" id="sub_menu" name="sub_menu" value="<?php echo urldecode($_GET['s']) ?>">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h4 mb-0 text-gray-800">รายงานสรุปยอดชำระรายเดือน</h1>
+                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                            <li class="breadcrumb-item">รายงาน</li>
-                            <li class="breadcrumb-item active">สรุปยอดชำระ</li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
+                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
                         </ol>
                     </div>
 
@@ -114,8 +123,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                         <tfoot>
                                         <tr>
                                             <th colspan="14" style="text-align:right">ยอดรวมทั้งหมด:</th>
-                                            <th></th>
-                                        </tr>
+                                            <th></th> </tr>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -124,10 +132,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     </div>
 
                 </div>
-                <?php
-                    include('includes/Modal-Logout.php');
-                    include('includes/Footer.php');
-                ?>
+                <?php include('includes/Footer.php'); ?>
             </div>
         </div>
     </div>
@@ -152,46 +157,43 @@ if (strlen($_SESSION['alogin']) == "") {
             let table;
 
             function loadTable(year) {
-                // 1. Destroy ตารางเก่าถ้ามี
+                // 1. ถ้ามีตารางอยู่แล้ว ให้ล้างค่าเก่าทิ้งก่อน
                 if ($.fn.DataTable.isDataTable('#dataTablePayment')) {
                     $('#dataTablePayment').DataTable().destroy();
                 }
 
-                // 2. จัดการเรื่อง Header Filter (ป้องกันการสร้างซ้ำซ้อน)
-                // ลบแถว filter เก่าออกก่อน (ถ้ามี)
+                // 2. สร้างแถว Filter (Input ค้นหา)
+                // ลบแถว Filter เก่าก่อน (ป้องกันการสร้างซ้ำ)
                 $('#dataTablePayment thead tr.filter-row').remove();
 
-                // Clone แถว Header เพื่อสร้างเป็นช่อง Filter
+                // Clone แถว Header มาเป็นแถว Filter
                 $('#dataTablePayment thead tr').clone(true).addClass('filter-row').appendTo('#dataTablePayment thead');
 
-                // วนลูปสร้าง Input ในแถวที่ 2
+                // วนลูปใส่ Input Box
                 $('#dataTablePayment thead tr:eq(1) th').each(function (i) {
                     var title = $(this).text();
 
-                    // สร้าง Input เฉพาะคอลัมน์ บ้านเลขที่ (0) และ ซอย (1)
+                    // สร้าง Input เฉพาะคอลัมน์ "บ้านเลขที่" (0) และ "ซอย" (1)
                     if (i === 0 || i === 1) {
                         $(this).html('<input type="text" class="filter-input" placeholder="ค้นหา ' + title + '" />');
 
-                        // ใส่ Event ให้ Input
+                        // Binding Event ค้นหา
                         $('input', this).on('keyup change', function () {
                             if (table.column(i).search() !== this.value) {
-                                table
-                                    .column(i)
-                                    .search(this.value)
-                                    .draw();
+                                table.column(i).search(this.value).draw();
                             }
                         });
                     } else {
-                        // คอลัมน์อื่นๆ ไม่ต้องมีช่องค้นหา
+                        // คอลัมน์เดือนไม่ต้องมีช่องค้นหา
                         $(this).html('');
                     }
                 });
 
-                // 3. เริ่มสร้าง DataTable
+                // 3. เริ่มต้น DataTables
                 table = $('#dataTablePayment').DataTable({
                     "processing": true,
                     "serverSide": false,
-                    "orderCellsTop": true, // สำคัญ: บอกให้ Sort ที่แถวบนสุดเท่านั้น (ไม่ยุ่งกับแถว Filter)
+                    "orderCellsTop": true, // บอกให้ Sort เฉพาะแถวบนสุด (ไม่กระทบแถว Filter)
                     "fixedHeader": true,
                     "ajax": {
                         "url": "process/fetch_house_payment_data.php",
@@ -216,7 +218,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         { "data": "amount_period_month_12", render: $.fn.dataTable.render.number(',', '.', 2) },
                         { "data": "total", render: $.fn.dataTable.render.number(',', '.', 2) }
                     ],
-                    "dom": 'Bfrtip',
+                    // กำหนดตัวเลือกจำนวนรายการ (10, 25, 50, 100, ทั้งหมด)
+                    "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "ทั้งหมด"]],
+
+                    // เพิ่ม 'l' (length) เข้าไปใน dom: B=Buttons, l=Length, f=Filter, r=Processing, t=Table, i=Info, p=Pagination
+                    "dom": 'Blfrtip',
+
                     "buttons": [
                         {
                             extend: 'excelHtml5',
@@ -228,12 +235,14 @@ if (strlen($_SESSION['alogin']) == "") {
                     ],
                     "footerCallback": function (row, data, start, end, display) {
                         let api = this.api();
+
+                        // ฟังก์ชันแปลงค่า string เป็น float
                         let intVal = function (i) {
                             return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                         };
 
-                        // แก้ไข Index เป็น 14 (เพราะมี House(0) + Alley(1) + 12 Months)
-                        let grandTotal = api.column(14).data().reduce(function (a, b) {
+                        // คำนวณยอดรวม (Column Index 14 คือช่อง Total)
+                        let grandTotal = api.column(14, { page: 'current' }).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
 
@@ -241,9 +250,20 @@ if (strlen($_SESSION['alogin']) == "") {
                         $(api.column(14).footer()).html(grandTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
                     },
                     "language": {
+                        "lengthMenu": "แสดง _MENU_ รายการ",
                         "emptyTable": "ไม่พบข้อมูล หรือยังไม่ได้กดประมวลผล",
                         "processing": "กำลังโหลดข้อมูล...",
-                        "zeroRecords": "ไม่พบข้อมูลที่ค้นหา"
+                        "zeroRecords": "ไม่พบข้อมูลที่ค้นหา",
+                        "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                        "infoEmpty": "แสดง 0 ถึง 0 จาก 0 รายการ",
+                        "infoFiltered": "(กรองจากทั้งหมด _MAX_ รายการ)",
+                        "search": "ค้นหาภาพรวม:",
+                        "paginate": {
+                            "first": "หน้าแรก",
+                            "last": "หน้าสุดท้าย",
+                            "next": "ถัดไป",
+                            "previous": "ก่อนหน้า"
+                        }
                     }
                 });
             }
@@ -254,6 +274,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 let selectedYear = $('#select_year').val();
                 let btn = $(this);
 
+                // Disable ปุ่มชั่วคราว
                 btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> กำลังประมวลผล...');
 
                 $.ajax({
@@ -263,6 +284,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     dataType: 'json',
                     success: function (response) {
                         if (response.status === 'success') {
+                            // ถ้า Process ผ่าน ให้โหลดตาราง
                             loadTable(selectedYear);
                         } else {
                             alert('เกิดข้อผิดพลาด: ' + response.message);
@@ -270,9 +292,10 @@ if (strlen($_SESSION['alogin']) == "") {
                     },
                     error: function (xhr, status, error) {
                         console.error(xhr.responseText);
-                        alert('เชื่อมต่อ Server ไม่ได้ (ดู Console)');
+                        alert('เชื่อมต่อ Server ไม่ได้ (กรุณาดู Console)');
                     },
                     complete: function () {
+                        // คืนค่าปุ่ม
                         btn.prop('disabled', false).html('<i class="fas fa-sync-alt"></i> ประมวลผล & แสดงข้อมูล');
                     }
                 });
