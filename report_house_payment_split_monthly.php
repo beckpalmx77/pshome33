@@ -17,8 +17,14 @@ if (strlen($_SESSION['alogin']) == "") {
     <head>
         <meta charset="UTF-8">
         <title>รายงานสรุปยอดชำระรายเดือน</title>
-        <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap4.min.css">
+        <!--link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap4.min.css"-->
+
+        <link rel="stylesheet" href="css/spin_datatables.css"/>
+        <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
         <style>
             .btn-process {
                 min-width: 150px;
@@ -152,7 +158,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
-    <script src="vendor/jquery/jquery.min.js"></script>
+    <!--script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/ruang-admin.min.js"></script>
@@ -163,7 +169,22 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap4.min.js"></script-->
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
+    <script src="js/util/calculate_datetime.js"></script>
+    <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
+    <script src="vendor/datatables/v11/bootbox.min.js"></script>
+    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 
     <script>
         $(document).ready(function () {
