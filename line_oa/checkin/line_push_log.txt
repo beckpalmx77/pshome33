@@ -542,3 +542,27 @@ Error:
 Result: {"sentMessages":[{"id":"594860591714664755","quoteToken":"xhFhXSRH8KhzNPEB0PPaOsMCYIEXdJ1gK71RNzdzMF2SSGVftDu6lZURLfT5ZKbzDeLe1fiMy9oLwZvQ6L4LCl9Dixbo-L6eMNnMbzF9k5ULzFLV01scv_Cs5TYlIhYoiHLNgyobGBK5K52e5PIicQ"},{"id":"594860591462744496","quoteToken":"JVGAJ2kQxuEc0N-AkTlNYoHF2OlssquZc0drxadijgmzVizrRqsQWI2xrGN-r3dy4Bs9egLo-eiPKkUZfwOO9diBRxmHzFQc2cncMLiLtkxD8RWUDunP-uJU26DWvGLkGEg1ng8nrYnZVwZMPfiqOA"}]}
 Error: 
 
+[2026-01-09 06:15:06] To: U2c11430e6f4768a9a09c8c494185592e HTTP CODE: 0
+Result: 
+Error: Failed to connect to api.line.me port 443: Connection refused
+
+[2026-01-09 06:15:06] To: Ca579b4e8daae57c0f07c3508696074ae HTTP CODE: 0
+Result: 
+Error: Failed to connect to api.line.me port 443: Connection refused
+
+[2026-01-09 06:16:46] To: U2c11430e6f4768a9a09c8c494185592e HTTP CODE: 0
+Result: 
+Error: Failed to connect to api.line.me port 443: Connection refused
+
+[2026-01-09 06:16:46] To: Ca579b4e8daae57c0f07c3508696074ae HTTP CODE: 0
+Result: 
+Error: Failed to connect to api.line.me port 443: Connection refused
+
+[2026-01-09 06:16:47] To: U2c11430e6f4768a9a09c8c494185592e HTTP CODE: 0
+Result: 
+Error: Failed to connect to api.line.me port 443: Connection refused
+
+[2026-01-09 06:16:47] To: Ca579b4e8daae57c0f07c3508696074ae HTTP CODE: 0
+Result: 
+Error: Failed to connect to api.line.me port 443: Connection refused
+
