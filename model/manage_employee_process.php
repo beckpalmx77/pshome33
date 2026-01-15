@@ -324,7 +324,7 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
             FROM memployee em            
             left join mposition mp on mp.position_id = em.position_id
             left join mwork_time wt on wt.work_time_id = em.work_time_id 	 	
-            WHERE 1 " . $searchQuery
+            WHERE year > 2024 " . $searchQuery
         . " ORDER BY status DESC, emp_id DESC , " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
