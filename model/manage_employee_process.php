@@ -40,6 +40,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "remark" => $result['remark'],
             "salary_type" => $result['salary_type'],
             "salary" => $result['salary'],
+            "salary_history" => $result['salary_history'], // <--- เพิ่มตรงนี้
             "image" => $result['image'],
             "status" => $result['status']);
     }
@@ -78,6 +79,7 @@ if ($_POST["action"] === 'ADD') {
             $remark = $_POST["remark"];
             $salary_type = $_POST["salary_type"];
             $salary = $_POST["salary"];
+            $salary_history = $_POST["salary_history"]; // <--- รับค่า
             $sex = $_POST["sex"];
             $prefix = $_POST["prefix"];
             $nick_name = $_POST["nick_name"];
@@ -100,8 +102,6 @@ if ($_POST["action"] === 'ADD') {
                 move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image_filename);
             }
 
-            //file_put_contents("empte2.txt", "$emp_id | $f_name | $l_name | $position_id");
-
             $sql_find = "SELECT COUNT(*) FROM memployee WHERE emp_id = :emp_id";
             $stmt_check = $conn->prepare($sql_find);
             $stmt_check->bindParam(':emp_id', $emp_id);
@@ -109,12 +109,10 @@ if ($_POST["action"] === 'ADD') {
             $nRows = $stmt_check->fetchColumn();
 
             if ($nRows > 0) {
-                //$log_message = "[" . date("Y-m-d H:i:s") . "] Duplicate emp_id detected: $emp_id ($f_name $l_name)\n";
-                //file_put_contents("emp_duplicate.log", $log_message, FILE_APPEND);
                 echo $dup;
             } else {
-                $sql = "INSERT INTO memployee (emp_id, f_name, l_name, week_holiday, work_time_id, position_id, remark, sex, prefix, nick_name, start_work_date, status, phone, year, image ,salary_type, salary)
-                VALUES (:emp_id, :f_name, :l_name, :week_holiday, :work_time_id, :position_id, :remark, :sex, :prefix, :nick_name, :start_work_date, :status, :phone, :year, :image ,:salary_type, :salary)";
+                $sql = "INSERT INTO memployee (emp_id, f_name, l_name, week_holiday, work_time_id, position_id, remark, sex, prefix, nick_name, start_work_date, status, phone, year, image ,salary_type, salary, salary_history)
+                VALUES (:emp_id, :f_name, :l_name, :week_holiday, :work_time_id, :position_id, :remark, :sex, :prefix, :nick_name, :start_work_date, :status, :phone, :year, :image ,:salary_type, :salary, :salary_history)";
                 $query = $conn->prepare($sql);
                 $query->bindParam(':emp_id', $emp_id);
                 $query->bindParam(':f_name', $f_name);
@@ -133,6 +131,7 @@ if ($_POST["action"] === 'ADD') {
                 $query->bindParam(':image', $image_filename);
                 $query->bindParam(':salary_type', $salary_type);
                 $query->bindParam(':salary', $salary);
+                $query->bindParam(':salary_history', $salary_history); // <--- Bind
 
                 if (!$query->execute()) {
                     $errorInfo = $query->errorInfo();
@@ -162,6 +161,7 @@ if ($_POST["action"] === 'UPDATE') {
         $remark = $_POST["remark"];
         $salary_type = $_POST["salary_type"];
         $salary = $_POST["salary"];
+        $salary_history = $_POST["salary_history"]; // <--- รับค่า
         $sex = $_POST["sex"];
         $prefix = $_POST["prefix"];
         $nick_name = $_POST["nick_name"];
@@ -185,11 +185,6 @@ if ($_POST["action"] === 'UPDATE') {
             move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image_filename);
         }
 
-        $success = move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $image_filename);
-        if (!$success) {
-            file_put_contents("upload_error.txt", "ไม่สามารถอัปโหลดรูปได้: " . print_r($_FILES['image'], true));
-        }
-
         // ตรวจสอบว่ามี emp_id ซ้ำแต่ไม่ใช่ record ตัวเอง
         $sql_find = "SELECT COUNT(*) FROM memployee WHERE emp_id = :emp_id AND id != :id";
         $stmt_check = $conn->prepare($sql_find);
@@ -199,7 +194,7 @@ if ($_POST["action"] === 'UPDATE') {
         $nRows = $stmt_check->fetchColumn();
 
         if ($nRows > 0) {
-            echo $dup; // ตัวแปรนี้คุณต้องกำหนดค่าไว้ เช่น `$dup = "รหัสซ้ำ";`
+            echo $dup;
         } else {
             $sql = "UPDATE memployee SET  
                     emp_id = :emp_id,
@@ -218,6 +213,7 @@ if ($_POST["action"] === 'UPDATE') {
                     image = :image,
                     salary_type = :salary_type,
                     salary = :salary,
+                    salary_history = :salary_history,
                     status = :status
                     WHERE id = :id";
 
@@ -238,19 +234,14 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':image', $image_filename);
             $query->bindParam(':salary_type', $salary_type);
             $query->bindParam(':salary', $salary);
+            $query->bindParam(':salary_history', $salary_history); // <--- Bind
             $query->bindParam(':status', $status);
             $query->bindParam(':id', $id);
 
             $query->execute();
 
-/*
-            $myfile = fopen("a-permission.txt", "w") or die("Unable to open file!");
-            fwrite($myfile, " Row sql = " . $sql);
-            fclose($myfile);
-*/
-
             if ($query->rowCount() > 0) {
-                echo $save_success; // กำหนดข้อความ เช่น `$save_success = "บันทึกสำเร็จ";`
+                echo $save_success;
             } else {
                 echo "ไม่มีข้อมูลถูกเปลี่ยนแปลง";
             }
@@ -386,4 +377,3 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
     echo json_encode($response);
 
 }
-

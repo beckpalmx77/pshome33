@@ -23,7 +23,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 <?php
                 include('includes/Top-Bar.php');
                 ?>
-                <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
@@ -270,6 +269,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                 </div>
                                                             </div>
 
+                                                            <div class="form-group row">
+                                                                <div class="col-sm3">
+                                                                    <label for="salary_type_1" class="control-label">ประวัติเงินเดือนก่อนหน้า</label>
+                                                                    <select id="salary_type_1" name="salary_type_1"
+                                                                            class="form-control" data-live-search="true"
+                                                                            title="Please select">
+                                                                        <option value="-">เงินเดือนก่อนหน้า</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="salary_history"
+                                                                           class="control-label">เงินเดือน/ค่าจ้าง ก่อนหน้า</label>
+                                                                    <input type="text" class="form-control"
+                                                                           id="salary_history" name="salary_history" placeholder="">
+                                                                </div>
+                                                            </div>
+
                                                         </div>
 
                                                         <div class="modal-footer">
@@ -385,7 +401,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
     ?>
 
 
-    <!-- Scroll to top -->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
@@ -401,18 +416,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
 
     <script src="js/util/calculate_datetime.js"></script>
 
-    <!-- Page level plugins -->
-
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.0/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css"/-->
-
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
     <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
@@ -538,11 +545,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 $('#work_time_detail').val("");
                 $('#start_work_date').val("");
                 $('#work_age').val("");
-                $('#nick_name').val("");  // แก้ไขเป็นชื่อฟิลด์ที่ถูกต้อง
+                $('#nick_name').val("");
                 $('#prefix').val("");
                 $('#remark').val("");
                 $('#phone').val("");
                 $('#week_holiday').val("");
+                $('#salary').val("");
+                $('#salary_history').val(""); // <--- เพิ่มตรงนี้
 
                 // รีเซ็ต select หรือ textarea ถ้ามี
                 $('#position_id').val('').change();
@@ -590,6 +599,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         let remark = response[i].remark;
                         let salary_type = response[i].salary_type;
                         let salary = response[i].salary;
+                        let salary_history = response[i].salary_history; // <--- รับค่าตรงนี้
                         let week_holiday = response[i].week_holiday;
                         let work_age = 0;
                         let start_w_date = start_work_date.substr(3, 2) + "/" + start_work_date.substr(0, 2) + "/" + start_work_date.substr(6, 10);
@@ -614,6 +624,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         $('#remark').val(remark);
                         $('#salary_type').val(salary_type);
                         $('#salary').val(salary);
+                        $('#salary_history').val(salary_history); // <--- แสดงค่าตรงนี้
                         $('#week_holiday').val(week_holiday);
                         $('#work_age').val(work_age);
                         $('#status').val(status);
@@ -682,7 +693,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
             }
 
             return {years, months, days};
-
+        }
     </script>
 
     <script>
