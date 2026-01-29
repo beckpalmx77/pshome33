@@ -278,7 +278,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                         <option value="-">เงินเดือนก่อนหน้า</option>
                                                                     </select>
                                                                 </div>
-                                                                <div class="col-sm-3">
+                                                                <div class="col-sm-8">
                                                                     <label for="salary_history"
                                                                            class="control-label">เงินเดือน/ค่าจ้าง ก่อนหน้า</label>
                                                                     <input type="text" class="form-control"
