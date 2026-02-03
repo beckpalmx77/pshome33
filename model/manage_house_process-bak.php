@@ -190,107 +190,86 @@ if ($_POST["action"] === 'DELETE') {
 
 if ($_POST["action"] === 'GET_HOUSE') {
 
-    // 1. รับค่าจาก DataTables
+    ## Read value
     $draw = $_POST['draw'];
-    $start = $_POST['start']; // จุดเริ่มต้น (Offset)
-    $length = $_POST['length']; // จำนวนแถวต่อหน้า (Limit)
-
-    // การจัดการเรื่อง Sorting
-    $columnIndex = $_POST['order'][0]['column'];
-    $columnName = $_POST['columns'][$columnIndex]['data'];
-    $columnSortOrder = $_POST['order'][0]['dir'];
-
-    // ป้องกัน SQL Injection จากชื่อ Column (Whitelist หรือ Check เบื้องต้น)
-    // ถ้าไม่มีการส่งค่ามา ให้เรียงตาม id เป็น default
-    if (empty($columnName)) {
-        $columnName = 'id';
-        $columnSortOrder = 'DESC';
-    }
-
-    $searchValue = $_POST['search']['value'];
-
-    // 2. กำหนด Fields ที่จะ Select ตาม Sub Action
-    // เทคนิค: เลือกเฉพาะสิ่งที่ใช้ เพื่อลดการใช้ Memory
-    if ($_POST['sub_action'] === "GET_MASTER") {
-        $selectFields = "id, house_number, alley, area_size, garbage_collection_fee, common_fee, contact_name, phone_number, house_status, line_picture_profile, remark";
-    } else {
-        $selectFields = "id, house_number, contact_name";
-    }
+    $row = $_POST['start'];
+    $rowperpage = $_POST['length']; // Rows display per page
+    $columnIndex = $_POST['order'][0]['column']; // Column index
+    $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+    $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+    $searchValue = $_POST['search']['value']; // Search value
+    /*
+        $txt = "DDD " . $columnSortOrder;
+        $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
+        fwrite($my_file, $txt);
+        fclose($my_file);
+    */
 
     $searchArray = array();
-    $searchQuery = "";
 
-    // 3. สร้างเงื่อนไข Search
+## Search
+    $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number OR contact_name LIKE :contact_name) ";
+        $searchQuery = " AND (house_number LIKE :house_number or
+        contact_name LIKE :contact_name ) ";
         $searchArray = array(
             'house_number' => "%$searchValue%",
             'contact_name' => "%$searchValue%",
         );
     }
 
-    // 4. สร้างเงื่อนไข Session (ใช้ Parameter Binding เพื่อความปลอดภัย)
     $where_house_number = "";
+
     if (($_SESSION['account_type']) === "house_user") {
-        $where_house_number = " AND house_number = :session_house_number ";
-        // เราจะ bind ค่านี้ทีหลัง
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "' ";
     }
 
-    // --- Query 1: นับจำนวนทั้งหมด (ไม่กรอง) ---
-    $sql_count_all = "SELECT COUNT(id) AS allcount FROM v_ims_house WHERE 1=1 " . $where_house_number;
-    $stmt = $conn->prepare($sql_count_all);
-    if (!empty($where_house_number)) {
-        $stmt->bindValue(':session_house_number', $_SESSION['house_number'], PDO::PARAM_STR);
-    }
+/*
+    $txt = $where_house_number;
+    $my_file = fopen("device_a.txt", "w") or die("Unable to open file!");
+    fwrite($my_file, $txt);
+    fclose($my_file);
+*/
+
+## Total number of records without filtering
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1=1 " . $where_house_number );
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
-    // --- Query 2: นับจำนวนที่ผ่านการกรอง (Search) ---
-    $sql_count_filter = "SELECT COUNT(id) AS allcount FROM v_ims_house WHERE 1=1 " . $where_house_number . $searchQuery;
-    $stmt = $conn->prepare($sql_count_filter);
-
-    // Bind Search Params
-    foreach ($searchArray as $key => $search) {
-        $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
-    }
-    // Bind Session Param (ถ้ามี)
-    if (!empty($where_house_number)) {
-        $stmt->bindValue(':session_house_number', $_SESSION['house_number'], PDO::PARAM_STR);
-    }
-    $stmt->execute();
+## Total number of records with filtering
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house WHERE 1=1 " . $where_house_number . $searchQuery);
+    $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
-    // --- Query 3: ดึงข้อมูลจริง (Fetch Records) ---
-    // เพิ่ม ORDER BY เพื่อให้ DataTables เรียงข้อมูลได้
-    $sql_get_data = "SELECT " . $selectFields . " FROM v_ims_house 
-                     WHERE 1=1 " . $where_house_number . $searchQuery . " 
-                     ORDER BY " . $columnName . " " . $columnSortOrder . " 
-                     LIMIT :offset, :limit";
+## Fetch records
 
-    $stmt = $conn->prepare($sql_get_data);
+    $sql_get_date = "SELECT * FROM v_ims_house WHERE 1=1 " . $where_house_number . $searchQuery . " LIMIT :limit,:offset";
 
-    // Bind Search Params
+    $stmt = $conn->prepare($sql_get_date);
+
+/*
+        $txt = $sql_get_date;
+        $my_file = fopen("device_b.txt", "w") or die("Unable to open file!");
+        fwrite($my_file, $txt);
+        fclose($my_file);
+*/
+
+
+// Bind values
     foreach ($searchArray as $key => $search) {
         $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
     }
-    // Bind Session Param
-    if (!empty($where_house_number)) {
-        $stmt->bindValue(':session_house_number', $_SESSION['house_number'], PDO::PARAM_STR);
-    }
 
-    // Bind Pagination (Int ต้องระบุ Type ให้ชัดเจน)
-    // หมายเหตุ: SQL LIMIT offset, length
-    $stmt->bindValue(':offset', (int)$start, PDO::PARAM_INT);
-    $stmt->bindValue(':limit', (int)$length, PDO::PARAM_INT);
-
+    $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
     $stmt->execute();
     $empRecords = $stmt->fetchAll();
-
     $data = array();
 
     foreach ($empRecords as $row) {
+
         if ($_POST['sub_action'] === "GET_MASTER") {
             $data[] = array(
                 "id" => $row['id'],
@@ -303,7 +282,6 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "phone_number" => $row['phone_number'],
                 "house_status" => $row['house_status'],
                 "line_picture_profile" => $row['line_picture_profile'],
-                // ปุ่ม HTML ควรพิจารณาย้ายไปทำที่ฝั่ง JavaScript (render) เพื่อความ clean ของ data
                 "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>",
                 "remark" => $row['remark']
@@ -313,12 +291,14 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "id" => $row['id'],
                 "house_number" => $row['house_number'],
                 "contact_name" => $row['contact_name'],
-                "select" => "<button type='button' name='select' id='" . $row['house_number'] . "@" . $row['contact_name'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i></button>",
+                "select" => "<button type='button' name='select' id='" . $row['house_number'] . "@" . $row['contact_name'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select'>select <i class='fa fa-check' aria-hidden='true'></i>
+</button>",
             );
         }
+
     }
 
-    ## Response Return Value
+## Response Return Value
     $response = array(
         "draw" => intval($draw),
         "iTotalRecords" => $totalRecords,
@@ -327,4 +307,5 @@ if ($_POST["action"] === 'GET_HOUSE') {
     );
 
     echo json_encode($response);
+
 }
