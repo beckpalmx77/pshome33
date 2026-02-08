@@ -94,7 +94,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
                 <b>บ้านเลขที่ : ' . $receipt['house_number'] . ' ซอย : ' . $receipt['alley'] . ' &nbsp; ผู้ชำระเงิน : ' . $receipt['detail'] . '</b>
             </td>            
             <td width="40%" align="right" valign="top">
-                <b>เลขที่ใบเสร็จ: ' . $receipt['doc_id'] . '</b><br>
+                <b>เลขที่ใบเสร็จ: ' . $receipt['doc_id'] . '</b><br>  
                 <b>วันที่: ' . date('d/m/Y', strtotime($receipt['payment_date'])) . '</b>
             </td>
         </tr>
