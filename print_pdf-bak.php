@@ -6,6 +6,7 @@ include('util/number_to_thai_text.php');
 
 // ตรวจสอบค่า ID
 $id = isset($_GET['id']) ? $_GET['id'] : '';
+if (!$id) {
     die("ไม่พบข้อมูล");
 }
 
