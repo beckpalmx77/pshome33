@@ -41,6 +41,10 @@ function fetchPaymentData($conn, $table, $start_date, $end_date, $payment_method
     ORDER BY STR_TO_DATE(payment_date, '%d-%m-%Y') ASC, id ASC;
     ";
 
+    //$myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
+    //fwrite($myfile, $sql . " " . $start_date  . " " . $end_date);
+    //fclose($myfile);
+
     $query = $conn->prepare($sql);
     $query->bindParam(':start_date', $start_date);
     $query->bindParam(':end_date', $end_date);
@@ -77,7 +81,7 @@ function exportToCSV($data, $start_date, $end_date)
             $row->house_number,
             $row->area_size,
             $row->payment_method,
-            $row->month_name_start . " - " . $row->month_name_start,
+            $row->month_name_start . " - " . $row->month_name_to,
             $row->period_year,
             $row->payment_type,
             number_format($row->common_fee, 2),
