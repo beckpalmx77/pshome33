@@ -1,136 +1,160 @@
 <?php
-// กำหนด Path ให้ชี้ไปยังโฟลเดอร์ที่เก็บไฟล์ SQL
-$logDirPath = "line_oa/checkin/logs/";
-$sqlLogFile = $logDirPath . "debug_insert_queries.sql";
+session_start();
+error_reporting(0);
+include('includes/Header.php');
+include('config/connect_db.php');
 
-// จัดการการลบ Log
-if (isset($_POST['clear_log'])) {
+// ตรวจสอบ Login ตามโครงสร้างระบบเดิมของคุณ
+if (strlen($_SESSION['alogin']) == "") {
+    header("Location: index.php");
+    exit;
+} else {
+    // กำหนด Path ของไฟล์ SQL (อิงตามโครงสร้างที่คุณแจ้งไว้)
+    $logDirPath = "line_oa/checkin/logs/";
+    $sqlLogFile = $logDirPath . "debug_insert_queries.sql";
+
+    // อ่านข้อมูลจากไฟล์
+    $logs = [];
     if (file_exists($sqlLogFile)) {
-        unlink($sqlLogFile);
-        header("Location: view_sql_logs.php?status=cleared");
-        exit;
+        $content = file_get_contents($sqlLogFile);
+        $logs = explode(";\n\n", trim($content));
     }
-}
 
-// อ่านข้อมูลจากไฟล์
-$logs = [];
-if (file_exists($sqlLogFile)) {
-    $content = file_get_contents($sqlLogFile);
-    $logs = explode(";\n\n", trim($content));
-}
-?>
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Insert Logs - Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        :root { --primary-color: #003366; --bg-color: #f0f2f5; }
-        body { background-color: var(--bg-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar { background-color: var(--primary-color); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .card-sql { border: none; border-radius: 12px; transition: 0.2s; border-left: 6px solid #28a745; margin-bottom: 20px; }
-        .card-sql:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-        pre { background: #1e1e1e; color: #dcdcdc; padding: 15px; border-radius: 8px; font-size: 0.9rem; overflow-x: auto; margin-bottom: 0; }
-        .timestamp-box { font-size: 0.9rem; color: #495057; display: flex; align-items: center; gap: 8px; font-weight: 500; }
-        .empty-state { padding: 100px 0; text-align: center; color: #adb5bd; }
-        /* ปรับแต่งปุ่ม Copy ให้นิ่งขึ้น */
-        .btn-copy { min-width: 100px; }
-    </style>
-</head>
-<body>
+    // ดึงค่า status มาตรวจสอบ (ถ้าไม่มีให้เป็นค่าว่างเพื่อป้องกัน Warning)
+    $status = $_GET['status'] ?? '';
+    ?>
 
-<nav class="navbar navbar-dark mb-4">
-    <div class="container">
-        <span class="navbar-brand mb-0 h1">
-            <i class="bi bi-database-check me-2"></i> SQL Check-in Logs
-        </span>
-        <div class="d-flex gap-2">
-            <a href="view_sql_logs.php" class="btn btn-light btn-sm"><i class="bi bi-arrow-clockwise"></i> รีเฟรช</a>
-            <!--form method="POST" onsubmit="return confirm('ยืนยันการลบไฟล์ SQL Log ทั้งหมด?');">
-                <button type="submit" name="clear_log" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> ล้าง Log</button>
-            </form-->
-        </div>
-    </div>
-</nav>
+    <!DOCTYPE html>
+    <html lang="th">
 
-<div class="container">
-    <div class="mb-3 d-flex justify-content-between align-items-center">
-        <small class="text-muted"><i class="bi bi-folder2-open"></i> <?php echo htmlspecialchars($sqlLogFile); ?></small>
-        <span class="badge bg-secondary"><?php echo count($logs); ?> รายการ</span>
-    </div>
+    <head>
+        <style>
+            .card-sql { border: none; border-radius: 12px; transition: 0.2s; border-left: 6px solid #28a745; margin-bottom: 20px; background-color: #fff; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
+            .card-sql:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+            pre { background: #1e1e1e; color: #dcdcdc; padding: 15px; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; margin-bottom: 0; }
+            .timestamp-box { font-size: 0.9rem; color: #495057; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+            .btn-copy { min-width: 110px; }
+            .log-container { max-height: 800px; overflow-y: auto; padding: 10px; }
+        </style>
+    </head>
 
-    <?php if (isset($_GET['status']) && $_GET['status'] == 'cleared'): ?>
-        <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> ไฟล์ Log ถูกล้างเรียบร้อยแล้ว
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
+    <body id="page-top">
+    <div id="wrapper">
+        <?php include('includes/Side-Bar.php'); ?>
 
-    <?php if (empty($logs) || (count($logs) == 1 && trim($logs[0]) == "")): ?>
-        <div class="card shadow-sm border-0">
-            <div class="empty-state">
-                <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                <h4 class="mt-3">ไม่พบข้อมูลในขณะนี้</h4>
-            </div>
-        </div>
-    <?php else: ?>
-        <div class="row">
-            <?php
-            $reversedLogs = array_reverse($logs);
-            foreach ($reversedLogs as $index => $log):
-                if (trim($log) == "") continue;
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <?php include('includes/Top-Bar.php'); ?>
 
-                $lines = explode("\n", trim($log));
-                $timeInfo = isset($lines[0]) ? str_replace("-- Generated at ", "", $lines[0]) : "Unknown";
-                $sqlQuery = isset($lines[1]) ? $lines[1] : $lines[0];
-                $fullSql = htmlspecialchars($sqlQuery) . ";";
-                ?>
-                <div class="col-12">
-                    <div class="card card-sql shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="timestamp-box">
-                                    <i class="bi bi-clock-history text-primary"></i>
-                                    <span><?php echo htmlspecialchars($timeInfo); ?></span>
+                <div class="container-fluid" id="container-wrapper">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
+                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                        </ol>
+                    </div>
+
+                    <?php if ($status == 'cleared'): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i> ล้างข้อมูล Log เรียบร้อยแล้ว
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-database"></i> รายการคำสั่ง SQL ล่าสุด (ตรวจสอบการ Insert)
+                                    </h6>
+                                    <div class="btn-group">
+                                        <button onclick="location.reload();" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-sync-alt"></i> รีเฟรชข้อมูล
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <button class="btn btn-sm btn-outline-primary btn-copy"
-                                            onclick="copyToClipboard(this, `<?php echo addslashes($sqlQuery); ?>;`)">
-                                        <i class="bi bi-copy"></i> คัดลอก SQL
-                                    </button>
+                                <div class="card-body">
+                                    <small class="text-muted d-block mb-3">Path: <?php echo htmlspecialchars($sqlLogFile); ?></small>
+
+                                    <div class="log-container">
+                                        <?php if (empty($logs) || (count($logs) == 1 && trim($logs[0]) == "")): ?>
+                                            <div class="text-center py-5">
+                                                <i class="fas fa-inbox fa-3x text-light"></i>
+                                                <p class="mt-3 text-muted">ไม่พบข้อมูลการบันทึกในโฟลเดอร์ logs</p>
+                                            </div>
+                                        <?php else: ?>
+                                            <?php
+                                            $reversedLogs = array_reverse($logs);
+                                            foreach ($reversedLogs as $log):
+                                                if (trim($log) == "") continue;
+                                                $lines = explode("\n", trim($log));
+                                                $timeInfo = isset($lines[0]) ? str_replace("-- Generated at ", "", $lines[0]) : "Unknown";
+                                                $sqlQuery = isset($lines[1]) ? $lines[1] : $lines[0];
+                                                ?>
+                                                <div class="card card-sql">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <div class="timestamp-box">
+                                                                <i class="far fa-clock text-primary"></i>
+                                                                <span><?php echo htmlspecialchars($timeInfo); ?></span>
+                                                            </div>
+                                                            <button class="btn btn-xs btn-primary btn-copy shadow-sm"
+                                                                    onclick="copyToClipboard(this, `<?php echo addslashes($sqlQuery); ?>;`)">
+                                                                <i class="far fa-copy"></i> คัดลอก SQL
+                                                            </button>
+                                                        </div>
+                                                        <div class="position-relative">
+                                                            <pre><code><?php echo htmlspecialchars($sqlQuery); ?>;</code></pre>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="bg-dark rounded-3 position-relative">
-                                <pre><code><?php echo $fullSql; ?></code></pre>
                             </div>
                         </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
+
+            <?php
+            include('includes/Modal-Logout.php');
+            include('includes/Footer.php');
+            ?>
         </div>
-    <?php endif; ?>
-</div>
+    </div>
 
-<script>
-    function copyToClipboard(btn, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="bi bi-check-lg"></i> คัดลอกแล้ว!';
-            btn.classList.replace('btn-outline-primary', 'btn-success');
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.classList.replace('btn-success', 'btn-outline-primary');
-            }, 2000);
-        }).catch(err => {
-            console.error('ไม่สามารถคัดลอกได้: ', err);
-        });
-    }
-</script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <script>
+        function copyToClipboard(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> คัดลอกแล้ว';
+                btn.classList.replace('btn-primary', 'btn-success');
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.replace('btn-success', 'btn-primary');
+                }, 2000);
+            }).catch(err => {
+                alert('ไม่สามารถคัดลอกได้');
+            });
+        }
+    </script>
+    </body>
+    </html>
+
+<?php } ?>
