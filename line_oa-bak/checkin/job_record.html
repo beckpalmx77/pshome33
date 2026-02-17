@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#004d00" />
+    <meta name="description" content="ระบบจัดการข้อมูล" />
+    <meta name="author" content="PS33" />
+    <title>PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="jsconfig/config_job.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #caf1ca;
+            color: #000000;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: auto;
+            background-color: #cafaca;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+        }
+
+        .text-center {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        textarea,
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #33cc33;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        textarea::placeholder,
+        input[type="text"]::placeholder {
+            color: #000000;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            background-color: #00e600;
+            color: #003300;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #00cc00;
+        }
+
+        #spinner {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loader {
+            border: 6px solid #50d950;
+            border-top: 6px solid #c0ffc0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #imagePreview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        #imagePreview img {
+            width: 100px;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #33cc33;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="text-center">
+        <img src="ps33_logo.png" width="40" height="63" alt="Logo" />
+    </div>
+    <form id="checkinForm" enctype="multipart/form-data">
+        <label for="remark">✎▤ รายละเอียดรายงาน/เหตุการณ์ :</label>
+        <textarea id="remark" name="remark" placeholder="" rows="6" required></textarea>
+
+        <input type="hidden" id="place_name" name="place_name" value="พฤกษา 33" />
+        <input type="hidden" id="check_type" name="check_type" value="IN" />
+
+        <label for="photoInput">📷 รูปภาพ :</label>
+        <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple />
+        <div id="imagePreview"></div>
+
+        <button type="button" onclick="checkin()">✅ กดเพื่อบันทึกรายการ</button>
+        <a href="/manage_job_record_smart.php" class="btn btn-info w-100 mt-2">📝 ดูรายงานทั้งหมด</a>
+    </form>
+    <div id="spinner">
+        <div class="loader"></div>
+        <p>กำลังอัปโหลด...</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('photoInput').addEventListener('change', function (event) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        const files = event.target.files;
+        if (!files.length) return;
+
+        [...files].forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    async function checkin() {
+        try {
+            await liff.init({ liffId: LIFF_ID });
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                return;
+            }
+
+            const profile = await liff.getProfile();
+            const photoInput = document.getElementById('photoInput');
+            const check_type = document.getElementById('check_type');
+            const placeNameInput = document.getElementById('place_name');
+            const remarkInput = document.getElementById('remark');
+            const btn = document.querySelector('button');
+
+            if (!photoInput.files.length) return alert('กรุณาเลือกรูปถ่ายก่อน');
+            if (!placeNameInput.value.trim()) return alert('กรุณากรอกชื่อสถานที่');
+            if (!remarkInput.value.trim()) return alert('กรุณากรอกรายละเอียดรายงาน');
+
+            btn.disabled = true;
+
+            const placeName = placeNameInput.value;
+            const remark = remarkInput.value;
+
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    sendCheckin(
+                        profile,
+                        check_type.value,
+                        placeName,
+                        remark,
+                        photoInput,
+                        position.coords.latitude,
+                        position.coords.longitude
+                    );
+                },
+                error => {
+                    sendCheckin(profile, check_type.value, placeName, remark, photoInput, 0, 0);
+                },
+                { timeout: 10000 }
+            );
+        } catch (err) {
+            alert('เกิดข้อผิดพลาด: ' + err.message);
+            document.querySelector('button').disabled = false;
+        }
+    }
+
+    function sendCheckin(profile, checkType, placeName, remark, photoInput, lat, lng) {
+        const formData = new FormData();
+        formData.append('user_id', profile.userId);
+        formData.append('check_type', checkType);
+        formData.append('display_name', profile.displayName);
+        formData.append('place_name', placeName);
+        formData.append('remark', remark);
+        formData.append('latitude', lat);
+        formData.append('longitude', lng);
+
+        for (let i = 0; i < photoInput.files.length; i++) {
+            formData.append('photo[]', photoInput.files[i]);
+        }
+
+        document.getElementById('spinner').style.display = 'block';
+
+        fetch('https://ps33home.com/line_oa/checkin/job_record_api.php', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(res => res.text())
+            .then(() => {
+                alert('✅ บันทึก สำเร็จแล้ว');
+
+                // ✅ เคลียร์ฟอร์ม
+                document.getElementById('remark').value = '';
+                photoInput.value = '';
+                document.getElementById('imagePreview').innerHTML = '';
+
+                // ✅ เปิดปุ่ม
+                document.querySelector('button').disabled = false;
+
+                // ✅ ปิดหน้าต่าง LIFF
+                liff.closeWindow();
+            })
+            .catch(err => {
+                alert('❌ ไม่สามารถ บันทึก ได้: ' + err.message);
+                document.querySelector('button').disabled = false;
+            })
+            .finally(() => {
+                document.getElementById('spinner').style.display = 'none';
+            });
+    }
+</script>
+
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+</body>
+</html>

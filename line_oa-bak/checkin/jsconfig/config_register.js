@@ -1,0 +1,1 @@
+const LIFF_ID = "2007364217-G2VRbv5v";

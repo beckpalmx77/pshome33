@@ -1,0 +1,220 @@
+<?php include('../../config/connect_db.php');
+header('Content-Type: text/html; charset=utf-8');
+?>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>PS33 Home System</title>
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="jsconfig/config_house_send_message.js"></script>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .app-container {
+            padding: 1rem;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 0 10px rgba(196, 193, 193, 0.3);
+        }
+
+        textarea, input[type="text"], input[type="file"] {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+
+        textarea::placeholder, input::placeholder {
+            color: #aaa;
+        }
+
+        .btn-submit {
+            background-color: #00B900;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-submit:hover {
+            background-color: #009600;
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto;
+            width: 70px;
+            height: auto;
+        }
+
+        .header-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #spinner {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-container">
+    <div class="card">
+        <img src="ps33_logo.png" alt="Logo" class="logo">
+        <h5 class="header-text">📍 ส่งข้อความ/สอบถาม</h5>
+
+        <form id="checkinForm" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">📌 รายละเอียด :</label>
+                <textarea id="remark" class="form-control" placeholder="" rows="4" required></textarea>
+            </div>
+
+            <input type="hidden" id="place_name" value="พฤกษา 33" required>
+            <input type="hidden" id="check_type" value="IN" readonly="true">
+
+            <div class="mb-3">
+                <label class="form-label">📷 รูปภาพ :</label>
+                <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple class="form-control">
+            </div>
+
+            <button type="button" class="btn btn-submit w-100" id="saveBtn" onclick="checkin()">✅ กดเพื่อบันทึกข้อมูล</button>
+            <a href="/manage-message-smart.php" class="btn btn-info w-100 mt-2">💬 ดูข้อความทั้งหมด</a>
+        </form>
+
+        <div id="spinner">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2">กำลังอัปโหลด...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    async function checkin() {
+        const saveBtn = document.getElementById("saveBtn");
+
+        try {
+            saveBtn.disabled = true; // ปิดการกดปุ่มซ้ำ
+
+            await liff.init({liffId: LIFF_ID});
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                saveBtn.disabled = false; // ถ้า login ต้องเปิดปุ่มคืน
+                return;
+            }
+
+            const profile = await liff.getProfile();
+            const remark = document.getElementById("remark").value.trim();
+            const placeName = document.getElementById("place_name").value;
+            const check_type = document.getElementById("check_type").value;
+            const photoInput = document.getElementById("photoInput");
+
+            if (remark.length < 15) {
+                alert("กรุณากรอกรายละเอียดอย่างน้อย 15 ตัวอักษร");
+                saveBtn.disabled = false; // เปิดปุ่มถ้า validate ไม่ผ่าน
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("user_id", profile.userId);
+            formData.append("check_type", check_type);
+            formData.append("display_name", profile.displayName);
+            formData.append("remark", remark);
+            formData.append("place_name", placeName);
+
+            for (let i = 0; i < photoInput.files.length; i++) {
+                formData.append("photo[]", photoInput.files[i]);
+            }
+
+            document.getElementById("spinner").style.display = "block";
+
+            // รอผลการส่งฟอร์มก่อนเปิดปุ่มอีกครั้ง
+            await submitForm(formData, profile, remark);
+
+            saveBtn.disabled = false; // เปิดปุ่มหลังส่งเสร็จ
+            document.getElementById("spinner").style.display = "none";
+
+        } catch (err) {
+            alert("เกิดข้อผิดพลาด: " + err.message);
+            saveBtn.disabled = false; // เปิดปุ่มเมื่อเกิด error
+            document.getElementById("spinner").style.display = "none";
+        }
+    }
+
+
+    function submitForm(formData, profile, remark) {
+        fetch("https://ps33home.com/line_oa/house/send_message_api.php", {
+            method: "POST",
+            body: formData
+        })
+            .then(res => res.json()) // รับ response เป็น JSON
+            .then(data => {
+                if (data.status !== "success") {
+                    throw new Error("Upload failed");
+                }
+
+                // สร้างข้อความ text message
+                const textMessage = {
+                    type: "text",
+                    text: `📩 ส่งข้อมูลสำเร็จแล้ว\n👤 ${profile.displayName}\n📝 ${remark}`
+                };
+
+                // ถ้ามีรูปภาพที่ backend ส่งกลับมา
+                let messages = [textMessage];
+
+                if (data.image_urls && Array.isArray(data.image_urls) && data.image_urls.length > 0) {
+                    // ส่งเป็น image message สำหรับแต่ละรูป (ส่งได้สูงสุด 5 รูปต่อครั้ง LIFF จำกัด)
+                    const imageMessages = data.image_urls.slice(0, 5).map(url => ({
+                        type: "image",
+                        originalContentUrl: url,
+                        previewImageUrl: url
+                    }));
+                    messages = messages.concat(imageMessages);
+                }
+
+                if (liff.isInClient()) {
+                    return liff.sendMessages(messages)
+                        .then(() => {
+                            alert("✅ ส่งข้อมูลและข้อความสำเร็จ");
+                            liff.closeWindow();
+                        })
+                        .catch(() => {
+                            alert("ส่งข้อมูลสำเร็จ แต่ส่งข้อความไม่สำเร็จ");
+                            liff.closeWindow();
+                        });
+                } else {
+                    alert("✅ ส่งข้อมูลสำเร็จ (แต่ไม่ได้เปิดใน LINE)");
+                    liff.closeWindow();
+                }
+            })
+            .catch(err => {
+                alert("❌ ไม่สามารถบันทึกได้: " + err.message);
+            })
+            .finally(() => {
+                document.getElementById("spinner").style.display = "none";
+            });
+    }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
