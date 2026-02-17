@@ -5,36 +5,38 @@ header("Access-Control-Allow-Origin: *");
 $channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
 $group_ps33_niti = 'Ca579b4e8daae57c0f07c3508696074ae';
 
-if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['remark']) && isset($_FILES['photo'])) {
+
+if (isset($_POST['user_id'], $_POST['remark']) && isset($_FILES['photo'])) {
     $userId = $_POST['user_id'];
-    $displayName = $_POST['display_name'] ?? '';
-    $pictureUrl = $_POST['pictureUrl'] ?? '';
-    $place_name = $_POST['place_name'] ?? '';
-    $check_type = $_POST['check_type'] ?? 'IN';
+    $displayName = $_POST['display_name'] ?? 'Unknown';
+    $place_name = $_POST['place_name'];
+    $check_type = $_POST['check_type'];
     $remark = $_POST['remark'];
     $lat = $_POST['latitude'];
     $lon = $_POST['longitude'];
     $timestamp = date('Y-m-d H:i:s');
-    $token_checkin = uniqid("ps33_", true);
 
-    // 🔎 ดึงข้อมูลชื่อจาก memployee
-    $sql_get_data = "SELECT f_name, l_name, nickname FROM memployee WHERE line_user_id = :userId";
-    $stmt = $conn->prepare($sql_get_data);
-    $stmt->bindParam(':userId', $userId, PDO::PARAM_STR);
-    $stmt->execute();
-
-    if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $f_name   = $row['f_name'] ?? '';
-        $l_name   = $row['l_name'] ?? '';
-        $nickname = $row['nickname'] ?? '';
-    } else {
-        $f_name = $l_name = $nickname = '';
+    // ตรวจสอบ user
+    $sql_emp = "SELECT * FROM ims_employee_line_user WHERE line_user_id = :line_user_id";
+    $stmt_emp = $conn->prepare($sql_emp);
+    $stmt_emp->bindParam(':line_user_id', $userId, PDO::PARAM_STR);
+    $stmt_emp->execute();
+    $Employee = $stmt_emp->fetchAll();
+    foreach ($Employee as $row_emp) {
+        $emp_id = $row_emp["emp_id"];
     }
 
-    $full_name = trim("$f_name $l_name") . " ($nickname)";
+    // ตรวจสอบว่าเคยบันทึก timestamp นี้แล้วหรือไม่
+    $sql_check = "SELECT COUNT(*) FROM jobrecord WHERE user_id = ? AND checkin_time = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->execute([$userId, $timestamp]);
+    $count = $stmt_check->fetchColumn();
+    if ($count > 0) {
+        echo "❌ คุณได้ส่งข้อมูลนี้แล้ว";
+        exit;
+    }
 
-    // 📸 อัปโหลดรูปภาพ
-    $uploadDir = "uploads/";
+    $uploadDir = __DIR__ . "/uploads/";
     if (!file_exists($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }
@@ -45,15 +47,29 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
         $newFileName = uniqid("job_") . "_" . $originalName . ".jpg";
         $newFilePath = $uploadDir . $newFileName;
 
+        $token_checkin = uniqid("ps33_", true);
+
         $imageInfo = getimagesize($tmpName);
-        $mime = $imageInfo['mime'] ?? '';
+        if ($imageInfo === false) {
+            continue;
+        }
+        $mime = $imageInfo['mime'];
 
         switch ($mime) {
-            case 'image/jpeg': $image = imagecreatefromjpeg($tmpName); break;
-            case 'image/png':  $image = imagecreatefrompng($tmpName);  break;
-            case 'image/webp': $image = imagecreatefromwebp($tmpName); break;
-            case 'image/gif':  $image = imagecreatefromgif($tmpName);  break;
-            default: continue 2;
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($tmpName);
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($tmpName);
+                break;
+            case 'image/webp':
+                $image = imagecreatefromwebp($tmpName);
+                break;
+            case 'image/gif':
+                $image = imagecreatefromgif($tmpName);
+                break;
+            default:
+                continue 2;
         }
 
         if ($image && imagejpeg($image, $newFilePath, 90)) {
@@ -65,57 +81,22 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
     if (!empty($photoNames)) {
         $photoPaths = implode(",", $photoNames);
 
-        // ⏺ บันทึกลงฐานข้อมูล
-        $stmt = $conn->prepare("
-            INSERT INTO jobrecord (
-                user_id, emp_id, display_name, place_name, latitude, longitude,
-                checkin_time, photo_path, check_type, token_checkin, remark
-            ) VALUES (?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([
-            $userId, $displayName, $place_name,
-            $lat, $lon, $timestamp, $photoPaths,
-            $check_type, $token_checkin, $remark
-        ]);
+        $stmt = $conn->prepare("INSERT INTO jobrecord (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin, remark, emp_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$userId, $displayName, $place_name, $lat, $lon, $timestamp, $photoPaths, $check_type, $token_checkin, $remark, $emp_id]);
 
-        $actionText = ($check_type === 'IN') ? "เช็คอิน" : "เช็คเอาท์";
+        $actionText = "บันทึกรายงาน";
 
-        // 🧩 Flex Message เริ่มต้นด้วย Bubble โปรไฟล์
-        $flexContents = [];
-
-        // เพิ่ม Bubble โปรไฟล์
-        $flexContents[] = [
-            "type" => "bubble",
-            "hero" => [
-                "type" => "image",
-                "url" => $pictureUrl,
-                "size" => "full",
-                "aspectRatio" => "1:1",
-                "aspectMode" => "cover"
-            ],
-            "body" => [
-                "type" => "box",
-                "layout" => "vertical",
-                "contents" => [
-                    [
-                        "type" => "text",
-                        "text" => "👤 $full_name",
-                        "weight" => "bold",
-                        "size" => "md"
-                    ],
-                    [
-                        "type" => "text",
-                        "text" => "🔷 LINE: $displayName",
-                        "size" => "sm",
-                        "color" => "#888888"
-                    ]
-                ]
-            ]
+        // ข้อความธรรมดา
+        $textMessage = [
+            'type' => 'text',
+            'text' => "✅ {$actionText} สำเร็จโดยคุณ {$displayName}\nรายละเอียด: {$remark}\nเวลา: {$timestamp}"
         ];
 
-        // เพิ่มภาพการเช็คอิน/เอาท์
+        // Flex Message
+        $flexContents = [];
         foreach (array_slice($photoNames, 0, 10) as $photo) {
             $imageUrl = "https://ps33home.com/line_oa/checkin/uploads/" . $photo;
+
             $flexContents[] = [
                 "type" => "bubble",
                 "hero" => [
@@ -131,46 +112,38 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
                     "contents" => [
                         [
                             "type" => "text",
-                            "text" => "📍 สถานที่ : " . $place_name,
+                            "text" => "รายละเอียด : " . $remark,
                             "weight" => "bold",
                             "size" => "md"
                         ],
                         [
                             "type" => "text",
-                            "text" => "🕒 เวลา: $timestamp",
+                            "text" => "เวลา: $timestamp",
                             "size" => "sm",
                             "color" => "#888888"
-                        ],
-                        [
-                            "type" => "text",
-                            "text" => "📝 รายละเอียด: " . $remark,
-                            "wrap" => true,
-                            "size" => "sm"
                         ]
                     ]
                 ]
             ];
         }
 
-        // รายชื่อปลายทางที่จะส่ง LINE (user และ group)
-        $targetIds = [$userId, $group_ps33_niti];
+        $flexMessage = [
+            'type' => 'flex',
+            'altText' => "📸 รูปภาพจากการ{$actionText}",
+            'contents' => [
+                'type' => 'carousel',
+                'contents' => $flexContents
+            ]
+        ];
 
-        foreach ($targetIds as $target) {
+        // ส่งข้อความไปยัง user และกลุ่ม
+        $recipients = [$userId, $group_ps33_niti];
+        foreach ($recipients as $recipient) {
             $messageData = [
-                'to' => $target,
+                'to' => $recipient,
                 'messages' => [
-                    [
-                        'type' => 'text',
-                        'text' => "📌 แจ้งเตือนการรายงาน จาก $full_name\n🔷 line user: $displayName\n📍 สถานที่: $place_name\n📝 รายละเอียด: $remark\n🕒 เวลา: $timestamp"
-                    ],
-                    [
-                        'type' => 'flex',
-                        'altText' => "📸 รูปภาพจากการรายงาน ",
-                        'contents' => [
-                            'type' => 'carousel',
-                            'contents' => $flexContents
-                        ]
-                    ]
+                    $textMessage,
+                    $flexMessage
                 ]
             ];
 
@@ -188,10 +161,10 @@ if (isset($_POST['user_id'], $_POST['latitude'], $_POST['longitude'], $_POST['re
             $error = curl_error($ch);
             curl_close($ch);
 
-            file_put_contents("line_push_log.txt", "[$timestamp] TO $target: HTTP $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
+            file_put_contents("line_push_log.txt", "[$timestamp] To: $recipient HTTP CODE: $httpCode\nResult: $result\nError: $error\n\n", FILE_APPEND);
         }
 
-        echo "✅ บันทึกสำเร็จ และส่ง LINE ให้ผู้ใช้และกลุ่มแล้ว";
+        echo "✅ $actionText สำเร็จและส่ง LINE สำเร็จแล้ว";
     } else {
         http_response_code(500);
         echo "❌ อัปโหลดรูปไม่สำเร็จ";

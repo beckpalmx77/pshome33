@@ -109,4 +109,3 @@ if (isset($_POST['user_id'], $_POST['place_name'], $_POST['check_type'])) {
 } else {
     echo "ข้อมูลไม่ครบ";
 }
-?>
