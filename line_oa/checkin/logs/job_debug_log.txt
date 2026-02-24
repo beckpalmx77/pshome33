@@ -1,0 +1,4 @@
+[2026-02-17 11:08:52] 🚀 เริ่มต้นบันทึก Job Record
+[2026-02-17 11:08:52] ✅ บันทึก Job Successful (User: หนุ่ม Dev IT)
+[2026-02-17 11:08:52] 📱 LINE Sent to: Uc2648cdcef0f0608ce5c835883488bc7
+[2026-02-17 11:08:52] 📱 LINE Sent to: Ca579b4e8daae57c0f07c3508696074ae
