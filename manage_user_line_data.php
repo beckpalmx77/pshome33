@@ -34,6 +34,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <th>เบอร์โทร</th>
                                             <th>ชื่อสมาชิก</th>
                                             <th>เลขที่บ้าน</th>
+                                            <th>ซอย</th>
                                             <th>ชื่อใน LINE</th>
                                             <th>จัดการ</th>
                                         </tr>
@@ -86,8 +87,13 @@ if (strlen($_SESSION['alogin']) == "") {
                 'serverMethod': 'post',
                 'ajax': { 'url': 'model/manage_user_line_data_process.php', 'data': { action: "GET_USER_LINE_DATA" } },
                 'columns': [
-                    { data: 'no' }, { data: 'phone_number' }, { data: 'member_name' },
-                    { data: 'house_number' }, { data: 'line_user_name' }, { data: 'delete' }
+                    { data: 'no' },
+                    { data: 'phone_number' },
+                    { data: 'member_name' },
+                    { data: 'house_number' },
+                    { data: 'alley' },
+                    { data: 'line_user_name' },
+                    { data: 'delete' }
                 ],
                 'columnDefs': [{ "orderable": false, "targets": [0, 5] }]
             });
@@ -115,8 +121,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <div class="card-body">
                                                 <p><b>User ID:</b> ${d.user_id || '-'}</p>
                                                 <p><b>ชื่อ-นามสกุล:</b> ${d.first_name} ${d.last_name}</p>
-                                                <p><b>Email:</b> ${d.email || '-'}</p>
-                                                <p><b>Status:</b> ${d.status || '-'}</p>
+                                                <p><b>Role:</b> ${d.account_type || '-'}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -125,6 +130,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <div class="card-header bg-success text-white text-center"><b>ตาราง: ims_house</b></div>
                                             <div class="card-body">
                                                 <p><b>เลขที่บ้าน:</b> ${d.house_number}</p>
+                                                <p><b>ซอย:</b> ${d.alley}</p>
                                                 <p><b>เบอร์โทร:</b> ${d.phone_number}</p>
                                                 <p><b>ผู้ติดต่อ:</b> ${d.contact_name || '-'}</p>
                                                 <p><b>สถานะบ้าน:</b> ${d.house_status || '-'}</p>

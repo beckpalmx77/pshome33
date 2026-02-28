@@ -38,9 +38,10 @@ if ($_POST["action"] === 'GET_USER_LINE_DATA') {
     $totalRecordwithFilter = $stmtFilter->fetch()['allcount'];
 
     // ดึงข้อมูลจริง
-    $sqlMain = "SELECT l.id, l.line_phone, l.house_number, l.line_user_name, u.first_name, u.last_name 
+    $sqlMain = "SELECT l.id, l.line_phone, l.house_number, m.alley , l.line_user_name, u.first_name, u.last_name 
                 FROM ims_house_line_user l 
                 LEFT JOIN ims_user u ON l.line_phone = u.user_id 
+                LEFT JOIN ims_house_master m ON m.house_number = l.house_number
                 WHERE 1 " . $searchQuery . " 
                 ORDER BY l.id DESC LIMIT :limit, :offset";
 
@@ -61,6 +62,7 @@ if ($_POST["action"] === 'GET_USER_LINE_DATA') {
             "phone_number"   => $val['line_phone'],
             "member_name"    => $fullName,
             "house_number"   => $val['house_number'],
+            "alley"   => $val['alley'],
             "line_user_name" => $val['line_user_name'],
             "delete"         => "<button type='button' id='".$val['id']."' class='btn btn-danger btn-xs delete'><i class='fa fa-trash'></i> ลบข้อมูลทั้งหมด</button>"
         );
