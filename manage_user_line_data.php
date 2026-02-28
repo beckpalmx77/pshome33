@@ -135,7 +135,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                         <div class="card border-info mb-3">
                                             <div class="card-header bg-info text-white text-center"><b>ตาราง: ims_house_line_user</b></div>
                                             <div class="card-body text-center">
-                                                <img src="${d.line_picture_url || 'img/no-image.png'}" class="rounded-circle mb-2" width="60">
+                                                <img src="${d.line_picture_profile || 'img/no-image.png'}" class="rounded-circle mb-2" width="60">
                                                 <p><b>ชื่อ LINE:</b> ${d.line_user_name}</p>
                                                 <p><b>Line ID:</b> ${d.line_user_id || '-'}</p>
                                                 <p><b>วันที่ผูกบัญชี:</b> ${d.create_date || '-'}</p>
