@@ -1,1 +1,0 @@
-const LIFF_ID = "2007370141-AZ6qalek";
