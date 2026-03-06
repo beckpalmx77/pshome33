@@ -78,11 +78,11 @@ if ($_POST["action"] === 'UPDATE') {
         $remark = $_POST["remark"];
         $payment_method = $_POST["payment_method"];
 
-/*
-        $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
-        fwrite($myfile, $payment_status  . " | " . $payment_method);
-        fclose($myfile);
-*/
+        /*
+                $myfile = fopen("a-param.txt", "w") or die("Unable to open file!");
+                fwrite($myfile, $payment_status  . " | " . $payment_method);
+                fclose($myfile);
+        */
 
         // ตรวจสอบเงื่อนไข: ถ้าเลือกเดือนมกราคมถึงธันวาคม (1 ถึง 12)
         if ($period_month_start == 1 && $period_month_to == 12) {
@@ -427,66 +427,69 @@ if ($_POST["action"] === 'DELETE') {
     exit;
 }
 
+// Fetch data for the DataTable
 if ($_POST["action"] === 'GET_COMMON_FEE') {
+
+    ## Read value from DataTable's request
     $draw = $_POST['draw'];
-    $row = (int)$_POST['start'];
-    $rowperpage = (int)$_POST['length'];
-    $searchValue = $_POST['search']['value'];
-    $isMaster = ($_POST['sub_action'] === "GET_MASTER");
-    $isUser = ($_SESSION['account_type'] === "user");
-    $isManager = ($_SESSION['account_type'] === "manager");
+    $row = $_POST['start'];
+    $rowperpage = $_POST['length']; // Number of rows per page
+    $columnIndex = $_POST['order'][0]['column']; // Index of the column to sort by
+    $columnName = $_POST['columns'][$columnIndex]['data']; // Column name for sorting
+    $columnSortOrder = 'desc'; // Always sort descending
+    $searchValue = $_POST['search']['value']; // User-input search value
 
     $searchArray = array();
-    $whereClauses = ["1=1"];
 
-    // 1. จัดการ Filter ตามสิทธิ์ User
-    if ($isUser) {
-        $whereClauses[] = "house_number = :session_house";
-        $searchArray['session_house'] = $_SESSION['house_number'];
+    ## Search Query
+    $searchQuery = " ";
+    if ($searchValue != '') {
+        $searchQuery = " AND (house_number LIKE :house_number) ";
+        $searchArray = array(
+            'house_number' => "%$searchValue%"
+        );
     }
 
-    // 2. จัดการ Search (ใช้ Bind Parameter เพื่อความปลอดภัย)
-    if (!empty($searchValue)) {
-        $whereClauses[] = "(house_number LIKE :search_val OR contact_name LIKE :search_val)";
-        $searchArray['search_val'] = "%$searchValue%";
+    $where_house_number = " ";
+    if ($_SESSION['account_type'] === "user") {
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
     }
 
-    $whereSql = implode(" AND ", $whereClauses);
-
-    ## Total records (ดึงแค่ count)
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE $whereSql");
-    $stmt->execute($searchArray);
-    $totalRecordwithFilter = $stmt->fetchColumn();
-    $totalRecords = $totalRecordwithFilter; // หรือดึงแยกถ้าต้องการ Total จริงๆ แบบไม่ filter
-
-    ## Fetch records (เลือกเฉพาะฟิลด์ที่ใช้ในตาราง)
-    if ($isMaster) {
-        // ดึงเฉพาะฟิลด์ที่จำเป็นต้องใช้ในตัวแปร $data (Master Mode)
-        $fields = "id, doc_id, payment_date, detail, house_number, alley, contact_name, 
-                   phone_number, payment_type, period_month_start, period_month_to, 
-                   month_name_start, month_name_to, period_year, area_size, 
-                   garbage_collection_fee, common_fee, amount, payment_status, 
-                   line_picture_profile_show, remark";
-    } else {
-        // ดึงเฉพาะฟิลด์สำหรับ Selection Mode
-        $fields = "id, house_number, contact_name";
-    }
-
-    $sql = "SELECT $fields FROM v_ims_house_payment 
-            WHERE $whereSql 
-            ORDER BY id DESC 
-            LIMIT :limit, :offset";
-
-    $stmt = $conn->prepare($sql);
-    foreach ($searchArray as $key => $val) {
-        $stmt->bindValue(':' . $key, $val, PDO::PARAM_STR);
-    }
-    $stmt->bindValue(':limit', $row, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', $rowperpage, PDO::PARAM_INT);
+    ## Total number of records without filtering
+    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $where_house_number;
+    $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
-    $empRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $records = $stmt->fetch();
+    $totalRecords = $records['allcount'];
 
+    ## Total number of records with filtering
+    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
+    $stmt = $conn->prepare($sql_getdata);
+    $stmt->execute($searchArray);
+    $records = $stmt->fetch();
+    $totalRecordwithFilter = $records['allcount'];
+
+    ## Fetch records
+    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number
+        . " ORDER BY id DESC " . " LIMIT :limit,:offset"; // Sort by ID descending
+
+    $stmt = $conn->prepare($sql_getdata);
+
+    // Bind values
+    foreach ($searchArray as $key => $search) {
+        $stmt->bindValue(':' . $key, $search, PDO::PARAM_STR);
+    }
+
+    $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
+    $stmt->execute();
+    $empRecords = $stmt->fetchAll();
     $data = array();
+
+    $isUser = $_SESSION['account_type'] === "user";
+    $isManager = $_SESSION['account_type'] === "manager";
+    $isMaster = $_POST['sub_action'] === "GET_MASTER";
+
     $statusMeta = [
         'Y' => ['desc' => "ชำระเรียบร้อยแล้ว", 'color' => 'green', 'can_print' => true],
         'N' => ['desc' => "ยังไม่ยืนยันการชำระ", 'color' => 'gray', 'can_print' => false],
@@ -494,12 +497,8 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     foreach ($empRecords as $row) {
         if ($isMaster) {
-            $meta = $statusMeta[$row['payment_status']] ?? ['desc' => '-', 'color' => 'gray', 'can_print' => false];
-
-            // เตรียมปุ่มต่างๆ ไว้ก่อนเพื่อความสะอาดของ Code
-            $btnUpdate = $isUser ? "disabled" : "id='{$row['id']}' name='update'";
-            $btnDelete = ($isUser || $isManager) ? "disabled" : "id='{$row['id']}' name='delete'";
-            $imgProfile = $row['line_picture_profile_show'] ?: 'img/icon/none_img.png';
+            $status = $row['payment_status'];
+            $meta = $statusMeta[$status] ?? ['desc' => '-', 'color' => 'gray', 'can_print' => false];
 
             $data[] = [
                 "id" => $row['id'],
@@ -515,19 +514,21 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "period_month_to" => $row['period_month_to'],
                 "month_name_start" => $row['month_name_start'],
                 "month_name_to" => $row['month_name_to'],
-                "month_name_period" => "{$row['month_name_start']} - {$row['month_name_to']}",
+                "month_name_period" => $row['month_name_start'] . " - " . $row['month_name_to'],
                 "period_year" => $row['period_year'],
                 "area_size" => $row['area_size'],
                 "garbage_collection_fee" => $row['garbage_collection_fee'],
                 "common_fee" => $row['common_fee'],
                 "amount" => $row['amount'],
                 "payment_status" => $row['payment_status'],
-                "line_picture_profile" => "<img src='$imgProfile' alt='image' style='width: 40px; height: auto; border-radius: 50%;'>",
-                "payment_status_desc" => "<span style='color: {$meta['color']}'><b>{$meta['desc']}</b></span>",
-                "print" => "<button type='button' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
-                "slip" => "<button type='button' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
-                "update" => "<button type='button' class='btn btn-info btn-xs update' $btnUpdate>Update</button>",
-                "delete" => "<button type='button' class='btn btn-danger btn-xs delete' $btnDelete>Delete</button>",
+                "line_picture_profile" => "<img src='" . ($row['line_picture_profile_show'] ?: 'img/icon/none_img.png') . "' alt='image' style='width: 50px; height: auto;'>",
+                "payment_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
+                "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
+                "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
+                "update" => $isUser ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
+                    : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
+                    : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
                 "remark" => $row['remark']
             ];
         } else {
@@ -535,15 +536,18 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
                 "id" => $row['id'],
                 "house_number" => $row['house_number'],
                 "contact_name" => $row['contact_name'],
-                "select" => "<button type='button' id='{$row['house_number']}@{$row['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
+                "select" => "<button type='button' name='select' id='{$row['house_number']}@{$row['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
             ];
         }
     }
 
-    echo json_encode([
+    ## Response Return Value for DataTable
+    $response = array(
         "draw" => intval($draw),
         "iTotalRecords" => $totalRecords,
         "iTotalDisplayRecords" => $totalRecordwithFilter,
         "aaData" => $data
-    ]);
+    );
+
+    echo json_encode($response);
 }
