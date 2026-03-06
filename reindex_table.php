@@ -38,11 +38,34 @@ if (strlen($_SESSION['alogin']) == "") {
 } else {
     $stmt = $conn->query("SHOW TABLES");
     $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $dashboard_url = isset($_SESSION['dashboard_page']) ? $_SESSION['dashboard_page'] : 'dashboard.php';
     ?>
 
     <!DOCTYPE html>
     <html lang="th">
+    <head>
+        <style>
+            /* CSS สำหรับ Lock หน้าจอขณะทำงาน */
+            .sidebar-lock {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 250px;
+                height: 100%;
+                background: rgba(0,0,0,0.1);
+                z-index: 9999;
+                cursor: not-allowed;
+                display: none;
+            }
+            .working-overlay {
+                pointer-events: none;
+                opacity: 0.7;
+            }
+        </style>
+    </head>
     <body id="page-top">
+    <div id="lock-overlay" class="sidebar-lock"></div>
+
     <div id="wrapper">
         <?php include('includes/Side-Bar.php'); ?>
         <div id="content-wrapper" class="d-flex flex-column">
@@ -57,8 +80,11 @@ if (strlen($_SESSION['alogin']) == "") {
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card shadow mb-4">
-                                <div class="card-header py-3 bg-primary">
-                                    <h6 class="m-0 font-weight-bold text-white">MySQL Table Optimizer</h6>
+                                <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h6 class="m-0 font-weight-bold">MySQL Table Optimizer</h6>
+                                    <a href="<?php echo $dashboard_url; ?>" class="btn btn-sm btn-light shadow-sm text-primary">
+                                        <i class="fas fa-home fa-sm"></i> Home
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <div class="row text-center mb-4">
@@ -73,12 +99,21 @@ if (strlen($_SESSION['alogin']) == "") {
                                     </div>
 
                                     <div class="text-center mb-4">
-                                        <button id="start-btn" class="btn btn-primary btn-lg">
-                                            <i class="fas fa-play mr-2"></i> เริ่มรัน Optimize
+                                        <button id="start-btn" class="btn btn-primary btn-lg px-4">
+                                            <i class="fas fa-play mr-2"></i>เริ่มรัน Optimize
                                         </button>
-                                        <button id="download-btn" class="btn btn-outline-info btn-lg d-none">
-                                            <i class="fas fa-file-alt mr-2"></i> ดาวน์โหลดผลลัพธ์
-                                        </button>
+
+                                        <div id="after-action-btns" class="d-none">
+                                            <button id="reset-btn" class="btn btn-warning btn-lg px-4">
+                                                <i class="fas fa-undo mr-2"></i>Reset หน้าจอ
+                                            </button>
+                                            <button id="download-btn" class="btn btn-outline-info btn-lg px-4">
+                                                <i class="fas fa-file-alt mr-2"></i>ดาวน์โหลดผลลัพธ์
+                                            </button>
+                                            <a href="<?php echo $dashboard_url; ?>" class="btn btn-outline-secondary btn-lg px-4">
+                                                <i class="fas fa-home mr-2"></i>กลับหน้าหลัก
+                                            </a>
+                                        </div>
                                     </div>
 
                                     <div id="ui-section" class="d-none">
@@ -103,33 +138,47 @@ if (strlen($_SESSION['alogin']) == "") {
         </div>
     </div>
 
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tables = <?php echo json_encode($tables); ?>;
             const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
             const downloadBtn = document.getElementById('download-btn');
+            const afterActionBtns = document.getElementById('after-action-btns');
             const progressBar = document.getElementById('progress-bar');
             const uiSection = document.getElementById('ui-section');
             const logWindow = document.getElementById('log-window');
             const statusText = document.getElementById('status-text');
             const countText = document.getElementById('count-text');
             const totalSavedLabel = document.getElementById('total-saved');
+            const lockOverlay = document.getElementById('lock-overlay');
+            const sidebar = document.getElementById('accordionSidebar');
 
             let logContent = "";
             let totalSaved = 0;
 
-            startBtn.addEventListener('click', async () => {
-                if (!confirm('ยืนยันการเริ่มทำงาน?')) return;
+            function setInterfaceLock(isLocked) {
+                if(isLocked) {
+                    lockOverlay.style.display = 'block';
+                    if(sidebar) sidebar.classList.add('working-overlay');
+                    startBtn.disabled = true;
+                } else {
+                    lockOverlay.style.display = 'none';
+                    if(sidebar) sidebar.classList.remove('working-overlay');
+                    startBtn.disabled = false;
+                }
+            }
 
-                startBtn.disabled = true;
-                startBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังทำงาน...';
+            startBtn.addEventListener('click', async () => {
+                if (!confirm('ยืนยันการเริ่มทำงาน? ระบบจะระงับเมนูชั่วคราวจนกว่าจะเสร็จสิ้น')) return;
+
+                setInterfaceLock(true);
+                afterActionBtns.classList.add('d-none');
+                startBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>กำลังดำเนินการ...';
                 uiSection.classList.remove('d-none');
                 logWindow.innerHTML = '';
                 totalSaved = 0;
+                totalSavedLabel.innerText = "0.00";
 
                 logContent = "Database Optimization Report\nDate: " + new Date().toLocaleString() + "\n" + "=".repeat(50) + "\n";
 
@@ -138,9 +187,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
                 for (const table of tables) {
                     statusText.innerText = `กำลังจัดการ: ${table}...`;
-
                     try {
-                        // ดึงข้อมูลผ่าน AJAX Fetch
                         const response = await fetch(`?action=optimize&table=${encodeURIComponent(table)}`);
                         const result = await response.json();
 
@@ -156,7 +203,6 @@ if (strlen($_SESSION['alogin']) == "") {
 
                         logWindow.appendChild(logDiv);
                         logWindow.scrollTop = logWindow.scrollHeight;
-
                         logContent += logLine + "\n";
                     } catch (error) {
                         const errorDiv = document.createElement('div');
@@ -173,8 +219,19 @@ if (strlen($_SESSION['alogin']) == "") {
                 }
 
                 statusText.innerText = "เสร็จสมบูรณ์!";
-                startBtn.innerText = "ดำเนินการเสร็จสิ้น";
-                downloadBtn.classList.remove('d-none');
+                startBtn.classList.add('d-none');
+                afterActionBtns.classList.remove('d-none');
+                setInterfaceLock(false);
+            });
+
+            resetBtn.addEventListener('click', () => {
+                startBtn.classList.remove('d-none');
+                startBtn.innerHTML = '<i class="fas fa-play mr-2"></i>เริ่มรัน Optimize';
+                afterActionBtns.classList.add('d-none');
+                uiSection.classList.add('d-none');
+                totalSavedLabel.innerText = "0.00";
+                progressBar.style.width = '0%';
+                logWindow.innerHTML = '<div style="color: #666;">--- กดปุ่มด้านบนเพื่อเริ่มกระบวนการ ---</div>';
             });
 
             downloadBtn.addEventListener('click', () => {
