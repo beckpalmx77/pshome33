@@ -1,6 +1,6 @@
 <?php
 // แก้ไข path ให้ตรงกับโครงสร้างของคุณ
-require_once '../config/connect_db.php';
+require_once 'config/connect_db.php';
 
 // 1. API สำหรับประมวลผล (เรียกผ่าน Fetch JS)
 if (isset($_GET['action']) && $_GET['action'] == 'optimize' && isset($_GET['table'])) {
