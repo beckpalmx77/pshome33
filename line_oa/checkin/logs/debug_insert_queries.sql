@@ -242,3 +242,21 @@ INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, ch
 -- Generated at 2026-03-11 09:04:28 by Joy
 INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U80a32a9fff05635ec1c608e24f3f45e2', 'Joy', 'พฤกษา 33', '0', '0', '2026-03-11 09:04:28', NULL, 'IN', 'ps33_69b0cdacd87735.43664516');
 
+-- Generated at 2026-03-11 18:03:44 by Joy
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U80a32a9fff05635ec1c608e24f3f45e2', 'Joy', 'พฤกษา 33', '0', '0', '2026-03-11 18:03:44', NULL, 'OUT', 'ps33_69b14c108a7807.65117326');
+
+-- Generated at 2026-03-12 06:27:13 by De,'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U2c11430e6f4768a9a09c8c494185592e', 'De,\'nin💎🗽💎⛲💎💎💎💎💎💎💎💎💎', 'พฤกษา 33', '13.902147', '100.3671513', '2026-03-12 06:27:13', 'img_69b1fa51a5130.jpg', 'IN', 'ps33_69b1fa51a63568.60847921');
+
+-- Generated at 2026-03-12 08:56:29 by aom
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('Ud40b6c20c76f030bea5d4a0f781a23ab', 'aom', 'พฤกษา 33', '0', '0', '2026-03-12 08:56:29', NULL, 'IN', 'ps33_69b21d4d56a590.65995488');
+
+-- Generated at 2026-03-12 08:57:04 by Joy
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U80a32a9fff05635ec1c608e24f3f45e2', 'Joy', 'พฤกษา 33', '0', '0', '2026-03-12 08:57:04', NULL, 'IN', 'ps33_69b21d709d0206.00714787');
+
+-- Generated at 2026-03-12 18:03:48 by Joy
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U80a32a9fff05635ec1c608e24f3f45e2', 'Joy', 'พฤกษา 33', '0', '0', '2026-03-12 18:03:48', NULL, 'OUT', 'ps33_69b29d94930645.91164434');
+
+-- Generated at 2026-03-12 18:15:12 by aom
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('Ud40b6c20c76f030bea5d4a0f781a23ab', 'aom', 'พฤกษา 33', '13.891891891891891', '100.35887357858364', '2026-03-12 18:15:12', NULL, 'OUT', 'ps33_69b2a04048bb20.40593977');
+
