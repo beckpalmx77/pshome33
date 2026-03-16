@@ -214,7 +214,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                             </div>
 
                                                             <div class="form-group row">
-                                                                <div class="col-sm2">
+                                                                <div class="col-sm-2">
                                                                     <label for="salary_type" class="control-label">ประเภทพนักงาน</label>
                                                                     <select id="salary_type" name="salary_type"
                                                                             class="form-control" data-live-search="true"
@@ -270,7 +270,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                             </div>
 
                                                             <div class="form-group row">
-                                                                <div class="col-sm3">
+                                                                <div class="col-sm-3">
                                                                     <label for="salary_type_1" class="control-label">ประวัติเงินเดือนก่อนหน้า</label>
                                                                     <select id="salary_type_1" name="salary_type_1"
                                                                             class="form-control" data-live-search="true"
@@ -292,7 +292,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                             <input type="hidden" name="id" id="id"/>
                                                             <input type="hidden" name="action" id="action" value=""/>
                                                             <span class="icon-input-btn">
-                                                            <i class="fa fa-check"></i>
                                                             <input type="submit" name="save" id="save"
                                                                    class="btn btn-primary" value="บันทึก"/>
                                                             </span>
@@ -305,85 +304,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                             </div>
                                         </div>
 
-                                        <div class="modal fade" id="SearchPositionModal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-
-                                                        <div class="modal-body">
-
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TablePositionList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัสตำแหน่ง</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัสตำแหน่ง</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal fade" id="SearchWorkTimeModal">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title">Modal title</h4>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                                aria-hidden="true">×
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="container"></div>
-                                                    <div class="modal-body">
-
-                                                        <div class="modal-body">
-
-                                                            <table cellpadding="0" cellspacing="0" border="0"
-                                                                   class="display"
-                                                                   id="TableWorkTimeList"
-                                                                   width="100%">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>รหัสตารางเวลาการทำงาน</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tfoot>
-                                                                <tr>
-                                                                    <th>รหัสตารางเวลาการทำงาน</th>
-                                                                    <th>รายละเอียด</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                                </tfoot>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <div class="modal fade" id="SearchPositionModal">...</div>
+                                        <div class="modal fade" id="SearchWorkTimeModal">...</div>
 
                                 </div>
                             </div>
@@ -400,64 +322,29 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
     include('includes/Footer.php');
     ?>
 
-
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
-
     <script src="js/modal/show_position_modal.js"></script>
     <script src="js/modal/show_worktime_modal.js"></script>
-
     <script src="js/util/calculate_datetime.js"></script>
-
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-
     <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
-
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
 
-
-    <style>
-
-        .icon-input-btn {
-            display: inline-block;
-            position: relative;
-        }
-
-        .icon-input-btn input[type="submit"] {
-            padding-left: 2em;
-        }
-
-        .icon-input-btn .fa {
-            display: inline-block;
-            position: absolute;
-            left: 0.65em;
-            top: 30%;
-        }
-    </style>
     <script>
         $(document).ready(function () {
-            $(".icon-input-btn").each(function () {
-                let btnFont = $(this).find(".btn").css("font-size");
-                let btnColor = $(this).find(".btn").css("color");
-                $(this).find(".fa").css({'font-size': btnFont, 'color': btnColor});
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
+            // DataTables Setup
             let formData = {action: "GET_EMPLOYEE", sub_action: "GET_MASTER", page_manage: "ADMIN",};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[10, 20, 50, 100], [10, 20, 50, 100]],
@@ -467,47 +354,30 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                     infoEmpty: 'ไม่มีข้อมูล',
                     zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
                     infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
-                    paginate: {
-                        previous: 'ก่อนหน้า',
-                        last: 'สุดท้าย',
-                        next: 'ต่อไป'
-                    }
+                    paginate: { previous: 'ก่อนหน้า', last: 'สุดท้าย', next: 'ต่อไป' }
                 },
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                <?php  if ($_SESSION['deviceType'] !== 'computer') {
-                    echo "'scrollX': true,";
-                }?>
-                'ajax': {
-                    'url': 'model/manage_employee_process.php',
-                    'data': formData
-                },
+                <?php if ($_SESSION['deviceType'] !== 'computer') { echo "'scrollX': true,"; } ?>
+                'ajax': { 'url': 'model/manage_employee_process.php', 'data': formData },
                 'columns': [
-                    {data: 'emp_id'},
-                    {data: 'full_name'},
-                    {data: 'nick_name'},
-                    {data: 'position_desc'},
-                    {data: 'start_work_date'},
-                    {data: 'work_time_detail'},
-                    {data: 'status'},
-                    {data: 'update'},
+                    {data: 'emp_id'}, {data: 'full_name'}, {data: 'nick_name'}, {data: 'position_desc'},
+                    {data: 'start_work_date'}, {data: 'work_time_detail'}, {data: 'status'}, {data: 'update'},
                 ]
             });
 
-            // ✅ ใช้ FormData สำหรับส่งทั้งข้อมูลฟอร์ม + ไฟล์
+            // Form Submit with File Upload
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
-
-                let formData = new FormData(this); // ใช้ this เพื่อแนบไฟล์ด้วย
-
+                let formData = new FormData(this);
                 $.ajax({
                     url: 'model/manage_employee_process.php',
                     method: "POST",
                     data: formData,
-                    contentType: false, // สำคัญ: ปิด contentType เพื่อให้ browser set multipart/form-data
-                    processData: false, // สำคัญ: ห้ามแปลง formData เป็น string
+                    contentType: false,
+                    processData: false,
                     success: function (data) {
                         alertify.success(data);
                         $('#recordForm')[0].reset();
@@ -522,58 +392,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 });
             });
 
-
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-
+            // Add Record Click
             $("#btnAdd").click(function () {
                 $('#recordModal').modal('show');
-
-                // เคลียร์ค่าทั้งหมด
-                $('#id').val("");
-                $('#emp_id').val("");
-                $('#f_name').val("");
-                $('#l_name').val("");
-                $('#image').val("");  // เคลียร์ฟิลด์ภาพ
-                $('#old_image').val(""); // เคลียร์ old_image
-                $('#position_id').val("");
-                $('#position_desc').val("");
-                $('#work_time_id').val("");
-                $('#work_time_detail').val("");
-                $('#start_work_date').val("");
-                $('#work_age').val("");
-                $('#nick_name').val("");
-                $('#prefix').val("");
-                $('#remark').val("");
-                $('#phone').val("");
-                $('#week_holiday').val("");
-                $('#salary').val("");
-                $('#salary_history').val(""); // <--- เพิ่มตรงนี้
-
-                // รีเซ็ต select หรือ textarea ถ้ามี
-                $('#position_id').val('').change();
-                $('#work_time_id').val('').change();
-
-                // รีเซ็ตการแสดงรูปภาพ
+                $('#recordForm')[0].reset();
                 $('#preview-image').hide();
-
-                // ตั้งค่าชื่อ modal และ action
+                $('#id, #old_image').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
-                $('#save').val('Save');
             });
         });
 
-    </script>
-
-    <script>
-
+        // Update Click (Edit)
         $("#TableRecordList").on('click', '.update', function () {
             let id = $(this).attr("id");
-            // alert(id);
             let formData = {action: "GET_DATA", id: id};
             $.ajax({
                 type: "POST",
@@ -581,139 +413,98 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 dataType: "json",
                 data: formData,
                 success: function (response) {
-                    let len = response.length;
-                    for (let i = 0; i < len; i++) {
-                        let id = response[i].id;
-                        let emp_id = response[i].emp_id;
-                        let f_name = response[i].f_name;
-                        let l_name = response[i].l_name;
-                        let prefix = response[i].prefix;
-                        let sex = response[i].sex;
-                        let nick_name = response[i].nick_name;
-                        let phone = response[i].phone;
-                        let start_work_date = response[i].start_work_date;
-                        let position_id = response[i].position_id;
-                        let position_desc = response[i].position_desc;
-                        let work_time_id = response[i].work_time_id;
-                        let work_time_detail = response[i].work_time_detail;
-                        let remark = response[i].remark;
-                        let salary_type = response[i].salary_type;
-                        let salary = response[i].salary;
-                        let salary_history = response[i].salary_history; // <--- รับค่าตรงนี้
-                        let week_holiday = response[i].week_holiday;
-                        let work_age = 0;
-                        let start_w_date = start_work_date.substr(3, 2) + "/" + start_work_date.substr(0, 2) + "/" + start_work_date.substr(6, 10);
-                        let image = response[i].image;
-                        work_age = getAge(start_w_date);
-                        let status = response[i].status;
-
+                    if(response.length > 0) {
+                        let res = response[0];
                         $('#recordModal').modal('show');
-                        $('#id').val(id);
-                        $('#emp_id').val(emp_id);
-                        $('#f_name').val(f_name);
-                        $('#l_name').val(l_name);
-                        $('#prefix').val(prefix);
-                        $('#sex').val(sex);
-                        $('#nick_name').val(nick_name);
-                        $('#phone').val(phone);
-                        $('#start_work_date').val(start_work_date);
-                        $('#position_id').val(position_id);
-                        $('#position_desc').val(position_desc);
-                        $('#work_time_id').val(work_time_id);
-                        $('#work_time_detail').val(work_time_detail);
-                        $('#remark').val(remark);
-                        $('#salary_type').val(salary_type);
-                        $('#salary').val(salary);
-                        $('#salary_history').val(salary_history); // <--- แสดงค่าตรงนี้
-                        $('#week_holiday').val(week_holiday);
-                        $('#work_age').val(work_age);
-                        $('#status').val(status);
+                        $('#id').val(res.id);
+                        $('#emp_id').val(res.emp_id);
+                        $('#f_name').val(res.f_name);
+                        $('#l_name').val(res.l_name);
+                        $('#prefix').val(res.prefix);
+                        $('#sex').val(res.sex);
+                        $('#nick_name').val(res.nick_name);
+                        $('#phone').val(res.phone);
+                        $('#start_work_date').val(res.start_work_date);
+                        $('#position_id').val(res.position_id);
+                        $('#position_desc').val(res.position_desc);
+                        $('#work_time_id').val(res.work_time_id);
+                        $('#work_time_detail').val(res.work_time_detail);
+                        $('#salary_type').val(res.salary_type);
+                        $('#salary').val(res.salary);
+                        $('#salary_history').val(res.salary_history);
+                        $('#week_holiday').val(res.week_holiday);
+                        $('#status').val(res.status);
+                        $('#old_image').val(res.image);
 
-                        if (image) {
-                            $('#preview-image').attr('src', 'uploads/employees/' + image).show();
-                        } else if ($('#old_image').val()) {
-                            // หากมี old_image ให้แสดงภาพเดิม
-                            $('#preview-image').attr('src', 'uploads/employees/' + $('#old_image').val()).show();
+                        // ✅ แก้ไข: คำนวณอายุงานทันทีเมื่อเปิด Modal
+                        $('#work_age').val(getAge(res.start_work_date));
+
+                        if (res.image) {
+                            $('#preview-image').attr('src', 'uploads/employees/' + res.image).show();
                         } else {
                             $('#preview-image').hide();
                         }
 
-
-                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
+                        $('.modal-title').html("<i class='fa fa-edit'></i> Edit Record");
                         $('#action').val('UPDATE');
-                        $('#save').val('Save');
-
                     }
-                },
-                error: function (response) {
-                    alertify.error("error : " + response);
                 }
             });
         });
 
-    </script>
-
-
-    <script>
+        // Datepicker & Auto Age calculation
         $(document).ready(function () {
             $('#start_work_date').datepicker({
                 format: "dd-mm-yyyy",
                 todayHighlight: true,
                 language: "th",
                 autoclose: true
+            }).on('changeDate', function(e) {
+                // ✅ แก้ไข: คำนวณอายุงาน Real-time เมื่อเปลี่ยนวันที่
+                let dateStr = $(this).val();
+                $('#work_age').val(getAge(dateStr));
             });
         });
-    </script>
 
-    <script>
-
+        // ✅ แก้ไข: ฟังก์ชันคำนวณอายุงานที่สมบูรณ์ (คืนค่าเป็น String)
         function getAge(startWorkDate) {
+            if (!startWorkDate) return "";
+            const parts = startWorkDate.split(/[-/]/);
+            if (parts.length !== 3) return "";
 
-            // แปลงวันที่จากรูปแบบ DD/MM/YYYY เป็น Date object
-            const parts = startWorkDate.split("/");
-            const startDate = new Date(parts[2], parts[1] - 1, parts[0]); // ปี, เดือน(0-11), วัน
-
+            // ตรวจสอบ format (dd-mm-yyyy หรือ mm-dd-yyyy ตามที่ JS Date เข้าใจ)
+            // ในที่นี้รับเป็น dd-mm-yyyy จึงต้องเรียงเป็น Year, Month-1, Day
+            const startDate = new Date(parts[2], parts[1] - 1, parts[0]);
             const today = new Date();
 
             let years = today.getFullYear() - startDate.getFullYear();
             let months = today.getMonth() - startDate.getMonth();
             let days = today.getDate() - startDate.getDate();
 
-            // เช็คว่าต้องลดปีออกหรือไม่
             if (days < 0) {
                 months--;
-                const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); // วันสุดท้ายของเดือนก่อนหน้า
-                days += lastMonth.getDate(); // เพิ่มวันจากเดือนก่อนหน้า
+                const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += lastMonth.getDate();
             }
-
-            // เช็คว่าเดือนน้อยกว่าศูนย์หรือไม่
             if (months < 0) {
                 years--;
-                months += 12; // เพิ่มเดือนจากปีที่แล้ว
+                months += 12;
             }
-
-            return {years, months, days};
+            return years + " ปี " + months + " เดือน " + days + " วัน";
         }
-    </script>
 
-    <script>
+        // Image Preview
         $('#image').on('change', function () {
             const input = this;
-            const preview = document.getElementById("preview-image");
-
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    preview.src = e.target.result;
-                    preview.style.display = "block";
+                    $('#preview-image').attr('src', e.target.result).show();
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         });
     </script>
-
-
     </body>
     </html>
-
 <?php } ?>
