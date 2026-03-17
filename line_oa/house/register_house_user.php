@@ -118,6 +118,33 @@ header('Content-Type: text/html; charset=utf-8');
                     $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
                     $('#picture').val(profile.pictureUrl || "");
                     $('#statusMessage').val(profile.statusMessage || "ไม่มีข้อความสถานะ");
+
+                    // ตรวจสอบว่าลงทะเบียนแล้วหรือยัง
+                    $.post("https://ps33home.com/line_oa/house/register_house_with_line_api.php", {
+                        action: 'check',
+                        lineUserId: profile.userId
+                    }, function(data) {
+                        if (data.success && data.registered) {
+                            const user = data.user;
+                            const popupContent = `
+                                <div style="background-color: #d4edda; color: #155724; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #c3e6cb;">
+                                    <h5 style="margin-bottom: 15px;">⚠️ คุณลงทะเบียนแล้ว!</h5>
+                                    <p style="margin: 5px 0;"><strong>ชื่อ-นามสกุล:</strong> ${user.f_name} ${user.l_name}</p>
+                                    <p style="margin: 5px 0;"><strong>บ้านเลขที่:</strong> ${user.house_number}</p>
+                                    <p style="margin: 5px 0;"><strong>หมายเลขโทรศัพท์:</strong> ${user.line_phone}</p>
+                                </div>
+                            `;
+                            const overlay = document.createElement('div');
+                            overlay.id = 'successOverlay';
+                            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;';
+                            overlay.innerHTML = '<div style="max-width:400px;width:90%;">' + popupContent + '</div>';
+                            document.body.appendChild(overlay);
+                            setTimeout(() => {
+                                overlay.remove();
+                                liff.closeWindow();
+                            }, 5000);
+                        }
+                    });
                 });
             } else {
                 liff.login();
@@ -135,20 +162,38 @@ header('Content-Type: text/html; charset=utf-8');
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
+                        const user = data.user;
+                        const popupContent = `
+                            <div style="background-color: #d4edda; color: #155724; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #c3e6cb;">
+                                <h5 style="margin-bottom: 15px;">✅ ลงทะเบียนสำเร็จ!</h5>
+                                <p style="margin: 5px 0;"><strong>ชื่อ-นามสกุล:</strong> ${user.f_name} ${user.l_name}</p>
+                                <p style="margin: 5px 0;"><strong>บ้านเลขที่:</strong> ${user.house_number}</p>
+                                <p style="margin: 5px 0;"><strong>หมายเลขโทรศัพท์:</strong> ${user.line_phone}</p>
+                            </div>
+                        `;
+                        
                         if (liff.isInClient()) {
                             liff.sendMessages([{
                                 type: "text",
-                                text: `✅ ลงทะเบียนสำเร็จ!\n👤 ${formData.get("f_name")}\n🏢 ${formData.get("l_name")}\n📞 ${formData.get("phone")}`
+                                text: `✅ ลงทะเบียนสำเร็จ!\n👤 ${user.f_name} ${user.l_name}\n🏠 บ้านเลขที่: ${user.house_number}\n📞 ${user.line_phone}`
                             }]).then(() => {
-                                alert("✅ ลงทะเบียนสำเร็จ!");
-                                liff.closeWindow();
+                                const overlay = document.createElement('div');
+                                overlay.id = 'successOverlay';
+                                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;';
+                                overlay.innerHTML = '<div style="max-width:400px;width:90%;">' + popupContent + '</div>';
+                                document.body.appendChild(overlay);
+                                setTimeout(() => liff.closeWindow(), 3000);
                             }).catch(err => {
                                 alert("ลงทะเบียนสำเร็จ แต่ส่งข้อความไม่สำเร็จ");
                                 liff.closeWindow();
                             });
                         } else {
-                            alert("✅ ลงทะเบียนสำเร็จ! (ไม่ได้เปิดในแอป LINE)");
-                            liff.closeWindow();
+                            const overlay = document.createElement('div');
+                            overlay.id = 'successOverlay';
+                            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;';
+                            overlay.innerHTML = '<div style="max-width:400px;width:90%;">' + popupContent + '</div>';
+                            document.body.appendChild(overlay);
+                            setTimeout(() => liff.closeWindow(), 3000);
                         }
                     } else {
                         alert("❌ ลงทะเบียนไม่สำเร็จ: " + data.message);

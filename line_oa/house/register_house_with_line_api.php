@@ -15,6 +15,36 @@ $l_name             = $_POST['l_name'] ?? '';
 $house_number = preg_replace('/\s+/', '', $_POST['house_number']);
 $alley              = $_POST['alley'] ?? '';
 $password_raw       = $_POST['password'] ?? 'default_password';
+$action             = $_POST['action'] ?? 'register';
+
+// ตรวจสอบว่าลงทะเบียนแล้วหรือยัง
+if ($action === 'check') {
+    if (!empty($lineUserId)) {
+        $sql_check = "SELECT f_name, l_name, house_number, line_phone FROM ims_house_line_user WHERE line_user_id = :lineUserId";
+        $stmt_check = $conn->prepare($sql_check);
+        $stmt_check->execute([':lineUserId' => $lineUserId]);
+        $userData = $stmt_check->fetch(PDO::FETCH_ASSOC);
+        
+        if ($userData) {
+            echo json_encode([
+                "success" => true,
+                "registered" => true,
+                "user" => $userData
+            ]);
+        } else {
+            echo json_encode([
+                "success" => true,
+                "registered" => false
+            ]);
+        }
+    } else {
+        echo json_encode([
+            "success" => false,
+            "message" => "ไม่พบ Line User ID"
+        ]);
+    }
+    exit;
+}
 
 // Validate ข้อมูลที่จำเป็น
 if (empty($lineUserId) || empty($linePhone)) {
@@ -120,7 +150,17 @@ try {
     $logData = "[SUCCESS] {$currentDateTime} | UserID: {$lineUserId} | Name: {$lineUserName}\n";
     file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
 
-    echo json_encode(["success" => true, "message" => "สมัครสมาชิกสำเร็จ"]);
+    // ดึงข้อมูลที่เพิ่งลงทะเบียน
+    $sql_get = "SELECT f_name, l_name, house_number, line_phone FROM ims_house_line_user WHERE line_user_id = :lineUserId";
+    $stmt_get = $conn->prepare($sql_get);
+    $stmt_get->execute([':lineUserId' => $lineUserId]);
+    $userData = $stmt_get->fetch(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        "success" => true, 
+        "message" => "สมัครสมาชิกสำเร็จ",
+        "user" => $userData
+    ]);
 } catch (PDOException $e) {
     $currentDateTime = date("Y-m-d H:i:s");
     $logData = "[ERROR-INSERT] {$currentDateTime} | Message: {$e->getMessage()} | UserID: {$lineUserId}\n";
