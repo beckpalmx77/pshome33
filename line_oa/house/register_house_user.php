@@ -126,23 +126,26 @@ header('Content-Type: text/html; charset=utf-8');
                     }, function(data) {
                         if (data.success && data.registered) {
                             const user = data.user;
-                            const popupContent = `
-                                <div style="background-color: #d4edda; color: #155724; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #c3e6cb;">
-                                    <h5 style="margin-bottom: 15px;">⚠️ คุณลงทะเบียนแล้ว!</h5>
-                                    <p style="margin: 5px 0;"><strong>ชื่อ-นามสกุล:</strong> ${user.f_name} ${user.l_name}</p>
-                                    <p style="margin: 5px 0;"><strong>บ้านเลขที่:</strong> ${user.house_number}</p>
-                                    <p style="margin: 5px 0;"><strong>หมายเลขโทรศัพท์:</strong> ${user.line_phone}</p>
+                            const popupHtml = `
+                            <div class="modal fade show" id="registeredModal" tabindex="-1" style="display:block;background:rgba(0,0,0,0.5);">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-success text-white">
+                                            <h5 class="modal-title">⚠️ คุณลงทะเบียนแล้ว!</h5>
+                                            <button type="button" class="btn-close btn-close-white" onclick="closeModal('registeredModal')"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p><strong>ชื่อ-นามสกุล:</strong> ${user.f_name} ${user.l_name}</p>
+                                            <p><strong>บ้านเลขที่:</strong> ${user.house_number}</p>
+                                            <p><strong>หมายเลขโทรศัพท์:</strong> ${user.line_phone}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            `;
-                            const overlay = document.createElement('div');
-                            overlay.id = 'successOverlay';
-                            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;';
-                            overlay.innerHTML = '<div style="max-width:400px;width:90%;">' + popupContent + '</div>';
-                            document.body.appendChild(overlay);
-                            setTimeout(() => {
-                                overlay.remove();
-                                liff.closeWindow();
-                            }, 5000);
+                            </div>`;
+                            document.body.insertAdjacentHTML('beforeend', popupHtml);
+                            
+                            $('#house_number, #alley, #f_name, #l_name, #phone, #password').prop('readonly', true);
+                            $('#registerForm button[type="submit"]').prop('disabled', true).text('ลงทะเบียนแล้ว');
                         }
                     });
                 });
@@ -163,37 +166,32 @@ header('Content-Type: text/html; charset=utf-8');
                 .then(data => {
                     if (data.success) {
                         const user = data.user;
-                        const popupContent = `
-                            <div style="background-color: #d4edda; color: #155724; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #c3e6cb;">
-                                <h5 style="margin-bottom: 15px;">✅ ลงทะเบียนสำเร็จ!</h5>
-                                <p style="margin: 5px 0;"><strong>ชื่อ-นามสกุล:</strong> ${user.f_name} ${user.l_name}</p>
-                                <p style="margin: 5px 0;"><strong>บ้านเลขที่:</strong> ${user.house_number}</p>
-                                <p style="margin: 5px 0;"><strong>หมายเลขโทรศัพท์:</strong> ${user.line_phone}</p>
+                        const popupHtml = `
+                        <div class="modal fade show" id="successModal" tabindex="-1" style="display:block;background:rgba(0,0,0,0.5);">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title">✅ ลงทะเบียนสำเร็จ!</h5>
+                                        <button type="button" class="btn-close btn-close-white" onclick="closeModal('successModal')"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <p><strong>ชื่อ-นามสกุล:</strong> ${user.f_name} ${user.l_name}</p>
+                                        <p><strong>บ้านเลขที่:</strong> ${user.house_number}</p>
+                                        <p><strong>หมายเลขโทรศัพท์:</strong> ${user.line_phone}</p>
+                                    </div>
+                                </div>
                             </div>
-                        `;
+                        </div>`;
                         
+                        document.body.insertAdjacentHTML('beforeend', popupHtml);
+
                         if (liff.isInClient()) {
                             liff.sendMessages([{
                                 type: "text",
                                 text: `✅ ลงทะเบียนสำเร็จ!\n👤 ${user.f_name} ${user.l_name}\n🏠 บ้านเลขที่: ${user.house_number}\n📞 ${user.line_phone}`
-                            }]).then(() => {
-                                const overlay = document.createElement('div');
-                                overlay.id = 'successOverlay';
-                                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;';
-                                overlay.innerHTML = '<div style="max-width:400px;width:90%;">' + popupContent + '</div>';
-                                document.body.appendChild(overlay);
-                                setTimeout(() => liff.closeWindow(), 3000);
-                            }).catch(err => {
-                                alert("ลงทะเบียนสำเร็จ แต่ส่งข้อความไม่สำเร็จ");
-                                liff.closeWindow();
+                            }]).catch(err => {
+                                console.log("ส่งข้อความไม่สำเร็จ");
                             });
-                        } else {
-                            const overlay = document.createElement('div');
-                            overlay.id = 'successOverlay';
-                            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:9999;';
-                            overlay.innerHTML = '<div style="max-width:400px;width:90%;">' + popupContent + '</div>';
-                            document.body.appendChild(overlay);
-                            setTimeout(() => liff.closeWindow(), 3000);
                         }
                     } else {
                         alert("❌ ลงทะเบียนไม่สำเร็จ: " + data.message);
@@ -217,6 +215,13 @@ header('Content-Type: text/html; charset=utf-8');
             phoneInput.setCustomValidity('');
         }
     });
+</script>
+
+<script>
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.remove();
+}
 </script>
 
 </body>
