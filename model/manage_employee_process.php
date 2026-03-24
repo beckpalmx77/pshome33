@@ -298,14 +298,19 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
         );
     }
 
+    $status_where = "";
+    if ($_SESSION['role'] !== 'admin') {
+        $status_where = " AND em.status = 'Y' ";
+    }
+
 ## Total number of records without filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee ");
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee " . $status_where );
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
 ## Total number of records with filtering
-    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee WHERE 1 " . $searchQuery);
+    $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee WHERE 1 " . $status_where . $searchQuery);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
@@ -315,7 +320,7 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
             FROM memployee em            
             left join mposition mp on mp.position_id = em.position_id
             left join mwork_time wt on wt.work_time_id = em.work_time_id 	 	
-            WHERE year > 2024 " . $searchQuery
+            WHERE year >= 2024 " . $status_where . $searchQuery
         . " ORDER BY status DESC, emp_id DESC , " . $columnName . " " . $columnSortOrder . " LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
