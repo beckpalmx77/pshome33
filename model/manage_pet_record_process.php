@@ -93,6 +93,47 @@ if ($_POST["action"] === 'GET_DATA_BY_HOUSE_NUMBER') {
     echo json_encode($return_arr);
     exit();
 }
+
+if ($_POST["action"] === 'GET_DATA_BY_HOUSE') {
+    $house_number = $_POST["house_number"];
+    $return_arr = array();
+    $sql_get = "SELECT * FROM ims_house WHERE house_number = :house_number";
+    $stmt = $conn->prepare($sql_get);
+    $stmt->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($results as $result) {
+        $return_arr[] = array(
+            "house_number" => $result['house_number'],
+            "contact_name" => $result['contact_name'],
+            "phone_number" => $result['phone_number'],
+            "alley" => $result['alley'],
+            "house_status" => $result['house_status'],
+            "car_no1" => $result['car_no1'],
+            "car_no2" => $result['car_no2'],
+            "car_no3" => $result['car_no3'],
+            "car_no4" => $result['car_no4']
+        );
+    }
+    echo json_encode($return_arr);
+    exit();
+}
+
+if ($_POST["action"] === 'GET_HOUSE_AUTOCOMPLETE') {
+    $search = $_POST["search"] ?? '';
+    $return_arr = array();
+    $sql_get = "SELECT house_number FROM ims_house WHERE house_number LIKE :search ORDER BY house_number LIMIT 20";
+    $stmt = $conn->prepare($sql_get);
+    $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($results as $result) {
+        $return_arr[] = $result['house_number'];
+    }
+    echo json_encode($return_arr);
+    exit();
+}
+
 if ($_POST["action"] === 'ADD') {
     if ($_POST["house_number"] !== '') {
         $house_number = $_POST["house_number"];

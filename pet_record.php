@@ -48,6 +48,27 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             </button>
                                         </div>
 
+                                        <div class="col-md-12 col-md-offset-2 mt-3">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="search_house_number" class="control-label">ค้นหาบ้านเลขที่</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control"
+                                                                   id="search_house_number"
+                                                                   name="search_house_number"
+                                                                   placeholder="กรอกบ้านเลขที่">
+                                                            <div class="input-group-append">
+                                                                <button type="button" class="btn btn-info" id="btnSearchHouse">
+                                                                    <i class="fa fa-search"></i> ค้นหา
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-12 col-md-offset-2">
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
@@ -347,9 +368,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                <?php  if ($_SESSION['deviceType'] !== 'computer') {
+                <?php 
+                if ($_SESSION['deviceType'] !== 'computer') {
                     echo "'scrollX': true,";
-                }?>
+                }
+                ?>
                 'ajax': {
                     'url': 'model/manage_pet_record_process.php',
                     'data': formData
@@ -517,6 +540,60 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
         });
 
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btnSearchHouse").click(function () {
+                let house_number = $('#search_house_number').val();
+                if (house_number === '') {
+                    alertify.warning("กรุณากรอกบ้านเลขที่");
+                    return;
+                }
+
+                let formData = {action: "GET_DATA_BY_HOUSE", house_number: house_number};
+                $.ajax({
+                    type: "POST",
+                    url: 'model/manage_pet_record_process.php',
+                    dataType: "json",
+                    data: formData,
+                    success: function (response) {
+                        if (response && response.length > 0) {
+                            let house = response[0];
+                            $('#house_number').val(house.house_number);
+                            $('#contact_name').val(house.contact_name || '');
+                            $('#phone_number').val(house.phone_number || '');
+                            $('#alley').val(house.alley || '');
+                            $('#house_status').val(house.house_status || '-');
+                            
+                            let carNos = [];
+                            if (house.car_no1) carNos.push(house.car_no1);
+                            if (house.car_no2) carNos.push(house.car_no2);
+                            if (house.car_no3) carNos.push(house.car_no3);
+                            if (house.car_no4) carNos.push(house.car_no4);
+                            
+                            let carNosText = carNos.join('\n');
+                            $('#car_no1').val('');
+                            $('#car_no2').val('');
+                            $('#car_no3').val('');
+                            $('#car_no4').val('');
+                            
+                            if (carNos[0]) $('#car_no1').val(carNos[0]);
+                            if (carNos[1]) $('#car_no2').val(carNos[1]);
+                            if (carNos[2]) $('#car_no3').val(carNos[2]);
+                            if (carNos[3]) $('#car_no4').val(carNos[3]);
+                            
+                            alertify.success("พบข้อมูลบ้านเลขที่: " + house_number);
+                        } else {
+                            alertify.warning("ไม่พบข้อมูลบ้านเลขที่: " + house_number);
+                        }
+                    },
+                    error: function (response) {
+                        alertify.error("error : " + response);
+                    }
+                });
+            });
+        });
     </script>
 
     </body>
