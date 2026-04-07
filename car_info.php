@@ -47,6 +47,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 <button type="button" class="btn btn-info" id="btnSearch">
                                                                     <i class="fa fa-search"></i> ค้นหา
                                                                 </button>
+                                                                <button type="button" class="btn btn-success" id="btnSave" style="display:none;">
+                                                                    <i class="fa fa-save"></i> บันทึก
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -109,28 +112,28 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 1</label>
                                                                 <input type="text" class="form-control"
-                                                                       id="car_no1" readonly>
+                                                                       id="car_no1">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 2</label>
                                                                 <input type="text" class="form-control"
-                                                                       id="car_no2" readonly>
+                                                                       id="car_no2">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 3</label>
                                                                 <input type="text" class="form-control"
-                                                                       id="car_no3" readonly>
+                                                                       id="car_no3">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 4</label>
                                                                 <input type="text" class="form-control"
-                                                                       id="car_no4" readonly>
+                                                                       id="car_no4">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -223,6 +226,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             $('#resultSection').hide();
                             $('#notFoundSection').hide();
                             $('#btnPrint').prop('disabled', true);
+                            $('#btnSave').hide();
                             
                             if (response && response.length > 0) {
                                 let house = response[0];
@@ -252,10 +256,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 
                                 $('#resultSection').show();
                                 $('#btnPrint').prop('disabled', false);
+                                $('#btnSave').show();
                             } else {
                                 currentHouseNumber = '';
                                 $('#notFoundHouseNumber').text(house_number);
                                 $('#notFoundSection').show();
+                                $('#btnSave').hide();
                             }
                         },
                         error: function (response) {
@@ -274,6 +280,43 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     if (currentHouseNumber !== '') {
                         window.open('print_car_sticker.php?house_number=' + encodeURIComponent(currentHouseNumber), '_blank');
                     }
+                });
+
+                $("#btnSave").click(function () {
+                    let house_number = currentHouseNumber;
+                    let car_no1 = $('#car_no1').val().trim();
+                    let car_no2 = $('#car_no2').val().trim();
+                    let car_no3 = $('#car_no3').val().trim();
+                    let car_no4 = $('#car_no4').val().trim();
+
+                    if (house_number === '') {
+                        alertify.warning("กรุณาค้นหาข้อมูลก่อน");
+                        return;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: 'model/manage_pet_record_process.php',
+                        dataType: "json",
+                        data: {
+                            action: "UPDATE_CAR_NO",
+                            house_number: house_number,
+                            car_no1: car_no1,
+                            car_no2: car_no2,
+                            car_no3: car_no3,
+                            car_no4: car_no4
+                        },
+                        success: function (response) {
+                            if (response === '1' || response === 1) {
+                                alertify.success("บันทึกข้อมูลทะเบียนรถสำเร็จ");
+                            } else {
+                                alertify.error("ไม่สามารถบันทึกข้อมูลได้");
+                            }
+                        },
+                        error: function (response) {
+                            alertify.error("error : " + response);
+                        }
+                    });
                 });
             });
         </script>

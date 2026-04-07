@@ -134,6 +134,32 @@ if ($_POST["action"] === 'GET_HOUSE_AUTOCOMPLETE') {
     exit();
 }
 
+if ($_POST["action"] === 'UPDATE_CAR_NO') {
+    $house_number = $_POST["house_number"];
+    $car_no1 = $_POST["car_no1"];
+    $car_no2 = $_POST["car_no2"];
+    $car_no3 = $_POST["car_no3"];
+    $car_no4 = $_POST["car_no4"];
+
+    $sql_update = "UPDATE ims_house SET 
+        car_no1 = :car_no1, 
+        car_no2 = :car_no2, 
+        car_no3 = :car_no3, 
+        car_no4 = :car_no4 
+        WHERE house_number = :house_number";
+
+    $query = $conn->prepare($sql_update);
+    $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+    $query->bindParam(':car_no1', $car_no1, PDO::PARAM_STR);
+    $query->bindParam(':car_no2', $car_no2, PDO::PARAM_STR);
+    $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
+    $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
+    $query->execute();
+
+    echo $query->rowCount() > 0 ? '1' : '0';
+    exit();
+}
+
 if ($_POST["action"] === 'ADD') {
     if ($_POST["house_number"] !== '') {
         $house_number = $_POST["house_number"];
