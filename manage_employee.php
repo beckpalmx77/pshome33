@@ -466,6 +466,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                     if (ext === 'pdf') {
                         // อ่านไฟล์ PDF เป็น ArrayBuffer
                         const arrayBuffer = await file.arrayBuffer();
+                        const fileName = 'ps33_' + file.name;
                         
                         // แปลง PDF เป็นรูปภาพ
                         const imageData = await convertPdfToImage(arrayBuffer, 2);
@@ -474,11 +475,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                             // แสดงรูปที่แปลงแล้ว
                             $('#preview-image').attr('src', imageData).show();
                             $('#preview-image').data('type', 'image');
-                            $('#preview-image').data('pdf-original', arrayBuffer); // เก็บ original สำหรับ upload
+                            $('#preview-image').data('pdf-name', fileName);
                         } else {
                             // ถ้าแปลงไม่ได้ ใช้ logo
                             $('#preview-image').attr('src', pdfLogo).show();
                             $('#preview-image').data('type', 'pdf');
+                            $('#preview-image').data('pdf-name', fileName);
                         }
                     } else {
                         // สำหรับรูปภาพปกติ
@@ -498,13 +500,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
 
                 if (type === 'pdf') {
                     const pdfData = $(this).data('pdf-data');
+                    const pdfName = $(this).data('pdf-name') || 'ps33_pdf';
                     if (pdfData) {
                         // กรณีเป็นไฟล์ที่เพิ่งเลือกใหม่
                         const newTab = window.open();
                         newTab.document.write('<iframe src="' + pdfData + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+                        newTab.document.title = pdfName;
                     } else if (src !== pdfLogo) {
                         // กรณีฉุกเฉิน
-                        window.open(src, '_blank');
+                        const newTab = window.open(src, pdfName);
+                        newTab.document.title = pdfName;
                     }
                 } else {
                     // กรณีเป็นรูปภาพ JPG/PNG
@@ -596,7 +601,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                 $('#preview-image').data('type', 'pdf');
                                 // ผูก event เปิดไฟล์เดิมจาก Server
                                 $('#preview-image').off('click').on('click', function() {
-                                    window.open(fullPath, '_blank');
+                                    const pdfTitle = 'ps33_' + res.image;
+                                    const newTab = window.open(fullPath, pdfTitle);
+                                    newTab.document.title = pdfTitle;
                                 });
                             } else {
                                 $('#preview-image').attr('src', fullPath).show();
