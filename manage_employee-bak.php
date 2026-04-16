@@ -104,15 +104,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                                 </div>
 
                                                                 <div class="col-sm-3">
-                                                                    <label>รูปภาพ (JPG, PNG, PDF)</label>
+                                                                    <label>รูปภาพ</label>
                                                                     <input type="file" name="image" id="image"
-                                                                           class="form-control" accept="image/*,application/pdf">
+                                                                           class="form-control" accept="image/*">
                                                                     <input type="hidden" name="old_image"
                                                                            id="old_image">
                                                                     <br>
                                                                     <img id="preview-image" src="#"
-                                                                         style="max-width:100px; display:none; cursor: pointer;"
-                                                                         class="img-thumbnail" title="คลิกเพื่อดูไฟล์"/>
+                                                                         style="max-width:100px; display:none;"
+                                                                         class="img-thumbnail"/>
                                                                 </div>
 
                                                                 <div class="col-sm-3">
@@ -304,22 +304,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                             </div>
                                         </div>
 
-                                        <div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">แสดงรูปภาพ</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body text-center">
-                                                        <img src="" id="full-preview-image" style="max-width: 100%; height: auto; border-radius: 5px;" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <div class="modal fade" id="SearchPositionModal">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
@@ -330,11 +314,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                     <div class="modal-body">
                                                         <table cellpadding="0" cellspacing="0" border="0" class="display" id="TablePositionList" width="100%">
                                                             <thead>
-                                                            <tr>
-                                                                <th>รหัสตำแหน่ง</th>
-                                                                <th>ชื่อตำแหน่ง</th>
-                                                                <th>Action</th>
-                                                            </tr>
+                                                                <tr>
+                                                                    <th>รหัสตำแหน่ง</th>
+                                                                    <th>ชื่อตำแหน่ง</th>
+                                                                    <th>Action</th>
+                                                                </tr>
                                                             </thead>
                                                         </table>
                                                     </div>
@@ -352,11 +336,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                     <div class="modal-body">
                                                         <table cellpadding="0" cellspacing="0" border="0" class="display" id="TableWorkTimeList" width="100%">
                                                             <thead>
-                                                            <tr>
-                                                                <th>รหัสเวลาทำงาน</th>
-                                                                <th>รายละเอียดเวลาทำงาน</th>
-                                                                <th>Action</th>
-                                                            </tr>
+                                                                <tr>
+                                                                    <th>รหัสเวลาทำงาน</th>
+                                                                    <th>รายละเอียดเวลาทำงาน</th>
+                                                                    <th>Action</th>
+                                                                </tr>
                                                             </thead>
                                                         </table>
                                                     </div>
@@ -398,18 +382,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 
     <script>
         $(document).ready(function () {
-            // Path ของโลโก้ PDF (ตรวจสอบให้แน่ใจว่าไฟล์มีอยู่จริง)
-            const pdfLogo = "img/pdf_logo.png";
-
             // DataTables Setup
             let formData = {action: "GET_EMPLOYEE", sub_action: "GET_MASTER", page_manage: "ADMIN",};
             let dataRecords = $('#TableRecordList').DataTable({
-                'lengthMenu': [[7, 10, 20, 50, 100], [7, 10, 20, 50, 100]],
+                'lengthMenu': [[10, 20, 50, 100], [10, 20, 50, 100]],
                 'language': {
                     search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
@@ -429,91 +408,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 ]
             });
 
-            // Helper function: รับนามสกุลไฟล์
-            function getFileExt(filename) {
-                return filename.split('.').pop().toLowerCase();
-            }
-
-            // Function: แปลง PDF หน้าแรกเป็นรูปภาพ PNG
-            async function convertPdfToImage(pdfData, scale = 2) {
-                try {
-                    const loadingTask = pdfjsLib.getDocument({ data: pdfData });
-                    const pdf = await loadingTask.promise;
-                    const page = await pdf.getPage(1);
-                    
-                    const viewport = page.getViewport({ scale: scale });
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
-                    return canvas.toDataURL('image/png');
-                } catch (error) {
-                    console.error('Error converting PDF:', error);
-                    return null;
-                }
-            }
-
-            // Preview รูปภาพ/ไฟล์ เมื่อเลือกไฟล์ใหม่จากเครื่อง
-            $('#image').on('change', async function () {
-                const input = this;
-                if (input.files && input.files[0]) {
-                    const file = input.files[0];
-                    const reader = new FileReader();
-                    const ext = getFileExt(file.name);
-
-                    if (ext === 'pdf') {
-                        // อ่านไฟล์ PDF เป็น ArrayBuffer
-                        const arrayBuffer = await file.arrayBuffer();
-                        
-                        // แปลง PDF เป็นรูปภาพ
-                        const imageData = await convertPdfToImage(arrayBuffer, 2);
-                        
-                        if (imageData) {
-                            // แสดงรูปที่แปลงแล้ว
-                            $('#preview-image').attr('src', imageData).show();
-                            $('#preview-image').data('type', 'image');
-                            $('#preview-image').data('pdf-original', arrayBuffer); // เก็บ original สำหรับ upload
-                        } else {
-                            // ถ้าแปลงไม่ได้ ใช้ logo
-                            $('#preview-image').attr('src', pdfLogo).show();
-                            $('#preview-image').data('type', 'pdf');
-                        }
-                    } else {
-                        // สำหรับรูปภาพปกติ
-                        reader.onload = function (e) {
-                            $('#preview-image').attr('src', e.target.result).show();
-                            $('#preview-image').data('type', 'image');
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                }
-            });
-
-            // คลิกที่ Thumbnail เพื่อดูรูปใหญ่ หรือ เปิด PDF New Window
-            $('#preview-image').on('click', function() {
-                const type = $(this).data('type');
-                const src = $(this).attr('src');
-
-                if (type === 'pdf') {
-                    const pdfData = $(this).data('pdf-data');
-                    if (pdfData) {
-                        // กรณีเป็นไฟล์ที่เพิ่งเลือกใหม่
-                        const newTab = window.open();
-                        newTab.document.write('<iframe src="' + pdfData + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
-                    } else if (src !== pdfLogo) {
-                        // กรณีฉุกเฉิน
-                        window.open(src, '_blank');
-                    }
-                } else {
-                    // กรณีเป็นรูปภาพ JPG/PNG
-                    $('#full-preview-image').attr('src', src);
-                    $('#imagePreviewModal').modal('show');
-                }
-            });
-
-            // Form Submit
+            // Form Submit with File Upload
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');
@@ -538,7 +433,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 });
             });
 
-            // Add Record
+            // Add Record Click
             $("#btnAdd").click(function () {
                 $('#recordModal').modal('show');
                 $('#recordForm')[0].reset();
@@ -549,12 +444,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
             });
         });
 
-        // Edit Record
+        // Update Click (Edit)
         $("#TableRecordList").on('click', '.update', function () {
             let id = $(this).attr("id");
             let formData = {action: "GET_DATA", id: id};
-            const pdfLogo = "img/pdf_logo.png";
-
             $.ajax({
                 type: "POST",
                 url: 'model/manage_employee_process.php',
@@ -584,29 +477,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                         $('#status').val(res.status);
                         $('#old_image').val(res.image);
 
+                        // ✅ แก้ไข: คำนวณอายุงานทันทีเมื่อเปิด Modal
                         $('#work_age').val(getAge(res.start_work_date));
 
-                        // จัดการแสดงผลไฟล์เดิมที่มีใน Server
                         if (res.image) {
-                            const ext = res.image.split('.').pop().toLowerCase();
-                            const fullPath = 'uploads/employees/' + res.image;
-
-                            if (ext === 'pdf') {
-                                $('#preview-image').attr('src', pdfLogo).show();
-                                $('#preview-image').data('type', 'pdf');
-                                // ผูก event เปิดไฟล์เดิมจาก Server
-                                $('#preview-image').off('click').on('click', function() {
-                                    window.open(fullPath, '_blank');
-                                });
-                            } else {
-                                $('#preview-image').attr('src', fullPath).show();
-                                $('#preview-image').data('type', 'image');
-                                // ผูก event เปิด modal สำหรับรูปเดิม
-                                $('#preview-image').off('click').on('click', function() {
-                                    $('#full-preview-image').attr('src', fullPath);
-                                    $('#imagePreviewModal').modal('show');
-                                });
-                            }
+                            $('#preview-image').attr('src', 'uploads/employees/' + res.image).show();
                         } else {
                             $('#preview-image').hide();
                         }
@@ -618,7 +493,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
             });
         });
 
-        // Datepicker & Age
+        // Datepicker & Auto Age calculation
         $(document).ready(function () {
             $('#start_work_date').datepicker({
                 format: "dd-mm-yyyy",
@@ -626,23 +501,50 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 language: "th",
                 autoclose: true
             }).on('changeDate', function(e) {
-                $('#work_age').val(getAge($(this).val()));
+                // ✅ แก้ไข: คำนวณอายุงาน Real-time เมื่อเปลี่ยนวันที่
+                let dateStr = $(this).val();
+                $('#work_age').val(getAge(dateStr));
             });
         });
 
+        // ✅ แก้ไข: ฟังก์ชันคำนวณอายุงานที่สมบูรณ์ (คืนค่าเป็น String)
         function getAge(startWorkDate) {
             if (!startWorkDate) return "";
             const parts = startWorkDate.split(/[-/]/);
             if (parts.length !== 3) return "";
+
+            // ตรวจสอบ format (dd-mm-yyyy หรือ mm-dd-yyyy ตามที่ JS Date เข้าใจ)
+            // ในที่นี้รับเป็น dd-mm-yyyy จึงต้องเรียงเป็น Year, Month-1, Day
             const startDate = new Date(parts[2], parts[1] - 1, parts[0]);
             const today = new Date();
+
             let years = today.getFullYear() - startDate.getFullYear();
             let months = today.getMonth() - startDate.getMonth();
             let days = today.getDate() - startDate.getDate();
-            if (days < 0) { months--; const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0); days += lastMonth.getDate(); }
-            if (months < 0) { years--; months += 12; }
+
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
             return years + " ปี " + months + " เดือน " + days + " วัน";
         }
+
+        // Image Preview
+        $('#image').on('change', function () {
+            const input = this;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#preview-image').attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
     </script>
     </body>
     </html>
