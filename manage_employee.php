@@ -304,8 +304,49 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                             </div>
                                         </div>
 
-                                        <div class="modal fade" id="SearchPositionModal">...</div>
-                                        <div class="modal fade" id="SearchWorkTimeModal">...</div>
+                                        <div class="modal fade" id="SearchPositionModal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">รายชื่อตำแหน่ง</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="TablePositionList" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>รหัสตำแหน่ง</th>
+                                                                    <th>ชื่อตำแหน่ง</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal fade" id="SearchWorkTimeModal">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">รายชื่อตารางเวลาทำงาน</h4>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <table cellpadding="0" cellspacing="0" border="0" class="display" id="TableWorkTimeList" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>รหัสเวลาทำงาน</th>
+                                                                    <th>รายละเอียดเวลาทำงาน</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                 </div>
                             </div>
