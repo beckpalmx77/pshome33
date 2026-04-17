@@ -292,7 +292,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     let car_no2 = $('#car_no2').val().trim();
                     let car_no3 = $('#car_no3').val().trim();
                     let car_no4 = $('#car_no4').val().trim();
-                    let car_no5 = $('#car_no5').val().trim(); // ดึงค่าคันที่ 5
+                    let car_no5 = $('#car_no5').val().trim();
+
+                    console.log('Saving:', {house_number, car_no1, car_no2, car_no3, car_no4, car_no5});
 
                     if (house_number === '') {
                         alertify.warning("กรุณาค้นหาข้อมูลก่อน");
@@ -302,7 +304,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     $.ajax({
                         type: "POST",
                         url: 'model/manage_pet_record_process.php',
-                        dataType: "json",
                         data: {
                             action: "UPDATE_CAR_NO",
                             house_number: house_number,
@@ -310,17 +311,26 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             car_no2: car_no2,
                             car_no3: car_no3,
                             car_no4: car_no4,
-                            car_no5: car_no5 // ส่งค่าคันที่ 5 ไปบันทึก
+                            car_no5: car_no5
                         },
+                        dataType: "text",
                         success: function (response) {
-                            if (response === '1' || response === 1) {
-                                alertify.success("บันทึกข้อมูลทะเบียนรถสำเร็จ");
-                            } else {
-                                alertify.error("ไม่สามารถบันทึกข้อมูลได้");
+                            console.log('Raw Response:', response);
+                            try {
+                                var json = JSON.parse(response);
+                                console.log('Parsed:', json);
+                                if (json && json.result === '1') {
+                                    alertify.success("บันทึกข้อมูลทะเบียนรถสำเร็จ");
+                                } else {
+                                    alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
+                                }
+                            } catch(e) {
+                                alertify.error("Parse error: " + response);
                             }
                         },
-                        error: function (response) {
-                            alertify.error("error : " + response);
+                        error: function (xhr, status, error) {
+                            console.log('Error:', status, error, xhr.responseText);
+                            alertify.error("error : " + status + " - " + error + " - " + xhr.responseText);
                         }
                     });
                 });

@@ -1,6 +1,19 @@
 <?php
 session_start();
-error_reporting(0); // ควรเปลี่ยนเป็น E_ALL สำหรับการพัฒนา
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if (php_sapi_name() !== 'cli') {
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit();
+    }
+}
 
 include('../config/connect_db.php');
 include('../config/lang.php');
@@ -160,7 +173,7 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
     $query->execute();
 
-    echo $query->rowCount() > 0 ? '1' : '0';
+    echo json_encode(['result' => '1']);
     exit();
 }
 
