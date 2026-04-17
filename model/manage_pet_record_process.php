@@ -112,7 +112,8 @@ if ($_POST["action"] === 'GET_DATA_BY_HOUSE') {
             "car_no1" => $result['car_no1'],
             "car_no2" => $result['car_no2'],
             "car_no3" => $result['car_no3'],
-            "car_no4" => $result['car_no4']
+            "car_no4" => $result['car_no4'],
+            "car_no5" => $result['car_no5']
         );
     }
     echo json_encode($return_arr);
@@ -140,20 +141,23 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $car_no2 = $_POST["car_no2"];
     $car_no3 = $_POST["car_no3"];
     $car_no4 = $_POST["car_no4"];
+    $car_no5 = $_POST["car_no5"];
 
     $sql_update = "UPDATE ims_house SET 
         car_no1 = :car_no1, 
         car_no2 = :car_no2, 
         car_no3 = :car_no3, 
-        car_no4 = :car_no4 
+        car_no4 = :car_no4,
+        car_no5 = :car_no5
         WHERE house_number = :house_number";
 
     $query = $conn->prepare($sql_update);
-    $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
     $query->bindParam(':car_no1', $car_no1, PDO::PARAM_STR);
     $query->bindParam(':car_no2', $car_no2, PDO::PARAM_STR);
     $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
     $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
+    $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
+    $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
     $query->execute();
 
     echo $query->rowCount() > 0 ? '1' : '0';

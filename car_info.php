@@ -108,32 +108,34 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 1</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="car_no1">
+                                                                <input type="text" class="form-control" id="car_no1">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 2</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="car_no2">
+                                                                <input type="text" class="form-control" id="car_no2">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 3</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="car_no3">
+                                                                <input type="text" class="form-control" id="car_no3">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">ทะเบียนรถ 4</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="car_no4">
+                                                                <input type="text" class="form-control" id="car_no4">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ทะเบียนรถ 5</label>
+                                                                <input type="text" class="form-control" id="car_no5">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -188,7 +190,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
         <script>
             let currentHouseNumber = '';
-            
+
             $(document).ready(function () {
                 $("#house_number").autocomplete({
                     source: function (request, response) {
@@ -208,7 +210,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $("#btnSearch").click();
                     }
                 });
-                
+
                 $("#btnSearch").click(function () {
                     let house_number = $('#house_number').val();
                     if (house_number === '') {
@@ -227,7 +229,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             $('#notFoundSection').hide();
                             $('#btnPrint').prop('disabled', true);
                             $('#btnSave').hide();
-                            
+
                             if (response && response.length > 0) {
                                 let house = response[0];
                                 currentHouseNumber = house.house_number;
@@ -239,21 +241,23 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 $('#car_no2').val(house.car_no2 || '');
                                 $('#car_no3').val(house.car_no3 || '');
                                 $('#car_no4').val(house.car_no4 || '');
-                                
+                                $('#car_no5').val(house.car_no5 || ''); // เพิ่มแสดงข้อมูลคันที่ 5
+
                                 let carCount = 0;
                                 if (house.car_no1) carCount++;
                                 if (house.car_no2) carCount++;
                                 if (house.car_no3) carCount++;
                                 if (house.car_no4) carCount++;
-                                
+                                if (house.car_no5) carCount++; // เช็คจำนวนคันที่ 5
+
                                 let extraCarFee = 0;
                                 if (carCount > 2) {
                                     extraCarFee = (carCount - 2) * 100;
                                 }
-                                
+
                                 $('#car_count').val(carCount);
                                 $('#extra_car_fee').val(extraCarFee);
-                                
+
                                 $('#resultSection').show();
                                 $('#btnPrint').prop('disabled', false);
                                 $('#btnSave').show();
@@ -288,6 +292,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     let car_no2 = $('#car_no2').val().trim();
                     let car_no3 = $('#car_no3').val().trim();
                     let car_no4 = $('#car_no4').val().trim();
+                    let car_no5 = $('#car_no5').val().trim(); // ดึงค่าคันที่ 5
 
                     if (house_number === '') {
                         alertify.warning("กรุณาค้นหาข้อมูลก่อน");
@@ -304,7 +309,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             car_no1: car_no1,
                             car_no2: car_no2,
                             car_no3: car_no3,
-                            car_no4: car_no4
+                            car_no4: car_no4,
+                            car_no5: car_no5 // ส่งค่าคันที่ 5 ไปบันทึก
                         },
                         success: function (response) {
                             if (response === '1' || response === 1) {

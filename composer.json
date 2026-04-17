@@ -1,7 +1,7 @@
 {
     "require": {
         "mobiledetect/mobiledetectlib": "^3.74",
-        "mpdf/mpdf": "^8.2",
+        "mpdf/mpdf": "^8.3",
         "php-amqplib/php-amqplib": "^3.7",
         "phpoffice/phpspreadsheet": "2.4",
         "dompdf/dompdf": "^3.1",

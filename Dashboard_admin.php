@@ -86,7 +86,7 @@ $total_common_fee = $result_sum_house_data->common_fee ?? 0; // เก็บค�
                                                 จำนวนบ้านทั้งหมด: <strong><?= number_format($all_total_house) ?> หลัง</strong><br>
                                                 ลงทะเบียนแล้ว: <strong><?= number_format($total_house) ?> หลัง</strong><br>
                                                 คิดเป็น <strong><?= number_format($percent_chk, 2) ?>%</strong><br>
-                                                <strong>(ยอดรวมค่าส่วนกลาง กรณีที่จัดเก็บได้ 621 หลัง : <?= number_format($total_common_fee, 2) ?> บาท) ต่อเดือน</strong>
+                                                <strong>(ยอดรวมค่าส่วนกลาง กรณีที่จัดเก็บได้ 621 หลัง : <?= number_format($total_common_fee, 2) ?> บาท ต่อเดือน)</strong>
                                             </p>
                                         </div>
                                     </div>
