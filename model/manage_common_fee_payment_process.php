@@ -456,14 +456,14 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     }
 
     ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $where_house_number;
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
     ## Total number of records with filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();
