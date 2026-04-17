@@ -22,17 +22,17 @@ jobs:
           submodules: recursive
       - name: Update submodules
         run: git submodule update --remote --recursive
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         id: setup_node_id
         with:
           node-version: 22
-      - uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # 2.35.4
+      - uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
         with:
           php-version: 8.2
 
       # Install openapi-generator-cli
       - run: echo "OPENAPI_GENERATOR_VERSION=7.11.0" >> $GITHUB_ENV
-      - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: openapi-generator-cache
         env:
           cache-name: openapi-generator-cache
@@ -53,7 +53,7 @@ jobs:
           bash tools/gen-oas-client.sh
       - name: Update document
         run: |
-          wget https://github.com/phpDocumentor/phpDocumentor/releases/download/v3.3.1/phpDocumentor.phar
+          wget https://github.com/phpDocumentor/phpDocumentor/releases/download/v3.8.1/phpDocumentor.phar
           php phpDocumentor.phar run -d src -t docs
       - run: |
           diff_files=$(git --no-pager diff --name-only)
@@ -64,12 +64,28 @@ jobs:
 
           echo "DIFF_IS_EMPTY=$([[ -z "$diff_excluding_submodule" ]] && echo 'true' || echo 'false')" >> $GITHUB_ENV
           echo "CURRENT_DATETIME=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      # Save full diff to file and upload artifact
+      - name: Save full diff to file
+        if: env.DIFF_IS_EMPTY != 'true'
+        run: |
+          git --no-pager diff HEAD > diff.patch
+          echo "Full diff saved to diff.patch"
+
+      - name: Upload diff artifact
+        if: env.DIFF_IS_EMPTY != 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: codegen-diff
+          path: diff.patch
+
       ## Run if diff exists and pull request or merge queue, and make CI status failure (but allow renovate bot)
+      ## 29139614 is renovate bot's actor id
       - if: >-
           ${{
             (github.event_name == 'pull_request' || github.event_name == 'merge_group')
             && env.DIFF_IS_EMPTY != 'true'
-            && github.actor != 'renovate[bot]'
+            && github.actor_id != '29139614'
           }}
         run: |
           echo "There are changes in the generated codes. Please run 'generate-code.py' and commit the changes." >&2

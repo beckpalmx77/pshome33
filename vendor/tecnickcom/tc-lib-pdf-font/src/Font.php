@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -16,8 +16,8 @@
 
 namespace Com\Tecnick\Pdf\Font;
 
-use Com\Tecnick\Pdf\Font\Exception as FontException;
 use Com\Tecnick\File\File;
+use Com\Tecnick\Pdf\Font\Exception as FontException;
 
 /**
  * Com\Tecnick\Pdf\Font\Font
@@ -26,8 +26,8 @@ use Com\Tecnick\File\File;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @phpstan-import-type TFontData from Load
@@ -41,35 +41,22 @@ class Font extends \Com\Tecnick\Pdf\Font\Load
      * or in the one indicated by K_PATH_FONTS if the constant is defined.
      *
      * @param string $font     Font family.
-     *                         If it is a
-     *                         standard
-     *                         family name,
-     *                         it will
-     *                         override the
-     *                         corresponding
-     *                         font.
-     * @param string $style    Font style.
-     *                         Possible
-     *                         values are
-     *                         (case
-     *                         insensitive):
-     *                         regular
-     *                         (default)
-     *                         B: bold I:
-     *                         italic U:
-     *                         underline
-     *                         D:
-     *                         strikeout
-     *                         (linethrough)
+     *                         If it is a standard family name, it will override the corresponding font.
+     * @param string $style    Font style. Possible values are (case-insensitive):
+     *                         regular (default)
+     *                         B: bold
+     *                         I: italic
+     *                         U: underline
+     *                         D: strikeout (linethrough)
      *                         O: overline
      * @param string $ifile    The font definition file (or empty for autodetect).
      *                         By default, the name is built from the family and
      *                         style, in lower case with no spaces.
-     * @param bool   $subset   If true embedd only a subset of the font
+     * @param bool   $subset   If true embed only a subset of the font
      *                         (stores only the information related to
-     *                         the used characters); If false embedd
+     *                         the used characters); If false embed
      *                         full font; This option is valid only for
-     *                         TrueTypeUnicode fonts and it is disabled
+     *                         TrueTypeUnicode fonts and is disabled
      *                         for PDF/A. If you want to enable users
      *                         to modify the document, set this
      *                         parameter to false. If you subset the
@@ -77,10 +64,9 @@ class Font extends \Com\Tecnick\Pdf\Font\Load
      *                         would need to have your same font in
      *                         order to make changes to your PDF. The
      *                         file size of the PDF would also be
-     *                         smaller because you are embedding only a
-     *                         subset.
-     * @param bool   $unicode  True if we are in Unicode mode, False otherwhise.
-     * @param bool   $pdfa     True if we are in PDF/A mode.
+     *                         smaller because you are embedding only a subset.
+     * @param bool   $unicode  True in Unicode mode, False otherwise.
+     * @param bool   $pdfa     True in PDF/A mode, False otherwise.
      * @param bool   $compress Set to false to disable stream compression.
      *
      * @throws FontException in case of error
@@ -108,7 +94,7 @@ class Font extends \Com\Tecnick\Pdf\Font\Load
         $this->data['pdfa'] = $pdfa;
         $this->data['compress'] = $compress;
         $this->data['subset'] = $subset;
-        $this->data['subsetchars'] = array_fill(0, 255, true);
+        $this->data['subsetchars'] = \array_fill(0, 255, true);
 
         // generate the font key and set styles
         $this->setStyle($style);
@@ -139,19 +125,19 @@ class Font extends \Com\Tecnick\Pdf\Font\Load
      */
     protected function setStyle(string $style): void
     {
-        $style = strtoupper($style);
-        if (str_ends_with($this->data['family'], 'I')) {
+        $style = \strtoupper($style);
+        if (\str_ends_with($this->data['family'], 'I')) {
             $style .= 'I';
-            $this->data['family'] = substr($this->data['family'], 0, -1);
+            $this->data['family'] = \substr($this->data['family'], 0, -1);
         }
 
-        if (str_ends_with($this->data['family'], 'B')) {
+        if (\str_ends_with($this->data['family'], 'B')) {
             $style .= 'B';
-            $this->data['family'] = substr($this->data['family'], 0, -1);
+            $this->data['family'] = \substr($this->data['family'], 0, -1);
         }
 
         // normalize family name
-        $this->data['family'] = strtolower($this->data['family']);
+        $this->data['family'] = \strtolower($this->data['family']);
         if ((! $this->data['unicode']) && ($this->data['family'] == 'arial')) {
             $this->data['family'] = 'helvetica';
         }
@@ -176,28 +162,28 @@ class Font extends \Com\Tecnick\Pdf\Font\Load
     protected function setStyleMode(string $style): void
     {
         $suffix = '';
-        if (str_contains($style, 'B')) {
+        if (\str_contains($style, 'B')) {
             $this->data['mode']['bold'] = true;
             $suffix .= 'B';
         }
 
-        if (str_contains($style, 'I')) {
+        if (\str_contains($style, 'I')) {
             $this->data['mode']['italic'] = true;
             $suffix .= 'I';
         }
 
         $this->data['style'] = (string) $suffix;
-        if (str_contains($style, 'U')) {
+        if (\str_contains($style, 'U')) {
             $this->data['style'] .= 'U';
             $this->data['mode']['underline'] = true;
         }
 
-        if (str_contains($style, 'D')) {
+        if (\str_contains($style, 'D')) {
             $this->data['style'] .= 'D';
             $this->data['mode']['linethrough'] = true;
         }
 
-        if (str_contains($style, 'O')) {
+        if (\str_contains($style, 'O')) {
             $this->data['style'] .= 'O';
             $this->data['mode']['overline'] = true;
         }

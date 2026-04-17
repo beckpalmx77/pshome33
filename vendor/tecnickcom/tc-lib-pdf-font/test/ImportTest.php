@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -25,8 +25,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @SuppressWarnings("PHPMD.LongVariable")
@@ -54,9 +54,9 @@ class ImportTest extends TestUtil
     public function testImportExist(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Font\Exception::class);
-        $fin = dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Helvetica.afm';
-        $outdir = dirname(__DIR__) . '/target/tmptest/';
-        system('rm -rf ' . $outdir . ' && mkdir -p ' . $outdir);
+        $fin = \dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Helvetica.afm';
+        $outdir = \dirname(__DIR__) . '/target/tmptest/';
+        \system('rm -rf ' . $outdir . ' && mkdir -p ' . $outdir);
         new \Com\Tecnick\Pdf\Font\Import($fin, $outdir);
         new \Com\Tecnick\Pdf\Font\Import($fin, $outdir);
     }
@@ -64,30 +64,30 @@ class ImportTest extends TestUtil
     public function testImportWrongFile(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Font\Exception::class);
-        new \Com\Tecnick\Pdf\Font\Import(dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Missing.afm');
+        new \Com\Tecnick\Pdf\Font\Import(\dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Missing.afm');
     }
 
     public function testImportDefaultOutput(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Font\Exception::class);
-        new \Com\Tecnick\Pdf\Font\Import(dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Missing.afm');
+        new \Com\Tecnick\Pdf\Font\Import(\dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Missing.afm');
     }
 
     public function testImportUnsupportedType(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Font\Exception::class);
-        $fin = dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Helvetica.afm';
-        $outdir = dirname(__DIR__) . '/target/tmptest/core/';
-        system('rm -rf ' . $outdir . ' && mkdir -p ' . $outdir);
+        $fin = \dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/core/Helvetica.afm';
+        $outdir = \dirname(__DIR__) . '/target/tmptest/core/';
+        \system('rm -rf ' . $outdir . ' && mkdir -p ' . $outdir);
         new \Com\Tecnick\Pdf\Font\Import($fin, $outdir, 'ERROR');
     }
 
     public function testImportUnsupportedOpenType(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Pdf\Font\Exception::class);
-        $outdir = dirname(__DIR__) . '/target/tmptest/core/';
-        system('rm -rf ' . $outdir . ' && mkdir -p ' . $outdir);
-        file_put_contents($outdir . 'test.ttf', 'OTTO 1234');
+        $outdir = \dirname(__DIR__) . '/target/tmptest/core/';
+        \system('rm -rf ' . $outdir . ' && mkdir -p ' . $outdir);
+        \file_put_contents($outdir . 'test.ttf', 'OTTO 1234');
         new \Com\Tecnick\Pdf\Font\Import($outdir . 'test.ttf', $outdir);
     }
 
@@ -99,17 +99,17 @@ class ImportTest extends TestUtil
         string $type = '',
         string $encoding = ''
     ): void {
-        $indir = dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/' . $fontdir . '/';
-        $outdir = dirname(__DIR__) . '/target/tmptest/' . $fontdir . '/';
-        system('rm -rf ' . dirname(__DIR__) . '/target/tmptest/ && mkdir -p ' . $outdir);
+        $indir = \dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/' . $fontdir . '/';
+        $outdir = \dirname(__DIR__) . '/target/tmptest/' . $fontdir . '/';
+        \system('rm -rf ' . \dirname(__DIR__) . '/target/tmptest/ && mkdir -p ' . $outdir);
 
         $import = new \Com\Tecnick\Pdf\Font\Import($indir . $font, $outdir, $type, $encoding);
         $this->assertEquals($outname, $import->getFontName());
 
-        $file = file_get_contents($outdir . $outname . '.json');
+        $file = \file_get_contents($outdir . $outname . '.json');
         $this->assertNotFalse($file);
 
-        $json = json_decode($file, true, 512, JSON_THROW_ON_ERROR);
+        $json = \json_decode($file, true, 512, JSON_THROW_ON_ERROR);
         $this->assertNotNull($json);
         $this->assertIsArray($json);
 
@@ -125,7 +125,7 @@ class ImportTest extends TestUtil
         $metric = $import->getFontMetrics();
 
         $this->assertEquals('[' . $metric['bbox'] . ']', $json['desc']['FontBBox']);
-        $this->assertEquals($metric['italicAngle'], $json['desc']['ItalicAngle']);
+        $this->assertEqualsWithDelta($metric['italicAngle'], $json['desc']['ItalicAngle'], 0.001);
         $this->assertEquals($metric['Ascent'], $json['desc']['Ascent']);
         $this->assertEquals($metric['Descent'], $json['desc']['Descent']);
         $this->assertEquals($metric['Leading'], $json['desc']['Leading']);

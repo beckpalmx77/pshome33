@@ -18,7 +18,7 @@ BuildArch: noarch
 
 Requires:  php(language) >= 8.1.0
 Requires:  php-composer(%{c_vendor}/tc-lib-unicode-data) < 3.0.0
-Requires:  php-composer(%{c_vendor}/tc-lib-unicode-data) >= 2.0.24
+Requires:  php-composer(%{c_vendor}/tc-lib-unicode-data) >= 2.0.46
 Requires:  php-pcre
 Requires:  php-mbstring
 
@@ -46,5 +46,5 @@ rm -rf $RPM_BUILD_ROOT
 #%config(noreplace) %{_configpath}*
 
 %changelog
-* Tue Jul 21 2024 Nicola Asuni <info@tecnick.com> 1.0.0-1
+* Tue Jul 21 2026 Nicola Asuni <info@tecnick.com> 1.0.0-1
 - Initial Commit

@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * This file is part of tc-lib-pdf-graph software library.
@@ -26,8 +26,8 @@ use Com\Tecnick\Pdf\Encrypt\Encrypt;
  * @category  Library
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * @phpstan-type TTMatrix array{
@@ -215,7 +215,7 @@ abstract class Base
             'fillColor' => 'black',
         ];
 
-        return array_merge($def, $style);
+        return \array_merge($def, $style);
     }
 
     /**
@@ -227,25 +227,31 @@ abstract class Base
     }
 
     /**
-     * Set page height
+     * Set page height and returns previous value.
      *
-     * @param float $pageh Page height
+     * @param float $pageh Page height.
+     *
+     * @return float previous page height value.
      */
-    public function setPageHeight(float $pageh): static
+    public function setPageHeight(float $pageh): float
     {
+        $ret = $this->pageh;
         $this->pageh = $pageh;
-        return $this;
+        return $ret;
     }
 
     /**
-     * Set page width
+     * Set page width and returns previous value.
      *
-     * @param float $pagew Page width
+     * @param float $pagew Page width.
+     *
+     * @return float previous page width value.
      */
-    public function setPageWidth(float $pagew): static
+    public function setPageWidth(float $pagew): float
     {
+        $ret = $this->pagew;
         $this->pagew = $pagew;
-        return $this;
+        return $ret;
     }
 
     /**
@@ -275,8 +281,8 @@ abstract class Base
             $out .= $this->pon . ' 0 obj' . "\n"
                 . '<< /Type /ExtGState';
             foreach ($ext['parms'] as $key => $val) {
-                if (is_numeric($val)) {
-                    $val = sprintf('%F', $val);
+                if (\is_numeric($val)) {
+                    $val = \sprintf('%F', $val);
                 } elseif ($val === true) {
                     $val = 'true';
                 } elseif ($val === false) {
@@ -300,7 +306,7 @@ abstract class Base
      */
     public function getLastExtGStateID(): ?int
     {
-        return array_key_last($this->extgstates);
+        return \array_key_last($this->extgstates);
     }
 
     /**
@@ -445,7 +451,7 @@ abstract class Base
 
         $out = '';
         if (($grad['type'] == 2) || ($grad['type'] == 3)) {
-            $num_cols = count($grad['colors']);
+            $num_cols = \count($grad['colors']);
             $lastcols = ($num_cols - 1);
             $funct = []; // color and transparency objects
             $bounds = [];
@@ -471,7 +477,7 @@ abstract class Base
 
                 $encode[] = '0 1';
                 if ($idx < $lastcols && isset($grad['colors'][$idx]['offset'])) {
-                    $bounds[] = sprintf('%F ', $grad['colors'][$idx]['offset']);
+                    $bounds[] = \sprintf('%F ', $grad['colors'][$idx]['offset']);
                 }
 
                 $out .= ++$this->pon . ' 0 obj' . "\n"
@@ -493,9 +499,9 @@ abstract class Base
                 . '<<'
                 . ' /FunctionType 3'
                 . ' /Domain [0 1]'
-                . ' /Functions [' . implode(' ', $funct) . ']'
-                . ' /Bounds [' . implode(' ', $bounds) . ']'
-                . ' /Encode [' . implode(' ', $encode) . ']'
+                . ' /Functions [' . \implode(' ', $funct) . ']'
+                . ' /Bounds [' . \implode(' ', $bounds) . ']'
+                . ' /Encode [' . \implode(' ', $encode) . ']'
                 . ' >>' . "\n"
                 . 'endobj' . "\n";
         }
@@ -532,7 +538,7 @@ abstract class Base
         }
 
         if ($grad['type'] == 2) {
-            $out .= ' ' . sprintf(
+            $out .= ' ' . \sprintf(
                 '/Coords [%F %F %F %F]',
                 $grad['coords'][0],
                 $grad['coords'][1],
@@ -546,7 +552,7 @@ abstract class Base
         } elseif ($grad['type'] == 3) {
             // x0, y0, r0, x1, y1, r1
             // the  radius of the inner circle is 0
-            $out .= ' ' . sprintf(
+            $out .= ' ' . \sprintf(
                 '/Coords [%F %F 0 %F %F %F]',
                 $grad['coords'][0],
                 $grad['coords'][1],
@@ -561,7 +567,7 @@ abstract class Base
         } elseif ($grad['type'] == 6) {
             $stream = $this->encrypt->encryptString($grad['stream'], $this->pon);
             $out .= ' /BitsPerCoordinate 16 /BitsPerComponent 8/Decode[0 1 0 1 0 1 0 1 0 1] /BitsPerFlag 8 /Length '
-                . strlen($stream)
+                . \strlen($stream)
                 . ' >>' . "\n"
                 . ' stream' . "\n"
                 . $stream . "\n"
@@ -598,13 +604,14 @@ abstract class Base
             return '';
         }
 
-        $idt = count($this->gradients); // index for transparency gradients
+        $idt = \count($this->gradients); // index for transparency gradients
         $out = '';
         foreach ($this->gradients as $idx => $grad) {
             $gcol = $this->getOutGradientCols($grad, 'color');
             if ($gcol !== '') {
                 $out .= $gcol;
                 $this->gradients[$idx]['id'] = ($this->pon - 1);
+                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idx]['pattern'] = $this->pon;
             }
 
@@ -613,7 +620,9 @@ abstract class Base
 
             if ($gopa !== '') {
                 $out .= $gopa;
+                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idgs]['id'] = ($this->pon - 1);
+                // @phpstan-ignore assign.propertyType
                 $this->gradients[$idgs]['pattern'] = $this->pon;
             }
 
@@ -621,7 +630,7 @@ abstract class Base
                 $oid = ++$this->pon;
                 $pwidth = ($this->pagew * $this->kunit);
                 $pheight = ($this->pageh * $this->kunit);
-                $rect = sprintf('%F %F', $pwidth, $pheight);
+                $rect = \sprintf('%F %F', $pwidth, $pheight);
 
                 $out .= $oid . ' 0 obj' . "\n"
                     . '<<'
@@ -630,7 +639,7 @@ abstract class Base
                     . ' /FormType 1';
                 $stream = 'q /a0 gs /Pattern cs /p' . $idgs . ' scn 0 0 ' . $pwidth . ' ' . $pheight . ' re f Q';
                 if ($this->compress) {
-                    $cmpstream = gzcompress($stream);
+                    $cmpstream = \gzcompress($stream);
                     if ($cmpstream !== false) {
                         $stream = $cmpstream;
                         $out .= ' /Filter /FlateDecode';
@@ -638,7 +647,7 @@ abstract class Base
                 }
 
                 $stream = $this->encrypt->encryptString($stream, $oid);
-                $out .= ' /Length ' . strlen($stream)
+                $out .= ' /Length ' . \strlen($stream)
                     . ' /BBox [0 0 ' . $rect . ']'
                     . ' /Group << /Type /Group /S /Transparency /CS /DeviceGray >>'
                     . ' /Resources <<'
@@ -663,7 +672,7 @@ abstract class Base
 
                 // ExtGState
                 $objext = ++$this->pon;
-                $out .= ++$objext . ' 0 obj' . "\n"
+                $out .= $objext . ' 0 obj' . "\n"
                     . '<<'
                     . ' /Type /ExtGState'
                     . ' /SMask ' . $objsm . ' 0 R'

@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -16,6 +16,7 @@
 
 namespace Com\Tecnick\Pdf\Font;
 
+use Com\Tecnick\File\Exception as FileException;
 use Com\Tecnick\Pdf\Encrypt\Encrypt;
 use Com\Tecnick\Pdf\Font\Exception as FontException;
 
@@ -26,8 +27,8 @@ use Com\Tecnick\Pdf\Font\Exception as FontException;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @phpstan-import-type TFontData from Load
@@ -50,8 +51,11 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
      * Initialize font data
      *
      * @param array<string, TFontData> $fonts   Array of imported fonts data
-     * @param int                     $pon     Current PDF Object Number
-     * @param Encrypt                 $encrypt Encrypt object
+     * @param int                      $pon     Current PDF Object Number
+     * @param Encrypt                  $encrypt Encrypt object
+     *
+     * @throws FileException
+     * @throws FontException
      */
     public function __construct(
         protected array $fonts,
@@ -142,7 +146,7 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
     /**
      * Get the PDF output string for font encoding diffs
      *
-     * return string
+     * @return string
      */
     protected function getEncodingDiffs(): string
     {
@@ -150,7 +154,7 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
         $done = []; // store processed items to avoid duplication
         foreach ($this->fonts as $fkey => $font) {
             if (! empty($font['diff'])) {
-                $dkey = md5($font['diff']);
+                $dkey = \md5($font['diff']);
                 if (! isset($done[$dkey])) {
                     $out .= (++$this->pon) . ' 0 obj' . "\n"
                         . '<< /Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['
@@ -164,11 +168,11 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
 
             // extract the character subset
             if (! empty($font['file'])) {
-                $file_key = md5($font['file']);
+                $file_key = \md5($font['file']);
                 if (empty($this->subchars[$file_key])) {
                     $this->subchars[$file_key] = $font['subsetchars'];
                 } else {
-                    $this->subchars[$file_key] = array_merge($this->subchars[$file_key], $font['subsetchars']);
+                    $this->subchars[$file_key] = \array_merge($this->subchars[$file_key], $font['subsetchars']);
                 }
             }
         }
@@ -179,7 +183,10 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
     /**
      * Get the PDF output string for font files
      *
-     * return string
+     * @return string
+     *
+     * @throws FileException
+     * @throws FontException
      */
     protected function getFontFiles(): string
     {
@@ -187,24 +194,24 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
         $done = []; // store processed items to avoid duplication
         foreach ($this->fonts as $fkey => $font) {
             if (! empty($font['file'])) {
-                $dkey = md5($font['file']);
+                $dkey = \md5($font['file']);
                 if (! isset($done[$dkey])) {
                     $fontfile = $this->getFontFullPath($font['dir'], $font['file']);
-                    $font_data = file_get_contents($fontfile);
+                    $font_data = \file_get_contents($fontfile);
                     if ($font_data === false) {
                         throw new FontException('Unable to read font file: ' . $fontfile);
                     }
 
                     if ($font['subset']) {
-                        $font_data = gzuncompress($font_data);
+                        $font_data = \gzuncompress($font_data);
                         if ($font_data === false) {
                             throw new FontException('Unable to uncompress font file: ' . $fontfile);
                         }
 
-                        $sub = new Subset($font_data, $font, $this->subchars[md5($font['file'])]);
+                        $sub = new Subset($font_data, $font, $this->subchars[\md5($font['file'])]);
                         $font_data = $sub->getSubsetFont();
-                        $font['length1'] = strlen($font_data);
-                        $font_data = gzcompress($font_data);
+                        $font['length1'] = \strlen($font_data);
+                        $font_data = \gzcompress($font_data);
                         if ($font_data === false) {
                             throw new FontException('Unable to compress font file: ' . $fontfile);
                         }
@@ -215,7 +222,7 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
                     $out .= $this->pon . ' 0 obj' . "\n"
                         . '<<'
                         . ' /Filter /FlateDecode'
-                        . ' /Length ' . strlen($stream)
+                        . ' /Length ' . \strlen($stream)
                         . ' /Length1 ' . $font['length1'];
                     $out .= ' /Length2 ' . $font['length2']
                         . ' /Length3 0';
@@ -237,13 +244,13 @@ class Output extends \Com\Tecnick\Pdf\Font\OutFont
     /**
      * Get the PDF output string for fonts
      *
-     * return string
+     * @return string
      */
     protected function getFontDefinitions(): string
     {
         $out = '';
         foreach ($this->fonts as $font) {
-            $out .= match (strtolower($font['type'])) {
+            $out .= match (\strtolower($font['type'])) {
                 'core' => $this->getCore($font),
                 'cidfont0' => $this->getCid0($font),
                 'type1' => $this->getTrueType($font),

@@ -8,8 +8,8 @@
  * @category    Library
  * @package     Barcode
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-barcode
  *
  * This file is part of tc-lib-barcode software library.
@@ -24,8 +24,8 @@ namespace Test;
  * @category    Library
  * @package     Barcode
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-barcode
  */
 class TestStrings
@@ -34,6 +34,8 @@ class TestStrings
      * Array containing testing strings.
      *
      * @var array<array{string}>
+     *
+     * @phpcs:disable Generic.Files.LineLength.TooLong
      */
     public static $data = [
         // Reserved keywords
@@ -73,6 +75,6 @@ class TestStrings
         // Unwanted Interpolation
         ['$HOME $ENV{\'HOME\'} %d %s {0} %*.*s'],
         // PHP code
-        ['echo \'hello world\'; exit(); for($i=32;$i<120;++$i){echo chr($i);}'],
+        ['echo \'hello world\'; exit(); for($i=32;$i<120;++$i){echo \chr($i);}'],
     ];
 }

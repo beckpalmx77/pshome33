@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * This file is part of tc-lib-pdf software library.
@@ -25,13 +25,14 @@ namespace Com\Tecnick\Pdf;
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Style
  * @phpstan-import-type TCellDef from \Com\Tecnick\Pdf\Base
  *
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 abstract class Cell extends \Com\Tecnick\Pdf\Base
 {
@@ -117,7 +118,7 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
             $styles = $this->graph->getCurrentStyleArray();
         }
 
-        $border_ratio = round(self::BORDERPOS_INTERNAL + $cell['borderpos'], 1);
+        $border_ratio = \round(self::BORDERPOS_INTERNAL + $cell['borderpos'], 1);
 
         $minT = 0;
         $minR = 0;
@@ -129,7 +130,7 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
             $minB = $minT;
             $minL = $minT;
         } elseif (
-            (count($styles) == 4)
+            (\count($styles) == 4)
             && isset($styles[0]['lineWidth'])
             && isset($styles[1]['lineWidth'])
             && isset($styles[2]['lineWidth'])
@@ -143,10 +144,10 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
             return $cell;
         }
 
-        $cell['padding']['T'] = max($cell['padding']['T'], $minT);
-        $cell['padding']['R'] = max($cell['padding']['R'], $minR);
-        $cell['padding']['B'] = max($cell['padding']['B'], $minB);
-        $cell['padding']['L'] = max($cell['padding']['L'], $minL);
+        $cell['padding']['T'] = \max($cell['padding']['T'], $minT);
+        $cell['padding']['R'] = \max($cell['padding']['R'], $minR);
+        $cell['padding']['B'] = \max($cell['padding']['B'], $minB);
+        $cell['padding']['L'] = \max($cell['padding']['L'], $minL);
         return $cell;
     }
 
@@ -180,15 +181,15 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
 
         return match ($align) {
             'T', 'B' => ($pheight + $cell['padding']['T'] + $cell['padding']['B']),
-            'L' => ($pheight - $curfont['height'] + (2 * max(
+            'L' => ($pheight - $curfont['height'] + (2 * \max(
                 ($cell['padding']['T'] + $curfont['ascent']),
                 ($cell['padding']['B'] - $curfont['descent'])
             ))),
             'A', 'D' => ($pheight
             - $curfont['height']
-            + (2 * ($curfont['height'] + max($cell['padding']['T'], $cell['padding']['B'])))),
+            + (2 * ($curfont['height'] + \max($cell['padding']['T'], $cell['padding']['B'])))),
             // default on 'C' case
-            default => ($pheight + (2 * max($cell['padding']['T'], $cell['padding']['B']))),
+            default => ($pheight + (2 * \max($cell['padding']['T'], $cell['padding']['B']))),
         };
     }
 
@@ -213,8 +214,8 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
         }
 
         return match ($align) {
-            'C' => ceil($txtwidth + (2 * max($cell['padding']['L'], $cell['padding']['R']))),
-            default => ceil($txtwidth + $cell['padding']['L'] + $cell['padding']['R']),
+            'C' => \ceil($txtwidth + (2 * \max($cell['padding']['L'], $cell['padding']['R']))),
+            default => \ceil($txtwidth + $cell['padding']['L'] + $cell['padding']['R']),
         };
     }
 
@@ -504,16 +505,16 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
             // Top or Bottom
             'T', 'B' => ($cph - $cell['padding']['T'] - $cell['padding']['B']),
             // Center on font Baseline
-            'L' => ($cph + $curfont['height'] - (2 * max(
+            'L' => ($cph + $curfont['height'] - (2 * \max(
                 ($cell['padding']['T'] + $curfont['ascent']),
                 ($cell['padding']['B'] - $curfont['descent'])
             ))),
             // Center on font Ascent or Descent
             'A', 'D' => ($cph
             + $curfont['height']
-            - (2 * ($curfont['height'] + max($cell['padding']['T'], $cell['padding']['B'])))),
+            - (2 * ($curfont['height'] + \max($cell['padding']['T'], $cell['padding']['B'])))),
             // Default to Center 'C' case
-            default => ($cph - (2 * max($cell['padding']['T'], $cell['padding']['B']))),
+            default => ($cph - (2 * \max($cell['padding']['T'], $cell['padding']['B']))),
         };
     }
 
@@ -564,7 +565,7 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
             $drawfill
             && $drawborder
             && ($cell['borderpos'] == self::BORDERPOS_DEFAULT)
-            && (count($styles) <= 1)
+            && (\count($styles) <= 1)
         ) {
             // single default border style for all sides
             $out .= $this->graph->getBasicRect(
@@ -621,5 +622,29 @@ abstract class Cell extends \Com\Tecnick\Pdf\Base
         );
 
         return $out . $stoptr;
+    }
+
+    /**
+     * Format a text string for output.
+     *
+     * @param string $str String to escape.
+     * @param int    $oid Current PDF object number.
+     * @param bool   $bom If true set the Byte Order Mark (BOM).
+     *
+     * @return string escaped string.
+     */
+    protected function getOutTextString(
+        string $str,
+        int $oid,
+        bool $bom = false
+    ): string {
+        if ($this->isunicode) {
+            $str = $this->uniconv->toUTF16BE($str);
+            if ($bom) {
+                $str = "\xFE\xFF" . $str; // Byte Order Mark (BOM)
+            }
+        }
+
+        return $this->encrypt->escapeDataString($str, $oid);
     }
 }

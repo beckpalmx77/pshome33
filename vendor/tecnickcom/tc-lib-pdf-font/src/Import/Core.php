@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -16,7 +16,6 @@
 
 namespace Com\Tecnick\Pdf\Font\Import;
 
-use Com\Tecnick\File\File;
 use Com\Tecnick\Pdf\Font\Exception as FontException;
 
 /**
@@ -26,8 +25,8 @@ use Com\Tecnick\Pdf\Font\Exception as FontException;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @phpstan-import-type TFontData from \Com\Tecnick\Pdf\Font\Load
@@ -102,7 +101,7 @@ class Core
             }
         }
 
-        $this->fdt['AvgWidth'] = (int) round($this->fdt['AvgWidth'] / count($cwidths));
+        $this->fdt['AvgWidth'] = (int) \round($this->fdt['AvgWidth'] / \count($cwidths));
     }
 
     /**
@@ -112,11 +111,11 @@ class Core
     {
         $cwd = [];
         $this->fdt['cbbox'] = [];
-        $lines = explode("\n", str_replace("\r", '', $this->font));
+        $lines = \explode("\n", \str_replace("\r", '', $this->font));
         // process each row
         foreach ($lines as $line) {
-            $col = explode(' ', rtrim($line));
-            if (count($col) > 1) {
+            $col = \explode(' ', \rtrim($line));
+            if (\count($col) > 1) {
                 $this->processMetricRow($col, $cwd);
             }
         }
@@ -177,6 +176,8 @@ class Core
 
     /**
      * Map values to the correct key name
+     *
+     * @throws FontException
      */
     protected function remapValues(): void
     {
@@ -190,13 +191,13 @@ class Core
         $this->fdt['StemV'] = $this->fdt['StdVW'];
         $this->fdt['StemH'] = $this->fdt['StdHW'];
 
-        $name = preg_replace('/[^a-zA-Z0-9_\-]/', '', $this->fdt['name']);
+        $name = \preg_replace('/[^a-zA-Z0-9_\-]/', '', $this->fdt['name']);
         if ($name === null) {
             throw new FontException('Invalid font name');
         }
 
         $this->fdt['name'] = $name;
-        $this->fdt['bbox'] = implode(' ', $this->fdt['FontBBox']);
+        $this->fdt['bbox'] = \implode(' ', $this->fdt['FontBBox']);
 
         if (empty($this->fdt['XHeight'])) {
             $this->fdt['XHeight'] = 0;
@@ -216,6 +217,8 @@ class Core
 
     /**
      * Process Core font
+     *
+     * @throws FontException
      */
     protected function process(): void
     {

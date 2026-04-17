@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Barcode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2023-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2023-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-barcode
  *
  * This file is part of tc-lib-barcode software library.
@@ -26,8 +26,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @category  Library
  * @package   Barcode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2023-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2023-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-barcode
  */
 class AztecTest extends TestUtil
@@ -48,7 +48,7 @@ class AztecTest extends TestUtil
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Barcode\Exception::class);
         $barcode = $this->getTestObject();
-        $code = str_pad('', 2000, '0123456789');
+        $code = \str_pad('', 2000, '0123456789');
         $barcode->getBarcodeObj('AZTEC,100,B,F,3', $code);
     }
 
@@ -58,7 +58,7 @@ class AztecTest extends TestUtil
         $barcode = $this->getTestObject();
         $type = $barcode->getBarcodeObj('AZTEC' . $options, $code);
         $grid = $type->getGrid();
-        $this->assertEquals($expected, md5($grid));
+        $this->assertEquals($expected, \md5($grid));
     }
 
     /**

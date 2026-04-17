@@ -7,11 +7,13 @@
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * This file is part of tc-lib-pdf software library.
+ *
+ * @phpcs:disable Generic.Files.LineLength
  */
 
 namespace Com\Tecnick\Pdf;
@@ -27,15 +29,15 @@ use Com\Tecnick\Pdf\Exception as PdfException;
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * @phpstan-import-type TViewerPref from Base
  *
  * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
-abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
+abstract class MetaInfo extends \Com\Tecnick\Pdf\HTML
 {
     /**
      * Valid document zoom modes
@@ -77,13 +79,13 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
     private function setNonEmptyArrayFieldValue(string $field, string $key, string $value): static
     {
         if (
-            isset($this->$field)
-            && is_array($this->$field)
+            isset($this->{$field})
+            && \is_array($this->{$field})
             && ($key !== '')
-            && isset($this->$field[$key])
+            && isset($this->{$field}[$key])
             && ($value !== '')
         ) {
-            $this->$field[$key] = $value;
+            $this->{$field}[$key] = $value;
         }
 
         return $this;
@@ -149,13 +151,27 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
      */
     public function setPDFVersion(string $version = '1.7'): static
     {
-        if ($this->pdfa == 1) { // PDF/A 1 mode
+        // PDF/A-1 is based on and require the PDF 1.4.
+        if ($this->pdfa === 1) {
             $this->pdfver = '1.4';
             return $this;
         }
 
-        $isvalid = preg_match('/^[1-9]+[.]\d+$/', $version);
-        if ($isvalid === false) {
+        // PDF/A-2 (ISO 19005-2:2011) and PDF/A-3 (ISO 19005-3:2012)
+        // are based on and require the PDF 1.7 standard (ISO 32000-1:2008)
+        if ($this->pdfa === 2 || $this->pdfa === 3) {
+            $this->pdfver = '1.7';
+            return $this;
+        }
+
+        // // PDF/A-4 is based on and require the PDF 2.0 (ISO 32000-2)
+        if ($this->pdfa === 4) {
+            $this->pdfver = '2.0';
+            return $this;
+        }
+
+        $isvalid = \preg_match('/^[1-9]+[.]\d+$/', $version);
+        if ($isvalid !== 1) {
             throw new PdfException('Invalid PDF version format');
         }
 
@@ -164,7 +180,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
     }
 
     /**
-     * Set the sRGB mode
+     * Set the sRGB mode.
      *
      * @param bool $enabled Set to true to add the default sRGB ICC color profile
      */
@@ -175,31 +191,8 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
     }
 
     /**
-     * Format a text string for output.
-     *
-     * @param string $str String to escape.
-     * @param int    $oid Current PDF object number.
-     * @param bool   $bom If true set the Byte Order Mark (BOM).
-     *
-     * @return string escaped string.
-     */
-    protected function getOutTextString(
-        string $str,
-        int $oid,
-        bool $bom = false
-    ): string {
-        if ($this->isunicode) {
-            $str = $this->uniconv->toUTF16BE($str);
-            if ($bom) {
-                $str = "\xFE\xFF" . $str; // Byte Order Mark (BOM)
-            }
-        }
-
-        return $this->encrypt->escapeDataString($str, $oid);
-    }
-
-    /**
-     * Returns a formatted date for meta information
+     * Returns a formatted date for meta information.
+     * (ref. Chapter 7.9.4 Dates of PDF32000_2008.pdf).
      *
      * @param int $time Time in seconds.
      *
@@ -207,11 +200,12 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
      */
     protected function getFormattedDate(int $time): string
     {
-        return substr_replace(date('YmdHisO', $time), "'", (-2), 0) . "'";
+        $date = \date('YmdHisp', $time);
+        return \str_ends_with($date, 'Z') ? $date : \substr_replace($date, "'", -3, 1) . "'";
     }
 
     /**
-     * Returns a formatted date for XMP meta information
+     * Returns a formatted date for XMP meta information.
      *
      * @param int $time Time in seconds.
      *
@@ -219,11 +213,11 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
      */
     protected function getXMPFormattedDate(int $time): string
     {
-        return date('Y-m-dTH:i:sP', $time);
+        return \date('Y-m-d\TH:i:sp', $time);
     }
 
     /**
-     * Returns the producer string
+     * Returns the producer string.
      */
     protected function getProducer(): string
     {
@@ -234,7 +228,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
     }
 
     /**
-     * Returns a formatted date for meta information
+     * Returns a formatted date for meta information.
      *
      * @param int $time Time in seconds.
      * @param int $oid  Current PDF object number.
@@ -252,7 +246,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
 
     /**
      * Get the PDF output string for the Document Information Dictionary.
-     * (ref. Chapter 14.3.3 Document Information Dictionary of PDF32000_2008.pdf)
+     * (ref. Chapter 14.3.3 Document Information Dictionary of PDF32000_2008.pdf).
      */
     protected function getOutMetaInfo(): string
     {
@@ -280,7 +274,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
      */
     protected function getEscapedXML(string $str): string
     {
-        return strtr($str, [
+        return \strtr($str, [
             "\0" => '',
             '&' => '&amp;',
             '<' => '&lt;',
@@ -314,11 +308,11 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
      */
     protected function getOutXMP(): string
     {
-        $uuid = 'uuid:' . substr($this->fileid, 0, 8)
-        . '-' . substr($this->fileid, 8, 4)
-        . '-' . substr($this->fileid, 12, 4)
-        . '-' . substr($this->fileid, 16, 4)
-        . '-' . substr($this->fileid, 20, 12);
+        $uuid = 'uuid:' . \substr($this->fileid, 0, 8)
+        . '-' . \substr($this->fileid, 8, 4)
+        . '-' . \substr($this->fileid, 12, 4)
+        . '-' . \substr($this->fileid, 16, 4)
+        . '-' . \substr($this->fileid, 20, 12);
 
         // @codingStandardsIgnoreStart
         $xmp = '<?xpacket begin="' . $this->uniconv->chr(0xfeff) . '" id="W5M0MpCehiHzreSzNTczkc9d"?>' . "\n"
@@ -365,7 +359,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
         if ($this->pdfa !== 0) {
             $xmp .= '		<rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">' . "\n"
             . "\t\t\t" . '<pdfaid:part>' . $this->pdfa . '</pdfaid:part>' . "\n"
-            . "\t\t\t" . '<pdfaid:conformance>B</pdfaid:conformance>' . "\n"
+            . "\t\t\t" . '<pdfaid:conformance>' . $this->pdfaConformance . '</pdfaid:conformance>' . "\n"
             . "\t\t" . '</rdf:Description>' . "\n";
         }
 
@@ -440,22 +434,11 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
         . '<<'
         . ' /Type /Metadata'
         . ' /Subtype /XML'
-        . ' /Length ' . strlen($xmp)
+        . ' /Length ' . \strlen($xmp)
         . ' >> stream' . "\n"
         . $xmp . "\n"
         . 'endstream' . "\n"
         . 'endobj' . "\n";
-    }
-
-    /**
-     * Set the default document language direction.
-     *
-     * @param bool $enabled False = LTR = Left-To-Right; True = RTL = Right-To-Left.
-     */
-    public function setRTL(bool $enabled): static
-    {
-        $this->rtl = $enabled;
-        return $this;
     }
 
     /**
@@ -481,10 +464,10 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
         if (isset($this->viewerpref[$name])) {
             $val = $this->viewerpref[$name];
             if (
-                isset($this->page->$box[$val]) // @phpstan-ignore offsetAccess.nonOffsetAccessible
-                && is_string($this->page->$box[$val])
+                isset($this->page->{$box}[$val]) // @phpstan-ignore offsetAccess.nonOffsetAccessible
+                && \is_string($this->page->{$box}[$val])
             ) {
-                $box = $this->page->$box[$val];
+                $box = $this->page->{$box}[$val];
             }
         }
 
@@ -498,7 +481,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
     {
         $mode = 'AppDefault';
         if (isset($this->viewerpref['PrintScaling'])) {
-            $name = strtolower($this->viewerpref['PrintScaling']);
+            $name = \strtolower($this->viewerpref['PrintScaling']);
             $valid = [
                 'none' => 'None',
                 'appdefault' => 'AppDefault',
@@ -517,7 +500,7 @@ abstract class MetaInfo extends \Com\Tecnick\Pdf\JavaScript
     protected function getDuplexMode(): string
     {
         if (isset($this->viewerpref['Duplex'])) {
-            $name = strtolower($this->viewerpref['Duplex']);
+            $name = \strtolower($this->viewerpref['Duplex']);
             $valid = [
                 'simplex' => 'Simplex',
                 'duplexflipshortedge' => 'DuplexFlipShortEdge',

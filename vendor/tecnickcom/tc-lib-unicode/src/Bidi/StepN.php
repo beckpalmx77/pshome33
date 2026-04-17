@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * This file is part of tc-lib-unicode software library.
@@ -25,8 +25,8 @@ use Com\Tecnick\Unicode\Data\Bracket as UniBracket;
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  */
 class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
@@ -91,7 +91,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
             // find matching opening bracket
             $tmpstack = $this->bstack;
             while ($tmpstack !== []) {
-                $item = array_pop($tmpstack);
+                $item = \array_pop($tmpstack);
                 if ($char == UniBracket::OPEN[$item[1]]) {
                     $this->brackets[$item[0]] = $idx;
                     $this->bstack = $tmpstack;
@@ -101,7 +101,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
 
         // Sort the list of pairs of text positions in ascending order
         // based on the text position of the opening paired bracket.
-        ksort($this->brackets);
+        \ksort($this->brackets);
     }
 
     /**
@@ -191,6 +191,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
     protected function setBracketsType(int $open, int $close, string $type): void
     {
         $this->seq['item'][$open]['type'] = $type;
+        // @phpstan-ignore assign.propertyType
         $this->seq['item'][$close]['type'] = $type;
 
         // Any number of characters that had original bidirectional character type NSM
@@ -198,6 +199,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
         // changed to L or R under N0 should change to match the type of their preceding bracket.
         $next = ($close + 1);
         while (isset($this->seq['item'][$next]['otype']) && ($this->seq['item'][$next]['otype'] == 'NSM')) {
+            // @phpstan-ignore assign.propertyType
             $this->seq['item'][$next]['type'] = $type;
             ++$next;
         }
@@ -227,6 +229,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
 
             if ($next === $prev) {
                 for ($bdx = $idx; (($bdx < $jdx) && ($bdx < $this->seq['length'])); ++$bdx) {
+                    // @phpstan-ignore assign.propertyType
                     $this->seq['item'][$bdx]['type'] = $next;
                 }
             }
@@ -247,7 +250,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
             return $this->seq['sos'];
         }
 
-        if (in_array($this->seq['item'][$bdx]['type'], ['R', 'AN', 'EN'])) {
+        if (\in_array($this->seq['item'][$bdx]['type'], ['R', 'AN', 'EN'])) {
             return 'R';
         }
 
@@ -272,7 +275,7 @@ class StepN extends \Com\Tecnick\Unicode\Bidi\StepBase
             return $this->seq['eos'];
         }
 
-        if (in_array($this->seq['item'][$jdx]['type'], ['R', 'AN', 'EN'])) {
+        if (\in_array($this->seq['item'][$jdx]['type'], ['R', 'AN', 'EN'])) {
             return 'R';
         }
 

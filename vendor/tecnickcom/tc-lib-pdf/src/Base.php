@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * This file is part of tc-lib-pdf software library.
@@ -37,8 +37,8 @@ use Com\Tecnick\Unicode\Convert as ObjUniConvert;
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * @phpstan-import-type PageInputData from \Com\Tecnick\Pdf\Page\Box
@@ -72,20 +72,17 @@ use Com\Tecnick\Unicode\Convert as ObjUniConvert;
  *     'h': float,
  * }
  *
+ * @phpstan-type TCellBound array{
+ *     'T': float,
+ *     'R': float,
+ *     'B': float,
+ *     'L': float,
+ * }
+ *
  * @phpstan-type TCellDef array{
- *     'margin': array{
- *         'T': float,
- *         'R': float,
- *         'B': float,
- *         'L': float,
- *     },
- *     'padding': array{
- *         'T': float,
- *         'R': float,
- *         'B': float,
- *         'L': float,
- *     },
- *    'borderpos': float,
+ *     'margin': TCellBound,
+ *     'padding': TCellBound,
+ *     'borderpos': float,
  * }
  *
  * @phpstan-type TRefUnitValues array{
@@ -183,7 +180,7 @@ abstract class Base
     /**
      * TCPDF version.
      */
-    protected string $version = '8.1.5';
+    protected string $version = '8.5.2';
 
     /**
      * Time is seconds since EPOCH when the document was created.
@@ -259,6 +256,15 @@ abstract class Base
     protected bool $rtl = false;
 
     /**
+     * Boolean flag to set temporary document language direction.
+     *    False = LTR = Left-To-Right.
+     *    True = RTL = Right-To-Left.
+     *
+     * @val bool
+     */
+    protected bool $tmprtl = false;
+
+    /**
      * Document ID.
      */
     protected string $fileid;
@@ -292,10 +298,24 @@ abstract class Base
         'small' => -2.0,
         'medium' => 0.0,
         'large' => 2.0,
-        'x-large' => 4.0,
         'larger' => 3.0,
+        'x-large' => 4.0,
         'xx-large' => 6.0,
     ];
+
+    /**
+     * Ration for small font.
+     *
+     * @var float
+     */
+    protected const FONT_SMALL_RATIO = 2 / 3;
+
+    /**
+     * Default monospaced font.
+     *
+     * @var string
+     */
+    protected const FONT_MONO = 'courier';
 
     /**
      * Default eference values for unit conversion.
@@ -321,10 +341,27 @@ abstract class Base
     ];
 
     /**
-     * DPI (Dot Per Inch) Document Resolution (do not change).
-     * 1pt = 1/72 of 1in.
+     * DPI (Dot Per Inch) PDF Document Resolution (do not change).
+     * 1pt = 1/72 inch.
+     *
+     * @var float
      */
-    protected float $dpi = 72.0;
+    protected const DPI_PDF = 72.0;
+
+    /**
+     * DPI (Dot Per Inch) Image/CSS Resolution (do not change).
+     * 1pt = 1/96 inch.
+     *
+     * @var float
+     */
+    protected const DPI_IMG = 96.0;
+
+    /**
+     * DPI (Dot Per Inch) ratio between internal PDF points and pixels.
+     *
+     * @var float
+     */
+    protected const DPI_PIXEL_RATIO = self::DPI_PDF / self::DPI_IMG;
 
     /**
      * Unit of measure conversion ratio.
@@ -332,14 +369,17 @@ abstract class Base
     protected float $kunit = 1.0;
 
     /**
-     * Ratio between an internal point and pixel size.
-     */
-    protected float $pointtopixelratio = 1.0;
-
-    /**
      * Version of the PDF/A mode or 0 otherwise.
      */
     protected int $pdfa = 0;
+
+    /**
+     * PDF/A conformance level:
+     * - 'A' (Accessible): Full compliance including tagged PDF and Unicode mapping.
+     * - 'B' (Basic): Visual appearance preservation.
+     * - 'U' (Unicode): Basic + Unicode character mapping (PDF/A-2 and PDF/A-3 only).
+     */
+    protected string $pdfaConformance = 'B';
 
     /**
      * Enable stream compression.
@@ -562,10 +602,10 @@ abstract class Base
      * @var TStackBBox
      */
     protected array $bbox = [[
-        'x' => 0,
-        'y' => 0,
-        'w' => 0,
-        'h' => 0,
+        'x' => 0.0,
+        'y' => 0.0,
+        'w' => 0.0,
+        'h' => 0.0,
     ]];
 
     /**
@@ -600,23 +640,25 @@ abstract class Base
     public const BORDERPOS_INTERNAL = 0.5; // 1/2
 
     /**
+     * Default values for cell boundaries.
+     *
+     * @const TCellBound
+     */
+    public const ZEROCELLBOUND = [
+        'T' => 0.0,
+        'R' => 0.0,
+        'B' => 0.0,
+        'L' => 0.0,
+    ];
+
+    /**
      * Default values for cell.
      *
      * @const TCellDef
      */
     public const ZEROCELL = [
-        'margin' => [
-            'T' => 0,
-            'R' => 0,
-            'B' => 0,
-            'L' => 0,
-        ],
-        'padding' => [
-            'T' => 0,
-            'R' => 0,
-            'B' => 0,
-            'L' => 0,
-        ],
+        'margin' => self::ZEROCELLBOUND,
+        'padding' => self::ZEROCELLBOUND,
         'borderpos' => self::BORDERPOS_DEFAULT,
     ];
 
@@ -656,7 +698,9 @@ abstract class Base
      */
     public function toYPoints(float $usr, float $pageh = -1): float
     {
-        $pageh = $pageh >= 0 ? $pageh : $this->page->getPage()['pheight'];
+        if ($pageh < 0) {
+            return ($this->page->getPage()['pheight'] - $this->toPoints($usr));
+        }
         return ($pageh - $this->toPoints($usr));
     }
 
@@ -669,7 +713,9 @@ abstract class Base
      */
     public function toYUnit(float $pnt, float $pageh = -1): float
     {
-        $pageh = $pageh >= 0 ? $pageh : $this->page->getPage()['pheight'];
+        if ($pageh < 0) {
+             return $this->toUnit($this->page->getPage()['pheight'] - $pnt);
+        }
         return $this->toUnit($pageh - $pnt);
     }
 
@@ -683,18 +729,6 @@ abstract class Base
     public function enableDefaultPageContent(bool $enable = true): void
     {
         $this->defPageContentEnabled = $enable;
-    }
-
-    /**
-     * Set the pixel/point ratio used to convert pixel values to points.
-     *
-     * @param float $val
-     *
-     * @return void
-     */
-    public function setPointToPixelRatio(float $val): void
-    {
-        $this->pointtopixelratio = $val;
     }
 
     /**
@@ -713,16 +747,16 @@ abstract class Base
         string $defunit = 'px',
     ): float {
         $unit = 'px';
-        if (in_array($defunit, self::VALIDUNITS)) {
+        if (\in_array($defunit, self::VALIDUNITS)) {
             $unit = $defunit;
         }
 
         $value = 0.0;
-        if (is_numeric($val)) {
-            $value = floatval($val);
-        } elseif (preg_match('/([0-9\.\-\+]+)([a-z%]{0,4})/', $val, $match)) {
-            $value = floatval($match[1]);
-            if (in_array($match[2], self::VALIDUNITS)) {
+        if (\is_numeric($val)) {
+            $value = \floatval($val);
+        } elseif (\preg_match('/([0-9\.\-\+]+)([a-z%]{0,4})/', $val, $match)) {
+            $value = \floatval($match[1]);
+            if (\in_array($match[2], self::VALIDUNITS)) {
                 $unit = $match[2];
             }
         } else {
@@ -735,33 +769,31 @@ abstract class Base
             // Relative to the width of the "0" (zero)
             'ch' => ($value * $ref['font']['zerowidth']),
             // Centimeters.
-            'cm' => (($value * $this->dpi) / 2.54),
+            'cm' => (($value * self::DPI_PDF) / 2.54),
             // Relative to the font-size of the element.
             'em' => ($value * $ref['font']['size']),
             // Relative to the x-height of the current font.
             'ex' => ($value * $ref['font']['xheight']),
             // Inches.
-            'in' => ($value * $this->dpi),
+            'in' => ($value * self::DPI_PDF),
             // Millimeters.
-            'mm' => (($value * $this->dpi) / 25.4),
+            'mm' => (($value * self::DPI_PDF) / 25.4),
             // One pica is 12 points.
             'pc' => ($value * 12),
             // Points.
             'pt' => $value,
             // Pixels.
-            'px' => ($value * $this->pointtopixelratio),
+            'px' => ($value * self::DPI_PIXEL_RATIO),
             // Relative to font-size of the root element.
             'rem' => ($value * $ref['font']['rootsize']),
             // Relative to 1% of the height of the viewport.
             'vh' => (($value * $ref['viewport']['height']) / 100),
             // Relative to 1% of viewport's* larger dimension.
-            'vmax' => (($value * max($ref['viewport']['height'], $ref['viewport']['width'])) / 100),
+            'vmax' => (($value * \max($ref['viewport']['height'], $ref['viewport']['width'])) / 100),
             // Relative to 1% of viewport's smaller dimension.
-            'vmin' => (($value * min($ref['viewport']['height'], $ref['viewport']['width'])) / 100),
+            'vmin' => (($value * \min($ref['viewport']['height'], $ref['viewport']['width'])) / 100),
             // Relative to 1% of the width of the viewport.
             'vw' => (($value * $ref['viewport']['width']) / 100),
-            // Default to pixels.
-            default => ($value * $this->pointtopixelratio),
         };
     }
 
@@ -780,10 +812,41 @@ abstract class Base
         array $ref = self::REFUNITVAL,
         string $defunit = 'pt',
     ): float {
-        if (is_string($val) && isset(self::FONTRELSIZE[$val])) {
+        if (\is_string($val) && isset(self::FONTRELSIZE[$val])) {
             return ($ref['parent'] + self::FONTRELSIZE[$val]);
         }
 
         return $this->getUnitValuePoints($val, $ref, $defunit);
+    }
+
+    /**
+     * Set the default document language direction.
+     *
+     * @param bool $enabled False = LTR = Left-To-Right; True = RTL = Right-To-Left.
+     */
+    public function setRTL(bool $enabled): static
+    {
+        $this->rtl = $enabled;
+        return $this;
+    }
+
+    /**
+     * Force temporary RTL language direction.
+     *
+     * @param string $mode 'L' = 'LTR' = Left-To-Right; 'R' = 'RTL' = Right-To-Left.
+     */
+    protected function setTmpRTL(string $mode): void
+    {
+        $this->tmprtl = (!empty($mode) && (strtoupper($mode[0]) == 'R'));
+    }
+
+    /**
+     * Return the current temporary RTL status.
+     *
+     * @return bool
+     */
+    protected function isRTL(): bool
+    {
+        return ($this->rtl || $this->tmprtl);
     }
 }

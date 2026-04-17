@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfPage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-page
  *
  * This file is part of tc-lib-pdf-page software library.
@@ -26,8 +26,8 @@ use Com\Tecnick\Pdf\Page\Exception as PageException;
  * @category  Library
  * @package   PdfPage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-page
  *
  * @phpstan-type PageBci array{
@@ -266,7 +266,7 @@ abstract class Box extends \Com\Tecnick\Pdf\Page\Mode
             $dims = [];
         }
 
-        if (! in_array($type, self::BOX)) {
+        if (! \in_array($type, self::BOX)) {
             throw new PageException('unknown page box type: ' . $type);
         }
 
@@ -328,7 +328,7 @@ abstract class Box extends \Com\Tecnick\Pdf\Page\Mode
                 // @codeCoverageIgnoreEnd
             }
 
-            $out .= '/' . $box . ' [' . sprintf(
+            $out .= '/' . $box . ' [' . \sprintf(
                 '%F %F %F %F',
                 $dims[$box]['llx'],
                 $dims[$box]['lly'],
@@ -363,11 +363,11 @@ abstract class Box extends \Com\Tecnick\Pdf\Page\Mode
             }
 
             if (! empty($dims[$box]['bci']['width'])) {
-                $out .= '/W ' . sprintf('%F', ($dims[$box]['bci']['width'] * $this->kunit)) . "\n";
+                $out .= '/W ' . \sprintf('%F', ($dims[$box]['bci']['width'] * $this->kunit)) . "\n";
             }
 
             if (! empty($dims[$box]['bci']['style'])) {
-                $mode = strtoupper($dims[$box]['bci']['style'][0]);
+                $mode = \strtoupper($dims[$box]['bci']['style'][0]);
                 if ($mode !== 'D') {
                     $mode = 'S';
                 }
@@ -378,7 +378,7 @@ abstract class Box extends \Com\Tecnick\Pdf\Page\Mode
             if (! empty($dims[$box]['bci']['dash'])) {
                 $out .= '/D [';
                 foreach ($dims[$box]['bci']['dash'] as $dash) {
-                    $out .= sprintf(' %F', ((float) $dash * $this->kunit));
+                    $out .= \sprintf(' %F', ((float) $dash * $this->kunit));
                 }
 
                 $out .= ' ]' . "\n";

@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -17,6 +17,7 @@
 namespace Com\Tecnick\Pdf\Font;
 
 use Com\Tecnick\Pdf\Encrypt\Encrypt;
+use Com\Tecnick\Pdf\Encrypt\Exception as EncException;
 use Com\Tecnick\Pdf\Font\Exception as FontException;
 use Com\Tecnick\Unicode\Data\Identity;
 
@@ -27,8 +28,8 @@ use Com\Tecnick\Unicode\Data\Identity;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @phpstan-import-type TFontDataCidInfo from Load
@@ -63,7 +64,9 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
      *        'subsetchars': array<int, bool>,
      *    } $font Font to process
      *
-     * return string
+     * @return string
+     *
+     * @throws EncException
      */
     protected function getCid0(array $font): string
     {
@@ -151,7 +154,7 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
             } // else unknown character
         }
 
-        $font['cw'] = array_merge($font['cw'], $chw);
+        $font['cw'] = \array_merge($font['cw'], $chw);
     }
 
     /**
@@ -175,7 +178,10 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
      *        'subsetchars': array<int, bool>,
      *    } $font Font to process
      *
-     * return string
+     * @return string
+     *
+     * @throws EncException
+     * @throws FontException
      *
      * @SuppressWarnings("PHPMD.ExcessiveMethodLength")
      * @SuppressWarnings("PHPMD.CyclomaticComplexity")
@@ -186,8 +192,8 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
         $fontname = '';
         if ($font['subset']) {
             // change name for font subsetting
-            $subtag = sprintf('%06u', $font['i']);
-            $subtag = strtr($subtag, '0123456789', 'ABCDEFGHIJ');
+            $subtag = \sprintf('%06u', $font['i']);
+            $subtag = \strtr($subtag, '0123456789', 'ABCDEFGHIJ');
             $fontname .= $subtag . '+';
         }
 
@@ -214,14 +220,14 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
         $cidhmap = Identity::CIDHMAP;
         if ($font['compress']) {
             $out .= ' /Filter /FlateDecode';
-            $cidhmap = gzcompress($cidhmap);
+            $cidhmap = \gzcompress($cidhmap);
             if ($cidhmap === false) {
                 throw new \RuntimeException('Unable to compress CIDHMAP');
             }
         }
 
         $stream = $this->enc->encryptString($cidhmap, $this->pon); // ToUnicode map for Identity-H
-        $out .= ' /Length ' . strlen($stream)
+        $out .= ' /Length ' . \strlen($stream)
             . ' >>'
             . ' stream' . "\n"
             . $stream . "\n"
@@ -270,18 +276,18 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
             $out .= (++$this->pon) . ' 0 obj' . "\n";
             // Embed CIDToGIDMap
             // A specification of the mapping from CIDs to glyph indices
-            // search and get CTG font file to embedd
-            $ctgfile = strtolower($font['ctg']);
-            // search and get ctg font file to embedd
+            // search and get CTG font file to embed
+            $ctgfile = \strtolower($font['ctg']);
+            // search and get ctg font file to embed
             $fontfile = $this->getFontFullPath($font['dir'], $ctgfile);
-            $content = file_get_contents($fontfile);
+            $content = \file_get_contents($fontfile);
             if ($content === false) {
                 throw new FontException('Unable to read font file: ' . $fontfile);
             }
 
             $stream = $this->enc->encryptString($content, $this->pon);
-            $out .= '<< /Length ' . strlen($stream) . '';
-            if (str_ends_with($fontfile, '.z')) { // check file extension
+            $out .= '<< /Length ' . \strlen($stream) . '';
+            if (\str_ends_with($fontfile, '.z')) { // check file extension
                 // Decompresses data encoded using the public-domain
                 // zlib/deflate compression method, reproducing the
                 // original text or binary data
@@ -402,8 +408,8 @@ abstract class OutFont extends \Com\Tecnick\Pdf\Font\OutUtil
      */
     protected function getKeyValOut(string $key, mixed $val): string
     {
-        if (is_float($val)) {
-            $val = sprintf('%F', $val);
+        if (\is_float($val)) {
+            $val = \sprintf('%F', $val);
         }
 
         return ' /' . $key . ' ' . $val . '';

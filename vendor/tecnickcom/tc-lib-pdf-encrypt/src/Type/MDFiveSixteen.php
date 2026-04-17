@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfEncrypt
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-encrypt
  *
  * This file is part of tc-lib-pdf-encrypt software library.
@@ -25,8 +25,8 @@ namespace Com\Tecnick\Pdf\Encrypt\Type;
  * @category  Library
  * @package   PdfEncrypt
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-encrypt
  */
 class MDFiveSixteen
@@ -44,6 +44,6 @@ class MDFiveSixteen
         string $key = 'H*',
     ): string {
         $key = 'H*';
-        return pack($key, md5($data));
+        return \pack($key, \md5($data));
     }
 }

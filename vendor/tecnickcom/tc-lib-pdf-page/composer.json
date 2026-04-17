@@ -21,14 +21,20 @@
     "php": ">=8.1",
     "ext-date": "*",
     "ext-zlib": "*",
-    "tecnickcom/tc-lib-color": "^2.2",
+    "tecnickcom/tc-lib-color": "^2.3",
     "tecnickcom/tc-lib-pdf-encrypt": "^2.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   },
   "require-dev": {
     "pdepend/pdepend": "2.16.2",
     "phpmd/phpmd": "2.15.0",
-    "phpunit/phpunit": "12.2.0 || 11.5.7 || 10.5.40",
-    "squizlabs/php_codesniffer": "3.13.0"
+    "phpunit/phpunit": "13.1.1 || 12.5.17 || 11.5.55 || 10.5.63",
+    "squizlabs/php_codesniffer": "4.0.1",
+    "phpcompatibility/php-compatibility": "^10.0.0@dev"
   },
   "autoload": {
     "psr-4": {

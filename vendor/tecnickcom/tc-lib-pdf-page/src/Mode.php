@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfPage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-page
  *
  * This file is part of tc-lib-pdf-page software library.
@@ -23,8 +23,8 @@ namespace Com\Tecnick\Pdf\Page;
  * @category  Library
  * @package   PdfPage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-page
  */
 abstract class Mode extends \Com\Tecnick\Pdf\Page\Format
@@ -71,7 +71,7 @@ abstract class Mode extends \Com\Tecnick\Pdf\Page\Format
      */
     public function getLayout(string $name = ''): string
     {
-        $name = strtolower($name);
+        $name = \strtolower($name);
         return self::LAYOUT[$name] ?? 'SinglePage';
     }
 
@@ -84,7 +84,7 @@ abstract class Mode extends \Com\Tecnick\Pdf\Page\Format
      */
     public function getDisplay(string $mode = ''): string
     {
-        $mode = strtolower($mode);
+        $mode = \strtolower($mode);
         return self::DISPLAY[$mode] ?? 'UseNone';
     }
 }

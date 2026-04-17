@@ -7,8 +7,8 @@
  * @category  Library
  * @package   File
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-file
  *
  * This file is part of tc-lib-file software library.
@@ -25,8 +25,8 @@ namespace Com\Tecnick\File;
  * @category  Library
  * @package   File
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-file
  */
 class Dir
@@ -42,19 +42,19 @@ class Dir
     public function findParentDir(string $name, string $dir = __DIR__): string
     {
         while ($dir !== '') {
-            if ($dir === dirname($dir)) {
+            if ($dir === \dirname($dir)) {
                 $dir = '';
             }
 
-            if (@is_writable($dir . DIRECTORY_SEPARATOR . $name)) {
+            if (@\is_writable($dir . DIRECTORY_SEPARATOR . $name)) {
                 $dir = $dir . DIRECTORY_SEPARATOR . $name;
                 break;
             }
 
-            $dir = dirname($dir);
+            $dir = \dirname($dir);
         }
 
-        if (substr($dir, -1) !== DIRECTORY_SEPARATOR) {
+        if (\substr($dir, -1) !== DIRECTORY_SEPARATOR) {
             $dir .= DIRECTORY_SEPARATOR;
         }
 

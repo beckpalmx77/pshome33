@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * This file is part of tc-lib-pdf software library.
@@ -29,8 +29,8 @@ use Com\Tecnick\Pdf\Exception as PdfException;
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
@@ -38,12 +38,9 @@ use Com\Tecnick\Pdf\Exception as PdfException;
  * @phpstan-import-type PageInputData from \Com\Tecnick\Pdf\Page\Box
  * @phpstan-import-type TFontMetric from \Com\Tecnick\Pdf\Font\Stack
  *
- * @phpstan-import-type TAnnotOpts from Output
  * @phpstan-import-type TSignature from Output
  * @phpstan-import-type TSignTimeStamp from Output
- * @phpstan-import-type TGTransparency from Output
  * @phpstan-import-type TUserRights from Output
- * @phpstan-import-type TXOBject from Output
  *
  * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
@@ -68,10 +65,10 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         ?ObjEncrypt $objEncrypt = null
     ) {
         $this->setDecimalSeparator();
-        $this->doctime = time();
+        $this->doctime = \time();
         $this->docmodtime = $this->doctime;
         $seed = new \Com\Tecnick\Pdf\Encrypt\Type\Seed();
-        $this->fileid = md5($seed->encrypt('TCPDF'));
+        $this->fileid = \md5($seed->encrypt('TCPDF'));
         $this->setPDFFilename($this->fileid . '.pdf');
         $this->unit = $unit;
         $this->setUnicodeMode($isunicode);
@@ -83,17 +80,36 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
     }
 
     /**
-     * Set the pdf mode.
+     * Set the PDF mode.
      *
-     * @param string $mode Input PDFA mode.
+     * Supported modes:
+     * - 'pdfa1', 'pdfa1a', 'pdfa1b': PDF/A-1 with optional conformance level
+     * - 'pdfa2', 'pdfa2a', 'pdfa2b', 'pdfa2u': PDF/A-2 with optional conformance level
+     * - 'pdfa3', 'pdfa3a', 'pdfa3b', 'pdfa3u': PDF/A-3 with optional conformance level
+     * - 'pdfx': PDF/X mode
+     *
+     * Conformance levels:
+     * - 'a': Accessible (tagged PDF + Unicode)
+     * - 'b': Basic (visual appearance only)
+     * - 'u': Unicode (basic + Unicode mapping, PDF/A-2 and PDF/A-3 only)
+     *
+     * @param string $mode Input PDF/A mode.
      */
     protected function setPDFMode(string $mode): void
     {
         $this->pdfx = ($mode == 'pdfx');
         $this->pdfa = 0;
-        $matches = ['', '0'];
-        if (preg_match('/^pdfa([1-3])$/', $mode, $matches) === 1) {
+        $this->pdfaConformance = 'B';
+        $matches = [];
+        if (\preg_match('/^pdfa([1-3])([abu])?$/i', $mode, $matches) === 1) {
             $this->pdfa = (int) $matches[1];
+            if (!empty($matches[2])) {
+                $conf = \strtoupper($matches[2]);
+                if (($conf === 'U') && ($this->pdfa === 1)) {
+                    $conf = 'B';
+                }
+                $this->pdfaConformance = $conf;
+            }
         }
     }
 
@@ -120,8 +136,9 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         }
 
         // check for decimal separator
-        if (sprintf('%.1F', 1.0) != '1.0') {
-            setlocale(LC_NUMERIC, 'C');
+        // @phpstan-ignore notEqual.alwaysFalse
+        if (\sprintf('%.1F', 1.0) != '1.0') {
+            \setlocale(LC_NUMERIC, 'C');
         }
     }
 
@@ -134,7 +151,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
     {
         $this->isunicode = $isunicode;
         // check if PCRE Unicode support is enabled
-        if ($this->isunicode && (@preg_match('/\pL/u', 'a') == 1)) {
+        if ($this->isunicode && (@\preg_match('/\pL/u', 'a') == 1)) {
             $this->setSpaceRegexp('/(?!\xa0)[\s\p{Z}]/u');
             return;
         }
@@ -151,10 +168,10 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
      */
     public function setPDFFilename(string $name): void
     {
-        $bname = basename($name);
-        if (preg_match('/^[\w,\s-]+(\.pdf)?$/i', $bname) === 1) {
+        $bname = \basename($name);
+        if (\preg_match('/^[\w,\s-]+(\.pdf)?$/i', $bname) === 1) {
             $this->pdffilename = $bname;
-            $this->encpdffilename = rawurlencode($bname);
+            $this->encpdffilename = \rawurlencode($bname);
         }
     }
 
@@ -177,7 +194,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
      */
     public function setSpaceRegexp(string $regexp = '/[^\S\xa0]/'): void
     {
-        $parts = explode('/', $regexp);
+        $parts = \explode('/', $regexp);
         $this->spaceregexp = [
             'r' => $regexp,
             'p' => (empty($parts[1]) ? '[\s]' : $parts[1]),
@@ -221,7 +238,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         string $layout = 'SinglePage',
         string $mode = 'UseNone'
     ): static {
-        $this->display['zoom'] = (is_numeric($zoom) || in_array($zoom, $this::VALIDZOOM)) ? $zoom : 'default';
+        $this->display['zoom'] = (\is_numeric($zoom) || \in_array($zoom, $this::VALIDZOOM)) ? $zoom : 'default';
         $this->display['layout'] = $this->page->getLayout($layout);
         $this->display['page'] = $this->page->getDisplay($mode);
         return $this;
@@ -273,268 +290,6 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         return $out . $this->graph->getStopTransform();
     }
 
-    /**
-     * Add an embedded file.
-     * If a file with the same name already exists, it will be ignored.
-     *
-     * @param string $file File name (absolute or relative path).
-     *
-     * @throws PdfException in case of error.
-     */
-    public function addEmbeddedFile(string $file): void
-    {
-        if (($this->pdfa == 1) || ($this->pdfa == 2)) {
-            throw new PdfException('Embedded files are not allowed in PDF/A mode version 1 and 2');
-        }
-
-        if (empty($file)) {
-            throw new PdfException('Empty file name');
-        }
-        $filekey = basename((string) $file);
-        if (
-            ! empty($filekey)
-            && empty($this->embeddedfiles[$filekey])
-        ) {
-            $this->embeddedfiles[$filekey] = [
-                'a' => 0,
-                'f' => ++$this->pon,
-                'n' => ++$this->pon,
-                'file' => (string) $file,
-                'content' => '',
-            ];
-        }
-    }
-
-    /**
-     * Add string content as an embedded file.
-     * If a file with the same name already exists, it will be ignored.
-     *
-     * @param string $file File name to be used a key for the embedded file.
-     * @param string $content  Content of the embedded file.
-     *
-     * @throws PdfException in case of error.
-     */
-    public function addContentAsEmbeddedFile(string $file, string $content): void
-    {
-        if (($this->pdfa == 1) || ($this->pdfa == 2)) {
-            throw new PdfException('Embedded files are not allowed in PDF/A mode version 1 and 2');
-        }
-        if (empty($file) || empty($content)) {
-            throw new PdfException('Empty file name or content');
-        }
-        if (empty($this->embeddedfiles[$file])) {
-            $this->embeddedfiles[$file] = [
-                'a' => 0,
-                'f' => ++$this->pon,
-                'n' => ++$this->pon,
-                'file' => $file,
-                'content' => $content,
-            ];
-        }
-    }
-
-    // ===| ANNOTATION |====================================================
-
-
-    /**
-     * Add an annotation and returns the object id.
-     *
-     * @param float      $posx   Abscissa of upper-left corner.
-     * @param float      $posy   Ordinate of upper-left corner.
-     * @param float      $width  Width.
-     * @param float      $height Height.
-     * @param string     $txt    Annotation text or alternate content.
-     * @param TAnnotOpts $opt    Array of options (Annotation Types) - all lowercase.
-     *
-     * @return int Object ID.
-     */
-    public function setAnnotation(
-        float $posx,
-        float $posy,
-        float $width,
-        float $height,
-        string $txt,
-        array $opt = [
-            'subtype' => 'text',
-        ]
-    ): int {
-        if (!empty($this->xobjtid)) {
-            // Store annotationparameters for later use on a XObject template.
-            $this->xobjects[$this->xobjtid]['annotations'][] = [
-                'n' => 0,
-                'x' => $posx,
-                'y' => $posy,
-                'w' => $width,
-                'h' => $height,
-                'txt' => $txt,
-                'opt' => $opt,
-            ];
-
-            return 0;
-        }
-
-        $oid = ++$this->pon;
-        $this->annotation[$oid] = [
-            'n' => $oid,
-            'x' => $posx,
-            'y' => $posy,
-            'w' => $width,
-            'h' => $height,
-            'txt' => $txt,
-            'opt' => $opt,
-        ];
-        switch (strtolower($opt['subtype'])) {
-            case 'fileattachment':
-            case 'sound':
-                $this->addEmbeddedFile($opt['fs']);
-        }
-
-        // Add widgets annotation's icons
-        if (isset($opt['mk']['i']) && is_string($opt['mk']['i'])) {
-            $this->image->add($opt['mk']['i']);
-        }
-
-        if (isset($opt['mk']['ri']) && is_string($opt['mk']['ri'])) {
-            $this->image->add($opt['mk']['ri']);
-        }
-
-        if (isset($opt['mk']['ix']) && is_string($opt['mk']['ix'])) {
-            $this->image->add($opt['mk']['ix']);
-        }
-
-        return $oid;
-    }
-
-    /**
-     * Creates a link in the specified area.
-     * A link annotation represents either a hypertext link to a destination elsewhere in the document.
-     *
-     * @param float      $posx   Abscissa of upper-left corner.
-     * @param float      $posy   Ordinate of upper-left corner.
-     * @param float      $width  Width.
-     * @param float      $height Height.
-     * @param string     $link   URL to open when the link is clicked or an identifier returned by addInternalLink().
-     *                           A single character prefix may be used to specify the link action:
-     *                           - '#' = internal destination
-     *                           - '%' = embedded PDF file
-     *                           - '*' = embedded generic file
-     *
-     * @return int Object ID (Add to a page via: $pdf->page->addAnnotRef($aoid);).
-     */
-    public function setLink(
-        float $posx,
-        float $posy,
-        float $width,
-        float $height,
-        string $link,
-    ): int {
-        return $this->setAnnotation(
-            $posx,
-            $posy,
-            $width,
-            $height,
-            $link,
-            ['subtype' => 'Link']
-        );
-    }
-
-    /**
-     * Defines the page and vertical position an internal link points to.
-     *
-     * @param int $page Page number.
-     * @param float $posy Vertical position.
-     *
-     * @return string Internal link identifier to be used with setLink().
-     *
-     */
-    public function addInternalLink(int $page = -1, float $posy = 0): string
-    {
-        $lnkid = '@' . (count($this->links) + 1);
-        $this->links[$lnkid] = [
-            'p' => ($page < 0) ? $this->page->getPageID() : $page,
-            'y' => $posy,
-        ];
-        return $lnkid;
-    }
-
-    /**
-     * Add a named destination.
-     *
-     * @param string $name Named destination (must be unique).
-     * @param int    $page Page number.
-     * @param float  $posx Abscissa of upper-left corner.
-     * @param float  $posy Ordinate of upper-left corner.
-     *
-     * @return string Destination name.
-     */
-    public function setNamedDestination(
-        string $name,
-        int $page = -1,
-        float $posx = 0,
-        float $posy = 0,
-    ): string {
-        $ename = $this->encrypt->encodeNameObject($name);
-        $this->dests[$ename] = [
-            'p' => ($page < 0) ? $this->page->getPageID() : $page,
-            'x' => $posx,
-            'y' => $posy,
-        ];
-        return '#' . $ename;
-    }
-
-    /**
-     * Add a bookmark entry.
-     *
-     * @param string $name   Bookmark description that will be printed in the TOC.
-     * @param string $link   (Optional) URL to open when the link is clicked
-     *                       or an identifier returned by addInternalLink().
-     *                       A single character prefix may be used to specify the link action:
-     *                       - '#' = internal destination
-     *                       - '%' = embedded PDF file
-     *                       - '*' = embedded generic file
-     * @param int    $level  Bookmark level (minimum 0).
-     *
-     * @param int    $page   Page number.
-     * @param float  $posx   Abscissa of upper-left corner.
-     * @param float  $posy   Ordinate of upper-left corner.
-     * @param string $fstyle Font style.
-     *                       Possible values are (case insensitive):
-     *                       - regular (default)
-     *                       - B: bold
-     *                       - I: italic
-     *                       - U: underline
-     *                       - D: strikeout (linethrough)
-     *                       - O: overline
-     * @param string $color Color name.
-     */
-    public function setBookmark(
-        string $name,
-        string $link = '',
-        int $level = 0,
-        int $page = -1,
-        float $posx = 0,
-        float $posy = 0,
-        string $fstyle = '',
-        string $color = '',
-    ): void {
-        $maxlevel = ((count($this->outlines) > 0) ? (end($this->outlines)['l'] + 1) : 0);
-        $this->outlines[] = [
-            't' => $name,
-            'u' => $link,
-            'l' => (($level < 0) ? 0 : ($level > $maxlevel ? $maxlevel : $level)),
-            'p' => (($page < 0) ? $this->page->getPageID() : $page),
-            'x' => $posx,
-            'y' => $posy,
-            's' => strtoupper($fstyle),
-            'c' => $color,
-            'parent' => 0,
-            'first' => -1,
-            'last' => -1,
-            'next' => -1,
-            'prev' => -1,
-        ];
-    }
-
     // ===| SIGNATURE |=====================================================
 
     /**
@@ -566,7 +321,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
      */
     public function setUserRights(array $rights): void
     {
-        $this->userrights = array_merge($this->userrights, $rights);
+        $this->userrights = \array_merge($this->userrights, $rights);
     }
 
     /**
@@ -614,7 +369,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
      */
     public function setSignature(array $data): void
     {
-        $this->signature = array_merge($this->signature, $data);
+        $this->signature = \array_merge($this->signature, $data);
 
         if (empty($this->signature['signcert'])) {
             throw new PdfException('Invalid signing certificate (signcert)');
@@ -658,7 +413,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
      */
     public function setSignTimeStamp(array $data): void
     {
-        $this->sigtimestamp = array_merge($this->sigtimestamp, $data);
+        $this->sigtimestamp = \array_merge($this->sigtimestamp, $data);
 
         if ($this->sigtimestamp['enabled'] && empty($this->sigtimestamp['host'])) {
             throw new PdfException('Invalid TSA host');
@@ -699,7 +454,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         $pntw = $this->toPoints($width);
         $pnth = $this->toPoints($heigth);
 
-        $sigapp['rect'] = sprintf('%F %F %F %F', $pntx, $pnty, ($pntx + $pntw), ($pnty + $pnth));
+        $sigapp['rect'] = \sprintf('%F %F %F %F', $pntx, $pnty, ($pntx + $pntw), ($pnty + $pnth));
 
         return $sigapp;
     }
@@ -780,261 +535,6 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         }
     }
 
-    // ===| XOBJECT |=======================================================
-
-    /**
-     * Create a new XObject template and return the object id.
-     *
-     * An XObject Template is a PDF block that is a self-contained description
-     * of any sequence of graphics objects (including path objects, text objects,
-     * and sampled images). An XObject Template may be painted multiple times,
-     * either on several pages or at several locations on the same page and
-     * produces the same results each time, subject only to the graphics state
-     * at the time it is invoked.
-     *
-     * @param float $width  Width of the XObject.
-     * @param float $heigth Height of the XObject.
-     * @param ?TGTransparency $transpgroup Optional group attributes.
-     *
-     * @return string XObject template object ID.
-     */
-    public function newXObjectTemplate(
-        float $width = 0,
-        float $heigth = 0,
-        ?array $transpgroup = null,
-    ): string {
-        $oid = ++$this->pon;
-        $tid = 'XT' . $oid;
-        $this->xobjtid = $tid;
-
-        $region = $this->page->getRegion();
-
-        if (empty($width) || $width < 0) {
-            $width = $region['RW'];
-        }
-
-        if (empty($heigth) || $heigth < 0) {
-            $heigth = $region['RH'];
-        }
-
-        $this->xobjects[$tid] = [
-            'spot_colors' => [],
-            'extgstate' => [],
-            'gradient' => [],
-            'font' => [],
-            'image' => [],
-            'xobject' => [],
-            'annotations' => [],
-            'id' => $tid,
-            'n' => $oid,
-            'x' => 0,
-            'y' => 0,
-            'w' => $width,
-            'h' => $heigth,
-            'outdata' => '',
-            'transparency' => $transpgroup,
-        ];
-
-        return $tid;
-    }
-
-    /**
-     * Exit from the XObject template mode.
-     *
-     * See: newXObjectTemplate.
-     */
-    public function exitXObjectTemplate(): void
-    {
-        $this->xobjtid = '';
-    }
-
-    /**
-     * Returns the PDF code to render the specified XObject template.
-     *
-     * See: newXObjectTemplate.
-     *
-     * @param string      $tid         The XObject Template object as returned by the newXObjectTemplate method.
-     * @param float       $posx        Abscissa of upper-left corner.
-     * @param float       $posy        Ordinate of upper-left corner.
-     * @param float       $width       Width.
-     * @param float       $height      Height.
-     * @param string      $valign      Vertical alignment inside the specified box: T=top; C=center; B=bottom.
-     * @param string      $halign      Horizontal alignment inside the specified box: L=left; C=center; R=right.
-     *
-     * @return string The PDF code to render the specified XObject template.
-     */
-    public function getXObjectTemplate(
-        string $tid,
-        float $posx = 0,
-        float $posy = 0,
-        float $width = 0,
-        float $height = 0,
-        string $valign = 'T',
-        string $halign = 'L',
-    ): string {
-        $this->xobjtid = '';
-        $region = $this->page->getRegion();
-
-        if (empty($this->xobjects[$tid])) {
-            return '';
-        }
-
-        $xobj = $this->xobjects[$tid];
-
-        if (empty($width) || $width < 0) {
-            $width = min($xobj['w'], $region['RW']);
-        }
-
-        if (empty($height) || $height < 0) {
-            $height = min($xobj['h'], $region['RH']);
-        }
-
-        $tplx = $this->cellHPos($posx, $width, $halign, $this->defcell);
-        $tply = $this->cellVPos($posy, $height, $valign, $this->defcell);
-
-        $this->bbox[] = [
-            'x' => $tplx,
-            'y' => $tply,
-            'w' => $width,
-            'h' => $height,
-        ];
-
-        $ctm = [
-            0 => ($width / $xobj['w']),
-            1 => 0,
-            2 => 0,
-            3 => ($height / $xobj['h']),
-            4 => $this->toPoints($tplx),
-            5 => $this->toYPoints($tply + $height),
-        ];
-
-        $out = $this->graph->getStartTransform();
-        $out .= $this->graph->getTransformation($ctm);
-        $out .= '/' . $xobj['id'] . ' Do' . "\n";
-        $out .= $this->graph->getStopTransform();
-
-        if (!empty($xobj['annotations'])) {
-            foreach ($xobj['annotations'] as $annot) {
-                // transform original coordinates
-                $clt = $this->graph->getCtmProduct(
-                    $ctm,
-                    array(
-                        1,
-                        0,
-                        0,
-                        1,
-                        $this->toPoints($annot['x']),
-                        $this->toPoints(-$annot['y']),
-                    ),
-                );
-                $anx = $this->toUnit($clt[4]);
-                $any = $this->toYUnit($clt[5] + $this->toUnit($height));
-
-                $crb = $this->graph->getCtmProduct(
-                    $ctm,
-                    array(
-                        1,
-                        0,
-                        0,
-                        1,
-                        $this->toPoints(($annot['x'] + $annot['w'])),
-                        $this->toPoints((-$annot['y'] - $annot['h'])),
-                    ),
-                );
-                $anw = $this->toUnit($crb[4]) - $anx;
-                $anh = $this->toYUnit($crb[5] + $this->toUnit($height)) - $any;
-
-                $out .= $this->setAnnotation(
-                    $anx,
-                    $any,
-                    $anw,
-                    $anh,
-                    $annot['txt'],
-                    $annot['opt']
-                );
-            }
-        }
-
-        return $out;
-    }
-
-    /**
-     * Add the specified raw PDF content to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param string  $data  The raw PDF content data to add.
-     */
-    public function addXObjectContent(string $tid, string $data): void
-    {
-        $this->xobjects[$tid]['outdata'] .= $data;
-    }
-
-    /**
-     * Add the specified XObject ID to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param string  $key  The XObject key to add.
-     */
-    public function addXObjectXObjectID(string $tid, string $key): void
-    {
-        $this->xobjects[$tid]['xobject'][] = $key;
-    }
-
-    /**
-     * Add the specified Image ID to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param int     $key  TheImage key to add.
-     */
-    public function addXObjectImageID(string $tid, int $key): void
-    {
-        $this->xobjects[$tid]['image'][] = $key;
-    }
-
-    /**
-     * Add the specified Font ID to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param string  $key  The Font key to add.
-     */
-    public function addXObjectFontID(string $tid, string $key): void
-    {
-        $this->xobjects[$tid]['font'][] = $key;
-    }
-
-    /**
-     * Add the specified Gradient ID to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param int     $key  The Gradient key to add.
-     */
-    public function addXObjectGradientID(string $tid, int $key): void
-    {
-        $this->xobjects[$tid]['gradient'][] = $key;
-    }
-
-    /**
-     * Add the specified ExtGState ID to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param int     $key  The ExtGState key to add.
-     */
-    public function addXObjectExtGStateID(string $tid, int $key): void
-    {
-        $this->xobjects[$tid]['extgstate'][] = $key;
-    }
-
-    /**
-     * Add the specified SpotColor ID to the XObject template.
-     *
-     * @param string  $tid  The XObject Template object as returned by the newXObjectTemplate method.
-     * @param string  $key  The SpotColor key to add.
-     */
-    public function addXObjectSpotColorID(string $tid, string $key): void
-    {
-        $this->xobjects[$tid]['spot_colors'][] = $key;
-    }
-
     // ===| LAYERS |========================================================
 
     /**
@@ -1055,8 +555,8 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         bool $view = true,
         bool $lock = true,
     ): string {
-        $layer = sprintf('LYR%03d', (count($this->pdflayer) + 1));
-        $name = preg_replace('/[^a-zA-Z0-9_\-]/', '', $name);
+        $layer = \sprintf('LYR%03d', (\count($this->pdflayer) + 1));
+        $name = \preg_replace('/[^a-zA-Z0-9_\-]/', '', $name);
         if (empty($name)) {
             $name = $layer;
         }
@@ -1072,7 +572,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
         $this->pdflayer[] = array(
             'layer' => $layer,
             'name' => $name,
-            'intent' => implode(' ', $intarr),
+            'intent' => \implode(' ', $intarr),
             'print' => $print,
             'view' => $view,
             'lock' => $lock,
@@ -1163,7 +663,7 @@ class Tcpdf extends \Com\Tecnick\Pdf\ClassObjects
                 $this->pon,
                 $curfont['idx'],
                 $bmrk['s'] . (($bmrk['l'] == 0) ? 'B' : ''),
-                (int) round($curfont['size'] - $bmrk['l']),
+                (int) \round($curfont['size'] - $bmrk['l']),
                 $curfont['spacing'],
                 $curfont['stretching'],
             );

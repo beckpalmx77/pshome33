@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * This file is part of tc-lib-unicode software library.
@@ -27,8 +27,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  */
 class ConvertTest extends TestCase
@@ -117,11 +117,11 @@ class ConvertTest extends TestCase
     public function testUniArrToLatinArr(): void
     {
         $convert = $this->getTestObject();
-        $uniarr = array_keys(Latin::SUBSTITUTE);
+        $uniarr = \array_keys(Latin::SUBSTITUTE);
         $uniarr[] = 65533;  // 0xFFFD - character to ignore
         $uniarr[] = 123456; // undefined char
         $uniarr[] = 65;     // ASCII char
-        $latarr = array_values(Latin::SUBSTITUTE);
+        $latarr = \array_values(Latin::SUBSTITUTE);
         $latarr[] = 63;
         $latarr[] = 65;
         $res = $convert->uniArrToLatinArr($uniarr);
@@ -181,7 +181,7 @@ class ConvertTest extends TestCase
         return [
             ['', ''],
             ['ABC', '004100420043'],
-            [json_decode('"\u0010\uffff\u00ff\uff00"'), '0010ffff00ffff00'],
+            [\json_decode('"\u0010\uffff\u00ff\uff00"'), '0010ffff00ffff00'],
         ];
     }
 

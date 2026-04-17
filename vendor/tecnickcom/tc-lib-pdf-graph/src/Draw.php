@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * This file is part of tc-lib-pdf-graph software library.
@@ -25,8 +25,8 @@ use Com\Tecnick\Pdf\Graph\Exception as GraphException;
  * @category  Library
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * @phpstan-import-type StyleDataOpt from \Com\Tecnick\Pdf\Graph\Base
@@ -262,7 +262,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         string $mode = 'S',
         array $style = [],
     ): string {
-        $nco = count($points); // number of coordinates
+        $nco = \count($points); // number of coordinates
         $out = $this->getStyleCmd($style)
             . $this->getRawPoint($points[0], $points[1]);
         for ($idx = 2; $idx < $nco; $idx += 2) {
@@ -309,7 +309,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
      */
     public function getPolygon(array $points, string $mode = 'S', array $styles = []): string
     {
-        $nco = count($points); // number of points
+        $nco = \count($points); // number of points
         if ($nco < 6) {
             return ''; // we need at least 3 points
         }
@@ -399,8 +399,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $points = [];
         for ($idx = 0; $idx < $sides; ++$idx) {
             $angrad = $this->degToRad($angle + ($idx * 360 / $sides));
-            $points[] = ($posx + ($radius * sin($angrad)));
-            $points[] = ($posy + ($radius * cos($angrad)));
+            $points[] = ($posx + ($radius * \sin($angrad)));
+            $points[] = ($posy + ($radius * \cos($angrad)));
         }
 
         return $out . $this->getPolygon($points, $mode, $styles);
@@ -450,8 +450,8 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $visited = [];
         for ($idx = 0; $idx < $nvert; ++$idx) {
             $angrad = $this->degToRad($angle + ($idx * 360 / $nvert));
-            $points2[] = $posx + ($radius * sin($angrad));
-            $points2[] = $posy + ($radius * cos($angrad));
+            $points2[] = $posx + ($radius * \sin($angrad));
+            $points2[] = $posy + ($radius * \cos($angrad));
             $visited[] = false;
         }
 
@@ -545,7 +545,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $posxc = ($posx + $width - $hrad);
         $posyc = ($posy + $vrad);
         $out .= $this->getRawLine($posxc, $posy);
-        $arc = (4 / 3 * (sqrt(2) - 1));
+        $arc = (4 / 3 * (\sqrt(2) - 1));
         $harc = ($hrad * $arc);
         $varc = ($vrad * $arc);
 
@@ -648,7 +648,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         array $style = [],
     ): string {
         // getting arrow direction angle; 0 deg angle is when both arms go along X axis; angle grows clockwise.
-        $dir_angle = atan2(($posy0 - $posy1), ($posx0 - $posx1));
+        $dir_angle = \atan2(($posy0 - $posy1), ($posx0 - $posx1));
         if ($dir_angle < 0) {
             $dir_angle += (2 * self::MPI);
         }
@@ -661,19 +661,19 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
             $linewidth = 0;
             $linewidth = $style['lineWidth'] ?? (float) $this->getLastStyleProperty('lineWidth', $linewidth);
 
-            $sx1 = ($posx1 + (($armsize - $linewidth) * cos($dir_angle)));
-            $sy1 = ($posy1 + (($armsize - $linewidth) * sin($dir_angle)));
+            $sx1 = ($posx1 + (($armsize - $linewidth) * \cos($dir_angle)));
+            $sy1 = ($posy1 + (($armsize - $linewidth) * \sin($dir_angle)));
         }
 
         $out = $this->getStyleCmd($style);
         // main arrow line / shaft
         $out .= $this->getLine($posx0, $posy0, $sx1, $sy1);
         // left arrowhead arm tip
-        $hxl = ($posx1 + ($armsize * cos($dir_angle + $armangle)));
-        $hyl = ($posy1 + ($armsize * sin($dir_angle + $armangle)));
+        $hxl = ($posx1 + ($armsize * \cos($dir_angle + $armangle)));
+        $hyl = ($posy1 + ($armsize * \sin($dir_angle + $armangle)));
         // right arrowhead arm tip
-        $hxr = ($posx1 + ($armsize * cos($dir_angle - $armangle)));
-        $hyr = ($posy1 + ($armsize * sin($dir_angle - $armangle)));
+        $hxr = ($posx1 + ($armsize * \cos($dir_angle - $armangle)));
+        $hyr = ($posy1 + ($armsize * \sin($dir_angle - $armangle)));
         $modemap = [
             0 => 'S',
             1 => 's',
@@ -703,7 +703,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         string $color = 'all'
     ): string {
         $style = [
-            'lineWidth' => max((0.5 / $this->kunit), ($rad / 30)),
+            'lineWidth' => \max((0.5 / $this->kunit), ($rad / 30)),
             'lineCap' => 'butt',
             'lineJoin' => 'miter',
             'miterLimit' => (10.0 / $this->kunit),
@@ -715,7 +715,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
 
         $colobj = $this->pdfColor->getColorObject($color);
         if (! $colobj instanceof \Com\Tecnick\Color\Model) {
-            throw new GraphException('Unknow color: ' . $color);
+            throw new GraphException('Unknown color: ' . $color);
         }
 
         $out = $colobj->getPdfColor()
@@ -757,7 +757,7 @@ class Draw extends \Com\Tecnick\Pdf\Graph\Gradient
         $rade = ($rad * 1.3);
         // line style for external circle
         $style = [
-            'lineWidth' => max((0.5 / $this->kunit), ($rad / 30)),
+            'lineWidth' => \max((0.5 / $this->kunit), ($rad / 30)),
             'lineCap' => 'butt',
             'lineJoin' => 'miter',
             'miterLimit' => (10.0 / $this->kunit),

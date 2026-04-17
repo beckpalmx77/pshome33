@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfImage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-image
  *
  * This file is part of tc-lib-pdf-image software library.
@@ -26,8 +26,8 @@ use Com\Tecnick\Pdf\Image\Exception as ImageException;
  * @category  Library
  * @package   PdfImage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-image
  *
  * @phpstan-import-type ImageBaseData from \Com\Tecnick\Pdf\Image\Import
@@ -119,11 +119,11 @@ abstract class Output
         float $pageheight
     ): string {
         if (empty($this->image[$iid])) {
-            throw new ImageException('Unknown image ID: ' . $iid);
+            throw new ImageException('Unknownn image ID: ' . $iid);
         }
 
         $out = 'q';
-        $out .= sprintf(
+        $out .= \sprintf(
             ' %F 0 0 %F %F %F cm',
             ($width * $this->kunit),
             ($height * $this->kunit),
@@ -160,7 +160,13 @@ abstract class Output
                 } else {
                     $out .= $this->getOutImage($img, $this->cache[$img['key']]['mask'], 'mask');
                     if (!empty($this->cache[$img['key']]['plain'])) {
-                        $out .= $this->getOutImage($img, $this->cache[$img['key']]['plain'], 'plain');
+                        /** @var ImageBaseData $plain */
+                        $plain = &$this->cache[$img['key']]['plain'];
+                        $out .= $this->getOutImage(
+                            $img,
+                            $plain,
+                            'plain',
+                        );
                     }
                 }
 
@@ -246,7 +252,7 @@ abstract class Output
             }
 
             $stream = $this->encrypt->encryptString($data['data'], $this->pon);
-            $out .= ' /Length ' . strlen($stream)
+            $out .= ' /Length ' . \strlen($stream)
                 . '>> stream' . "\n"
                 . $stream . "\n"
                 . 'endstream' . "\n";
@@ -325,14 +331,14 @@ abstract class Output
         $icc = $data['icc'];
         if ($this->compress) {
             $out .= ' /Filter /FlateDecode';
-            $cicc = gzcompress($icc);
+            $cicc = \gzcompress($icc);
             if ($cicc !== false) {
                 $icc = $cicc;
             }
         }
 
         $stream = $this->encrypt->encryptString($icc, $this->pon);
-        return $out . (' /Length ' . strlen($stream)
+        return $out . (' /Length ' . \strlen($stream)
             . ' >>'
             . ' stream' . "\n"
             . $stream . "\n"
@@ -357,14 +363,14 @@ abstract class Output
         $pal = $data['pal'];
         if ($this->compress) {
             $out .= '/Filter /FlateDecode';
-            $cpal = gzcompress($pal);
+            $cpal = \gzcompress($pal);
             if ($cpal !== false) {
                 $pal = $cpal;
             }
         }
 
         $stream = $this->encrypt->encryptString($pal, $this->pon);
-        return $out . (' /Length ' . strlen($stream)
+        return $out . (' /Length ' . \strlen($stream)
             . '>>'
             . ' stream' . "\n"
             . $stream . "\n"
@@ -387,7 +393,7 @@ abstract class Output
         } elseif (! empty($data['obj_pal'])) {
             // Indexed Colour Space
             $out .= ' /ColorSpace [/Indexed /DeviceRGB '
-                . ((strlen($data['pal']) / 3) - 1)
+                . ((\strlen($data['pal']) / 3) - 1)
                 . ' ' . $data['obj_pal'] . ' 0 R]';
         } else {
             // Device Colour Space

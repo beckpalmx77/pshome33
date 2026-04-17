@@ -7,8 +7,8 @@
  * @category    Library
  * @package     Barcode
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-barcode
  *
  * This file is part of tc-lib-barcode software library.
@@ -26,8 +26,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @category    Library
  * @package     Barcode
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-barcode
  */
 class DatamatrixTest extends TestUtil
@@ -48,7 +48,7 @@ class DatamatrixTest extends TestUtil
     {
         $this->bcExpectException('\\' . \Com\Tecnick\Barcode\Exception::class);
         $barcode = $this->getTestObject();
-        $code = str_pad('', 3000, 'X');
+        $code = \str_pad('', 3000, 'X');
         $barcode->getBarcodeObj('DATAMATRIX', $code);
     }
 
@@ -82,7 +82,7 @@ class DatamatrixTest extends TestUtil
         $barcode = $this->getTestObject();
         $type = $barcode->getBarcodeObj($mode, $code);
         $grid = $type->getGrid();
-        $this->assertEquals($expected, md5($grid));
+        $this->assertEquals($expected, \md5($grid));
     }
 
     /**
@@ -291,7 +291,7 @@ class DatamatrixTest extends TestUtil
             ],
             [
                 'DATAMATRIX',
-                str_pad('', 300, "\xFE\xFD\xFC\xFB"),
+                \str_pad('', 300, "\xFE\xFD\xFC\xFB"),
                 'e524bb17821d0461f3db6f313d35018f',
             ],
             [
@@ -422,7 +422,31 @@ class DatamatrixTest extends TestUtil
                 '8b4f688a774130bc654e39dfcfadb482'
             ],
             [
+                'DATAMATRIX,S,GS1',
+                // \xE8 is the control character FNC1 (ASCII 232)
+                // Expected read:
+                //     (01)03453120000011
+                //     (17)191125
+                //     (10)ABCD1234
+                //     (21)10
+                "\xE8" . '01034531200000111719112510ABCD1234' . "\xE8" . '2110',
+                '3c66c6c7355e7dea071501216e894eac'
+            ],
+            [
+                'DATAMATRIX,S,GS1',
+                // \xE8 is the control character FNC1 (ASCII 232)
+                // \x1D is the control character <GS> (ASCII 29)
+                // Expected read:
+                //     (01)03453120000011
+                //     (17)191125
+                //     (10)ABCD1234
+                //     (21)10
+                "\xE8" . '01034531200000111719112510ABCD1234' . "\x1D" . '2110',
+                '3c66c6c7355e7dea071501216e894eac'
+            ],
+            [
                 'DATAMATRIX,S,GS1,C40',
+                // \xE8 is the control character FNC1 (ASCII 232)
                 "\xE8" . '01095011010209171719050810ABCD1234' . "\xE8" . '2110',
                 'ba117111dfa40a40e1bb968c719d2eef'
             ]

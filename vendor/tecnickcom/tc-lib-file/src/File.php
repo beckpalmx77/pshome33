@@ -7,8 +7,8 @@
  * @category  Library
  * @package   File
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-file
  *
  * This file is part of tc-lib-file software library.
@@ -27,8 +27,8 @@ use Com\Tecnick\File\Exception as FileException;
  * @category  Library
  * @package   File
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-file
  *
  * @SuppressWarnings("PHPMD.ExcessiveClassComplexity")
@@ -83,13 +83,13 @@ class File
             throw new FileException('path contains parent directory dots');
         }
 
-        if (! str_contains($filename, '://')) {
+        if (! \str_contains($filename, '://')) {
             $filename = 'file://' . $filename;
-        } elseif (! str_starts_with($filename, 'file://')) {
+        } elseif (! \str_starts_with($filename, 'file://')) {
             throw new FileException('this is not a local file');
         }
 
-        $handler = @fopen($filename, $mode);
+        $handler = @\fopen($filename, $mode);
         if ($handler === false) {
             throw new FileException('unable to open the file: ' . $filename);
         }
@@ -100,19 +100,20 @@ class File
     /**
      * Read a 4-byte (32 bit) integer from file.
      *
-     * @param resource $resource A file system pointer resource that is typically created using fopen().
+     * @param resource $resource A file system pointer resource that is typically created using \fopen().
      *
      * @return int 4-byte integer
      */
     public function fReadInt(mixed $resource): int
     {
-        $data = fread($resource, 4);
+        // suppress notices from fread; we check return value explicitly
+        $data = @\fread($resource, 4);
         if ($data === false) {
             throw new FileException('unable to read the file');
         }
 
-        $val = unpack('Ni', $data);
-        return $val === false ? 0 : (is_int($val['i']) ? $val['i'] : 0);
+        $val = \unpack('Ni', $data);
+        return $val === false ? 0 : (\is_int($val['i']) ? $val['i'] : 0);
     }
 
     /**
@@ -121,7 +122,7 @@ class File
      * Reading stops as soon as one of the following conditions is met:
      * length bytes have been read; EOF (end of file) is reached.
      *
-     * @param ?resource  $resource A file system pointer resource that is typically created using fopen().
+     * @param ?resource  $resource A file system pointer resource that is typically created using \fopen().
      * @param int<1, max> $length  Number of bytes to read.
      *
      * @throws FileException in case of error
@@ -129,17 +130,17 @@ class File
     public function rfRead(mixed $resource, int $length): string
     {
         $data = false;
-        if (is_resource($resource)) {
-            $data = @fread($resource, $length);
+        if (\is_resource($resource)) {
+            $data = @\fread($resource, $length);
         }
 
         if (($data === false) || ($resource === null)) {
             throw new FileException('unable to read the file');
         }
 
-        $rest = ($length - strlen($data));
-        if (($rest > 0) && ! feof($resource)) {
-            $stream_meta_data = stream_get_meta_data($resource);
+        $rest = ($length - \strlen($data));
+        if (($rest > 0) && ! \feof($resource)) {
+            $stream_meta_data = \stream_get_meta_data($resource);
             if ($stream_meta_data['unread_bytes'] > 0) {
                 $data .= $this->rfRead($resource, $rest);
             }
@@ -181,7 +182,7 @@ class File
             return false;
         }
 
-        $ret = @file_get_contents($file);
+        $ret = @\file_get_contents($file);
         if ($ret !== false) {
             return $ret;
         }
@@ -200,36 +201,31 @@ class File
     public function getUrlData(string $url): string|false
     {
         if (
-            (ini_get('allow_url_fopen') && ! defined('FORCE_CURL'))
-            || (! function_exists('curl_init'))
-            || preg_match('%^(https?|ftp)://%', $url) === 0
-            || preg_match('%^(https?|ftp)://%', $url) === false
+            (\ini_get('allow_url_fopen') && ! \defined('FORCE_CURL'))
+            || (! \function_exists('curl_init'))
+            || \preg_match('%^(https?|ftp)://%', $url) === 0
+            || \preg_match('%^(https?|ftp)://%', $url) === false
         ) {
             return false;
         }
 
         // try to get remote file data using cURL
-        $curlHandle = curl_init();
+        $curlHandle = \curl_init();
 
         $curlopts = [];
 
-        if (
-            (ini_get('open_basedir') == '')
-            && (ini_get('safe_mode') === ''
-            || ini_get('safe_mode') === false)
-        ) {
+        if (\ini_get('open_basedir') == '') {
             $curlopts[CURLOPT_FOLLOWLOCATION] = true;
         }
 
-        $curlopts = array_replace($curlopts, self::CURLOPT_DEFAULT);
-        $curlopts = array_replace($curlopts, $this->curlopts);
-        $curlopts = array_replace($curlopts, self::CURLOPT_FIXED);
+        $curlopts = \array_replace($curlopts, self::CURLOPT_DEFAULT);
+        $curlopts = \array_replace($curlopts, $this->curlopts);
+        $curlopts = \array_replace($curlopts, self::CURLOPT_FIXED);
         $curlopts[CURLOPT_URL] = $url;
 
-        curl_setopt_array($curlHandle, $curlopts);
+        \curl_setopt_array($curlHandle, $curlopts);
 
-        $ret = curl_exec($curlHandle);
-        curl_close($curlHandle);
+        $ret = \curl_exec($curlHandle);
         return $ret === true ? '' : $ret;
     }
 
@@ -248,7 +244,7 @@ class File
         $alt[] = $url;
         $alt[] = $this->getAltPathFromUrl($url);
         $alt[] = $this->getAltUrlFromPath($file);
-        return array_unique($alt);
+        return \array_unique($alt);
     }
 
     /**
@@ -259,16 +255,16 @@ class File
     protected function getAltLocalUrlPath(string $file): string
     {
         if (
-            (strlen($file) > 1)
+            (\strlen($file) > 1)
             && ($file[0] === '/')
             && ($file[1] !== '/')
             && ! empty($_SERVER['DOCUMENT_ROOT'])
-            && is_string($_SERVER['DOCUMENT_ROOT'])
+            && \is_string($_SERVER['DOCUMENT_ROOT'])
             && ($_SERVER['DOCUMENT_ROOT'] !== '/')
         ) {
-            $findroot = strpos($file, (string) $_SERVER['DOCUMENT_ROOT']);
+            $findroot = \strpos($file, (string) $_SERVER['DOCUMENT_ROOT']);
             if (($findroot === false) || ($findroot > 1)) {
-                $file = htmlspecialchars_decode(urldecode($_SERVER['DOCUMENT_ROOT'] . $file));
+                $file = \htmlspecialchars_decode(\urldecode($_SERVER['DOCUMENT_ROOT'] . $file));
             }
         }
 
@@ -284,11 +280,11 @@ class File
      */
     protected function getAltMissingUrlProtocol(string $file): string
     {
-        if (preg_match('%^//%', $file) && ! empty($_SERVER['HTTP_HOST'])) {
-            $file = $this->getDefaultUrlProtocol() . ':' . str_replace(' ', '%20', $file);
+        if (\preg_match('%^//%', $file) && ! empty($_SERVER['HTTP_HOST'])) {
+            $file = $this->getDefaultUrlProtocol() . ':' . \str_replace(' ', '%20', $file);
         }
 
-        return htmlspecialchars_decode($file);
+        return \htmlspecialchars_decode($file);
     }
 
     /**
@@ -299,8 +295,8 @@ class File
         $protocol = 'http';
         if (
             ! empty($_SERVER['HTTPS'])
-            && is_string($_SERVER['HTTPS'])
-            && (strtolower($_SERVER['HTTPS']) != 'off')
+            && \is_string($_SERVER['HTTPS'])
+            && (\strtolower($_SERVER['HTTPS']) != 'off')
         ) {
             $protocol .= 's';
         }
@@ -320,26 +316,26 @@ class File
     protected function getAltPathFromUrl(string $url): string
     {
         if (
-            preg_match('%^(https?)://%', $url) === 0
-            || preg_match('%^(https?)://%', $url) === false
+            \preg_match('%^(https?)://%', $url) === 0
+            || \preg_match('%^(https?)://%', $url) === false
             || empty($_SERVER['HTTP_HOST'])
-            || !is_string($_SERVER['HTTP_HOST'])
+            || !\is_string($_SERVER['HTTP_HOST'])
             || empty($_SERVER['DOCUMENT_ROOT'])
-            || !is_string($_SERVER['DOCUMENT_ROOT'])
+            || !\is_string($_SERVER['DOCUMENT_ROOT'])
         ) {
             return $url;
         }
 
-        $urldata = parse_url($url);
+        $urldata = \parse_url($url);
         if (isset($urldata['query']) && $urldata['query'] !== '') {
             return $url;
         }
 
         $host = $this->getDefaultUrlProtocol() . '://' . $_SERVER['HTTP_HOST'];
-        if (str_starts_with($url, $host)) {
+        if (\str_starts_with($url, $host)) {
             // convert URL to full server path
-            $tmp = str_replace($host, $_SERVER['DOCUMENT_ROOT'], $url);
-            return htmlspecialchars_decode(urldecode($tmp));
+            $tmp = \str_replace($host, $_SERVER['DOCUMENT_ROOT'], $url);
+            return \htmlspecialchars_decode(\urldecode($tmp));
         }
 
         return $url;
@@ -356,14 +352,14 @@ class File
     {
         if (
             isset($_SERVER['SCRIPT_URI'])
-            && is_string($_SERVER['SCRIPT_URI'])
-            && (preg_match('%^(ftp|https?)://%', $file) === 0
-            || preg_match('%^(ftp|https?)://%', $file) === false)
-            && (preg_match('%^//%', $file) === 0
-            || preg_match('%^//%', $file) === false)
+            && \is_string($_SERVER['SCRIPT_URI'])
+            && (\preg_match('%^(ftp|https?)://%', $file) === 0
+            || \preg_match('%^(ftp|https?)://%', $file) === false)
+            && (\preg_match('%^//%', $file) === 0
+            || \preg_match('%^//%', $file) === false)
         ) {
-            $urldata = @parse_url($_SERVER['SCRIPT_URI']);
-            if (! is_array($urldata) || ! isset($urldata['scheme']) || ! isset($urldata['host'])) {
+            $urldata = @\parse_url($_SERVER['SCRIPT_URI']);
+            if (! \is_array($urldata) || ! isset($urldata['scheme']) || ! isset($urldata['host'])) {
                 return $file;
             }
 
@@ -382,7 +378,7 @@ class File
      */
     public static function hasDoubleDots($path)
     {
-        return (strpos(str_ireplace('%2E', '.', html_entity_decode($path, ENT_QUOTES, 'UTF-8')), '..') !== false);
+        return (\strpos(\str_ireplace('%2E', '.', \html_entity_decode($path, ENT_QUOTES, 'UTF-8')), '..') !== false);
     }
 
     /**
@@ -395,6 +391,6 @@ class File
      */
     public static function hasForbiddenProtocol($path)
     {
-        return ((strpos($path, '://') !== false) && (preg_match('%^(file|ftp|https?)://%', $path) !== 1));
+        return ((\strpos($path, '://') !== false) && (\preg_match('%^(file|ftp|https?)://%', $path) !== 1));
     }
 }

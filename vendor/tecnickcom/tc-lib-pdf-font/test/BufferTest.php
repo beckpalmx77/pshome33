@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -23,8 +23,8 @@ namespace Test;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @SuppressWarnings("PHPMD.LongVariable")
@@ -72,7 +72,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1);
         $objnum = 1;
-        file_put_contents($this->getFontPath() . 'badformat.json', '{"bad":"format"}');
+        \file_put_contents($this->getFontPath() . 'badformat.json', '{"bad":"format"}');
         $stack->add($objnum, 'something', '', $this->getFontPath() . 'badformat.json');
     }
 
@@ -81,7 +81,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1);
         $objnum = 1;
-        file_put_contents($this->getFontPath() . 'test.json', '{"type":"Type1","cw":{"0":100}}');
+        \file_put_contents($this->getFontPath() . 'test.json', '{"type":"Type1","cw":{"0":100}}');
         $stack->add($objnum, 'test', '', $this->getFontPath() . 'test.json');
         $font = $stack->getFont('test');
         $this->assertEquals(600, $font['dw']);
@@ -92,7 +92,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1);
         $objnum = 1;
-        file_put_contents($this->getFontPath() . 'test.json', '{"type":"Type1","cw":{"32":123}}');
+        \file_put_contents($this->getFontPath() . 'test.json', '{"type":"Type1","cw":{"32":123}}');
         $stack->add($objnum, 'test', '', $this->getFontPath() . 'test.json');
         $font = $stack->getFont('test');
         $this->assertEquals(123, $font['dw']);
@@ -103,7 +103,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1);
         $objnum = 1;
-        file_put_contents(
+        \file_put_contents(
             $this->getFontPath() . 'test.json',
             '{"type":"Type1","desc":{"MissingWidth":234},"cw":{"0":600}}'
         );
@@ -118,7 +118,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1);
         $objnum = 1;
-        file_put_contents($this->getFontPath() . 'test.json', '{"type":"WRONG","cw":{"0":600}}');
+        \file_put_contents($this->getFontPath() . 'test.json', '{"type":"WRONG","cw":{"0":600}}');
         $stack->add($objnum, 'test', '', $this->getFontPath() . 'test.json');
     }
 
@@ -128,7 +128,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1, false, true, true);
         $objnum = 1;
-        file_put_contents($this->getFontPath() . 'test.json', '{"type":"cidfont0","cw":{"0":600}}');
+        \file_put_contents($this->getFontPath() . 'test.json', '{"type":"cidfont0","cw":{"0":600}}');
         $stack->add($objnum, 'test', '', $this->getFontPath() . 'test.json', false);
     }
 
@@ -137,7 +137,7 @@ class BufferTest extends TestUtil
         $this->setupTest();
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1);
         $objnum = 1;
-        file_put_contents(
+        \file_put_contents(
             $this->getFontPath() . 'test.json',
             '{"type":"Core","cw":{"0":600},"mode":{"bold":true,"italic":true}}'
         );
@@ -148,7 +148,7 @@ class BufferTest extends TestUtil
     public function testBuffer(): void
     {
         $this->setupTest();
-        $indir = dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/';
+        $indir = \dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/';
 
         $objnum = 1;
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1, false, true, false);
@@ -201,7 +201,7 @@ class BufferTest extends TestUtil
     public function testBufferPdfa(): void
     {
         $this->setupTest();
-        $indir = dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/';
+        $indir = \dirname(__DIR__) . '/util/vendor/tecnickcom/tc-font-mirror/';
 
         $objnum = 1;
         $stack = new \Com\Tecnick\Pdf\Font\Stack(1, true, false, true);

@@ -23,12 +23,12 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: ["8.1", "8.2", "8.3", "8.4"]
+                php-version: ["8.1", "8.2", "8.3", "8.4", "8.5"]
                 experimental: [false]
                 os: [ubuntu-latest]
                 coverage-extension: [pcov]
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - name: Use php ${{ matrix.php-version }}
               uses: shivammathur/setup-php@v2
               with:
@@ -41,7 +41,7 @@ jobs:
             - name: List php modules using "no php ini" mode
               run: php -m -n
             - name: Cache module
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: ~/.composer/cache/
                   key: composer-cache
@@ -50,7 +50,7 @@ jobs:
             - name: Run all tests
               run: make qa
             - name: Send coverage
-              uses: codecov/codecov-action@v5
+              uses: codecov/codecov-action@v6
               with:
                 flags: php-${{ matrix.php-version }}-${{ matrix.os }}
                 name: php-${{ matrix.php-version }}-${{ matrix.os }}

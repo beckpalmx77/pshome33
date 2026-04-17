@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * This file is part of tc-lib-pdf software library.
@@ -29,8 +29,8 @@ use Com\Tecnick\Unicode\Data\Type as UnicodeType;
  * @category  Library
  * @package   Pdf
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf
  *
  * @phpstan-import-type TTextDims from \Com\Tecnick\Pdf\Font\Stack
@@ -59,6 +59,8 @@ use Com\Tecnick\Unicode\Data\Type as UnicodeType;
  *          'totspacewidth': float,
  *          'words': int,
  *      }
+ *
+ * @SuppressWarnings("PHPMD.DepthOfInheritance")
  */
 abstract class Text extends \Com\Tecnick\Pdf\Cell
 {
@@ -110,8 +112,6 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         'totspacewidth' => 0.0,
         'split' => [],
     ];
-
-
 
     /**
      * If true, ZERO-WIDTH-SPACE characters are automatically added
@@ -192,7 +192,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
 
         $cell_pwidth = $this->toPoints($width);
         if ($width <= 0) {
-            $cell_pwidth = min(
+            $cell_pwidth = \min(
                 $this->cellMaxWidth($pntx, $cell),
                 $this->cellMinWidth(
                     $txt_pwidth,
@@ -214,7 +214,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             $txt_pwidth,
             $this->toPoints($offset)
         );
-        $numlines = count($lines);
+        $numlines = \count($lines);
         $txt_pheight = (($numlines * $curfont['height']) + (($numlines - 1) * $this->toPoints($linespace)));
 
         $cell_pheight = $this->toPoints($height);
@@ -358,7 +358,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         if ($cstyles === []) {
             $cstyles = ['all' => $this->graph->getCurrentStyleArray()];
         }
-        if ($drawcell && (count($cstyles) == 1) && (!empty($cstyles['all']))) {
+        if ($drawcell && (\count($cstyles) == 1) && (!empty($cstyles['all']))) {
             $cstyles[0] = $cstyles['all'];
             $cstyles[1] = $cstyles['all'];
             $cstyles[2] = $cstyles['all'];
@@ -395,7 +395,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
 
             $cell_pwidth = $cell_pntw;
             if ($width <= 0) {
-                $cell_pwidth = min(
+                $cell_pwidth = \min(
                     $this->cellMaxWidth($rpntx, $cell),
                     $this->cellMinWidth(
                         $txt_pwidth,
@@ -424,7 +424,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
                 $txt_pwidth,
                 $this->toPoints($offset)
             );
-            $numlines = count($lines);
+            $numlines = \count($lines);
 
             $vspace = $this->textMaxHeight($region['RH'] + $cell['margin']['B'] + $cell['padding']['B'] - $cell_posy);
             $region_max_lines = (int)(($vspace + $linespace) / ($fontheight + $linespace));
@@ -432,7 +432,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
 
             $rlines = $lines;
             if ($numlines > $region_max_lines) {
-                $rlines = array_slice($lines, 0, $region_max_lines);
+                $rlines = \array_slice($lines, 0, $region_max_lines);
             }
 
             $txt_pheight = (($numlines * $curfont['height']) + (($numlines - 1) * $this->toPoints($linespace)));
@@ -502,7 +502,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
                 return;
             }
 
-            $ordarr = array_slice($ordarr, $lines[$region_max_lines]['pos']);
+            $ordarr = \array_slice($ordarr, $lines[$region_max_lines]['pos']);
             $dim = $this->font->getOrdArrDims($ordarr); // @phpstan-ignore argument.type
             $posy = 0;
             $offset = 0;
@@ -579,7 +579,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             $halign = $this->rtl ? 'R' : 'L';
         }
 
-        $num_lines = count($lines);
+        $num_lines = \count($lines);
         $lastline = ($num_lines - 1);
 
         $line_posx = $posx + $offset;
@@ -587,9 +587,9 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
 
         $out = '';
         foreach ($lines as $i => $data) {
-            $line_ordarr = array_slice($ordarr, $data['pos'], $data['chars']);
+            $line_ordarr = \array_slice($ordarr, $data['pos'], $data['chars']);
             $line_ordarr = $this->removeOrdArrSoftHyphens($line_ordarr);
-            $line_txt = implode('', $this->uniconv->ordArrToChrArr($line_ordarr));
+            $line_txt = \implode('', $this->uniconv->ordArrToChrArr($line_ordarr));
             $line_dim = [
                 'chars' => $data['chars'],
                 'spaces' => $data['spaces'],
@@ -662,6 +662,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
      * @param bool        $overline    If true overline the text.
      * @param bool        $clip        If true activate clipping mode.
      * @param string      $forcedir    If 'R' forces RTL, if 'L' forces LTR.
+     * @param string      $txtanchor   Text anchor position: 'S'=start (default), 'M'=middle, 'E'=end.
      * @param ?TextShadow $shadow      Text shadow parameters.
      */
     public function getTextLine(
@@ -680,6 +681,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         bool $overline = false,
         bool $clip = false,
         string $forcedir = '',
+        string $txtanchor = '',
         ?array $shadow = null,
     ): string {
         if ($txt === '') {
@@ -689,6 +691,26 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $ordarr = [];
         $dim = self::DIM_DEFAULT;
         $this->prepareText($txt, $ordarr, $dim, $forcedir);
+
+        switch ($txtanchor) {
+            case 'M':
+                if ($this->rtl || ($forcedir === 'R')) {
+                    $posx += ($dim['totwidth'] / 2);
+                    break;
+                }
+                $posx -= ($dim['totwidth'] / 2);
+                break;
+            case 'E':
+                if ($this->rtl || ($forcedir === 'R')) {
+                    $posx += $dim['totwidth'];
+                    break;
+                }
+                $posx -= $dim['totwidth'];
+                break;
+            default:
+                // do nothing
+                break;
+        }
 
         return $this->getOutTextLine(
             $txt,
@@ -893,7 +915,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $prev_totwidth = 0;
         $prev_totspacewidth = 0;
         $prev_words = 0;
-        $num_words = count($dim['split']);
+        $num_words = \count($dim['split']);
         $soft_hyphen_width = $this->font->getCharWidth(static::ORD_HYPHEN); // @phpstan-ignore argument.type
 
         for ($word = 0; $word < $num_words; $word++) {
@@ -905,8 +927,12 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
                 // the current word is a line break or does not fit in the current line
                 if ($overline && ($word > 0)) {
                     // the current word does not fit in the current line
-                    $data = $dim['split'][($word - 1)];
-                    --$word;
+                    $prevword = ($word - 1);
+                    // avoid looping forever when moving back would not advance the line start
+                    if ($dim['split'][$prevword]['pos'] >= $posstart) {
+                        $data = $dim['split'][$prevword];
+                        --$word;
+                    }
                 }
 
                 $posend = $data['pos'];
@@ -1075,7 +1101,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         float $pwidth,
         float $psize,
     ): string {
-        return sprintf('%F %F %F %F re f' . "\n", $pntx, $pnty, $pwidth, $psize);
+        return \sprintf('%F %F %F %F re f' . "\n", $pntx, $pnty, $pwidth, $psize);
     }
 
     /**
@@ -1085,7 +1111,16 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
      */
     public function getLastBBox(): array
     {
-        return $this->bbox[array_key_last($this->bbox)];
+        $idx = \array_key_last($this->bbox);
+        if ($idx === null || empty($this->bbox[$idx])) {
+            return [
+                'x' => 0.0,
+                'y' => 0.0,
+                'w' => 0.0,
+                'h' => 0.0,
+            ];
+        }
+        return $this->bbox[$idx];
     }
 
     /**
@@ -1098,9 +1133,9 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
      */
     protected function cleanupText(string $txt): string
     {
-        $txt = str_replace("\r", ' ', $txt);
-        $txt = str_replace($this->uniconv->chr(self::ORD_NO_BREAK_SPACE), ' ', $txt);
-        $txt = str_replace($this->uniconv->chr(self::ORD_SOFT_HYPHEN), '', $txt);
+        $txt = \str_replace("\r", ' ', $txt);
+        $txt = \str_replace($this->uniconv->chr(self::ORD_NO_BREAK_SPACE), ' ', $txt);
+        $txt = \str_replace($this->uniconv->chr(self::ORD_SOFT_HYPHEN), '', $txt);
         return $txt;
     }
 
@@ -1121,10 +1156,11 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $pwidth = $this->toPoints($width);
 
         $this->bbox[] = $this->getLastBBox();
-        $bboxid = array_key_last($this->bbox);
+        $bboxid = \array_key_last($this->bbox);
 
         if ((!$this->isunicode) || $this->font->isCurrentByteFont()) {
             if ($this->isunicode) {
+                // @phpstan-ignore argument.type
                 $txt = $this->uniconv->latinArrToStr($this->uniconv->uniArrToLatinArr($ordarr));
             }
             $txt = $this->encrypt->escapeString($txt);
@@ -1137,7 +1173,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $txt;
         }
 
-        $unistr = implode('', $this->uniconv->ordArrToChrArr($ordarr));
+        $unistr = \implode('', $this->uniconv->ordArrToChrArr($ordarr));
         $txt = $this->uniconv->toUTF16BE($unistr);
         $txt = $this->encrypt->escapeString($txt);
 
@@ -1149,7 +1185,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $fontsize = $this->font->getCurrentFont()['size'] ?: 1;
         $spacewidth = (($pwidth - $dim['totwidth'] + $dim['totspacewidth']) / ($dim['spaces'] ?: 1));
         $spacewidth = -1000 * $spacewidth / $fontsize;
-        $txt = str_replace(chr(0) . chr(32), ') ' . sprintf('%F', $spacewidth) . ' (', $txt);
+        $txt = \str_replace(\chr(0) . \chr(32), ') ' . \sprintf('%F', $spacewidth) . ' (', $txt);
 
         return $this->getOutTextShowing($txt, 'TJ');
     }
@@ -1171,8 +1207,8 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $pntx = $this->toPoints($posx);
         $pnty = $this->toYPoints($posy);
         return match ($mode) {
-            'Td' => sprintf('%F %F Td ' . $this->escapePerc($raw), $pntx, $pnty),
-            'TD' => sprintf('%F %F TD ' . $this->escapePerc($raw), $pntx, $pnty),
+            'Td' => \sprintf('%F %F Td ' . $this->escapePerc($raw), $pntx, $pnty),
+            'TD' => \sprintf('%F %F TD ' . $this->escapePerc($raw), $pntx, $pnty),
             'T*' => 'T* ' . $raw,
             default => '',
         };
@@ -1214,7 +1250,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $raw;
         }
 
-        return sprintf('%F Tc ' . $this->escapePerc($raw) . ' 0 Tc', $value);
+        return \sprintf('%F Tc ' . $this->escapePerc($raw) . ' 0 Tc', $value);
     }
 
     /**
@@ -1231,7 +1267,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $raw;
         }
 
-        return sprintf('%F Tw ' . $this->escapePerc($raw) . ' 0 Tw', $value);
+        return \sprintf('%F Tw ' . $this->escapePerc($raw) . ' 0 Tw', $value);
     }
 
     /**
@@ -1248,7 +1284,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $raw;
         }
 
-        return sprintf('%F Tz ' . $this->escapePerc($raw) . ' 100 Tz', $value);
+        return \sprintf('%F Tz ' . $this->escapePerc($raw) . ' 100 Tz', $value);
     }
 
     /**
@@ -1265,7 +1301,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $raw;
         }
 
-        return sprintf('%F TL ' . $this->escapePerc($raw) . ' 0 TL', $value);
+        return \sprintf('%F TL ' . $this->escapePerc($raw) . ' 0 TL', $value);
     }
 
     /**
@@ -1282,7 +1318,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $raw;
         }
 
-        return sprintf('%d Tr ' . $this->escapePerc($raw), $value);
+        return \sprintf('%d Tr ' . $this->escapePerc($raw), $value);
     }
 
     /**
@@ -1299,7 +1335,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
             return $raw;
         }
 
-        return sprintf('%F Ts ' . $this->escapePerc($raw) . ' 0 Ts', $value);
+        return \sprintf('%F Ts ' . $this->escapePerc($raw) . ' 0 Ts', $value);
     }
 
     /**
@@ -1312,7 +1348,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         string $raw,
         int|float $value = 0
     ): string {
-        return sprintf('%F w ' . $this->escapePerc($raw), ($value > 0 ? $value : 0));
+        return \sprintf('%F w ' . $this->escapePerc($raw), ($value > 0 ? $value : 0));
     }
 
     /**
@@ -1325,11 +1361,11 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         string $raw,
         array $matrix = [1, 0, 0, 1, 0, 0]
     ): string {
-        if (count($matrix) != 6) {
+        if (\count($matrix) != 6) {
             return '';
         }
 
-        return sprintf(
+        return \sprintf(
             '%F %F %F %F %F %F Tm ' . $this->escapePerc($raw),
             $matrix[0],
             $matrix[1],
@@ -1396,19 +1432,19 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $pattern = [];
         $data = $this->file->fileGetContents($file);
         // remove comments
-        $data = preg_replace('/\%[^\n]*+/', '', $data);
+        $data = \preg_replace('/\%[^\n]*+/', '', $data);
         if ($data === null) {
             throw new PdfException('Unable to load hyphenation patterns from file: ' . $file);
         }
 
         // extract the patterns part
-        if (preg_match('/\\\\patterns\{([^\}]*+)\}/i', $data, $matches) !== 1) {
+        if (\preg_match('/\\\\patterns\{([^\}]*+)\}/i', $data, $matches) !== 1) {
             throw new PdfException('Invalid hyphenation pattern section from file: ' . $file);
         }
 
-        $data = trim(substr($matches[0], 10, -1));
+        $data = \trim(\substr($matches[0], 10, -1));
         // extract each pattern
-        $list = preg_split('/[\s]+/', $data);
+        $list = \preg_split('/[\s]+/', $data);
         if ($list === false) {
             throw new PdfException('Invalid hyphenation patterns from file: ' . $file);
         }
@@ -1420,9 +1456,11 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
                 continue;
             }
 
-            $val = str_replace("'", '\\\'', trim($val));
-            $key = preg_replace('/\d+/', '', $val);
-            $pattern[$key] = $val;
+            $val = \str_replace("'", '\\\'', \trim($val));
+            $key = \preg_replace('/\d+/', '', $val);
+            if ($key !== null) {
+                $pattern[$key] = $val;
+            }
         }
 
         return $pattern;
@@ -1451,8 +1489,8 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
      */
     protected function removeOrdArrSoftHyphens(array $ordarr): array
     {
-        $keeplast = ((count($ordarr) > 0) && ($ordarr[(count($ordarr) - 1)] == self::ORD_SOFT_HYPHEN));
-        $retarr = array_filter(
+        $keeplast = ((\count($ordarr) > 0) && ($ordarr[(\count($ordarr) - 1)] == self::ORD_SOFT_HYPHEN));
+        $retarr = \array_filter(
             $ordarr,
             fn($ord) => (
                 ($ord != self::ORD_SOFT_HYPHEN)
@@ -1485,8 +1523,8 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
                     $word[] = $ord;
                     break;
                 default:
-                    if (count($word) > 0) {
-                        $txtarr = array_merge($txtarr, $this->hyphenateWordOrdArr($phyphens, $word));
+                    if (\count($word) > 0) {
+                        $txtarr = \array_merge($txtarr, $this->hyphenateWordOrdArr($phyphens, $word));
                         $word = [];
                     }
                     $txtarr[] = $ord;
@@ -1558,7 +1596,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $charmin = 1,
         $charmax = 8,
     ): array {
-        $numchars = count($ordarr);
+        $numchars = \count($ordarr);
         if (empty($phyphens) || ($numchars < $charmin)) {
             return $ordarr;
         }
@@ -1566,14 +1604,14 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         $hyphenpos = []; // hyphens positions
 
         $pad = array(46); // 46 = Period, dot or full stop
-        $tmpword = array_merge($pad, $ordarr, $pad);
+        $tmpword = \array_merge($pad, $ordarr, $pad);
         $tmpnumchars = $numchars + 2;
         $maxpos = $tmpnumchars - 1;
 
         for ($pos = 0; $pos < $maxpos; ++$pos) {
-            $imax = min(($tmpnumchars - $pos), $charmax);
+            $imax = \min(($tmpnumchars - $pos), $charmax);
             for ($i = 1; $i <= $imax; ++$i) {
-                $subword = mb_strtolower(
+                $subword = \mb_strtolower(
                     $this->uniconv->getSubUniArrStr(
                         $this->uniconv->ordArrToChrArr($tmpword),
                         $pos,
@@ -1582,7 +1620,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
                 );
                 if (isset($phyphens[$subword])) {
                     $pattern = $this->uniconv->strToOrdArr($phyphens[$subword]);
-                    $pattern_length = count($pattern);
+                    $pattern_length = \count($pattern);
                     $digits = 1;
                     for ($j = 0; $j < $pattern_length; ++$j) {
                         // check if $pattern[$j] is a number = hyphenation level
@@ -1608,7 +1646,7 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
         for ($i = $leftmin; $i <= $maxpos; ++$i) {
             // only odd levels indicate allowed hyphenation points
             if (isset($hyphenpos[$i]) && (($hyphenpos[$i] % 2) != 0)) {
-                array_splice($ordarr, $i + $inserted, 0, self::ORD_SOFT_HYPHEN);
+                \array_splice($ordarr, $i + $inserted, 0, self::ORD_SOFT_HYPHEN);
                 ++$inserted;
             }
         }
@@ -1698,6 +1736,21 @@ abstract class Text extends \Com\Tecnick\Pdf\Cell
      */
     protected function escapePerc(string $str): string
     {
-        return str_replace('%', '%%', $str);
+        return \str_replace('%', '%%', $str);
+    }
+
+    /**
+     * Returns the string width in user units.
+     *
+     * @param string $str Input string to measure.
+     *
+     * @return float String width in user units.
+     */
+    protected function getStringWidth(string $str): float
+    {
+        $ordarr = [];
+        $dim = self::DIM_DEFAULT;
+        $this->prepareText($str, $ordarr, $dim);
+        return $this->toUnit($dim['totwidth']);
     }
 }

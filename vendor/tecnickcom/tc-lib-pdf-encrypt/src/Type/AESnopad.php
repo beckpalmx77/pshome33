@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfEncrypt
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-encrypt
  *
  * This file is part of tc-lib-pdf-encrypt software library.
@@ -27,15 +27,15 @@ use Com\Tecnick\Pdf\Encrypt\Exception as EncException;
  * @category  Library
  * @package   PdfEncrypt
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-encrypt
  */
 class AESnopad
 {
     /**
      * Block size (IV length):
-     * openssl_cipher_iv_length('aes-256-cbc')
+     * \openssl_cipher_iv_length('aes-256-cbc')
      *
      * @var int
      */
@@ -76,7 +76,7 @@ class AESnopad
     ): string {
         $this->checkCipher($mode);
 
-        $enc = openssl_encrypt(
+        $enc = \openssl_encrypt(
             $this->pad($data, self::BLOCKSIZE),
             $mode,
             $this->pad($key, (2 * self::BLOCKSIZE)),
@@ -85,10 +85,10 @@ class AESnopad
         );
 
         if ($enc === false) {
-            throw new EncException('encryption error: ' . openssl_error_string());
+            throw new EncException('encryption error: ' . \openssl_error_string());
         }
 
-        return substr($enc, 0, -16);
+        return \substr($enc, 0, -16);
     }
 
     /**
@@ -102,8 +102,8 @@ class AESnopad
      */
     protected function pad(string $data, int $length): string
     {
-        $padding = ($length - (strlen($data) % $length));
-        return substr($data . str_repeat("\x00", $padding), 0, $length);
+        $padding = ($length - (\strlen($data) % $length));
+        return \substr($data . \str_repeat("\x00", $padding), 0, $length);
     }
 
     /**
@@ -115,11 +115,11 @@ class AESnopad
      */
     public function checkCipher(string $cipher): void
     {
-        if (! in_array($cipher, self::VALID_CIPHERS)) {
+        if (! \in_array($cipher, self::VALID_CIPHERS)) {
             throw new EncException('invalid chipher: ' . $cipher);
         }
 
-        if (! in_array($cipher, openssl_get_cipher_methods())) {
+        if (! \in_array($cipher, \openssl_get_cipher_methods())) {
             throw new EncException('unavailable chipher: ' . $cipher);
         }
     }

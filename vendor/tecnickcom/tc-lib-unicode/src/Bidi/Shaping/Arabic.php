@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * This file is part of tc-lib-unicode software library.
@@ -25,8 +25,8 @@ use Com\Tecnick\Unicode\Data\Arabic as UniArabic;
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * @phpstan-type CharData array{
@@ -170,7 +170,7 @@ abstract class Arabic
      */
     protected function setMiddleChar(int $idx, ?array $prevchar, array $thischar, array $arabicarr): void
     {
-        if (($prevchar != null) && in_array($prevchar['char'], UniArabic::END)) {
+        if (($prevchar != null) && \in_array($prevchar['char'], UniArabic::END)) {
             if (isset($arabicarr[$thischar['char']][2])) {
                 // initial
                 $this->newchardata[$idx]['char'] = $arabicarr[$thischar['char']][2];
@@ -212,10 +212,13 @@ abstract class Arabic
             && ($this->seq['item'][($idx - 2)]['char'] == UniArabic::LAM)
         ) {
             // Allah Word
+            // @phpstan-ignore assign.propertyType
             $this->newchardata[($idx - 2)]['char'] = -1;
+            // @phpstan-ignore assign.propertyType
             $this->newchardata[($idx - 1)]['char'] = -1;
+            // @phpstan-ignore assign.propertyType
             $this->newchardata[$idx]['char'] = UniArabic::LIGATURE_ALLAH_ISOLATED_FORM;
-        } elseif (($prevchar !== null) && in_array($prevchar['char'], UniArabic::END)) {
+        } elseif (($prevchar !== null) && \in_array($prevchar['char'], UniArabic::END)) {
             if (isset($arabicarr[$thischar['char']][0])) {
                 // isolated
                 $this->newchardata[$idx]['char'] = $arabicarr[$thischar['char']][0];

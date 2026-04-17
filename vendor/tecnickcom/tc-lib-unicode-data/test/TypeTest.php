@@ -7,8 +7,8 @@
  * @category    Library
  * @package     UnicodeData
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-unicode-data
  *
  * This file is part of tc-lib-unicode-data software library.
@@ -25,34 +25,34 @@ use PHPUnit\Framework\TestCase;
  * @category    Library
  * @package     UnicodeData
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-unicode-data
  */
 class TypeTest extends TestCase
 {
     public function testStrong(): void
     {
-        $this->assertEquals(3, count(\Com\Tecnick\Unicode\Data\Type::STRONG));
+        $this->assertEquals(3, \count(\Com\Tecnick\Unicode\Data\Type::STRONG));
     }
 
     public function testWeak(): void
     {
-        $this->assertEquals(7, count(\Com\Tecnick\Unicode\Data\Type::WEAK));
+        $this->assertEquals(7, \count(\Com\Tecnick\Unicode\Data\Type::WEAK));
     }
 
     public function testNeutral(): void
     {
-        $this->assertEquals(4, count(\Com\Tecnick\Unicode\Data\Type::NEUTRAL));
+        $this->assertEquals(4, \count(\Com\Tecnick\Unicode\Data\Type::NEUTRAL));
     }
 
     public function testExplicitFormatting(): void
     {
-        $this->assertEquals(9, count(\Com\Tecnick\Unicode\Data\Type::EXPLICIT_FORMATTING));
+        $this->assertEquals(9, \count(\Com\Tecnick\Unicode\Data\Type::EXPLICIT_FORMATTING));
     }
 
     public function testUni(): void
     {
-        $this->assertEquals(17720, count(\Com\Tecnick\Unicode\Data\Type::UNI));
+        $this->assertEquals(17720, \count(\Com\Tecnick\Unicode\Data\Type::UNI));
     }
 }

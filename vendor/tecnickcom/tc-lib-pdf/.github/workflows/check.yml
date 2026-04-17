@@ -23,12 +23,12 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-version: ["8.1", "8.2", "8.3", "8.4"]
+                php-version: ["8.1", "8.2", "8.3", "8.4", "8.5"]
                 experimental: [false]
                 os: [ubuntu-latest]
                 coverage-extension: [pcov]
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             #- name: Install pdfinfo
             #  run: sudo apt-get install -y poppler-utils
             - name: Use php ${{ matrix.php-version }}
@@ -43,16 +43,18 @@ jobs:
             - name: List php modules using "no php ini" mode
               run: php -m -n
             - name: Cache module
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: ~/.composer/cache/
                   key: composer-cache
             - name: Install dependencies
               run: make deps
+            - name: Make fonts
+              run: cd vendor/tecnickcom/tc-lib-pdf-font/ && make deps fonts
             - name: Run all tests
               run: make qa
             - name: Send coverage
-              uses: codecov/codecov-action@v5
+              uses: codecov/codecov-action@v6
               with:
                 flags: php-${{ matrix.php-version }}-${{ matrix.os }}
                 name: php-${{ matrix.php-version }}-${{ matrix.os }}

@@ -7,8 +7,8 @@
  * @category    Library
  * @package     UnicodeData
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-unicode-data
  *
  * This file is part of tc-lib-unicode-data software library.
@@ -25,8 +25,8 @@ use PHPUnit\Framework\TestCase;
  * @category    Library
  * @package     UnicodeData
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-unicode-data
  */
 class ConstantTest extends TestCase
@@ -34,6 +34,6 @@ class ConstantTest extends TestCase
     public function testConstants(): void
     {
         $reflectionClass = new \ReflectionClass('\\' . \Com\Tecnick\Unicode\Data\Constant::class);
-        $this->assertEquals(14, count($reflectionClass->getConstants()));
+        $this->assertEquals(14, \count($reflectionClass->getConstants()));
     }
 }

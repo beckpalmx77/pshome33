@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Color
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-color
  *
  * This file is part of tc-lib-color software library.
@@ -23,8 +23,8 @@ namespace Test;
  * @category  Library
  * @package   Color
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-color
  */
 class SpotTest extends TestUtil
@@ -38,7 +38,7 @@ class SpotTest extends TestUtil
     {
         $spot = $this->getTestObject();
         $res = $spot->getSpotColors();
-        $this->assertEquals(0, count($res));
+        $this->assertEquals(0, \count($res));
     }
 
     public function testNormalizeSpotColorName(): void
@@ -175,5 +175,8 @@ class SpotTest extends TestUtil
 
         $resk = $spot->getPdfSpotResourcesByKeys(['cyan','yellow']);
         $this->assertEquals('/ColorSpace << /CS2 3 0 R /CS4 5 0 R >>' . "\n", $resk);
+
+        $resk_empty = $spot->getPdfSpotResourcesByKeys([]);
+        $this->assertEquals('', $resk_empty);
     }
 }

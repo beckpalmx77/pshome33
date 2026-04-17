@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * This file is part of tc-lib-unicode software library.
@@ -25,8 +25,8 @@ use Com\Tecnick\Unicode\Data\Constant as UniConstant;
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  */
 class StepW extends \Com\Tecnick\Unicode\Bidi\StepBase
@@ -87,7 +87,7 @@ class StepW extends \Com\Tecnick\Unicode\Bidi\StepBase
                 if ($this->seq['item'][$jdx]['type'] == 'AL') {
                     $this->seq['item'][$idx]['type'] = 'AN';
                     break;
-                } elseif (in_array($this->seq['item'][$jdx]['type'], ['R', 'L'])) {
+                } elseif (\in_array($this->seq['item'][$jdx]['type'], ['R', 'L'])) {
                     break;
                 }
 
@@ -116,14 +116,14 @@ class StepW extends \Com\Tecnick\Unicode\Bidi\StepBase
      */
     protected function processW4(int $idx): void
     {
-        if (in_array($this->seq['item'][$idx]['type'], ['ES', 'CS'])) {
+        if (\in_array($this->seq['item'][$idx]['type'], ['ES', 'CS'])) {
             $bdx = ($idx - 1);
             $fdx = ($idx + 1);
             if (
                 ($bdx >= 0)
                 && ($fdx < $this->seq['length'])
                     && $this->seq['item'][$bdx]['type'] == $this->seq['item'][$fdx]['type']
-                    && in_array($this->seq['item'][$bdx]['type'], ['EN', 'AN'])
+                    && \in_array($this->seq['item'][$bdx]['type'], ['EN', 'AN'])
             ) {
                 $this->seq['item'][$idx]['type'] = $this->seq['item'][$bdx]['type'];
             }
@@ -184,7 +184,7 @@ class StepW extends \Com\Tecnick\Unicode\Bidi\StepBase
      */
     protected function processW6(int $idx): void
     {
-        if (in_array($this->seq['item'][$idx]['type'], ['ET', 'ES', 'CS', 'ON'])) {
+        if (\in_array($this->seq['item'][$idx]['type'], ['ET', 'ES', 'CS', 'ON'])) {
             $this->seq['item'][$idx]['type'] = 'ON';
         }
     }

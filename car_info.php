@@ -197,10 +197,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $.ajax({
                             type: "POST",
                             url: 'model/manage_pet_record_process.php',
-                            dataType: "json",
                             data: {action: "GET_HOUSE_AUTOCOMPLETE", search: request.term},
+                            dataType: "json",
                             success: function (data) {
                                 response(data);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('Autocomplete Error:', status, error, xhr.responseText);
+                                response([]);
                             }
                         });
                     },
@@ -222,8 +226,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     $.ajax({
                         type: "POST",
                         url: 'model/manage_pet_record_process.php',
-                        dataType: "json",
                         data: formData,
+                        dataType: "json",
                         success: function (response) {
                             $('#resultSection').hide();
                             $('#notFoundSection').hide();
@@ -268,8 +272,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 $('#btnSave').hide();
                             }
                         },
-                        error: function (response) {
-                            alertify.error("error : " + response);
+                        error: function (xhr, status, error) {
+                            console.log('Search Error:', status, error, xhr.responseText);
+                            alertify.error("error : " + status + " - " + error);
                         }
                     });
                 });

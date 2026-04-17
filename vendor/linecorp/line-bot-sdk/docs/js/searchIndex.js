@@ -46786,6 +46786,21 @@ Search.appendIndex(
             "summary": "Testing\u0020LINEBot\u0020facade\u0020instance",
             "url": "classes/LINE-Laravel-Tests-Facades-FacadesTest.html#method_testLINEBotFacadeInstance"
         },                {
+            "fqsen": "\\LINE\\Parser\\EventRequestOptions",
+            "name": "EventRequestOptions",
+            "summary": "Options\u0020for\u0020event\u0020request\u0020parsing.",
+            "url": "classes/LINE-Parser-EventRequestOptions.html"
+        },                {
+            "fqsen": "\\LINE\\Parser\\EventRequestOptions\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Constructor",
+            "url": "classes/LINE-Parser-EventRequestOptions.html#method___construct"
+        },                {
+            "fqsen": "\\LINE\\Parser\\EventRequestOptions\u003A\u003A\u0024skipSignatureValidation",
+            "name": "skipSignatureValidation",
+            "summary": "",
+            "url": "classes/LINE-Parser-EventRequestOptions.html#property_skipSignatureValidation"
+        },                {
             "fqsen": "\\LINE\\Parser\\EventRequestParser",
             "name": "EventRequestParser",
             "summary": "",
@@ -46865,6 +46880,11 @@ Search.appendIndex(
             "name": "getSignature",
             "summary": "",
             "url": "classes/LINE-Parser-Tests-EventRequestParserTest.html#method_getSignature"
+        },                {
+            "fqsen": "\\LINE\\Parser\\Tests\\EventRequestParserTest\u003A\u003AtestParseEventRequestWithSkipSignatureValidation\u0028\u0029",
+            "name": "testParseEventRequestWithSkipSignatureValidation",
+            "summary": "",
+            "url": "classes/LINE-Parser-Tests-EventRequestParserTest.html#method_testParseEventRequestWithSkipSignatureValidation"
         },                {
             "fqsen": "\\LINE\\Parser\\Tests\\EventRequestParserTest\u003A\u003A\u0024json",
             "name": "json",

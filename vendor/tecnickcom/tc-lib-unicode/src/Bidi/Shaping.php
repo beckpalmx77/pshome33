@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * This file is part of tc-lib-unicode software library.
@@ -26,8 +26,8 @@ use Com\Tecnick\Unicode\Data\Constant as UniConstant;
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * @phpstan-import-type SeqData from \Com\Tecnick\Unicode\Bidi\Shaping\Arabic
@@ -78,8 +78,8 @@ class Shaping extends \Com\Tecnick\Unicode\Bidi\Shaping\Arabic
 
         $this->combineShadda();
         $this->removeDeletedChars();
-        $this->seq['item'] = array_values($this->newchardata);
-        unset($this->newchardata);
+        $this->seq['item'] = \array_values($this->newchardata);
+        $this->newchardata = []; // reset
     }
 
     /**
@@ -95,7 +95,7 @@ class Shaping extends \Com\Tecnick\Unicode\Bidi\Shaping\Arabic
                 || ($this->seq['item'][$idx]['char'] == UniConstant::ZERO_WIDTH_NON_JOINER)
             ) {
                 $this->alchars[$this->numalchars]['i'] = $idx;
-                $this->alchars[$this->numalchars] = array_merge(
+                $this->alchars[$this->numalchars] = \array_merge(
                     $this->alchars[$this->numalchars],
                     $this->seq['item'][$idx]
                 );
@@ -121,6 +121,7 @@ class Shaping extends \Com\Tecnick\Unicode\Bidi\Shaping\Arabic
                 && ($nxt >= 0) && (isset(UniArabic::DIACRITIC[$nxt]))
             ) {
                 $this->newchardata[$idx]['char'] = -1;
+                // @phpstan-ignore assign.propertyType
                 $this->newchardata[($idx + 1)]['char'] = UniArabic::DIACRITIC[$nxt];
             }
         }

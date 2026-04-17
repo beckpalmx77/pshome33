@@ -6,8 +6,8 @@
  * @category    Library
  * @package     Pdf
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2002-2025 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2002-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-pdf
  *
  * This file is part of tc-lib-pdf software library.
@@ -19,10 +19,10 @@
 require(__DIR__ . '/../vendor/autoload.php');
 
 
-define('OUTPUT_FILE', realpath(__DIR__ . '/../target') . '/example.pdf');
+\define('OUTPUT_FILE', \realpath(__DIR__ . '/../target') . '/example.pdf');
 
 // define fonts directory
-define('K_PATH_FONTS', realpath(__DIR__ . '/../vendor/tecnickcom/tc-lib-pdf-font/target/fonts'));
+\define('K_PATH_FONTS', \realpath(__DIR__ . '/../vendor/tecnickcom/tc-lib-pdf-font/target/fonts'));
 
 // autoloader when using RPM or DEB package installation
 //require ('/usr/share/php/Com/Tecnick/Pdf/autoload.php');
@@ -32,7 +32,7 @@ $pdf = new \Com\Tecnick\Pdf\Tcpdf(
     'mm', // string $unit = 'mm',
     true, // bool $isunicode = true,
     false, // bool $subsetfont = false,
-    true, // bool $compress = true,
+    false, // bool $compress = true,
     '', // string $mode = '',
     null, // ?ObjEncrypt $objEncrypt = null,
 );
@@ -58,7 +58,7 @@ $bfont1 = $pdf->font->insert($pdf->pon, 'helvetica', '', 12);
 
 
 // test images directory
-$imgdir = realpath(__DIR__ . '/../vendor/tecnickcom/tc-lib-pdf-image/test/images/');
+$imgdir = \realpath(__DIR__ . '/../vendor/tecnickcom/tc-lib-pdf-image/test/images/');
 
 
 // ----------
@@ -116,6 +116,26 @@ $pdf->page->addContent($iid11_out);
 $iid12 = $pdf->image->add($imgdir . '/200x100_RGBINT.png');
 $iid12_out = $pdf->image->getSetImage($iid12, 40, 40, 40, 20, $page01['height']);
 $pdf->page->addContent($iid12_out);
+
+// test SVG
+$svgid01 = $pdf->addSVG('./images/tcpdf_box.svg', 10, 80, 120, 80, $page01['height']);
+$svgid01_out = $pdf->getSetSVG($svgid01);
+$pdf->page->addContent($svgid01_out);
+
+$svgid02 = $pdf->addSVG('./images/testsvg.svg', 10, 160, 120, 60, $page01['height']);
+$svgid02_out = $pdf->getSetSVG($svgid02);
+$pdf->page->addContent($svgid02_out);
+
+$svgid03 = $pdf->addSVG('./images/testsvgblend.svg', 100, 220, 90, 60, $page01['height']);
+$svgid03_out = $pdf->getSetSVG($svgid03);
+$pdf->page->addContent($svgid03_out);
+
+// The copyright holder of the tux.svg image is Larry Ewing,
+// allows anyone to use it for any purpose, provided that the copyright holder is properly attributed.
+// Redistribution, derivative work, commercial use, and all other use is permitted.
+$svgid03 = $pdf->addSVG('./images/tux.svg', 130, 80, 62, 75, $page01['height']);
+$svgid03_out = $pdf->getSetSVG($svgid03);
+$pdf->page->addContent($svgid03_out);
 
 // ----------
 // Add second page
@@ -1086,6 +1106,7 @@ $txt2 = $pdf->getTextLine(
     false,
     false,
     '',
+    'S',
     [
         'xoffset' => 0.5,
         'yoffset' => 0.5,
@@ -1153,7 +1174,7 @@ $pdf->page->addContent($txtbox);
 $col = $pdf->color->getPdfColor('black');
 $pdf->page->addContent($col);
 
-$bfont4 = $pdf->font->insert($pdf->pon, 'freeserif', 'I', 14);
+$bfont4 = $pdf->font->insert($pdf->pon, 'freeserif', 'I', 12);
 $pdf->page->addContent($bfont4['out']);
 
 $pdf->setDefaultCellPadding(2,2,2,2);
@@ -1172,6 +1193,7 @@ $style_cell = [
     ],
 ];
 
+$pdf->setDefaultCellBorderPos($pdf::BORDERPOS_DEFAULT);
 $txtcell1 = $pdf->getTextCell(
     'DEFAULT', // string $txt,
     20, // float $posx = 0,
@@ -1261,6 +1283,53 @@ $txtcell2 = $pdf->getTextCell(
 );
 $pdf->page->addContent($txtcell2);
 
+$defbstyle =  [
+    'lineWidth' => $pdf->toUnit(1),
+    'lineCap' => 'square',
+    'lineJoin' => 'miter',
+    'dashArray' => [],
+    'dashPhase' => 0,
+    'lineColor' => '#333333',
+    'fillColor' => '#cccccc',
+];
+$bstyle = [
+    'all' => $defbstyle,
+    0 => $defbstyle, // TOP
+    1 => $defbstyle, // RIGHT
+    2 => $defbstyle, // BOTTOM
+    3 => $defbstyle, // LEFT
+];
+$bstyle[0]['lineColor'] = $bstyle[3]['lineColor'] = '#e7e7e7';
+
+$pdf->setDefaultCellBorderPos($pdf::BORDERPOS_DEFAULT);
+$txtcell3 = $pdf->getTextCell(
+    "BUTTON", // string $txt,
+    120, // float $posx = 0,
+    100, // float $posy = 0,
+    0, // float $width = 0,
+    0, // float $height = 0,
+    0, // float $offset = 0,
+    0, // float $linespace = 0,
+    'C', // string $valign = 'C',
+    'C', // string $halign = 'C',
+    null, // ?array $cell = null,
+    $bstyle, // array $styles = [],
+    0, // float $strokewidth = 0,
+    0, // float $wordspacing = 0,
+    0, // float $leading = 0,
+    0, // float $rise = 0,
+    true, // bool $jlast = true,
+    true, // bool $fill = true,
+    false, // bool $stroke = false,
+    false, //bool $underline = false,
+    false, //bool $linethrough = false,
+    false, //bool $overline = false,
+    false, // bool $clip = false,
+    true, // bool $drawcell = true,
+    '', // string $forcedir = '',
+    null // ?array $shadow = null,
+);
+$pdf->page->addContent($txtcell3);
 
 $pdf->setDefaultCellBorderPos($pdf::BORDERPOS_DEFAULT);
 
@@ -1313,7 +1382,7 @@ $style_cell_b = [
 
 // block of text between two page regions
 $pdf->addTextCell(
-    $txt3, // string $txt,
+    "\u{27A0}".$txt3, // string $txt,
     -1, // int $pid = -1,
     20, // float $posx = 0,
     165, // float $posy = 0,
@@ -1555,12 +1624,118 @@ $pdf->page->addContent($tmpl);
 
 // ----------
 
+// Annotation Form Fields
+
+$pageC03 = $pdf->addPage();
+$pdf->setBookmark('Form', '', 0, -1, 0, 0, 'B', '');
+
+$bfont5 = $pdf->font->insert($pdf->pon, 'dejavusans', '', 12);
+$pdf->page->addContent($bfont5['out']);
+
+// text
+$fftextid = $pdf->addFFText('test_text', 20, 20, 50, 5);
+$pdf->page->addAnnotRef($fftextid);
+
+// radiobuttons
+$ffrbid1 = $pdf->addFFRadioButton('test_radiobutton', 20, 30, 5, 'one');
+$ffrbid2 = $pdf->addFFRadioButton('test_radiobutton', 20, 35, 5, 'two', true);
+$ffrbid3 = $pdf->addFFRadioButton('test_radiobutton', 20, 40, 5, 'three');
+$pdf->page->addAnnotRef($ffrbid1);
+$pdf->page->addAnnotRef($ffrbid2);
+$pdf->page->addAnnotRef($ffrbid3);
+
+// checkbox
+$ffckbxid1 = $pdf->addFFCheckBox('test_checkbox', 20, 50, 5);
+$pdf->page->addAnnotRef($ffckbxid1);
+
+// combobox
+$ffcmbxid1 = $pdf->addFFComboBox('test_combobox', 20, 60, 50, 5, [
+    ['0','one'],
+    ['1','two'],
+    ['2','three'],
+]);
+$pdf->page->addAnnotRef($ffcmbxid1);
+
+// listbox
+$fflsbxid1 = $pdf->addFFListBox('test_listbox', 20, 70, 50, 15,
+    ['one', 'two', 'three'],
+    ['subtype' => 'Widget'],
+    ['multipleSelection'=>'true'],
+);
+$pdf->page->addAnnotRef($fflsbxid1);
+
+// button - reset form
+$ffbtnid1 = $pdf->addFFButton('reset', 20, 90, 20, 5, 
+    "Reset", 
+    ['S'=>'ResetForm'],
+    ['subtype' => 'Widget'],
+    [
+        'lineWidth'=>2,
+        'borderStyle'=>'beveled',
+        'fillColor'=>'#80c4ff',
+        'strokeColor'=>'#404040',
+    ],
+);
+$pdf->page->addAnnotRef($ffbtnid1);
+
+// button - print document
+$ffbtnid2 = $pdf->addFFButton('print', 40, 90, 20, 5, 
+    'Print', 
+    'Print()',
+    ['subtype' => 'Widget'],
+    [
+        'lineWidth'=>2,
+        'borderStyle'=>'beveled',
+        'fillColor'=>'#80c4ff',
+        'strokeColor'=>'#404040',
+    ],
+);
+$pdf->page->addAnnotRef($ffbtnid2);
+
+// button - submit form
+$ffbtnid3 = $pdf->addFFButton('submit', 60, 90, 20, 5, 
+    'Submit', 
+    [
+        'S'=>'SubmitForm',
+        'F'=>'http://localhost/printvars.php',
+        'Flags'=>['ExportFormat'],
+    ],
+    ['subtype' => 'Widget'],
+    [
+        'lineWidth'=>2,
+        'borderStyle'=>'beveled',
+        'fillColor'=>'#80c4ff',
+        'strokeColor'=>'#404040',
+    ],
+);
+$pdf->page->addAnnotRef($ffbtnid3);
+
+// JavaScript form validation functions
+$formjs = <<<EOD
+function CheckField(name,message) {
+	var f = getField(name);
+	if(f.value == '') {
+	    app.alert(message);
+	    f.setFocus();
+	    return false;
+	}
+	return true;
+}
+function Print() {
+	if(!CheckField('test_text','test_text is mandatory')) {return;}
+	print();
+}
+EOD;
+
+// Add raw JavaScript code
+$pdf->appendRawJavaScript($formjs);
+
+// ----------
+
 // Layers
 
 $pageV01 = $pdf->addPage();
 $pdf->setBookmark('Layers', '', 0, -1, 0, 0, 'B', '');
-
-$pdf->page->addContent($bfont4['out']);
 
 $txtV1 = 'LAYERS: You can limit the visibility of PDF objects to screen or printer by using the newLayer() method.
 Check the print preview of this document to display the alternative text.';
@@ -1610,6 +1785,77 @@ $pdf->page->addAnnotRef($lnk2);
 
 // ----------
 
+// HTML
+
+$pageV01 = $pdf->addPage();
+$pdf->setBookmark('HTML', '', 0, -1, 0, 0, 'B', '');
+
+$pdf->page->addContent($bfont5['out']);
+
+
+$html_01 = '<h1>HTML Example</h1>
+Some special characters: &lt; € &euro; &#8364; &amp; è &egrave; &copy; &gt; \\slash \\\\double-slash \\\\\\triple-slash
+<h2>List</h2>
+List example:
+<ol>
+	<li><b>bold text</b></li>
+	<li><i>italic text</i></li>
+	<li><u>underlined text</u></li>
+	<li><b>b<i>bi<u>biu</u>bi</i>b</b></li>
+	<li><a href="https://tcpdf.org" dir="ltr">link to https://tcpdf.org</a></li>
+	<li>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.<br />Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</li>
+	<li>SUBLIST
+		<ol>
+			<li>row one
+				<ul>
+					<li>sublist</li>
+				</ul>
+			</li>
+			<li>row two</li>
+		</ol>
+	</li>
+	<li><b>T</b>E<i>S</i><u>T</u> <del>line through</del></li>
+	<li><font size="+3">font + 3</font></li>
+	<li><small>small text</small> normal <small>small text</small> normal <sub>subscript</sub> normal <sup>superscript</sup> normal</li>
+</ol>
+<dl>
+	<dt>Coffee</dt>
+	<dd>Black hot drink</dd>
+	<dt>Milk</dt>
+	<dd>White cold drink</dd>
+</dl>
+
+<div style="text-align:center">The words &#8220;<span dir="rtl">&#1502;&#1494;&#1500; [mazel] &#1496;&#1493;&#1489; [tov]</span>&#8221; mean &#8220;Congratulations!&#8221;</div>
+
+<p>This is just an example of html code to demonstrate some supported CSS inline styles.
+<span style="font-weight: bold;">bold text</span>
+<span style="text-decoration: line-through;">line-trough</span>
+<span style="text-decoration: underline line-through;">underline and line-trough</span>
+<span style="color: rgb(0, 128, 64);">color</span>
+<span style="background-color: rgb(255, 0, 0); color: rgb(255, 255, 255);">background color</span>
+<span style="font-weight: bold;">bold</span>
+<span style="font-size: xx-small;">xx-small</span>
+<span style="font-size: x-small;">x-small</span>
+<span style="font-size: small;">small</span>
+<span style="font-size: medium;">medium</span>
+<span style="font-size: large;">large</span>
+<span style="font-size: x-large;">x-large</span>
+<span style="font-size: xx-large;">xx-large</span>
+</p>';
+
+
+$pdf->addHTMLCell(
+    $html_01, // string $html,
+    20, // float $posx = 0,
+    10, // float $posy = 0,
+    150, // float $width = 0,
+    0, // float $height = 0,
+    null, // ?array $cell = null,
+    $style_cell, // array $styles = [],
+);
+
+// ----------
+
 $pageTOC = $pdf->addPage();
 $pdf->setBookmark('TOC');
 
@@ -1645,7 +1891,7 @@ $rawpdf = $pdf->getOutPDFString();
 
 // Various output modes:
 
-//$pdf->savePDF(dirname(__DIR__).'/target', $rawpdf);
+//$pdf->savePDF(\dirname(__DIR__).'/target', $rawpdf);
 $pdf->renderPDF($rawpdf);
 //$pdf->downloadPDF($rawpdf);
 //echo $pdf->getMIMEAttachmentPDF($rawpdf);

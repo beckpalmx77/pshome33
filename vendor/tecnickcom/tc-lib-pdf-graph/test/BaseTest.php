@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  *
  * This file is part of tc-lib-pdf-graph software library.
@@ -23,8 +23,8 @@ namespace Test;
  * @category  Library
  * @package   PdfGraph
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-graph
  */
 class BaseTest extends TestUtil
@@ -109,6 +109,9 @@ class BaseTest extends TestUtil
             $res
         );
 
+        $nres = $draw->getOutGradientResourcesByKeys([]);
+        $this->assertEmpty($nres);
+
         $resx = $draw->getOutGradientResourcesByKeys([1]);
         $this->assertEquals(
             ' /Pattern << /p1 13 0 R >>' . "\n"
@@ -164,9 +167,12 @@ class BaseTest extends TestUtil
 
         $res = $draw->getOutExtGStateResources();
         $this->assertEquals(
-            ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 20 0 R >>' . "\n",
+            ' /ExtGState << /GS1 1 0 R /GS2 2 0 R /TGS1 19 0 R >>' . "\n",
             $res
         );
+
+        $nres = $draw->getOutExtGStateResourcesByKeys([]);
+        $this->assertEmpty($nres);
 
         $resx = $draw->getOutExtGStateResourcesByKeys([1,2]);
         $this->assertEquals(

@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  *
  * This file is part of tc-lib-unicode software library.
@@ -35,8 +35,8 @@ use Com\Tecnick\Unicode\Exception as UnicodeException;
  * @category  Library
  * @package   Unicode
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-unicode
  */
 class Bidi
@@ -168,11 +168,13 @@ class Bidi
         string $forcedir = ''
     ): void {
         if ($str === null) {
+            $str = '';
             if (($chrarr === null || $chrarr === []) && ($ordarr !== null && $ordarr !== [])) {
                 $chrarr = $this->conv->ordArrToChrArr($ordarr);
             }
-
-            $str = implode('', $chrarr);
+            if (!empty($chrarr)) {
+                $str = \implode('', $chrarr);
+            }
         }
 
         if ($chrarr === null || $chrarr === []) {
@@ -188,7 +190,7 @@ class Bidi
         $this->ordarr = $ordarr;
         $this->forcedir = '';
         if ($forcedir !== '') {
-            $this->forcedir = strtoupper($forcedir[0]);
+            $this->forcedir = \strtoupper($forcedir[0]);
         }
     }
 
@@ -221,7 +223,7 @@ class Bidi
      */
     public function getNumChars(): int
     {
-        return count($this->getChrArray());
+        return \count($this->getChrArray());
     }
 
     /**
@@ -230,7 +232,7 @@ class Bidi
     public function getString(): string
     {
         if ($this->bidistr === '') {
-            $this->bidistr = implode('', $this->getChrArray());
+            $this->bidistr = \implode('', $this->getChrArray());
         }
 
         return $this->bidistr;
@@ -243,7 +245,7 @@ class Bidi
      */
     public function getCharKeys(): array
     {
-        return array_fill_keys(array_values($this->bidiordarr), true);
+        return \array_fill_keys(\array_values($this->bidiordarr), true);
     }
 
     /**
@@ -297,7 +299,7 @@ class Bidi
                     $ilr = $shaping->getSequence();
                 }
 
-                $chardata = array_merge($chardata, $ilr['item']);
+                $chardata = \array_merge($chardata, $ilr['item']);
 
                 if ($ilr['maxlevel'] > $maxlevel) {
                     $maxlevel = $ilr['maxlevel'];
@@ -311,7 +313,7 @@ class Bidi
             }
 
             // add back the paragraph separators
-            $lastchar = end($par);
+            $lastchar = \end($par);
             if ($lastchar === false) {
                 continue;
             }
@@ -356,7 +358,7 @@ class Bidi
      */
     protected function isRtlMode(): bool
     {
-        $this->arabic = (bool) preg_match(UniPattern::ARABIC, $this->str);
-        return (($this->forcedir === 'R') || $this->arabic || preg_match(UniPattern::RTL, $this->str));
+        $this->arabic = (bool) \preg_match(UniPattern::ARABIC, $this->str);
+        return (($this->forcedir === 'R') || $this->arabic || \preg_match(UniPattern::RTL, $this->str));
     }
 }

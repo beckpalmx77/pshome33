@@ -7,8 +7,8 @@
  * @category    Library
  * @package     Barcode
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2010-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2010-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-barcode
  *
  * This file is part of tc-lib-barcode software library.
@@ -23,8 +23,8 @@ namespace Com\Tecnick\Barcode\Type\Square\QrCode;
  * @category    Library
  * @package     Barcode
  * @author      Nicola Asuni <info@tecnick.com>
- * @copyright   2010-2024 Nicola Asuni - Tecnick.com LTD
- * @license     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright   2010-2026 Nicola Asuni - Tecnick.com LTD
+ * @license     https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link        https://github.com/tecnickcom/tc-lib-barcode
  *
  * @phpstan-type EccSpec array{
@@ -97,7 +97,7 @@ class Spec extends \Com\Tecnick\Barcode\Type\Square\QrCode\SpecRs
      */
     public function maximumWords(int $mode, int $version): int
     {
-        if ($mode == Data::ENC_MODES['ST']) {
+        if (($mode == Data::ENC_MODES['ST']) || ($mode < Data::ENC_MODES['NL']) || ($mode > Data::ENC_MODES['ST'])) {
             return 3;
         }
 
@@ -134,7 +134,7 @@ class Spec extends \Com\Tecnick\Barcode\Type\Square\QrCode\SpecRs
      */
     public function getEccSpec(int $version, int $level, array $spec): array
     {
-        if (count($spec) < 5) {
+        if (\count($spec) < 5) {
             $spec = [0, 0, 0, 0, 0];
         }
 

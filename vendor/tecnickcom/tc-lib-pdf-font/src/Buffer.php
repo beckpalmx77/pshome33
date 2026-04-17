@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -25,8 +25,8 @@ use Com\Tecnick\Pdf\Font\Exception as FontException;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @phpstan-import-type TFontData from Load
@@ -74,11 +74,11 @@ abstract class Buffer
      * Initialize fonts buffer
      *
      * @param float $kunit   Unit of measure conversion ratio.
-     * @param bool  $subset  If true embedd only a subset of the fonts
+     * @param bool  $subset  If true embed only a subset of the fonts
      *                       (stores only the information related to
-     *                       the used characters); If false embedd
+     *                       the used characters); If false embed
      *                       full font; This option is valid only for
-     *                       TrueTypeUnicode fonts and it is disabled
+     *                       TrueTypeUnicode fonts and is disabled
      *                       for PDF/A. If you want to enable users to
      *                       modify the document, set this parameter
      *                       to false. If you subset the font, the
@@ -89,10 +89,8 @@ abstract class Buffer
      *                       embedding only a subset. NOTE: This
      *                       option is computational and memory
      *                       intensive.
-     * @param bool  $unicode True if we are in Unicode mode, False otherwhise.
-     * @param bool  $pdfa    True if we are in PDF/A mode.
-     *
-     * @return string Font key
+     * @param bool  $unicode True if we are in Unicode mode, False otherwise.
+     * @param bool  $pdfa    True if we are in PDF/A mode, False otherwise.
      */
     public function __construct(
         protected float $kunit,
@@ -163,6 +161,8 @@ abstract class Buffer
      *
      * @param string $key  The font key
      * @param int    $char The Unicode character value to add
+     *
+     * @throws FontException
      */
     public function addSubsetChar(string $key, int $char): void
     {
@@ -183,7 +183,7 @@ abstract class Buffer
      * @param string $font   Font family.
      *                       If it is a standard family name, it will override the corresponding font.
      * @param string $style  Font style.
-     *                       Possible values are (case insensitive):
+     *                       Possible values are (case-insensitive):
      *                       regular (default)
      *                       B: bold
      *                       I: italic
@@ -196,7 +196,7 @@ abstract class Buffer
      *                       (stores only the information related to
      *                       the used characters); If false embed
      *                       full font; This option is valid only
-     *                       for TrueTypeUnicode fonts and it is
+     *                       for TrueTypeUnicode fonts and is
      *                       disabled for PDF/A. If you want to
      *                       enable users to modify the document,
      *                       set this parameter to false. If you
@@ -239,7 +239,7 @@ abstract class Buffer
         $this->setFontDiff($key);
 
         $this->font[$key]['i'] = ++$this->numfonts;
-        $this->font[$key]['n'] = ++$objnum;
+        $this->font[$key]['n'] = ++$objnum; // @phpstan-ignore assign.propertyType
 
         return $key;
     }
@@ -266,7 +266,7 @@ abstract class Buffer
             ];
         }
 
-        if (! in_array($key, $this->file[$file]['keys'])) {
+        if (! \in_array($key, $this->file[$file]['keys'])) {
             $this->file[$file]['keys'][] = $key;
         }
 
@@ -287,7 +287,7 @@ abstract class Buffer
             return;
         }
 
-        $diffid = array_search($this->font[$key]['diff'], $this->encdiff, true);
+        $diffid = \array_search($this->font[$key]['diff'], $this->encdiff, true);
         if ($diffid === false) {
             $diffid = ++$this->numdiffs;
             $this->encdiff[$diffid] = $this->font[$key]['diff'];

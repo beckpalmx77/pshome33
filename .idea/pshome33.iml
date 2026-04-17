@@ -93,6 +93,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/tecnickcom/tc-lib-unicode" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/tecnickcom/tc-lib-unicode-data" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/tecnickcom/tcpdf" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/thecodingmachine/safe" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/thiagoalessio/tesseract_ocr" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/ttskch/select2-bootstrap4-theme" />
     </content>

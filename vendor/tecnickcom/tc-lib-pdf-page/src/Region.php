@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfPage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-page
  *
  * This file is part of tc-lib-pdf-page software library.
@@ -25,8 +25,8 @@ use Com\Tecnick\Pdf\Page\Exception as PageException;
  * @category  Library
  * @package   PdfPage
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-page
  *
  * @phpstan-import-type RegionData from \Com\Tecnick\Pdf\Page\Box
@@ -141,6 +141,39 @@ abstract class Region extends \Com\Tecnick\Pdf\Page\Settings
         return $this->page[$pid];
     }
 
+    /**
+     * Overrides the page height and returns the current value in points.
+     *
+     * @param float $pheight new page height in internal points.
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
+     *
+     * @return float original page height in points.
+     */
+    public function setPagePHeight(float $pheight, int $pid = -1): float
+    {
+        $pid = $this->sanitizePageID($pid);
+        $ret = $this->page[$pid]['pheight'];
+        $this->page[$pid]['pheight'] = $pheight;
+        $this->page[$pid]['height'] = ($pheight / $this->kunit); // @phpstan-ignore assign.propertyType
+        return $ret;
+    }
+
+    /**
+     * Overrides the page width and returns the current value in points.
+     *
+     * @param float $pwidth new page width in internal points.
+     * @param int $pid page index. Omit or set it to -1 for the current page ID.
+     *
+     * @return float original page width in points.
+     */
+    public function setPagePWidth(float $pwidth, int $pid = -1): float
+    {
+        $pid = $this->sanitizePageID($pid);
+        $ret = $this->page[$pid]['pwidth'];
+        $this->page[$pid]['pwidth'] = $pwidth;
+        $this->page[$pid]['width'] = ($pwidth / $this->kunit); // @phpstan-ignore assign.propertyType
+        return $ret;
+    }
 
     /**
      * Check if the specified page ID exist.
@@ -173,7 +206,7 @@ abstract class Region extends \Com\Tecnick\Pdf\Page\Settings
     public function selectRegion(int $idr, int $pid = -1): array
     {
         $pid = $this->sanitizePageID($pid);
-        $this->page[$pid]['currentRegion'] = min(max(0, $idr), $this->page[$pid]['columns']);
+        $this->page[$pid]['currentRegion'] = \min(\max(0, $idr), $this->page[$pid]['columns']);
         return $this->getRegion();
     }
 

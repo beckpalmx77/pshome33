@@ -7,8 +7,8 @@
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * This file is part of tc-lib-pdf-font software library.
@@ -26,8 +26,8 @@ use Com\Tecnick\Pdf\Font\Exception as FontException;
  * @category  Library
  * @package   PdfFont
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2011-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2011-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-pdf-font
  *
  * @phpstan-import-type TFontData from Load
@@ -129,7 +129,7 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param string $font       Font family, or comma separated list of font families
      *                           If it is a standard family name, it will override the corresponding font.
      * @param string $style      Font style.
-     *                           Possible values are (case insensitive):
+     *                           Possible values are (case-insensitive):
      *                           regular (default)
      *                           B: bold
      *                           I: italic
@@ -141,22 +141,15 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param ?float $stretching Horizontal character stretching ratio.
      * @param string $ifile      The font definition file (or empty for autodetect).
      *                           By default, the name is built from the family and style, in lower case with no spaces.
-     * @param ?bool  $subset     If true embedd only a subset of the font
-     *                           (stores only the information related to
-     *                           the used characters); If false embedd
-     *                           full font; This option is valid only for
-     *                           TrueTypeUnicode fonts and it is disabled
-     *                           for PDF/A. If you want to enable users
-     *                           to modify the document, set this
-     *                           parameter to false. If you subset the
-     *                           font, the person who receives your PDF
-     *                           would need to have your same font in
-     *                           order to make changes to your PDF. The
-     *                           file size of the PDF would also be
-     *                           smaller because you are embedding only a
-     *                           subset. Set this to null to use the
-     *                           default value. NOTE: This option is
-     *                           computational and memory intensive.
+     * @param ?bool  $subset     If true embed only a subset of the font (stores only the information related to
+     *                           the used characters); If false embed full font; This option is valid only for
+     *                           TrueTypeUnicode fonts and is disabled for PDF/A. If you want to enable users to
+     *                           modify the document, set this parameter to false. If you subset the font, the person
+     *                           who receives your PDF would need to have your same font in order to make changes to
+     *                           your PDF. The file size of the PDF would also be smaller because you are embedding
+     *                           only a subset.
+     *                           Set this to null to use the default value.
+     *                           NOTE: This option is computational and memory intensive.
      *
      * @return TFontMetric Font data
      *
@@ -216,6 +209,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * Returns the current font data array.
      *
      * @return TFontMetric
+     *
+     * @throws FontException
      */
     public function getCurrentFont(): array
     {
@@ -228,7 +223,7 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param int     $objnum    Current PDF object number.
      * @param ?int    $idx       Font index. Leave it null to use the current font.
      * @param ?string $style     Font style.
-     *                           Possible values are (case insensitive):
+     *                           Possible values are (case-insensitive):
      *                           regular (default)
      *                           B: bold
      *                           I: italic
@@ -240,6 +235,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param ?float $stretching Horizontal character stretching ratio.
      *
      * @return TFontMetric
+     *
+     * @throws FontException
      */
     public function cloneFont(
         int &$objnum,
@@ -301,6 +298,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * Returns the current font type (i.e.: Core, TrueType, TrueTypeUnicode, Type1).
      *
      * @return string
+     *
+     * @throws FontException
      */
     public function getCurrentFontType(): string
     {
@@ -311,6 +310,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * Returns the PDF code to use the current font.
      *
      * @return string
+     *
+     * @throws FontException
      */
     public function getOutCurrentFont(): string
     {
@@ -321,6 +322,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * Returns true if the current font type is Core, TrueType or Type1.
      *
      * @return bool
+     *
+     * @throws FontException
      */
     public function isCurrentByteFont(): bool
     {
@@ -332,6 +335,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * Returns true if the current font type is TrueTypeUnicode or cidfont0.
      *
      * @return bool
+     *
+     * @throws FontException
      */
     public function isCurrentUnicodeFont(): bool
     {
@@ -343,6 +348,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * Remove and return the last inserted font
      *
      * @return TFontMetric
+     *
+     * @throws FontException
      */
     public function popLastFont(): array
     {
@@ -351,7 +358,7 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
         }
 
         $font = $this->getFontMetric($this->index);
-        array_pop($this->stack);
+        \array_pop($this->stack);
         --$this->index;
         return $font;
     }
@@ -365,6 +372,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      *                                       the value is an array of possible substitutes.
      *
      * @return array<int, int> Array of character codepoints.
+     *
+     * @throws FontException
      */
     public function replaceMissingChars(array $uniarr, array $subs = []): array
     {
@@ -390,11 +399,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
     }
 
     /**
-     * Returns true if the specified unicode value is defined in the current font
+     * Returns true if the specified Unicode value is defined in the current font
      *
      * @param int $ord Unicode character value to convert
      *
      * @return bool
+     *
+     * @throws FontException
      */
     public function isCharDefined(int $ord): bool
     {
@@ -408,6 +419,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param int $ord Unicode character value.
      *
      * @return float
+     *
+     * @throws FontException
      */
     public function getCharWidth(int $ord): float
     {
@@ -422,11 +435,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
     }
 
     /**
-     * Returns the lenght of the string specified using an array of codepoints.
+     * Returns the length of the string specified using an array of codepoints.
      *
      * @param array<int, int> $uniarr Array of character codepoints.
      *
      * @return float
+     *
+     * @throws FontException
      */
     public function getOrdArrWidth(array $uniarr): float
     {
@@ -439,10 +454,12 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param array<int, int> $uniarr Array of character codepoints.
      *
      * @return TTextDims
+     *
+     * @throws FontException
      */
     public function getOrdArrDims(array $uniarr): array
     {
-        $chars = count($uniarr); // total number of chars
+        $chars = \count($uniarr); // total number of chars
         $spaces = 0; // total number of spaces
         $totwidth = 0; // total string width
         $totspacewidth = 0; // total space width
@@ -496,6 +513,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param int $ord Unicode character value.
      *
      * @return TBBox (xMin, yMin, xMax, yMax)
+     *
+     * @throws FontException
      */
     public function getCharBBox(int $ord): array
     {
@@ -506,10 +525,12 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
     /**
      * Replace a char if it is defined on the current font.
      *
-     * @param int $oldchar Integer code (unicode) of the character to replace.
-     * @param int $newchar Integer code (unicode) of the new character.
+     * @param int $oldchar Integer code (Unicode) of the character to replace.
+     * @param int $newchar Integer code (Unicode) of the new character.
      *
-     * @return int the replaced char or the old char in case the new char i not defined
+     * @return int the replaced char or the old char in case the new char is not defined
+     *
+     * @throws FontException
      */
     public function replaceChar(int $oldchar, int $newchar): int
     {
@@ -530,11 +551,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param int $idx Font index in the stack.
      *
      * @return TFontMetric
+     *
+     * @throws FontException
      */
     protected function getFontMetric(int $idx): array
     {
         $font = $this->stack[$idx];
-        $mkey = md5(serialize($font));
+        $mkey = \md5(\serialize($font));
         if (! empty($this->metric[$mkey])) {
             return $this->metric[$mkey];
         }
@@ -544,7 +567,7 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
         $cratio = ((float) $size / 1000);
         $wratio = ($cratio * $font['stretching']); // horizontal ratio
         $data = $this->getFont($font['key']);
-        $outfont = sprintf('/F%d %F Tf', $data['i'], $font['size']); // PDF output string
+        $outfont = \sprintf('/F%d %F Tf', $data['i'], $font['size']); // PDF output string
         // add this font in the stack wit metrics in internal units
         $this->metric[$mkey] = [
             'ascent' => ((float) $data['desc']['Ascent'] * $cratio),
@@ -574,7 +597,7 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
             'ut' => ((float) $data['ut'] * $cratio),
             'xheight' => ((float) $data['desc']['XHeight'] * $cratio),
         ];
-        $tbox = explode(' ', substr($data['desc']['FontBBox'], 1, -1));
+        $tbox = \explode(' ', \substr($data['desc']['FontBBox'], 1, -1));
         $this->metric[$mkey]['fbbox'] = [
             // left
             ((float) $tbox[0] * $wratio),
@@ -590,13 +613,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
             $this->metric[$mkey]['cw'][(int) $cid] = ((float) $width * $wratio);
         }
 
-        if (is_array($data['cbbox'])) {
+        if (\is_array($data['cbbox'])) {
             foreach ($data['cbbox'] as $cid => $val) {
-                if (! is_array($val)) {
+                if (! \is_array($val)) {
                     continue;
                 }
 
-                if (count($val) != 4) {
+                if (\count($val) != 4) {
                     continue;
                 }
 
@@ -617,7 +640,7 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
     }
 
     /**
-     * Normalize the input size
+     * Normalize the input size (minimum 0)
      *
      * @param ?int $size Font size in points (set to null to inherit the last font size).
      *
@@ -634,11 +657,11 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
             return self::DEFAULT_SIZE;
         }
 
-        return max(0, (float) $size);
+        return \max(0, (float) $size);
     }
 
     /**
-     * Normalize the input spacing
+     * Normalize the input spacing (minimum 0)
      *
      * @param ?float $spacing Extra spacing between characters.
      *
@@ -685,6 +708,8 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
      * @param string $fontfamily Property string containing comma-separated font family names
      *
      * @return array<string>
+     *
+     * @throws FontException
      */
     protected function getNormalizedFontKeys(string $fontfamily): array
     {
@@ -694,13 +719,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
 
         $keys = [];
         // remove spaces and symbols
-        $fontfamily = preg_replace('/[^a-z0-9_\,]/', '', strtolower($fontfamily));
-        if (($fontfamily === null) || (! is_string($fontfamily))) {
+        $fontfamily = \preg_replace('/[^a-z0-9_\,]/', '', \strtolower($fontfamily));
+        if (($fontfamily === null) || (! \is_string($fontfamily))) {
             throw new FontException('Invalid font family name: ' . $fontfamily);
         }
 
         // extract all font names
-        $fontslist = preg_split('/[,]/', $fontfamily);
+        $fontslist = \preg_split('/[,]/', $fontfamily);
         if ($fontslist === false) {
             throw new FontException('Invalid font family name: ' . $fontfamily);
         }
@@ -715,13 +740,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
 
         // find first valid font name
         foreach ($fontslist as $font) {
-            $font = preg_replace($fontpattern, $fontreplacement, $font);
+            $font = \preg_replace($fontpattern, $fontreplacement, $font);
             if ($font === null) {
                 throw new FontException('Invalid font family name: ' . $fontfamily);
             }
 
             // replace common family names and core fonts
-            $fontkey = preg_replace($keypattern, $keyreplacement, $font);
+            $fontkey = \preg_replace($keypattern, $keyreplacement, $font);
             if ($fontkey === null) {
                 throw new FontException('Invalid font family name: ' . $fontfamily);
             }
@@ -733,11 +758,13 @@ class Stack extends \Com\Tecnick\Pdf\Font\Buffer
     }
 
     /**
-     * Returns the nomalized font family name or the current font name (key.
+     * Returns the normalized font family name or the current font name key.
      *
      * @param string $fontfamily Raw font family name.
      *
      * @return string
+     *
+     * @throws FontException
      */
     public function getFontFamilyName(string $fontfamily): string
     {

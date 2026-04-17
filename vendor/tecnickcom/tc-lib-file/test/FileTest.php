@@ -7,8 +7,8 @@
  * @category  Library
  * @package   File
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-file
  *
  * This file is part of tc-lib-file software library.
@@ -25,8 +25,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @category  Library
  * @package   File
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-file
  */
 class FileTest extends TestUtil
@@ -41,7 +41,7 @@ class FileTest extends TestUtil
         $file = $this->getTestObject();
         $handle = $file->fopenLocal(__FILE__, 'r');
         $this->bcAssertIsResource($handle);
-        fclose($handle);
+        \fclose($handle);
     }
 
     public function testFopenLocalNonLocal(): void
@@ -68,24 +68,37 @@ class FileTest extends TestUtil
     public function testfReadInt(): void
     {
         $file = $this->getTestObject();
-        $handle = fopen(__FILE__, 'r');
+        $handle = \fopen(__FILE__, 'r');
         $this->assertNotFalse($handle);
         $res = $file->fReadInt($handle);
         // '<?ph' = 60 63 112 104 = 00111100 00111111 01110000 01101000 = 1010790504
         $this->assertEquals(1_010_790_504, $res);
-        fclose($handle);
+        \fclose($handle);
+    }
+
+    public function testfReadIntReadFailureException(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\File\Exception::class);
+        $file = $this->getTestObject();
+
+        $tmp = \tempnam(\sys_get_temp_dir(), 'tc');
+        $handle = @\fopen($tmp, 'w');
+        $this->assertNotFalse($handle);
+        @$file->fReadInt($handle);
+        \fclose($handle);
+        \unlink($tmp);
     }
 
     public function testRfRead(): void
     {
         $file = $this->getTestObject();
-        $handle = fopen(dirname(__DIR__) . '/src/File.php', 'rb');
+        $handle = \fopen(\dirname(__DIR__) . '/src/File.php', 'rb');
         $this->assertNotFalse($handle);
         $res = $file->rfRead($handle, 2);
         $this->assertEquals('<?', $res);
         $res = $file->rfRead($handle, 3);
         $this->assertEquals('php', $res);
-        fclose($handle);
+        \fclose($handle);
     }
 
     public function testRfReadException(): void
@@ -93,6 +106,47 @@ class FileTest extends TestUtil
         $this->bcExpectException('\\' . \Com\Tecnick\File\Exception::class);
         $file = $this->getTestObject();
         $file->rfRead(null, 2);
+    }
+    public function testRfReadClosedHandleException(): void
+    {
+        $this->bcExpectException('\\' . \Com\Tecnick\File\Exception::class);
+        $file = $this->getTestObject();
+        $handle = \fopen(__FILE__, 'rb');
+        // ensure static analyzers know fopen succeeded
+        $this->assertNotFalse($handle);
+        \assert(\is_resource($handle));
+
+        \fclose($handle);
+        // handle is still typed resource by analyzers even after close
+        $file->rfRead($handle, 1);
+    }
+
+    public function testRfReadZeroLength(): void
+    {
+        $this->expectException(\ValueError::class);
+        $file = $this->getTestObject();
+        $handle = \fopen(__FILE__, 'rb');
+        $this->assertNotFalse($handle);
+        // length 0 is not allowed by PHP's fread and will raise ValueError
+        /**
+         * @psalm-suppress InvalidArgument Intentionally passing 0 to trigger ValueError
+         * @phpstan-ignore-next-line
+         */
+        $file->rfRead($handle, 0);
+        \fclose($handle);
+    }
+
+    public function testRfReadEofShorter(): void
+    {
+        $file = $this->getTestObject();
+        $tmp = \tempnam(\sys_get_temp_dir(), 'tc');
+        \file_put_contents($tmp, 'xy');
+        $handle = \fopen($tmp, 'rb');
+        $this->assertNotFalse($handle);
+        $res = $file->rfRead($handle, 10);
+        $this->assertEquals('xy', $res);
+        \fclose($handle);
+        \unlink($tmp);
     }
 
     /**
@@ -164,6 +218,25 @@ class FileTest extends TestUtil
         ];
     }
 
+    /**
+     * Ensure getAltUrlFromPath returns the input when SCRIPT_URI cannot be parsed
+     * (covers the guarded return on line 363 of File.php).
+     */
+    public function testGetAltUrlFromPathUnparseableUri(): void
+    {
+        $testObj = $this->getTestObject();
+
+        // set SCRIPT_URI to something parse_url will handle but without scheme/host
+        $_SERVER['SCRIPT_URI'] = 'not-a-url';
+
+        $rfm = new \ReflectionMethod($testObj, 'getAltUrlFromPath');
+        $rfm->setAccessible(true);
+
+        $input = 'some/path.txt';
+        $result = $rfm->invoke($testObj, $input);
+        $this->assertSame($input, $result, 'Expected original path when SCRIPT_URI lacks scheme/host');
+    }
+
     public function testFileGetContentsMissingException(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\File\Exception::class);
@@ -189,14 +262,14 @@ class FileTest extends TestUtil
     {
         $file = $this->getTestObject();
         $res = $file->fileGetContents(__FILE__);
-        $this->assertEquals('<?php', substr($res, 0, 5));
+        $this->assertEquals('<?php', \substr($res, 0, 5));
     }
 
     public function testFileGetContentsCurl(): void
     {
         $this->bcExpectException('\\' . \Com\Tecnick\File\Exception::class);
         $file = $this->getTestObject();
-        define('FORCE_CURL', true);
+        \define('FORCE_CURL', true);
         $file->fileGetContents('http://www.example.com/test.txt');
     }
 

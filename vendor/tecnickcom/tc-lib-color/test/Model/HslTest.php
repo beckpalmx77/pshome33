@@ -7,8 +7,8 @@
  * @category  Library
  * @package   Color
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-color
  *
  * This file is part of tc-lib-color software library.
@@ -25,8 +25,8 @@ use Test\TestUtil;
  * @category  Library
  * @package   Color
  * @author    Nicola Asuni <info@tecnick.com>
- * @copyright 2015-2024 Nicola Asuni - Tecnick.com LTD
- * @license   http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
+ * @copyright 2015-2026 Nicola Asuni - Tecnick.com LTD
+ * @license   https://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
  * @link      https://github.com/tecnickcom/tc-lib-color
  */
 class HslTest extends TestUtil
@@ -90,6 +90,20 @@ class HslTest extends TestUtil
                 'S' => 0.5,
                 'L' => 0.5,
                 'A' => 0.85,
+            ],
+            $res
+        );
+    }
+
+    public function testGetPDFacArray(): void
+    {
+        $hsl = $this->getTestObject();
+        $res = $hsl->getPDFacArray();
+        $this->bcAssertEqualsWithDelta(
+            [
+                0.25,
+                0.50,
+                0.75,
             ],
             $res
         );
