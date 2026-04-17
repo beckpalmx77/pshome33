@@ -200,7 +200,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             data: {action: "GET_HOUSE_AUTOCOMPLETE", search: request.term},
                             dataType: "json",
                             success: function (data) {
-                                response(data);
+                                console.log('Autocomplete data:', data);
+                                // Transform to autocomplete format if needed
+                                if (Array.isArray(data)) {
+                                    response(data.map(function(item) {
+                                        return {label: item, value: item};
+                                    }));
+                                } else {
+                                    response([]);
+                                }
                             },
                             error: function (xhr, status, error) {
                                 console.log('Autocomplete Error:', status, error, xhr.responseText);

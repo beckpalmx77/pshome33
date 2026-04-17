@@ -1,15 +1,18 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// Prevent any output before JSON
+ob_clean();
 
 if (php_sapi_name() !== 'cli') {
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');
 
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit();
     }
