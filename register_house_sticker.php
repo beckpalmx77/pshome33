@@ -94,7 +94,32 @@ include('includes/Header.php');
                                             </div>
                                         </div>
 
-                                        <!-- สามารถลบ comment ทะเบียนรถ 3-5 ออก ถ้าต้องการใช้งานจริง -->
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no3">ทะเบียนรถ 3</label>
+                                                    <input type="text" name="car_no3" id="car_no3" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no4">ทะเบียนรถ 4</label>
+                                                    <input type="text" name="car_no4" id="car_no4" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no5">ทะเบียนรถ 5</label>
+                                                    <input type="text" name="car_no5" id="car_no5" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="row">
                                             <div class="col-md-4">
@@ -315,6 +340,9 @@ include('includes/Header.php');
                             document.getElementById('phone_number').value = data.phone_number || '';
                             document.getElementById('car_no1').value = data.car_no1 || '';
                             document.getElementById('car_no2').value = data.car_no2 || '';
+                            document.getElementById('car_no3').value = data.car_no3 || '';
+                            document.getElementById('car_no4').value = data.car_no4 || '';
+                            document.getElementById('car_no5').value = data.car_no5 || '';
                             document.getElementById('user-info-liff3').innerText = displayName;
                             $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
 

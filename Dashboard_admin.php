@@ -2,7 +2,7 @@
 include('includes/Header.php');
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
     header("Location: index.php");
-    exit(); // เพิ่ม exit() เพื่อหยุดการทำงาน
+    exit();
 }
 
 include('config/connect_db.php');
@@ -43,233 +43,139 @@ $cardClass = ($percent_chk >= 50) ? 'border-left-success' : 'border-left-danger'
 $percent_67 = ($count_67_house_master > 0) ? ($count_67 / $count_67_house_master) * 100 : 0;
 $percent_68 = ($count_68_house_master > 0) ? ($count_68 / $count_68_house_master) * 100 : 0;
 
+// ดึงยอดรวมค่าส่วนกลาง
+$sql_sum_house_data = " SELECT SUM(common_fee) AS common_fee FROM ims_house_master ";
+$query_sum_house_data = $conn->prepare($sql_sum_house_data);
+$query_sum_house_data->execute();
+$result_sum_house_data = $query_sum_house_data->fetch(PDO::FETCH_OBJ);
+$total_common_fee = $result_sum_house_data->common_fee ?? 0; // เก็บค่าใส่ตัวแปรเพื่อให้ใช้ง่าย
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
 <body id="page-top">
 <div id="wrapper">
-    <?php
-    include('includes/Side-Bar.php');
-    ?>
+    <?php include('includes/Side-Bar.php'); ?>
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
             <?php include('includes/Top-Bar.php'); ?>
 
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold">สรุปข้อมูลภาพรวม</h6>
-                    <a href="#collapseCard" data-toggle="collapse" role="button" aria-expanded="true"
-                       aria-controls="collapseCard" id="toggleCollapse">
-                        <i class="fas fa-chevron-down text-white" id="collapseIcon"></i>
-                    </a>
-                </div>
+            <div class="container-fluid"> <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold">
+                            สรุปข้อมูลภาพรวม
+                        </h6>
+                        <a href="#collapseCard" data-toggle="collapse" role="button" aria-expanded="true"
+                           aria-controls="collapseCard" id="toggleCollapse">
+                            <i class="fas fa-chevron-down text-white" id="collapseIcon"></i>
+                        </a>
+                    </div>
 
-                <div class="collapse show" id="collapseCard">
-                    <div class="card-body">
-
-                        <div class="row">
-                            <div class="col-xl-6 col-md-12 mb-4">
-                                <div class="card <?= $cardClass ?> shadow h-100 py-2">
-                                    <div class="card-body text-center d-flex flex-column justify-content-center">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
-                                            เปรียบเทียบบ้านที่ลงทะเบียนแล้ว กับบ้านทั้งหมด
+                    <div class="collapse show" id="collapseCard">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xl-6 col-md-12 mb-4">
+                                    <div class="card <?= $cardClass ?> shadow h-100 py-2">
+                                        <div class="card-body text-center d-flex flex-column justify-content-center">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
+                                                เปรียบเทียบบ้านที่ลงทะเบียนแล้ว กับบ้านทั้งหมด
+                                            </div>
+                                            <canvas id="totalHousePieChart" style="max-width: 100%; max-height: 400px;"></canvas>
+                                            <p class="text-center mt-3">
+                                                จำนวนบ้านทั้งหมด: <strong><?= number_format($all_total_house) ?> หลัง</strong><br>
+                                                ลงทะเบียนแล้ว: <strong><?= number_format($total_house) ?> หลัง</strong><br>
+                                                คิดเป็น <strong><?= number_format($percent_chk, 2) ?>%</strong><br>
+                                                <strong>(ยอดรวมค่าส่วนกลาง กรณีที่จัดเก็บได้ 621 หลัง : <?= number_format($total_common_fee, 2) ?> บาท) ต่อเดือน</strong>
+                                            </p>
                                         </div>
-                                        <canvas id="totalHousePieChart"
-                                                style="max-width: 100%; max-height: 400px;"></canvas>
-                                        <p class="text-center mt-3">
-                                            จำนวนบ้านทั้งหมด (67 และ 68) :
-                                            <strong><?= number_format($all_total_house) ?> หลัง</strong><br>
-                                            จำนวนบ้านที่ลงทะเบียนในระบบทั้งหมด (67 และ 68) :
-                                            <strong><?= number_format($total_house) ?> หลัง</strong><br>
-                                            คิดเป็น <strong><?= number_format($percent_chk, 2) ?>%</strong>
-                                            ของบ้านทั้งหมด
-                                        </p>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="col-xl-6 col-md-12 mb-4">
-                                <div class="card border-left-danger shadow mb-3">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                    LINE OA ระบบส่วนกลางพฤกษา 33
-                                                </div>
-                                                <div class="row align-items-center">
-                                                    <div class="col-auto">
-                                                        <img src="img/icon/PS33-COMMONFEE-LINEOA.png"
-                                                             alt="QR Code" class="img-fluid rounded shadow-sm"
-                                                             style="max-height: 60px;">
-                                                    </div>
-                                                    <div class="col">
-                                                        <span class="text-gray-800 ml-2">Scan QR Code เพื่อเข้าระบบค่าส่วนกลางพฤกษา 33</span>
+                                <div class="col-xl-6 col-md-12 mb-4">
+                                    <div class="card border-left-danger shadow mb-3">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">LINE OA พฤกษา 33</div>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto"><img src="img/icon/PS33-COMMONFEE-LINEOA.png" style="max-height: 60px;"></div>
+                                                        <div class="col"><span class="text-gray-800 small">Scan เพื่อเข้าระบบค่าส่วนกลาง</span></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fab fa-line fa-2x text-gray-300"></i>
+                                                <div class="col-auto"><i class="fab fa-line fa-2x text-gray-300"></i></div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="card border-left-primary shadow mb-3">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ทั้งหมด
-                                                </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?= number_format($total_house) ?> หลัง
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-home fa-2x text-gray-300"></i>
+                                    <div class="card border-left-primary shadow mb-3">
+                                        <div class="card-body">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">บ้านที่ลงทะเบียนทั้งหมด</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($total_house) ?> หลัง</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card border-left-info shadow mb-3">
+                                        <div class="card-body">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">บ้านกลุ่ม 67 (ลงทะเบียนแล้ว)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($count_67) ?> / <?= number_format($count_67_house_master) ?></div>
+                                            <div class="progress progress-sm mr-2 mt-2">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: <?= $percent_67 ?>%"></div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="card border-left-info shadow mb-3">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                    จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ที่ขึ้นต้นด้วย 67
-                                                </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?= number_format($count_67) ?> หลัง
-                                                    จาก <?= number_format($count_67_house_master) ?> หลัง
-                                                </div>
-                                                <div class="text-xs text-info mt-1">
-                                                    คิดเป็น <strong><?= number_format($percent_67, 2) ?>%</strong>
-                                                    ของบ้านทั้งหมด
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-home fa-2x text-gray-300"></i>
+                                    <div class="card border-left-success shadow mb-3">
+                                        <div class="card-body">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">บ้านกลุ่ม 68 (ลงทะเบียนแล้ว)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($count_68) ?> / <?= number_format($count_68_house_master) ?></div>
+                                            <div class="progress progress-sm mr-2 mt-2">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: <?= $percent_68 ?>%"></div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="card border-left-success shadow mb-3">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                    จำนวนบ้านที่ลงทะเบียน ระบบส่วนกลางพฤกษา33 ที่ขึ้นต้นด้วย 68
-                                                </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?= number_format($count_68) ?> หลัง
-                                                    จาก <?= number_format($count_68_house_master) ?> หลัง
-                                                </div>
-                                                <div class="text-xs text-success mt-1">
-                                                    คิดเป็น <strong><?= number_format($percent_68, 2) ?>%</strong>
-                                                    ของบ้านทั้งหมด
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-home fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="card border-left-secondary shadow">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
-                                                    จำนวนสมาชิกที่ลงทะเบียนทั้งหมด
-                                                </div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                    <?= number_format($total_user) ?> User
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-users fa-2x text-gray-300"></i>
-                                            </div>
+                                    <div class="card border-left-secondary shadow">
+                                        <div class="card-body">
+                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">สมาชิกทั้งหมด</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($total_user) ?> User</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
+            </div> </div> <?php include('includes/Footer.php'); ?>
+    </div> </div> <?php include('includes/Modal-Logout.php'); ?>
 
-                <?php
-                include('includes/Modal-Logout.php');
-                include('includes/Footer.php');
-                ?>
-                <a class="scroll-to-top rounded" href="#page-top">
-                    <i class="fas fa-angle-up"></i>
-                </a>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="vendor/chart.js/Chart.min.js"></script>
 
-                <script src="vendor/jquery/jquery.min.js"></script>
-                <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-                <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-                <script src="js/myadmin.min.js"></script>
-                <script src="vendor/chart.js/Chart.min.js"></script>
-                <script src="js/chart/chart-area-demo.js"></script>
+<script>
+    // Pie Chart Logic
+    const ctxTotal = document.getElementById("totalHousePieChart").getContext('2d');
+    new Chart(ctxTotal, {
+        type: 'pie',
+        data: {
+            labels: ['ลงทะเบียนแล้ว', 'ยังไม่ลงทะเบียน'],
+            datasets: [{
+                data: [<?= $total_house ?>, <?= $unregistered_house ?>],
+                backgroundColor: ['#28a745', '#dc3545'],
+                borderWidth: 1
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
 
-                <link href='vendor/calendar/main.css' rel='stylesheet'/>
-                <script src='vendor/calendar/main.js'></script>
-                <script src='vendor/calendar/locales/th.js'></script>
-
-                <script src='js/clock_time.js'></script>
-
-                <script src="vendor/datatables/v11/bootbox.min.js"></script>
-                <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
-                <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
-                <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
-
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const collapseCard = document.getElementById("collapseCard");
-                        const collapseIcon = document.getElementById("collapseIcon");
-
-                        // ใช้ Bootstrap collapse events
-                        collapseCard.addEventListener("show.bs.collapse", function () {
-                            collapseIcon.classList.remove("fa-chevron-down");
-                            collapseIcon.classList.add("fa-chevron-up");
-                        });
-
-                        collapseCard.addEventListener("hide.bs.collapse", function () {
-                            collapseIcon.classList.remove("fa-chevron-up");
-                            collapseIcon.classList.add("fa-chevron-down");
-                        });
-                    });
-                </script>
-
-                <script>
-                    const ctxTotal = document.getElementById("totalHousePieChart").getContext('2d');
-                    const totalHousePieChart = new Chart(ctxTotal, {
-                        type: 'pie',
-                        data: {
-                            labels: ['ลงทะเบียนแล้ว', 'ยังไม่ลงทะเบียน'],
-                            datasets: [{
-                                data: [<?= $total_house ?>, <?= $unregistered_house ?>],
-                                backgroundColor: ['#28a745', '#dc3545'],
-                                hoverBackgroundColor: ['#218838', '#c82333'],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom'
-                                }
-                            }
-                        }
-                    });
-                </script>
-
+    // Collapse Icon Toggle
+    $('#collapseCard').on('show.bs.collapse', function () {
+        $('#collapseIcon').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    });
+    $('#collapseCard').on('hide.bs.collapse', function () {
+        $('#collapseIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    });
+</script>
 </body>
 </html>

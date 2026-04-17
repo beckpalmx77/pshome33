@@ -10,6 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // รับค่าจาก POST และตัดช่องว่าง
     $car_no1 = trim($_POST['car_no1'] ?? '');
     $car_no2 = trim($_POST['car_no2'] ?? '');
+    $car_no3 = trim($_POST['car_no3'] ?? '');
+    $car_no4 = trim($_POST['car_no4'] ?? '');
+    $car_no5 = trim($_POST['car_no5'] ?? '');
     $phone_number = trim($_POST['phone_number'] ?? '');
     $house_status = trim($_POST['house_status'] ?? '');
     $house_number = trim($_POST['house_number'] ?? '');
@@ -23,12 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     fclose($myfile);
 */
     $sql = "UPDATE ims_house 
-            SET car_no1 = :car_no1, car_no2 = :car_no2 , house_status = :house_status
+            SET car_no1 = :car_no1, car_no2 = :car_no2 , car_no3 = :car_no3 , car_no4 = :car_no4 , car_no5 = :car_no5 , house_status = :house_status
             WHERE house_number = :house_number";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':car_no1', $car_no1);
     $stmt->bindParam(':car_no2', $car_no2);
+    $stmt->bindParam(':car_no3', $car_no3);
+    $stmt->bindParam(':car_no4', $car_no4);
+    $stmt->bindParam(':car_no5', $car_no5);
     $stmt->bindParam(':house_status', $house_status);
     $stmt->bindParam(':house_number', $house_number);
 

@@ -45,7 +45,10 @@ if (!empty($userId)) {
             'phone_number' => $row['phone_number'],
             'house_status' => $row['house_status'],
             'car_no1' => $row['car_no1'],
-            'car_no2' => $row['car_no2']
+            'car_no2' => $row['car_no2'],
+            'car_no3' => $row['car_no3'],
+            'car_no4' => $row['car_no4'],
+            'car_no5' => $row['car_no5']
         ]);
     } else {
         echo json_encode([
@@ -58,7 +61,10 @@ if (!empty($userId)) {
             'phone_number' => '',
             'house_status' => '',
             'car_no1' => '',
-            'car_no2' => ''
+            'car_no2' => '',
+            'car_no3' => '',
+            'car_no4' => '',
+            'car_no5' => ''
         ]);
     }
 } else {
@@ -72,6 +78,9 @@ if (!empty($userId)) {
         'phone_number' => '',
         'house_status' => '',
         'car_no1' => '',
-        'car_no2' => ''
+        'car_no2' => '',
+        'car_no3' => '',
+        'car_no4' => '',
+        'car_no5' => ''
     ]);
 }
