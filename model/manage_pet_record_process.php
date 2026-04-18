@@ -126,10 +126,30 @@ if ($_POST["action"] === 'GET_DATA_BY_HOUSE') {
             "alley" => $result['alley'],
             "house_status" => $result['house_status'],
             "car_no1" => $result['car_no1'],
+            "car_no1_province" => $result['car_no1_province'],
+            "car_no1_brand" => $result['car_no1_brand'],
+            "car_no1_color" => $result['car_no1_color'],
+            "car_no1_type" => $result['car_no1_type'],
             "car_no2" => $result['car_no2'],
+            "car_no2_province" => $result['car_no2_province'],
+            "car_no2_brand" => $result['car_no2_brand'],
+            "car_no2_color" => $result['car_no2_color'],
+            "car_no2_type" => $result['car_no2_type'],
             "car_no3" => $result['car_no3'],
+            "car_no3_province" => $result['car_no3_province'],
+            "car_no3_brand" => $result['car_no3_brand'],
+            "car_no3_color" => $result['car_no3_color'],
+            "car_no3_type" => $result['car_no3_type'],
             "car_no4" => $result['car_no4'],
-            "car_no5" => $result['car_no5']
+            "car_no4_province" => $result['car_no4_province'],
+            "car_no4_brand" => $result['car_no4_brand'],
+            "car_no4_color" => $result['car_no4_color'],
+            "car_no4_type" => $result['car_no4_type'],
+            "car_no5" => $result['car_no5'],
+            "car_no5_province" => $result['car_no5_province'],
+            "car_no5_brand" => $result['car_no5_brand'],
+            "car_no5_color" => $result['car_no5_color'],
+            "car_no5_type" => $result['car_no5_type']
         );
     }
     echo json_encode($return_arr);
@@ -151,28 +171,103 @@ if ($_POST["action"] === 'GET_HOUSE_AUTOCOMPLETE') {
     exit();
 }
 
+if ($_POST["action"] === 'GET_PROVINCE_AUTOCOMPLETE') {
+    $search = $_POST["search"] ?? '';
+    $return_arr = array();
+    $sql_get = "SELECT province_name FROM ims_provinces WHERE province_name LIKE :search ORDER BY province_name LIMIT 20";
+    $stmt = $conn->prepare($sql_get);
+    $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($results as $result) {
+        $return_arr[] = $result['province_name'];
+    }
+    echo json_encode($return_arr);
+    exit();
+}
+
 if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $house_number = $_POST["house_number"];
     $car_no1 = $_POST["car_no1"];
+    $car_no1_province = $_POST["car_no1_province"];
+    $car_no1_brand = $_POST["car_no1_brand"];
+    $car_no1_color = $_POST["car_no1_color"];
+    $car_no1_type = $_POST["car_no1_type"];
     $car_no2 = $_POST["car_no2"];
+    $car_no2_province = $_POST["car_no2_province"];
+    $car_no2_brand = $_POST["car_no2_brand"];
+    $car_no2_color = $_POST["car_no2_color"];
+    $car_no2_type = $_POST["car_no2_type"];
     $car_no3 = $_POST["car_no3"];
+    $car_no3_province = $_POST["car_no3_province"];
+    $car_no3_brand = $_POST["car_no3_brand"];
+    $car_no3_color = $_POST["car_no3_color"];
+    $car_no3_type = $_POST["car_no3_type"];
     $car_no4 = $_POST["car_no4"];
+    $car_no4_province = $_POST["car_no4_province"];
+    $car_no4_brand = $_POST["car_no4_brand"];
+    $car_no4_color = $_POST["car_no4_color"];
+    $car_no4_type = $_POST["car_no4_type"];
     $car_no5 = $_POST["car_no5"];
+    $car_no5_province = $_POST["car_no5_province"];
+    $car_no5_brand = $_POST["car_no5_brand"];
+    $car_no5_color = $_POST["car_no5_color"];
+    $car_no5_type = $_POST["car_no5_type"];
 
     $sql_update = "UPDATE ims_house SET 
         car_no1 = :car_no1, 
+        car_no1_province = :car_no1_province,
+        car_no1_brand = :car_no1_brand,
+        car_no1_color = :car_no1_color,
+        car_no1_type = :car_no1_type,
         car_no2 = :car_no2, 
+        car_no2_province = :car_no2_province,
+        car_no2_brand = :car_no2_brand,
+        car_no2_color = :car_no2_color,
+        car_no2_type = :car_no2_type,
         car_no3 = :car_no3, 
+        car_no3_province = :car_no3_province,
+        car_no3_brand = :car_no3_brand,
+        car_no3_color = :car_no3_color,
+        car_no3_type = :car_no3_type,
         car_no4 = :car_no4,
-        car_no5 = :car_no5
+        car_no4_province = :car_no4_province,
+        car_no4_brand = :car_no4_brand,
+        car_no4_color = :car_no4_color,
+        car_no4_type = :car_no4_type,
+        car_no5 = :car_no5,
+        car_no5_province = :car_no5_province,
+        car_no5_brand = :car_no5_brand,
+        car_no5_color = :car_no5_color,
+        car_no5_type = :car_no5_type
         WHERE house_number = :house_number";
 
     $query = $conn->prepare($sql_update);
     $query->bindParam(':car_no1', $car_no1, PDO::PARAM_STR);
+    $query->bindParam(':car_no1_province', $car_no1_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no1_brand', $car_no1_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no1_color', $car_no1_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no1_type', $car_no1_type, PDO::PARAM_STR);
     $query->bindParam(':car_no2', $car_no2, PDO::PARAM_STR);
+    $query->bindParam(':car_no2_province', $car_no2_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no2_brand', $car_no2_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no2_color', $car_no2_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no2_type', $car_no2_type, PDO::PARAM_STR);
     $query->bindParam(':car_no3', $car_no3, PDO::PARAM_STR);
+    $query->bindParam(':car_no3_province', $car_no3_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no3_brand', $car_no3_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no3_color', $car_no3_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no3_type', $car_no3_type, PDO::PARAM_STR);
     $query->bindParam(':car_no4', $car_no4, PDO::PARAM_STR);
+    $query->bindParam(':car_no4_province', $car_no4_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no4_brand', $car_no4_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no4_color', $car_no4_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no4_type', $car_no4_type, PDO::PARAM_STR);
     $query->bindParam(':car_no5', $car_no5, PDO::PARAM_STR);
+    $query->bindParam(':car_no5_province', $car_no5_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no5_brand', $car_no5_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no5_color', $car_no5_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no5_type', $car_no5_type, PDO::PARAM_STR);
     $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
     $query->execute();
 

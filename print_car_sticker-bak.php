@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+// Prevent output buffer issues
+ob_clean();
+
 require_once __DIR__ . '/vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/vendor/setasign/fpdi/src/autoload.php';
 
@@ -44,7 +48,7 @@ function generateCarStickerPdf($house_number, $output = 'I') {
     $monthThai = ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
     $dateText = $day . ' ' . $monthThai[$month] . ' ' . $year;
     
-    $pdf->SetFont('THSarabunNew', '', 14);
+    $pdf->SetFont('thsarabunnew', '', 14);
     
     $pdf->setSourceFile('document/sticker_form_decompressed.pdf');
     $tplId = $pdf->importPage(1);

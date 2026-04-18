@@ -25,11 +25,20 @@ function generateCarStickerPdf($house_number, $output = 'I') {
     }
     
     $carNos = [];
-    if (!empty($result['car_no1'])) $carNos[] = $result['car_no1'];
-    if (!empty($result['car_no2'])) $carNos[] = $result['car_no2'];
-    if (!empty($result['car_no3'])) $carNos[] = $result['car_no3'];
-    if (!empty($result['car_no4'])) $carNos[] = $result['car_no4'];
-    if (!empty($result['car_no5'])) $carNos[] = $result['car_no5'];
+    $carData = [];
+    for ($i = 1; $i <= 5; $i++) {
+        $carNo = $result['car_no' . $i] ?? '';
+        if (!empty($carNo)) {
+            $carNos[] = $carNo;
+            $carData[] = [
+                'no' => $carNo,
+                'brand' => $result['car_no' . $i . '_brand'] ?? '',
+                'color' => $result['car_no' . $i . '_color'] ?? '',
+                'province' => $result['car_no' . $i . '_province'] ?? '',
+                'type' => $result['car_no' . $i . '_type'] ?? ''
+            ];
+        }
+    }
     
     $carCount = count($carNos);
     $extraCarFee = 0;
@@ -72,9 +81,23 @@ function generateCarStickerPdf($house_number, $output = 'I') {
     $pdf->Cell(0, 0, $result['phone_number'] ?? '', 0, 0, 'L');
     
     $y_car = 135;
-    foreach ($carNos as $carNo) {
-        $pdf->SetXY(32, $y_car);
-        $pdf->Cell(0, 0, $carNo, 0, 0, 'L');
+    $x_car = 32;
+    $x_province = $x_car + 35;
+    $x_brand = $x_province + 35;
+    $x_color = $x_brand + 40;
+    $x_type = $x_color + 35;
+    
+    foreach ($carData as $car) {
+        $pdf->SetXY($x_car, $y_car);
+        $pdf->Cell(0, 0, $car['no'], 0, 0, 'L');
+        $pdf->SetXY($x_province, $y_car);
+        $pdf->Cell(0, 0, $car['province'], 0, 0, 'L');
+        $pdf->SetXY($x_brand, $y_car);
+        $pdf->Cell(0, 0, $car['brand'], 0, 0, 'L');
+        $pdf->SetXY($x_color, $y_car);
+        $pdf->Cell(0, 0, $car['color'], 0, 0, 'L');
+        $pdf->SetXY($x_type, $y_car);
+        $pdf->Cell(0, 0, $car['type'], 0, 0, 'L');
         $y_car += 8;
     }
     
