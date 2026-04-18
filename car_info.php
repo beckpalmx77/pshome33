@@ -20,11 +20,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 ?>
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">ค้นหาข้อมูลทะเบียนรถ</h1>
+                        <h1 class="h3 mb-0 text-gray-800">บันทึกข้อมูลทะเบียนรถ</h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">ค้นหาข้อมูลทะเบียนรถ</li>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                                </li>
+                                <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                                <li class="breadcrumb-item active"
+                                    aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                            </ol>
                         </ol>
                     </div>
 
@@ -122,7 +126,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ / รุ่น</label>
+                                                                <label class="control-label">ยี่ห้อ</label>
                                                                 <input type="text" class="form-control" id="car_no1_brand">
                                                             </div>
                                                         </div>
@@ -158,7 +162,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ / รุ่น</label>
+                                                                <label class="control-label">ยี่ห้อ</label>
                                                                 <input type="text" class="form-control" id="car_no2_brand">
                                                             </div>
                                                         </div>
@@ -194,7 +198,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ / รุ่น</label>
+                                                                <label class="control-label">ยี่ห้อ</label>
                                                                 <input type="text" class="form-control" id="car_no3_brand">
                                                             </div>
                                                         </div>
@@ -230,7 +234,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ / รุ่น</label>
+                                                                <label class="control-label">ยี่ห้อ</label>
                                                                 <input type="text" class="form-control" id="car_no4_brand">
                                                             </div>
                                                         </div>
@@ -266,7 +270,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ / รุ่น</label>
+                                                                <label class="control-label">ยี่ห้อ</label>
                                                                 <input type="text" class="form-control" id="car_no5_brand">
                                                             </div>
                                                         </div>
