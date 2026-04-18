@@ -149,7 +149,9 @@ if ($_POST["action"] === 'GET_DATA_BY_HOUSE') {
             "car_no5_province" => $result['car_no5_province'],
             "car_no5_brand" => $result['car_no5_brand'],
             "car_no5_color" => $result['car_no5_color'],
-            "car_no5_type" => $result['car_no5_type']
+            "car_no5_type" => $result['car_no5_type'],
+            "sticker_receive_status" => $result['sticker_receive_status'],
+            "sticker_receive_date" => $result['sticker_receive_date']
         );
     }
     echo json_encode($return_arr);
@@ -171,6 +173,40 @@ if ($_POST["action"] === 'GET_HOUSE_AUTOCOMPLETE') {
     exit();
 }
 
+if ($_POST["action"] === 'GET_COLOR_AUTOCOMPLETE') {
+    $search = $_POST["search"] ?? '';
+    //$colors = ['ขาว', 'ดำ', 'เทา', 'เงิน', 'น้ำเงิน', 'แดง', 'เขียว', 'เหลือง', 'ส้ม', 'น้ำตาล', 'ม่วง', 'ชมพู', 'ทอง', 'บรอนซ์', 'ครีม', 'เทาอ่อน', 'เทาเข้ม', 'ดำเงา', 'ขาวมุข'];
+    $colors = [
+        'ขาว', 'ดำ', 'เทา', 'เงิน', 'น้ำเงิน', 'แดง', 'เขียว', 'เหลือง', 'ส้ม', 'น้ำตาล',
+        'ม่วง', 'ชมพู', 'ทอง', 'บรอนซ์', 'ครีม', 'เทาอ่อน', 'เทาเข้ม', 'ดำเงา', 'ขาวมุข',
+        'White', 'Black', 'Gray', 'Silver', 'Blue', 'Red', 'Green', 'Yellow', 'Orange', 'Brown',
+        'Purple', 'Pink', 'Gold', 'Bronze', 'Cream', 'Light Gray', 'Dark Gray', 'Glossy Black', 'Pearl White'
+    ];
+    $return_arr = array_filter($colors, function($color) use ($search) {
+        return mb_stripos($color, $search) !== false;
+    });
+    echo json_encode(array_values($return_arr));
+    exit();
+}
+
+if ($_POST["action"] === 'GET_BRAND_AUTOCOMPLETE') {
+    $search = $_POST["search"] ?? '';
+    //$brands = ['โตโยต้า', 'ฮอนด้า', 'นิสสัน', 'มาสด้า', 'ซูซูกิ', 'มิตซูบิชิ', 'อีซูซุ', 'ฟอร์ด', 'เชฟโรเลต', 'บีเอ็มดับเบิลยู', 'เมอร์เซเดส', 'อาวดี้', 'โวลโว', 'เปโตรนาส', 'ซามซอง', 'ดีเอส', 'เอสเอสซี', 'ฮาวิ์', 'ยามาฮ่า', 'คาวาซากิ', 'ดูคาติ', 'อพอลโล', 'เจ็ท', 'ยามาฮ่า มอเตอร์ไซค์', 'ฮอนด้า มอเตอร์ไซค์', 'ซูซูกิ มอเตอร์ไซค์', 'คาวาซากิ มอเตอร์ไซค์', 'ดีเอ็นเอ็ม', 'บีทีอาร์', 'ไทยแลนด์'];
+    $brands = [
+        'โตโยต้า', 'ฮอนด้า', 'นิสสัน', 'มาสด้า', 'ซูซูกิ', 'มิตซูบิชิ', 'อีซูซุ', 'ฟอร์ด', 'เชฟโรเลต', 'บีเอ็มดับเบิลยู','เอ็มจี',
+        'เมอร์เซเดส', 'อาวดี้', 'โวลโว', 'เปโตรนาส', 'ซามซอง', 'ดีเอส', 'เอสเอสซี', 'ฮาวิ์', 'ยามาฮ่า', 'คาวาซากิ',
+        'ดูคาติ', 'อพอลโล', 'เจ็ท', 'ยามาฮ่า มอเตอร์ไซค์', 'ฮอนด้า มอเตอร์ไซค์', 'ซูซูกิ มอเตอร์ไซค์', 'คาวาซากิ มอเตอร์ไซค์', 'ดีเอ็นเอ็ม', 'บีทีอาร์', 'ไทยแลนด์',
+        'Toyota', 'Honda', 'Nissan', 'Mazda', 'Suzuki', 'Mitsubishi', 'Isuzu', 'Ford', 'Chevrolet', 'BMW','MG',
+        'Mercedes-Benz', 'Audi', 'Volvo', 'Petronas', 'Samsung', 'DS', 'SSC', 'Haval', 'Yamaha', 'Kawasaki',
+        'Ducati', 'Apollo', 'Jet', 'Yamaha Motorcycle', 'Honda Motorcycle', 'Suzuki Motorcycle', 'Kawasaki Motorcycle', 'DNM', 'BTR', 'Thailand'
+    ];
+    $return_arr = array_filter($brands, function($brand) use ($search) {
+        return mb_stripos($brand, $search) !== false;
+    });
+    echo json_encode(array_values($return_arr));
+    exit();
+}
+
 if ($_POST["action"] === 'GET_PROVINCE_AUTOCOMPLETE') {
     $search = $_POST["search"] ?? '';
     $return_arr = array();
@@ -183,6 +219,35 @@ if ($_POST["action"] === 'GET_PROVINCE_AUTOCOMPLETE') {
         $return_arr[] = $result['province_name'];
     }
     echo json_encode($return_arr);
+    exit();
+}
+
+if ($_POST["action"] === 'UPDATE_STICKER_RECEIVE_STATUS') {
+    $house_number = $_POST["house_number"];
+    $sticker_receive_status = $_POST["sticker_receive_status"];
+    
+    $sql_check = "SELECT sticker_receive_status FROM ims_house WHERE house_number = :house_number";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+    $stmt_check->execute();
+    $row = $stmt_check->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row && $row['sticker_receive_status'] === 'Y') {
+        echo json_encode(['result' => '1']);
+        exit();
+    }
+    
+    $sql_update = "UPDATE ims_house SET 
+        sticker_receive_status = :sticker_receive_status,
+        sticker_receive_date = NOW()
+        WHERE house_number = :house_number";
+    
+    $query = $conn->prepare($sql_update);
+    $query->bindParam(':sticker_receive_status', $sticker_receive_status, PDO::PARAM_STR);
+    $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+    $query->execute();
+    
+    echo json_encode(['result' => '1']);
     exit();
 }
 
@@ -213,6 +278,18 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $car_no5_brand = $_POST["car_no5_brand"];
     $car_no5_color = $_POST["car_no5_color"];
     $car_no5_type = $_POST["car_no5_type"];
+    $sticker_receive_status = $_POST["sticker_receive_status"];
+
+    $sql_check = "SELECT sticker_receive_status, sticker_receive_date FROM ims_house WHERE house_number = :house_number";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bindParam(':house_number', $house_number, PDO::PARAM_STR);
+    $stmt_check->execute();
+    $row = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+    $date_update = "";
+    if ($sticker_receive_status === 'Y' && (empty($row['sticker_receive_date']) || $row['sticker_receive_date'] === null)) {
+        $date_update = ", sticker_receive_date = NOW()";
+    }
 
     $sql_update = "UPDATE ims_house SET 
         car_no1 = :car_no1, 
@@ -239,7 +316,9 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
         car_no5_province = :car_no5_province,
         car_no5_brand = :car_no5_brand,
         car_no5_color = :car_no5_color,
-        car_no5_type = :car_no5_type
+        car_no5_type = :car_no5_type,
+        sticker_receive_status = :sticker_receive_status
+        $date_update
         WHERE house_number = :house_number";
 
     $query = $conn->prepare($sql_update);
@@ -268,6 +347,7 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $query->bindParam(':car_no5_brand', $car_no5_brand, PDO::PARAM_STR);
     $query->bindParam(':car_no5_color', $car_no5_color, PDO::PARAM_STR);
     $query->bindParam(':car_no5_type', $car_no5_type, PDO::PARAM_STR);
+    $query->bindParam(':sticker_receive_status', $sticker_receive_status, PDO::PARAM_STR);
     $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
     $query->execute();
 

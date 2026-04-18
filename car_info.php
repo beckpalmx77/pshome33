@@ -20,7 +20,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 ?>
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">บันทึกข้อมูลทะเบียนรถ</h1>
+                        <h1 class="h3 mb-0 text-gray-800">บันทึกข้อมูลทะเบียนรถ (รับสติกเกอร์)</h1>
                         <ol class="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
@@ -106,6 +106,42 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                             </div>
                                                         </div>
                                                     </div>
+
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="control-label">จำนวนรถ (คัน)</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="car_count" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ค่า สติกเกอร์ ทะเบียนรถเพิ่ม (บาท)</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="extra_car_fee" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">สถานะการรับสติกเกอร์</label>
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" class="form-check-input" id="sticker_receive_status" value="Y">
+                                                                    <label class="form-check-label" for="sticker_receive_status">รับแล้ว</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="control-label">วันที่รับ</label>
+                                                                <input type="text" class="form-control" id="sticker_receive_date" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="row mt-3">
                                                         <div class="col-md-12">
                                                             <label class="control-label"><strong>ทะเบียนรถ</strong></label>
@@ -126,7 +162,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ</label>
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
                                                                 <input type="text" class="form-control" id="car_no1_brand">
                                                             </div>
                                                         </div>
@@ -162,7 +198,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ</label>
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
                                                                 <input type="text" class="form-control" id="car_no2_brand">
                                                             </div>
                                                         </div>
@@ -198,7 +234,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ</label>
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
                                                                 <input type="text" class="form-control" id="car_no3_brand">
                                                             </div>
                                                         </div>
@@ -234,7 +270,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ</label>
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
                                                                 <input type="text" class="form-control" id="car_no4_brand">
                                                             </div>
                                                         </div>
@@ -270,7 +306,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <label class="control-label">ยี่ห้อ</label>
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
                                                                 <input type="text" class="form-control" id="car_no5_brand">
                                                             </div>
                                                         </div>
@@ -290,25 +326,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                            
-
-                                                    <div class="row mt-3">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label class="control-label">จำนวนรถ (คัน)</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="car_count" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label class="control-label">ค่าจดทะเบียนรถเพิ่ม (บาท)</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="extra_car_fee" readonly>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -444,6 +462,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 $('#car_count').val(carCount);
                                 $('#extra_car_fee').val(extraCarFee);
 
+                                if (house.sticker_receive_status === 'Y') {
+                                    $('#sticker_receive_status').prop('checked', true);
+                                    $('#sticker_receive_status').prop('disabled', true);
+                                    $('#sticker_receive_date').val(house.sticker_receive_date || '');
+                                } else {
+                                    $('#sticker_receive_status').prop('checked', false);
+                                    $('#sticker_receive_status').prop('disabled', false);
+                                    $('#sticker_receive_date').val('');
+                                }
+
                                 $('#resultSection').show();
                                 $('#btnPrint').prop('disabled', false);
                                 $('#btnSave').show();
@@ -500,8 +528,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     let car_no5_brand = $('#car_no5_brand').val().trim();
                     let car_no5_color = $('#car_no5_color').val().trim();
                     let car_no5_type = $('#car_no5_type').val().trim();
+                    let sticker_receive_status = $('#sticker_receive_status').is(':checked') ? 'Y' : 'N';
 
-                    console.log('Saving:', {house_number, car_no1, car_no1_province, car_no1_brand, car_no1_color, car_no1_type, car_no2, car_no2_province, car_no2_brand, car_no2_color, car_no2_type, car_no3, car_no3_province, car_no3_brand, car_no3_color, car_no3_type, car_no4, car_no4_province, car_no4_brand, car_no4_color, car_no4_type, car_no5, car_no5_province, car_no5_brand, car_no5_color, car_no5_type});
+                    console.log('Saving:', {house_number, car_no1, car_no1_province, car_no1_brand, car_no1_color, car_no1_type, car_no2, car_no2_province, car_no2_brand, car_no2_color, car_no2_type, car_no3, car_no3_province, car_no3_brand, car_no3_color, car_no3_type, car_no4, car_no4_province, car_no4_brand, car_no4_color, car_no4_type, car_no5, car_no5_province, car_no5_brand, car_no5_color, car_no5_type, sticker_receive_status});
 
                     if (house_number === '') {
                         alertify.warning("กรุณาค้นหาข้อมูลก่อน");
@@ -538,7 +567,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             car_no5_province: car_no5_province,
                             car_no5_brand: car_no5_brand,
                             car_no5_color: car_no5_color,
-                            car_no5_type: car_no5_type
+                            car_no5_type: car_no5_type,
+                            sticker_receive_status: sticker_receive_status
                         },
                         dataType: "text",
                         success: function (response) {
@@ -561,6 +591,25 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         }
                     });
                 });
+
+                function updateCarCount() {
+                    let carCount = 0;
+                    if ($('#car_no1').val().trim() !== '') carCount++;
+                    if ($('#car_no2').val().trim() !== '') carCount++;
+                    if ($('#car_no3').val().trim() !== '') carCount++;
+                    if ($('#car_no4').val().trim() !== '') carCount++;
+                    if ($('#car_no5').val().trim() !== '') carCount++;
+
+                    let extraCarFee = 0;
+                    if (carCount > 2) {
+                        extraCarFee = (carCount - 2) * 100;
+                    }
+
+                    $('#car_count').val(carCount);
+                    $('#extra_car_fee').val(extraCarFee);
+                }
+
+                $('#car_no1, #car_no2, #car_no3, #car_no4, #car_no5').on('input', updateCarCount);
 
                 function initProvinceAutocomplete(inputId) {
                     $("#" + inputId).autocomplete({
@@ -594,6 +643,70 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 initProvinceAutocomplete("car_no3_province");
                 initProvinceAutocomplete("car_no4_province");
                 initProvinceAutocomplete("car_no5_province");
+
+                function initColorAutocomplete(inputId) {
+                    $("#" + inputId).autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                type: "POST",
+                                url: 'model/manage_pet_record_process.php',
+                                data: {action: "GET_COLOR_AUTOCOMPLETE", search: request.term},
+                                dataType: "json",
+                                success: function (data) {
+                                    if (Array.isArray(data)) {
+                                        response(data.map(function(item) {
+                                            return {label: item, value: item};
+                                        }));
+                                    } else {
+                                        response([]);
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    response([]);
+                                }
+                            });
+                        },
+                        minLength: 1
+                    });
+                }
+
+                initColorAutocomplete("car_no1_color");
+                initColorAutocomplete("car_no2_color");
+                initColorAutocomplete("car_no3_color");
+                initColorAutocomplete("car_no4_color");
+                initColorAutocomplete("car_no5_color");
+
+                function initBrandAutocomplete(inputId) {
+                    $("#" + inputId).autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                type: "POST",
+                                url: 'model/manage_pet_record_process.php',
+                                data: {action: "GET_BRAND_AUTOCOMPLETE", search: request.term},
+                                dataType: "json",
+                                success: function (data) {
+                                    if (Array.isArray(data)) {
+                                        response(data.map(function(item) {
+                                            return {label: item, value: item};
+                                        }));
+                                    } else {
+                                        response([]);
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    response([]);
+                                }
+                            });
+                        },
+                        minLength: 1
+                    });
+                }
+
+                initBrandAutocomplete("car_no1_brand");
+                initBrandAutocomplete("car_no2_brand");
+                initBrandAutocomplete("car_no3_brand");
+                initBrandAutocomplete("car_no4_brand");
+                initBrandAutocomplete("car_no5_brand");
             });
         </script>
 

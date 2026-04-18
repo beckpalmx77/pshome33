@@ -91,7 +91,7 @@ include('includes/Header.php');
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no1_brand">ยี่ห้อ</label>
+                                                    <label for="car_no1_brand">ยี่ห้อ-รุ่น</label>
                                                     <input type="text" name="car_no1_brand" id="car_no1_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -131,7 +131,7 @@ include('includes/Header.php');
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no2_brand">ยี่ห้อ</label>
+                                                    <label for="car_no2_brand">ยี่ห้อ-รุ่น</label>
                                                     <input type="text" name="car_no2_brand" id="car_no2_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -171,7 +171,7 @@ include('includes/Header.php');
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no3_brand">ยี่ห้อ</label>
+                                                    <label for="car_no3_brand">ยี่ห้อ-รุ่น</label>
                                                     <input type="text" name="car_no3_brand" id="car_no3_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -211,7 +211,7 @@ include('includes/Header.php');
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no4_brand">ยี่ห้อ</label>
+                                                    <label for="car_no4_brand">ยี่ห้อ-รุ่น</label>
                                                     <input type="text" name="car_no4_brand" id="car_no4_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -251,7 +251,7 @@ include('includes/Header.php');
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no5_brand">ยี่ห้อ</label>
+                                                    <label for="car_no5_brand">ยี่ห้อ-รุ่น</label>
                                                     <input type="text" name="car_no5_brand" id="car_no5_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -472,6 +472,70 @@ include('includes/Header.php');
         initProvinceAutocomplete("car_no3_province");
         initProvinceAutocomplete("car_no4_province");
         initProvinceAutocomplete("car_no5_province");
+
+        function initColorAutocomplete(inputId) {
+            $("#" + inputId).autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: 'model/manage_pet_record_process.php',
+                        data: {action: "GET_COLOR_AUTOCOMPLETE", search: request.term},
+                        dataType: "json",
+                        success: function (data) {
+                            if (Array.isArray(data)) {
+                                response(data.map(function(item) {
+                                    return {label: item, value: item};
+                                }));
+                            } else {
+                                response([]);
+                            }
+                        },
+                        error: function () {
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        }
+
+        initColorAutocomplete("car_no1_color");
+        initColorAutocomplete("car_no2_color");
+        initColorAutocomplete("car_no3_color");
+        initColorAutocomplete("car_no4_color");
+        initColorAutocomplete("car_no5_color");
+
+        function initBrandAutocomplete(inputId) {
+            $("#" + inputId).autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: 'model/manage_pet_record_process.php',
+                        data: {action: "GET_BRAND_AUTOCOMPLETE", search: request.term},
+                        dataType: "json",
+                        success: function (data) {
+                            if (Array.isArray(data)) {
+                                response(data.map(function(item) {
+                                    return {label: item, value: item};
+                                }));
+                            } else {
+                                response([]);
+                            }
+                        },
+                        error: function () {
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        }
+
+        initBrandAutocomplete("car_no1_brand");
+        initBrandAutocomplete("car_no2_brand");
+        initBrandAutocomplete("car_no3_brand");
+        initBrandAutocomplete("car_no4_brand");
+        initBrandAutocomplete("car_no5_brand");
     });
 </script>
 
