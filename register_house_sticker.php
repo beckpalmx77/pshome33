@@ -79,19 +79,19 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no1">ทะเบียนรถ 1</label>
+                                                    <label for="car_no1">ทะเบียนรถ (1)</label>
                                                     <input type="text" name="car_no1" id="car_no1" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no1_province">จังหวัด</label>
+                                                    <label for="car_no1_province">จังหวัด (1)</label>
                                                     <input type="text" name="car_no1_province" id="car_no1_province" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no1_brand">ยี่ห้อ-รุ่น</label>
+                                                    <label for="car_no1_brand">ยี่ห้อ-รุ่น (1)</label>
                                                     <input type="text" name="car_no1_brand" id="car_no1_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -100,13 +100,13 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no1_color">สี</label>
+                                                    <label for="car_no1_color">สี (1)</label>
                                                     <input type="text" name="car_no1_color" id="car_no1_color" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no1_type">ประเภท</label>
+                                                    <label for="car_no1_type">ประเภท (1)</label>
                                                     <select name="car_no1_type" id="car_no1_type" class="form-control">
                                                         <option value="">-- เลือก --</option>
                                                         <option value="รถยนต์">รถยนต์</option>
@@ -119,19 +119,19 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no2">ทะเบียนรถ 2</label>
+                                                    <label for="car_no2">ทะเบียนรถ (2)</label>
                                                     <input type="text" name="car_no2" id="car_no2" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no2_province">จังหวัด</label>
+                                                    <label for="car_no2_province">จังหวัด (2)</label>
                                                     <input type="text" name="car_no2_province" id="car_no2_province" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no2_brand">ยี่ห้อ-รุ่น</label>
+                                                    <label for="car_no2_brand">ยี่ห้อ-รุ่น (2)</label>
                                                     <input type="text" name="car_no2_brand" id="car_no2_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -140,13 +140,13 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no2_color">สี</label>
+                                                    <label for="car_no2_color">สี (2)</label>
                                                     <input type="text" name="car_no2_color" id="car_no2_color" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no2_type">ประเภท</label>
+                                                    <label for="car_no2_type">ประเภท (2)</label>
                                                     <select name="car_no2_type" id="car_no2_type" class="form-control">
                                                         <option value="">-- เลือก --</option>
                                                         <option value="รถยนต์">รถยนต์</option>
@@ -159,19 +159,19 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no3">ทะเบียนรถ 3</label>
+                                                    <label for="car_no3">ทะเบียนรถ (3)</label>
                                                     <input type="text" name="car_no3" id="car_no3" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no3_province">จังหวัด</label>
+                                                    <label for="car_no3_province">จังหวัด (3)</label>
                                                     <input type="text" name="car_no3_province" id="car_no3_province" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no3_brand">ยี่ห้อ-รุ่น</label>
+                                                    <label for="car_no3_brand">ยี่ห้อ-รุ่น (3)</label>
                                                     <input type="text" name="car_no3_brand" id="car_no3_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -180,13 +180,13 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no3_color">สี</label>
+                                                    <label for="car_no3_color">สี (3)</label>
                                                     <input type="text" name="car_no3_color" id="car_no3_color" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no3_type">ประเภท</label>
+                                                    <label for="car_no3_type">ประเภท (3)</label>
                                                     <select name="car_no3_type" id="car_no3_type" class="form-control">
                                                         <option value="">-- เลือก --</option>
                                                         <option value="รถยนต์">รถยนต์</option>
@@ -199,19 +199,19 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no4">ทะเบียนรถ 4</label>
+                                                    <label for="car_no4">ทะเบียนรถ (4)</label>
                                                     <input type="text" name="car_no4" id="car_no4" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no4_province">จังหวัด</label>
+                                                    <label for="car_no4_province">จังหวัด (4)</label>
                                                     <input type="text" name="car_no4_province" id="car_no4_province" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no4_brand">ยี่ห้อ-รุ่น</label>
+                                                    <label for="car_no4_brand">ยี่ห้อ-รุ่น (4)</label>
                                                     <input type="text" name="car_no4_brand" id="car_no4_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -220,13 +220,13 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no4_color">สี</label>
+                                                    <label for="car_no4_color">สี (4)</label>
                                                     <input type="text" name="car_no4_color" id="car_no4_color" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no4_type">ประเภท</label>
+                                                    <label for="car_no4_type">ประเภท (4)</label>
                                                     <select name="car_no4_type" id="car_no4_type" class="form-control">
                                                         <option value="">-- เลือก --</option>
                                                         <option value="รถยนต์">รถยนต์</option>
@@ -239,19 +239,19 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no5">ทะเบียนรถ 5</label>
+                                                    <label for="car_no5">ทะเบียนรถ (5)</label>
                                                     <input type="text" name="car_no5" id="car_no5" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no5_province">จังหวัด</label>
+                                                    <label for="car_no5_province">จังหวัด (5)</label>
                                                     <input type="text" name="car_no5_province" id="car_no5_province" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no5_brand">ยี่ห้อ-รุ่น</label>
+                                                    <label for="car_no5_brand">ยี่ห้อ-รุ่น (5)</label>
                                                     <input type="text" name="car_no5_brand" id="car_no5_brand" class="form-control">
                                                 </div>
                                             </div>
@@ -260,13 +260,13 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no5_color">สี</label>
+                                                    <label for="car_no5_color">สี (5)</label>
                                                     <input type="text" name="car_no5_color" id="car_no5_color" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no5_type">ประเภท</label>
+                                                    <label for="car_no5_type">ประเภท (5)</label>
                                                     <select name="car_no5_type" id="car_no5_type" class="form-control">
                                                         <option value="">-- เลือก --</option>
                                                         <option value="รถยนต์">รถยนต์</option>
