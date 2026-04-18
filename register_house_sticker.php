@@ -83,6 +83,37 @@ include('includes/Header.php');
                                                     <input type="text" name="car_no1" id="car_no1" class="form-control">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no1_province">จังหวัด</label>
+                                                    <input type="text" name="car_no1_province" id="car_no1_province" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no1_brand">ยี่ห้อ</label>
+                                                    <input type="text" name="car_no1_brand" id="car_no1_brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no1_color">สี</label>
+                                                    <input type="text" name="car_no1_color" id="car_no1_color" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no1_type">ประเภท</label>
+                                                    <select name="car_no1_type" id="car_no1_type" class="form-control">
+                                                        <option value="">-- เลือก --</option>
+                                                        <option value="รถยนต์">รถยนต์</option>
+                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="row">
@@ -90,6 +121,37 @@ include('includes/Header.php');
                                                 <div class="form-group">
                                                     <label for="car_no2">ทะเบียนรถ 2</label>
                                                     <input type="text" name="car_no2" id="car_no2" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no2_province">จังหวัด</label>
+                                                    <input type="text" name="car_no2_province" id="car_no2_province" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no2_brand">ยี่ห้อ</label>
+                                                    <input type="text" name="car_no2_brand" id="car_no2_brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no2_color">สี</label>
+                                                    <input type="text" name="car_no2_color" id="car_no2_color" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no2_type">ประเภท</label>
+                                                    <select name="car_no2_type" id="car_no2_type" class="form-control">
+                                                        <option value="">-- เลือก --</option>
+                                                        <option value="รถยนต์">รถยนต์</option>
+                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -101,6 +163,37 @@ include('includes/Header.php');
                                                     <input type="text" name="car_no3" id="car_no3" class="form-control">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no3_province">จังหวัด</label>
+                                                    <input type="text" name="car_no3_province" id="car_no3_province" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no3_brand">ยี่ห้อ</label>
+                                                    <input type="text" name="car_no3_brand" id="car_no3_brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no3_color">สี</label>
+                                                    <input type="text" name="car_no3_color" id="car_no3_color" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no3_type">ประเภท</label>
+                                                    <select name="car_no3_type" id="car_no3_type" class="form-control">
+                                                        <option value="">-- เลือก --</option>
+                                                        <option value="รถยนต์">รถยนต์</option>
+                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="row">
@@ -110,6 +203,37 @@ include('includes/Header.php');
                                                     <input type="text" name="car_no4" id="car_no4" class="form-control">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no4_province">จังหวัด</label>
+                                                    <input type="text" name="car_no4_province" id="car_no4_province" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no4_brand">ยี่ห้อ</label>
+                                                    <input type="text" name="car_no4_brand" id="car_no4_brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no4_color">สี</label>
+                                                    <input type="text" name="car_no4_color" id="car_no4_color" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no4_type">ประเภท</label>
+                                                    <select name="car_no4_type" id="car_no4_type" class="form-control">
+                                                        <option value="">-- เลือก --</option>
+                                                        <option value="รถยนต์">รถยนต์</option>
+                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="row">
@@ -117,6 +241,37 @@ include('includes/Header.php');
                                                 <div class="form-group">
                                                     <label for="car_no5">ทะเบียนรถ 5</label>
                                                     <input type="text" name="car_no5" id="car_no5" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no5_province">จังหวัด</label>
+                                                    <input type="text" name="car_no5_province" id="car_no5_province" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no5_brand">ยี่ห้อ</label>
+                                                    <input type="text" name="car_no5_brand" id="car_no5_brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no5_color">สี</label>
+                                                    <input type="text" name="car_no5_color" id="car_no5_color" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no5_type">ประเภท</label>
+                                                    <select name="car_no5_type" id="car_no5_type" class="form-control">
+                                                        <option value="">-- เลือก --</option>
+                                                        <option value="รถยนต์">รถยนต์</option>
+                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -194,6 +349,9 @@ include('includes/Header.php');
 
 <script src="line_oa/house/jsconfig/config_house_sticker.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
 <style>
     body {
         background-color: #f4f0f8; /* พื้นหลังม่วงพาสเทล */
@@ -258,26 +416,11 @@ include('includes/Header.php');
 
 </style>
 
-
 <script>
     $(document).ready(function () {
-        // Submit Form with Loading Indicator
         $("#sticker_form").on("submit", function (event) {
             event.preventDefault();
-            //$("#loading").show();
             let formData = new FormData(this);
-
-            let dataToShow = '';
-
-            // สร้างข้อความที่จะแสดงใน alert
-            for (let [key, value] of formData.entries()) {
-                dataToShow += `${key}: ${value} | `;
-            }
-
-            // ลบตัว '|' สุดท้ายออก (ถ้ามี)
-            if (dataToShow.endsWith(' | ')) {
-                dataToShow = dataToShow.slice(0, -3);
-            }
 
             $.ajax({
                 url: "model/manage_house_sticker_process.php",
@@ -286,7 +429,6 @@ include('includes/Header.php');
                 contentType: false,
                 processData: false,
                 success: function (response) {
-                    //$("#loading").hide();
                     if (response == 1) {
                         alertify.success("บันทึกข้อมูล สำเร็จ");
                     } else {
@@ -294,11 +436,42 @@ include('includes/Header.php');
                     }
                 },
                 error: function () {
-                    //$("#loading").hide();
                     alertify.error("เกิดข้อผิดพลาดในการส่งข้อมูล");
                 }
             });
         });
+
+        function initProvinceAutocomplete(inputId) {
+            $("#" + inputId).autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: 'model/manage_pet_record_process.php',
+                        data: {action: "GET_PROVINCE_AUTOCOMPLETE", search: request.term},
+                        dataType: "json",
+                        success: function (data) {
+                            if (Array.isArray(data)) {
+                                response(data.map(function(item) {
+                                    return {label: item, value: item};
+                                }));
+                            } else {
+                                response([]);
+                            }
+                        },
+                        error: function () {
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        }
+
+        initProvinceAutocomplete("car_no1_province");
+        initProvinceAutocomplete("car_no2_province");
+        initProvinceAutocomplete("car_no3_province");
+        initProvinceAutocomplete("car_no4_province");
+        initProvinceAutocomplete("car_no5_province");
     });
 </script>
 
@@ -321,9 +494,7 @@ include('includes/Header.php');
 
                 fetch('model/get_house_car_number.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'userId=' + encodeURIComponent(userId)
                 })
                     .then(response => response.json())
@@ -331,45 +502,54 @@ include('includes/Header.php');
                         if (data.house_number) {
                             document.getElementById('house_number').value = data.house_number || '';
                             document.getElementById('house_number_old').value = data.house_number || '';
-
                             document.getElementById('area_size').value = data.area_size || '';
                             document.getElementById('common_fee').value = data.common_fee || '';
-
-                            document.getElementById('full_name').value = `${data.f_name || ''} ${data.l_name || ''}`;
+                            document.getElementById('full_name').value = (data.f_name || '') + ' ' + (data.l_name || '');
                             document.getElementById('house_status').value = data.house_status || '';
                             document.getElementById('phone_number').value = data.phone_number || '';
                             document.getElementById('car_no1').value = data.car_no1 || '';
+                            document.getElementById('car_no1_province').value = data.car_no1_province || '';
+                            document.getElementById('car_no1_brand').value = data.car_no1_brand || '';
+                            document.getElementById('car_no1_color').value = data.car_no1_color || '';
+                            document.getElementById('car_no1_type').value = data.car_no1_type || '';
                             document.getElementById('car_no2').value = data.car_no2 || '';
+                            document.getElementById('car_no2_province').value = data.car_no2_province || '';
+                            document.getElementById('car_no2_brand').value = data.car_no2_brand || '';
+                            document.getElementById('car_no2_color').value = data.car_no2_color || '';
+                            document.getElementById('car_no2_type').value = data.car_no2_type || '';
                             document.getElementById('car_no3').value = data.car_no3 || '';
+                            document.getElementById('car_no3_province').value = data.car_no3_province || '';
+                            document.getElementById('car_no3_brand').value = data.car_no3_brand || '';
+                            document.getElementById('car_no3_color').value = data.car_no3_color || '';
+                            document.getElementById('car_no3_type').value = data.car_no3_type || '';
                             document.getElementById('car_no4').value = data.car_no4 || '';
+                            document.getElementById('car_no4_province').value = data.car_no4_province || '';
+                            document.getElementById('car_no4_brand').value = data.car_no4_brand || '';
+                            document.getElementById('car_no4_color').value = data.car_no4_color || '';
+                            document.getElementById('car_no4_type').value = data.car_no4_type || '';
                             document.getElementById('car_no5').value = data.car_no5 || '';
+                            document.getElementById('car_no5_province').value = data.car_no5_province || '';
+                            document.getElementById('car_no5_brand').value = data.car_no5_brand || '';
+                            document.getElementById('car_no5_color').value = data.car_no5_color || '';
+                            document.getElementById('car_no5_type').value = data.car_no5_type || '';
                             document.getElementById('user-info-liff3').innerText = displayName;
                             $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
-
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                             liff.closeWindow();
                         }
                     })
                     .catch(error => {
-                        console.error('เกิดข้อผิดพลาด:', error);
-                        alert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+                        console.error('Error:', error);
+                        alert('Error');
                         liff.closeWindow();
                     });
             });
         }
-    });
+});
 
-</script>
-
-<script>
-    $(document).ready(function() {
-
-        // When the "Sticker" button is clicked
-        $('#BackBtn').on('click', function() {
-            // Redirect to the sticker page URL
-            window.location.href = 'https://liff.line.me/2007370141-AxBy7eGD'; // <-- ‼️ **แก้ไข URL ของหน้าสติกเกอร์ที่นี่**
-        });
+    $('#BackBtn').on('click', function() {
+        window.location.href = 'https://liff.line.me/2007370141-AxBy7eGD';
     });
 </script>
 
