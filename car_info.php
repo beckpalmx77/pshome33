@@ -62,7 +62,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <div class="form-group">
                                                         <label class="control-label">&nbsp;</label>
                                                         <button type="button" class="btn btn-success btn-block" id="btnPrint" disabled>
-                                                            <i class="fa fa-print"></i> ใบคำขอ สติ๊กเกอร์
+                                                            <i class="fa fa-print"></i> ใบคำขอ สติกเกอร์
                                                         </button>
                                                     </div>
                                                 </div>
@@ -128,9 +128,28 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">สถานะการรับสติกเกอร์</label>
-                                                                <div class="form-check">
+<div class="form-check">
                                                                     <input type="checkbox" class="form-check-input" id="sticker_receive_status" value="Y">
                                                                     <label class="form-check-label" for="sticker_receive_status">รับแล้ว</label>
+                                                                </div>
+
+                                                                <div class="modal fade" id="stickerReceivedModal" tabindex="-1" role="dialog">
+                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header bg-info text-white">
+                                                                                <h5 class="modal-title">แจ้งเตือน</h5>
+                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                    <span aria-hidden="true">&times;</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="modal-body text-center">
+                                                                                <h4>รับสติกเกอร์แล้ว</h4>
+                                                                            </div>
+                                                                            <div class="modal-footer justify-content-center">
+                                                                                <button type="button" class="btn btn-primary" data-dismiss="modal">ตกลง</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -283,7 +302,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">ประเภท</label>
-                                                                <select class="form-control" id="car_no4_type">
+<select class="form-control" id="car_no4_type">
                                                                     <option value="">-- เลือก --</option>
                                                                     <option value="รถยนต์">รถยนต์</option>
                                                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
@@ -291,6 +310,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                             </div>
                                                         </div>
                                                     </div>
+
                                                     <div class="row">
                                                         <div class="col-md-2">
                                                             <div class="form-group">
@@ -326,12 +346,86 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </select>
                                                             </div>
                                                         </div>
-</div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ทะเบียนรถ 6</label>
+                                                                <input type="text" class="form-control" id="car_no6">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">จังหวัด</label>
+                                                                <input type="text" class="form-control" id="car_no6_province">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
+                                                                <input type="text" class="form-control" id="car_no6_brand">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">สี</label>
+                                                                <input type="text" class="form-control" id="car_no6_color">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ประเภท</label>
+                                                                <select class="form-control" id="car_no6_type">
+                                                                    <option value="">-- เลือก --</option>
+                                                                    <option value="รถยนต์">รถยนต์</option>
+                                                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ทะเบียนรถ 7</label>
+                                                                <input type="text" class="form-control" id="car_no7">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">จังหวัด</label>
+                                                                <input type="text" class="form-control" id="car_no7_province">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ยี่ห้อ-รุ่น</label>
+                                                                <input type="text" class="form-control" id="car_no7_brand">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">สี</label>
+                                                                <input type="text" class="form-control" id="car_no7_color">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="control-label">ประเภท</label>
+                                                                <select class="form-control" id="car_no7_type">
+                                                                    <option value="">-- เลือก --</option>
+                                                                    <option value="รถยนต์">รถยนต์</option>
+                                                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12 col-md-offset-2 mt-4" id="notFoundSection" style="display:none;">
+                                        <div class="col-md-12 col-md-offset-2 mt-3" id="notFoundSection" style="display:none;">
                                             <div class="alert alert-warning">
                                                 ไม่พบข้อมูลบ้านเลขที่: <span id="notFoundHouseNumber"></span>
                                             </div>
@@ -446,13 +540,25 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 $('#car_no5_brand').val(house.car_no5_brand || '');
                                 $('#car_no5_color').val(house.car_no5_color || '');
                                 $('#car_no5_type').val(house.car_no5_type || '');
+                                $('#car_no6').val(house.car_no6 || '');
+                                $('#car_no6_province').val(house.car_no6_province || '');
+                                $('#car_no6_brand').val(house.car_no6_brand || '');
+                                $('#car_no6_color').val(house.car_no6_color || '');
+                                $('#car_no6_type').val(house.car_no6_type || '');
+                                $('#car_no7').val(house.car_no7 || '');
+                                $('#car_no7_province').val(house.car_no7_province || '');
+                                $('#car_no7_brand').val(house.car_no7_brand || '');
+                                $('#car_no7_color').val(house.car_no7_color || '');
+                                $('#car_no7_type').val(house.car_no7_type || '');
 
                                 let carCount = 0;
                                 if (house.car_no1) carCount++;
                                 if (house.car_no2) carCount++;
                                 if (house.car_no3) carCount++;
                                 if (house.car_no4) carCount++;
-                                if (house.car_no5) carCount++; // เช็คจำนวนคันที่ 5
+                                if (house.car_no5) carCount++;
+                                if (house.car_no6) carCount++;
+                                if (house.car_no7) carCount++;
 
                                 let extraCarFee = 0;
                                 if (carCount > 2) {
@@ -466,6 +572,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                     $('#sticker_receive_status').prop('checked', true);
                                     $('#sticker_receive_status').prop('disabled', true);
                                     $('#sticker_receive_date').val(house.sticker_receive_date || '');
+                                    $('#stickerReceivedModal').modal('show');
                                 } else {
                                     $('#sticker_receive_status').prop('checked', false);
                                     $('#sticker_receive_status').prop('disabled', false);
@@ -528,6 +635,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     let car_no5_brand = $('#car_no5_brand').val().trim();
                     let car_no5_color = $('#car_no5_color').val().trim();
                     let car_no5_type = $('#car_no5_type').val().trim();
+                    let car_no6 = $('#car_no6').val().trim();
+                    let car_no6_province = $('#car_no6_province').val().trim();
+                    let car_no6_brand = $('#car_no6_brand').val().trim();
+                    let car_no6_color = $('#car_no6_color').val().trim();
+                    let car_no6_type = $('#car_no6_type').val().trim();
+                    let car_no7 = $('#car_no7').val().trim();
+                    let car_no7_province = $('#car_no7_province').val().trim();
+                    let car_no7_brand = $('#car_no7_brand').val().trim();
+                    let car_no7_color = $('#car_no7_color').val().trim();
+                    let car_no7_type = $('#car_no7_type').val().trim();
                     let sticker_receive_status = $('#sticker_receive_status').is(':checked') ? 'Y' : 'N';
 
                     console.log('Saving:', {house_number, car_no1, car_no1_province, car_no1_brand, car_no1_color, car_no1_type, car_no2, car_no2_province, car_no2_brand, car_no2_color, car_no2_type, car_no3, car_no3_province, car_no3_brand, car_no3_color, car_no3_type, car_no4, car_no4_province, car_no4_brand, car_no4_color, car_no4_type, car_no5, car_no5_province, car_no5_brand, car_no5_color, car_no5_type, sticker_receive_status});
@@ -568,6 +685,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             car_no5_brand: car_no5_brand,
                             car_no5_color: car_no5_color,
                             car_no5_type: car_no5_type,
+                            car_no6: car_no6,
+                            car_no6_province: car_no6_province,
+                            car_no6_brand: car_no6_brand,
+                            car_no6_color: car_no6_color,
+                            car_no6_type: car_no6_type,
+                            car_no7: car_no7,
+                            car_no7_province: car_no7_province,
+                            car_no7_brand: car_no7_brand,
+                            car_no7_color: car_no7_color,
+                            car_no7_type: car_no7_type,
                             sticker_receive_status: sticker_receive_status
                         },
                         dataType: "text",
@@ -577,6 +704,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 var json = JSON.parse(response);
                                 console.log('Parsed:', json);
                                 if (json && json.result === '1') {
+                                    if (sticker_receive_status === 'Y') {
+                                        $('#sticker_receive_status').prop('checked', true);
+                                        $('#sticker_receive_status').prop('disabled', true);
+                                        $('#stickerReceivedModal').modal('show');
+                                    }
                                     alertify.success("บันทึกข้อมูลทะเบียนรถสำเร็จ");
                                 } else {
                                     alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
@@ -599,6 +731,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     if ($('#car_no3').val().trim() !== '') carCount++;
                     if ($('#car_no4').val().trim() !== '') carCount++;
                     if ($('#car_no5').val().trim() !== '') carCount++;
+                    if ($('#car_no6').val().trim() !== '') carCount++;
+                    if ($('#car_no7').val().trim() !== '') carCount++;
 
                     let extraCarFee = 0;
                     if (carCount > 2) {
@@ -609,7 +743,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     $('#extra_car_fee').val(extraCarFee);
                 }
 
-                $('#car_no1, #car_no2, #car_no3, #car_no4, #car_no5').on('input', updateCarCount);
+                $('#car_no1, #car_no2, #car_no3, #car_no4, #car_no5, #car_no6, #car_no7').on('input', updateCarCount);
 
                 function initProvinceAutocomplete(inputId) {
                     $("#" + inputId).autocomplete({

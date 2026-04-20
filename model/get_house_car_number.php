@@ -18,14 +18,16 @@ if (!empty($userId)) {
     lhuser.house_number, 
     lhuser.f_name, 
     lhuser.l_name, 
-    h.car_no1, h.car_no2, h.car_no3, h.car_no4, h.car_no5, 
-    h.car_no1_province, h.car_no2_province, h.car_no3_province, h.car_no4_province, h.car_no5_province,
-    h.car_no1_brand, h.car_no2_brand, h.car_no3_brand, h.car_no4_brand, h.car_no5_brand,
-    h.car_no1_color, h.car_no2_color, h.car_no3_color, h.car_no4_color, h.car_no5_color,
-    h.car_no1_type, h.car_no2_type, h.car_no3_type, h.car_no4_type, h.car_no5_type,
+    h.car_no1, h.car_no2, h.car_no3, h.car_no4, h.car_no5, h.car_no6, h.car_no7, 
+    h.car_no1_province, h.car_no2_province, h.car_no3_province, h.car_no4_province, h.car_no5_province, h.car_no6_province, h.car_no7_province,
+    h.car_no1_brand, h.car_no2_brand, h.car_no3_brand, h.car_no4_brand, h.car_no5_brand, h.car_no6_brand, h.car_no7_brand,
+    h.car_no1_color, h.car_no2_color, h.car_no3_color, h.car_no4_color, h.car_no5_color, h.car_no6_color, h.car_no7_color,
+    h.car_no1_type, h.car_no2_type, h.car_no3_type, h.car_no4_type, h.car_no5_type, h.car_no6_type, h.car_no7_type,
     h.status, 
     h.house_status, 
     h.phone_number,
+    h.sticker_receive_status,
+    h.sticker_receive_date,
     m_house_master.area_size,
     m_house_master.garbage_collection_fee,
     m_house_master.common_fee
@@ -48,6 +50,8 @@ if (!empty($userId)) {
             'l_name' => $row['l_name'],
             'phone_number' => $row['phone_number'],
             'house_status' => $row['house_status'],
+            'sticker_receive_status' => $row['sticker_receive_status'] ?? '',
+            'sticker_receive_date' => $row['sticker_receive_date'] ?? '',
             'car_no1' => $row['car_no1'],
             'car_no1_province' => $row['car_no1_province'],
             'car_no1_brand' => $row['car_no1_brand'],
@@ -72,7 +76,18 @@ if (!empty($userId)) {
             'car_no5_province' => $row['car_no5_province'],
             'car_no5_brand' => $row['car_no5_brand'],
             'car_no5_color' => $row['car_no5_color'],
-            'car_no5_type' => $row['car_no5_type']
+            'car_no5_type' => $row['car_no5_type'],
+            'car_no6' => $row['car_no6'] ?? '',
+            'car_no6_province' => $row['car_no6_province'] ?? '',
+            'car_no6_brand' => $row['car_no6_brand'] ?? '',
+            'car_no6_color' => $row['car_no6_color'] ?? '',
+            'car_no6_type' => $row['car_no6_type'] ?? '',
+            'car_no7' => $row['car_no7'] ?? '',
+            'car_no7_province' => $row['car_no7_province'] ?? '',
+            'car_no7_brand' => $row['car_no7_brand'] ?? '',
+            'car_no7_color' => $row['car_no7_color'] ?? '',
+            'car_no7_type' => $row['car_no7_type'] ?? ''
+
         ]);
     } else {
         echo json_encode([
@@ -108,7 +123,17 @@ if (!empty($userId)) {
             'car_no5_province' => '',
             'car_no5_brand' => '',
             'car_no5_color' => '',
-            'car_no5_type' => ''
+            'car_no5_type' => '',
+            'car_no6' => '',
+            'car_no6_province' => '',
+            'car_no6_brand' => '',
+            'car_no6_color' => '',
+            'car_no6_type' => '',
+            'car_no7' => '',
+            'car_no7_province' => '',
+            'car_no7_brand' => '',
+            'car_no7_color' => '',
+            'car_no7_type' => ''
         ]);
     }
 } else {
@@ -121,7 +146,9 @@ if (!empty($userId)) {
         'l_name' => '',
         'phone_number' => '',
         'house_status' => '',
-        'car_no1' => '',
+            'sticker_receive_status' => '',
+            'sticker_receive_date' => '',
+            'car_no1' => '',
         'car_no1_province' => '',
         'car_no1_brand' => '',
         'car_no1_color' => '',
@@ -145,6 +172,16 @@ if (!empty($userId)) {
         'car_no5_province' => '',
         'car_no5_brand' => '',
         'car_no5_color' => '',
-        'car_no5_type' => ''
+        'car_no5_type' => '',
+        'car_no6' => '',
+        'car_no6_province' => '',
+        'car_no6_brand' => '',
+        'car_no6_color' => '',
+        'car_no6_type' => '',
+        'car_no7' => '',
+        'car_no7_province' => '',
+        'car_no7_brand' => '',
+        'car_no7_color' => '',
+        'car_no7_type' => ''
     ]);
 }

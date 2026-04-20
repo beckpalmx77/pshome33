@@ -23,6 +23,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             .dataTables_wrapper {
                 overflow-x: auto;
             }
+            /* ตกแต่งระยะห่างของเมนูเลือกจำนวนแถวและปุ่ม Export */
+            .dataTables_length {
+                margin-top: 10px;
+                margin-right: 20px;
+                float: left;
+            }
+            .dt-buttons {
+                margin-top: 10px;
+            }
             .dataTables_wrapper .dataTables_paginate .paginate_button {
                 padding: 0.3em 0.6em;
             }
@@ -62,6 +71,42 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         </ol>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ลงทะเบียน</div>
+                                    <div class="h4 mb-0 font-weight-bold" id="totalHouse">0 หลัง</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถที่ลงทะเบียน</div>
+                                    <div class="h4 mb-0 font-weight-bold" id="totalCars">0 คัน</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนเงินค่าสติกเกอร์รถเพิ่ม</div>
+                                    <div class="h4 mb-0 font-weight-bold" id="totalExtraFee">0 บาท</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 80px;">
+                                    <button type="button" class="btn btn-info btn-lg" id="btnExportCsv">
+                                        <i class="fas fa-file-csv text-white"></i> Export CSV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
@@ -80,7 +125,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ทะเบียนรถ 3</th>
                                                     <th>ทะเบียนรถ 4</th>
                                                     <th>ทะเบียนรถ 5</th>
+                                                    <th>ทะเบียนรถ 6</th>
+                                                    <th>ทะเบียนรถ 7</th>
+                                                    <th>จำนวนรถ</th>
+                                                    <th>ค่าสติกเกอร์(บาท)</th>
                                                     <th>วันที่รับสติกเกอร์</th>
+                                                    <th>รายละเอียด</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -102,6 +152,25 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         <i class="fas fa-angle-up"></i>
     </a>
 
+    <div class="modal fade" id="houseDetailModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">รายละเอียดบ้านเลขที่: <span id="detailHouseNumber"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="detailContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -116,12 +185,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <script>
         $(document).ready(function() {
-            var table = $('#TableRecordList').DataTable({
+            let table = $('#TableRecordList').DataTable({
                 "processing": true,
                 "serverSide": false,
                 "ajax": {
                     "url": "model/get_sticker_received_list.php",
-                    "type": "POST"
+                    "type": "POST",
+                    "dataSrc": function(json) {
+                        if (json.summary) {
+                            $('#totalHouse').text(json.summary.total_house);
+                            $('#totalCars').text(json.summary.total_cars);
+                            $('#totalExtraFee').text(json.summary.total_extra_fee.toLocaleString());
+                        }
+                        return json.data;
+                    }
                 },
                 "columns": [
                     { "data": "house_number" },
@@ -130,7 +207,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     { "data": "car_no3" },
                     { "data": "car_no4" },
                     { "data": "car_no5" },
-                    { "data": "sticker_receive_date" }
+                    { "data": "car_no6" },
+                    { "data": "car_no7" },
+                    { "data": "car_count", "className": "text-right" },
+                    { "data": "extra_car_fee", "className": "text-right" },
+                    { "data": "sticker_receive_date" },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return '<button type="button" class="btn btn-sm btn-info btn-detail" data-house="' + row.house_number + '"><i class="fas fa-eye"></i> ดู</button>';
+                        },
+                        "orderable": false
+                    }
                 ],
                 "language": {
                     "emptyTable": "ไม่พบข้อมูล",
@@ -149,12 +237,92 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         "previous": "ก่อนหน้า"
                     }
                 },
-                "dom": 'Blfrtip',
+                "dom": 'Blfrtip', // l คือตัวเลือกความยาวหน้า (length changing input)
                 "buttons": [
                     'copy', 'excel', 'print'
                 ],
-                "order": [[0, "asc"]],
-                "pageLength": 10
+                "order": [[10, "desc"]],
+                "lengthMenu": [[5, 10, 20, 50, 100, -1], [5, 10, 20, 50, 100, "All"]], // กำหนดเมนูเลือกจำนวนแถว
+                "pageLength": 10, // ตั้งค่าเริ่มต้นให้แสดง 10 แถว
+                "retrieve": true
+            });
+
+            // Export CSV button click
+            $('#btnExportCsv').on('click', function() {
+                let data = table.rows().data();
+                if (data.length === 0) {
+                    alert('ไม่มีข้อมูลสำหรับ Export');
+                    return;
+                }
+
+                let csvContent = "\uFEFF"; // BOM for UTF-8
+                csvContent += "ลำดับ,บ้านเลขที่,ทะเบียนรถ 1,ทะเบียนรถ 2,ทะเบียนรถ 3,ทะเบียนรถ 4,ทะเบียนรถ 5,ทะเบียนรถ 6,ทะเบียนรถ 7,จำนวนรถ,ค่าสติกเกอร์รถเพิ่ม (บาท),วันที่รับสติกเกอร์\n";
+
+                let totalCars = 0;
+                let totalExtraFee = 0;
+                let rowNum = 1;
+
+                data.each(function(row) {
+                    csvContent += rowNum + ',';
+                    csvContent += '"' + row.house_number + '",';
+                    csvContent += '"' + row.car_no1 + '",';
+                    csvContent += '"' + row.car_no2 + '",';
+                    csvContent += '"' + row.car_no3 + '",';
+                    csvContent += '"' + row.car_no4 + '",';
+                    csvContent += '"' + row.car_no5 + '",';
+                    csvContent += '"' + row.car_no6 + '",';
+                    csvContent += '"' + row.car_no7 + '",';
+                    csvContent += row.car_count + ',';
+                    csvContent += row.extra_car_fee + ',';
+                    csvContent += '"' + row.sticker_receive_date + '"\n';
+
+                    totalCars += row.car_count;
+                    totalExtraFee += row.extra_car_fee;
+                    rowNum++;
+                });
+
+                // Add total row
+                csvContent += '"รวมทั้งหมด","","","","","","","",' + totalCars + ',' + totalExtraFee + ',""\n';
+
+                let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                let link = document.createElement("a");
+                let url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "sticker_received_list.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Detail button click
+            $('#TableRecordList').on('click', '.btn-detail', function() {
+                let houseNumber = $(this).data('house');
+                let rowData = table.row($(this).closest('tr')).data();
+
+                $('#detailHouseNumber').text(houseNumber);
+
+                let detailHtml = '<table class="table table-bordered"><thead><tr><th>ลำดับ</th><th>ทะเบียนรถ</th><th>จังหวัด</th><th>ยี่ห้อ-รุ่น</th><th>สี</th><th>ประเภท</th></tr></thead><tbody>';
+
+                let cars = [];
+                if (rowData.car_no1) cars.push({no: 1, car_no: rowData.car_no1, province: rowData.car_no1_province, brand: rowData.car_no1_brand, color: rowData.car_no1_color, type: rowData.car_no1_type});
+                if (rowData.car_no2) cars.push({no: 2, car_no: rowData.car_no2, province: rowData.car_no2_province, brand: rowData.car_no2_brand, color: rowData.car_no2_color, type: rowData.car_no2_type});
+                if (rowData.car_no3) cars.push({no: 3, car_no: rowData.car_no3, province: rowData.car_no3_province, brand: rowData.car_no3_brand, color: rowData.car_no3_color, type: rowData.car_no3_type});
+                if (rowData.car_no4) cars.push({no: 4, car_no: rowData.car_no4, province: rowData.car_no4_province, brand: rowData.car_no4_brand, color: rowData.car_no4_color, type: rowData.car_no4_type});
+                if (rowData.car_no5) cars.push({no: 5, car_no: rowData.car_no5, province: rowData.car_no5_province, brand: rowData.car_no5_brand, color: rowData.car_no5_color, type: rowData.car_no5_type});
+                if (rowData.car_no6) cars.push({no: 6, car_no: rowData.car_no6, province: rowData.car_no6_province, brand: rowData.car_no6_brand, color: rowData.car_no6_color, type: rowData.car_no6_type});
+                if (rowData.car_no7) cars.push({no: 7, car_no: rowData.car_no7, province: rowData.car_no7_province, brand: rowData.car_no7_brand, color: rowData.car_no7_color, type: rowData.car_no7_type});
+
+                for (let i = 0; i < cars.length; i++) {
+                    detailHtml += '<tr><td>' + cars[i].no + '</td><td>' + cars[i].car_no + '</td><td>' + cars[i].province + '</td><td>' + cars[i].brand + '</td><td>' + cars[i].color + '</td><td>' + cars[i].type + '</td></tr>';
+                }
+
+                detailHtml += '</tbody></table>';
+                detailHtml += '<div class="mt-3"><strong>จำนวนรถ: </strong>' + rowData.car_count + ' คัน</div>';
+                detailHtml += '<div><strong>ค่าสติกเกอร์รถเพิ่ม: </strong>' + rowData.extra_car_fee + ' บาท</div>';
+                detailHtml += '<div><strong>วันที่รับสติกเกอร์: </strong>' + rowData.sticker_receive_date + '</div>';
+
+                $('#detailContent').html(detailHtml);
+                $('#houseDetailModal').modal('show');
             });
         });
     </script>

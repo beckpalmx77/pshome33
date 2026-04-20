@@ -150,6 +150,16 @@ if ($_POST["action"] === 'GET_DATA_BY_HOUSE') {
             "car_no5_brand" => $result['car_no5_brand'],
             "car_no5_color" => $result['car_no5_color'],
             "car_no5_type" => $result['car_no5_type'],
+            "car_no6" => $result['car_no6'] ?? '',
+            "car_no6_province" => $result['car_no6_province'] ?? '',
+            "car_no6_brand" => $result['car_no6_brand'] ?? '',
+            "car_no6_color" => $result['car_no6_color'] ?? '',
+            "car_no6_type" => $result['car_no6_type'] ?? '',
+            "car_no7" => $result['car_no7'] ?? '',
+            "car_no7_province" => $result['car_no7_province'] ?? '',
+            "car_no7_brand" => $result['car_no7_brand'] ?? '',
+            "car_no7_color" => $result['car_no7_color'] ?? '',
+            "car_no7_type" => $result['car_no7_type'] ?? '',
             "sticker_receive_status" => $result['sticker_receive_status'],
             "sticker_receive_date" => $result['sticker_receive_date']
         );
@@ -278,6 +288,16 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $car_no5_brand = $_POST["car_no5_brand"];
     $car_no5_color = $_POST["car_no5_color"];
     $car_no5_type = $_POST["car_no5_type"];
+    $car_no6 = $_POST["car_no6"] ?? '';
+    $car_no6_province = $_POST["car_no6_province"] ?? '';
+    $car_no6_brand = $_POST["car_no6_brand"] ?? '';
+    $car_no6_color = $_POST["car_no6_color"] ?? '';
+    $car_no6_type = $_POST["car_no6_type"] ?? '';
+    $car_no7 = $_POST["car_no7"] ?? '';
+    $car_no7_province = $_POST["car_no7_province"] ?? '';
+    $car_no7_brand = $_POST["car_no7_brand"] ?? '';
+    $car_no7_color = $_POST["car_no7_color"] ?? '';
+    $car_no7_type = $_POST["car_no7_type"] ?? '';
     $sticker_receive_status = $_POST["sticker_receive_status"];
 
     $sql_check = "SELECT sticker_receive_status, sticker_receive_date FROM ims_house WHERE house_number = :house_number";
@@ -317,6 +337,16 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
         car_no5_brand = :car_no5_brand,
         car_no5_color = :car_no5_color,
         car_no5_type = :car_no5_type,
+        car_no6 = :car_no6,
+        car_no6_province = :car_no6_province,
+        car_no6_brand = :car_no6_brand,
+        car_no6_color = :car_no6_color,
+        car_no6_type = :car_no6_type,
+        car_no7 = :car_no7,
+        car_no7_province = :car_no7_province,
+        car_no7_brand = :car_no7_brand,
+        car_no7_color = :car_no7_color,
+        car_no7_type = :car_no7_type,
         sticker_receive_status = :sticker_receive_status
         $date_update
         WHERE house_number = :house_number AND sticker_receive_status = 'N' ";
@@ -347,6 +377,16 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $query->bindParam(':car_no5_brand', $car_no5_brand, PDO::PARAM_STR);
     $query->bindParam(':car_no5_color', $car_no5_color, PDO::PARAM_STR);
     $query->bindParam(':car_no5_type', $car_no5_type, PDO::PARAM_STR);
+    $query->bindParam(':car_no6', $car_no6, PDO::PARAM_STR);
+    $query->bindParam(':car_no6_province', $car_no6_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no6_brand', $car_no6_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no6_color', $car_no6_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no6_type', $car_no6_type, PDO::PARAM_STR);
+    $query->bindParam(':car_no7', $car_no7, PDO::PARAM_STR);
+    $query->bindParam(':car_no7_province', $car_no7_province, PDO::PARAM_STR);
+    $query->bindParam(':car_no7_brand', $car_no7_brand, PDO::PARAM_STR);
+    $query->bindParam(':car_no7_color', $car_no7_color, PDO::PARAM_STR);
+    $query->bindParam(':car_no7_type', $car_no7_type, PDO::PARAM_STR);
     $query->bindParam(':sticker_receive_status', $sticker_receive_status, PDO::PARAM_STR);
     $query->bindParam(':house_number', $house_number, PDO::PARAM_STR);
     $query->execute();

@@ -33,6 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $car_no5_brand = trim($_POST['car_no5_brand'] ?? '');
     $car_no5_color = trim($_POST['car_no5_color'] ?? '');
     $car_no5_type = trim($_POST['car_no5_type'] ?? '');
+    $car_no6 = trim($_POST['car_no6'] ?? '');
+    $car_no6_province = trim($_POST['car_no6_province'] ?? '');
+    $car_no6_brand = trim($_POST['car_no6_brand'] ?? '');
+    $car_no6_color = trim($_POST['car_no6_color'] ?? '');
+    $car_no6_type = trim($_POST['car_no6_type'] ?? '');
+    $car_no7 = trim($_POST['car_no7'] ?? '');
+    $car_no7_province = trim($_POST['car_no7_province'] ?? '');
+    $car_no7_brand = trim($_POST['car_no7_brand'] ?? '');
+    $car_no7_color = trim($_POST['car_no7_color'] ?? '');
+    $car_no7_type = trim($_POST['car_no7_type'] ?? '');
     $phone_number = trim($_POST['phone_number'] ?? '');
     $house_status = trim($_POST['house_status'] ?? '');
     $house_number = trim($_POST['house_number'] ?? '');
@@ -64,6 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 car_no5_brand = :car_no5_brand,
                 car_no5_color = :car_no5_color,
                 car_no5_type = :car_no5_type,
+                car_no6 = :car_no6,
+                car_no6_province = :car_no6_province,
+                car_no6_brand = :car_no6_brand,
+                car_no6_color = :car_no6_color,
+                car_no6_type = :car_no6_type,
+                car_no7 = :car_no7,
+                car_no7_province = :car_no7_province,
+                car_no7_brand = :car_no7_brand,
+                car_no7_color = :car_no7_color,
+                car_no7_type = :car_no7_type,
                 house_status = :house_status
             WHERE house_number = :house_number AND sticker_receive_status = 'N' ";
 
@@ -93,6 +113,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':car_no5_brand', $car_no5_brand);
     $stmt->bindParam(':car_no5_color', $car_no5_color);
     $stmt->bindParam(':car_no5_type', $car_no5_type);
+    $stmt->bindParam(':car_no6', $car_no6);
+    $stmt->bindParam(':car_no6_province', $car_no6_province);
+    $stmt->bindParam(':car_no6_brand', $car_no6_brand);
+    $stmt->bindParam(':car_no6_color', $car_no6_color);
+    $stmt->bindParam(':car_no6_type', $car_no6_type);
+    $stmt->bindParam(':car_no7', $car_no7);
+    $stmt->bindParam(':car_no7_province', $car_no7_province);
+    $stmt->bindParam(':car_no7_brand', $car_no7_brand);
+    $stmt->bindParam(':car_no7_color', $car_no7_color);
+    $stmt->bindParam(':car_no7_type', $car_no7_type);
     $stmt->bindParam(':house_status', $house_status);
     $stmt->bindParam(':house_number', $house_number);
 

@@ -33,7 +33,7 @@ $html = '
 </head>
 <body>
     <div class="header">
-        <h1>แบบฟอร์มสติ๊กเกอร์</h1>
+        <h1>แบบฟอร์มสติกเกอร์</h1>
     </div>
     
     <div class="info-box">

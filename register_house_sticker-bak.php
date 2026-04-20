@@ -79,30 +79,6 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="sticker_receive_status">สถานะการรับ สติกเกอร์</label>
-                                                    <input type="text" name="sticker_receive_status" id="sticker_receive_status" class="form-control" readonly="true">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="sticker_receive_date">วันที่รับ สติกเกอร์</label>
-                                                    <input type="text" name="sticker_receive_date" id="sticker_receive_date" class="form-control" readonly="true">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="extra_car_fee">ค่า สติกเกอร์ ทะเบียนรถเพิ่ม (บาท) เงื่อนไข: สิทธิรับฟรี 2 คันแรก / คันที่ 3 ขึ้นไป มีค่าใช้จ่ายคันละ 100 บาท</label>
-                                                    <input type="text" name="extra_car_fee" id="extra_car_fee" class="form-control" readonly="true">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
                                                     <label for="car_no1">ทะเบียนรถ (1)</label>
                                                     <input type="text" name="car_no1" id="car_no1" class="form-control">
                                                 </div>
@@ -303,20 +279,8 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no6">ทะเบียนรถ (6)</label>
-                                                    <input type="text" name="car_no6" id="car_no6" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no6_province">จังหวัด (6)</label>
-                                                    <input type="text" name="car_no6_province" id="car_no6_province" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no6_brand">ยี่ห้อ-รุ่น (6)</label>
-                                                    <input type="text" name="car_no6_brand" id="car_no6_brand" class="form-control">
+                                                    <label for="sticker_receive_status">สถานะการรับ สติกเกอร์</label>
+                                                    <input type="text" name="sticker_receive_status" id="sticker_receive_status" class="form-control" readonly="true">
                                                 </div>
                                             </div>
                                         </div>
@@ -324,58 +288,8 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="car_no6_color">สี (6)</label>
-                                                    <input type="text" name="car_no6_color" id="car_no6_color" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no6_type">ประเภท (6)</label>
-                                                    <select name="car_no6_type" id="car_no6_type" class="form-control">
-                                                        <option value="">-- เลือก --</option>
-                                                        <option value="รถยนต์">รถยนต์</option>
-                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no7">ทะเบียนรถ (7)</label>
-                                                    <input type="text" name="car_no7" id="car_no7" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no7_province">จังหวัด (7)</label>
-                                                    <input type="text" name="car_no7_province" id="car_no7_province" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no7_brand">ยี่ห้อ-รุ่น (7)</label>
-                                                    <input type="text" name="car_no7_brand" id="car_no7_brand" class="form-control">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no7_color">สี (7)</label>
-                                                    <input type="text" name="car_no7_color" id="car_no7_color" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="car_no7_type">ประเภท (7)</label>
-                                                    <select name="car_no7_type" id="car_no7_type" class="form-control">
-                                                        <option value="">-- เลือก --</option>
-                                                        <option value="รถยนต์">รถยนต์</option>
-                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
-                                                    </select>
+                                                    <label for="sticker_receive_date">วันที่รับ สติกเกอร์</label>
+                                                    <input type="text" name="sticker_receive_date" id="sticker_receive_date" class="form-control" readonly="true">
                                                 </div>
                                             </div>
                                         </div>
@@ -448,32 +362,13 @@ include('includes/Header.php');
 <script src="vendor/bootstrap-touchspin/js/jquery.bootstrap-touchspin.js"></script>
 <script src="vendor/clock-picker/clockpicker.js"></script>
 <script src="js/myadmin.min.js"></script>
-<!--script src="js/modal/show_department_modal.js"></script-->
+<script src="js/modal/show_department_modal.js"></script>
 <script src="js/MyFrameWork/framework_util.js"></script>
 
 <script src="line_oa/house/jsconfig/config_house_sticker.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-<script>
-function calculateExtraCarFee() {
-    let carCount = 0;
-    if ($('#car_no1').val() && $('#car_no1').val().trim() !== '') carCount++;
-    if ($('#car_no2').val() && $('#car_no2').val().trim() !== '') carCount++;
-    if ($('#car_no3').val() && $('#car_no3').val().trim() !== '') carCount++;
-    if ($('#car_no4').val() && $('#car_no4').val().trim() !== '') carCount++;
-    if ($('#car_no5').val() && $('#car_no5').val().trim() !== '') carCount++;
-    if ($('#car_no6').val() && $('#car_no6').val().trim() !== '') carCount++;
-    if ($('#car_no7').val() && $('#car_no7').val().trim() !== '') carCount++;
-    
-    let extraCarFee = 0;
-    if (carCount > 2) {
-        extraCarFee = (carCount - 2) * 100;
-    }
-    $('#extra_car_fee').val(extraCarFee);
-}
-</script>
 
 <style>
     body {
@@ -595,8 +490,6 @@ function calculateExtraCarFee() {
         initProvinceAutocomplete("car_no3_province");
         initProvinceAutocomplete("car_no4_province");
         initProvinceAutocomplete("car_no5_province");
-        initProvinceAutocomplete("car_no6_province");
-        initProvinceAutocomplete("car_no7_province");
 
         function initColorAutocomplete(inputId) {
             $("#" + inputId).autocomplete({
@@ -629,12 +522,6 @@ function calculateExtraCarFee() {
         initColorAutocomplete("car_no3_color");
         initColorAutocomplete("car_no4_color");
         initColorAutocomplete("car_no5_color");
-        initColorAutocomplete("car_no6_color");
-        initColorAutocomplete("car_no7_color");
-
-        $('#car_no1, #car_no2, #car_no3, #car_no4, #car_no5, #car_no6, #car_no7').on('change', function() {
-            calculateExtraCarFee();
-        });
 
         function initBrandAutocomplete(inputId) {
             $("#" + inputId).autocomplete({
@@ -667,8 +554,6 @@ function calculateExtraCarFee() {
         initBrandAutocomplete("car_no3_brand");
         initBrandAutocomplete("car_no4_brand");
         initBrandAutocomplete("car_no5_brand");
-        initBrandAutocomplete("car_no6_brand");
-        initBrandAutocomplete("car_no7_brand");
     });
 </script>
 
@@ -729,22 +614,10 @@ function calculateExtraCarFee() {
                             document.getElementById('car_no5_brand').value = data.car_no5_brand || '';
                             document.getElementById('car_no5_color').value = data.car_no5_color || '';
                             document.getElementById('car_no5_type').value = data.car_no5_type || '';
-                            document.getElementById('car_no6').value = data.car_no6 || '';
-                            document.getElementById('car_no6_province').value = data.car_no6_province || '';
-                            document.getElementById('car_no6_brand').value = data.car_no6_brand || '';
-                            document.getElementById('car_no6_color').value = data.car_no6_color || '';
-                            document.getElementById('car_no6_type').value = data.car_no6_type || '';
-                            document.getElementById('car_no7').value = data.car_no7 || '';
-                            document.getElementById('car_no7_province').value = data.car_no7_province || '';
-                            document.getElementById('car_no7_brand').value = data.car_no7_brand || '';
-                            document.getElementById('car_no7_color').value = data.car_no7_color || '';
-                            document.getElementById('car_no7_type').value = data.car_no7_type || '';
                             document.getElementById('user-info-liff3').innerText = displayName;
                             document.getElementById('sticker_receive_status').value = data.sticker_receive_status === 'Y' ? 'รับแล้ว' : data.sticker_receive_status === 'N' ? 'ยังไม่ได้รับ' : '';
                             document.getElementById('sticker_receive_date').value = data.sticker_receive_date || '';
                             $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
-                            
-                            calculateExtraCarFee();
                         } else {
                             alert('ไม่พบผู้ใช้งานในระบบ กรุณาลงทะเบียนก่อน');
                             liff.closeWindow();
