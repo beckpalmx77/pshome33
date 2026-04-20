@@ -319,7 +319,7 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
         car_no5_type = :car_no5_type,
         sticker_receive_status = :sticker_receive_status
         $date_update
-        WHERE house_number = :house_number";
+        WHERE house_number = :house_number AND sticker_receive_status = 'N' ";
 
     $query = $conn->prepare($sql_update);
     $query->bindParam(':car_no1', $car_no1, PDO::PARAM_STR);

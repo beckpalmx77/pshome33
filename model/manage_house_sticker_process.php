@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 car_no5_color = :car_no5_color,
                 car_no5_type = :car_no5_type,
                 house_status = :house_status
-            WHERE house_number = :house_number";
+            WHERE house_number = :house_number AND sticker_receive_status = 'N' ";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':car_no1', $car_no1);
