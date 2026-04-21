@@ -101,7 +101,7 @@ function generateCarStickerPdf($house_number, $output = 'I') {
         $y_car += 8;
     }
     
-    $pdf->SetXY(100, 262);
+    $pdf->SetXY(100, 270);
     $pdf->Cell(0, 0, $result['contact_name'], 0, 0, 'L');
 
     $pdf->SetXY(155, 120);
