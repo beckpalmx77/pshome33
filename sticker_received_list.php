@@ -170,8 +170,8 @@ FROM ims_house;";
                                                     <th>จำนวนรถ</th>
                                                     <th>ค่าสติกเกอร์(บาท)</th>
                                                     <th>วันที่รับสติกเกอร์</th>
-                                                    <th>รายละเอียด</th>
-                                                    <th>แก้ไข</th>
+                                                    <th>Action</th>
+                                                    <th>Action</th>
                                                 </tr>
                                                 </thead>
                                             </table>
