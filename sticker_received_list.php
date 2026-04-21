@@ -37,6 +37,7 @@ FROM ims_house;";
         <link rel="stylesheet" href="css/spin_datatables.css"/>
         <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
         <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
 
         <style>
             .card-body {
@@ -170,6 +171,7 @@ FROM ims_house;";
                                                     <th>ค่าสติกเกอร์(บาท)</th>
                                                     <th>วันที่รับสติกเกอร์</th>
                                                     <th>รายละเอียด</th>
+                                                    <th>แก้ไข</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -210,7 +212,243 @@ FROM ims_house;";
         </div>
     </div>
 
+    <div class="modal fade" id="editStickerModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">แก้ไขข้อมูลสติกเกอร์ บ้านเลขที่: <span id="editHouseNumber"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStickerForm">
+                        <input type="hidden" id="edit_house_number" name="house_number">
+
+                        <h6 class="text-primary font-weight-bold mb-3">ข้อมูลรถ</h6>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 1</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no1" name="car_no1" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no1_province" name="car_no1_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no1_type" name="car_no1_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no1_brand" name="car_no1_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no1_color" name="car_no1_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 2</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no2" name="car_no2" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no2_province" name="car_no2_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no2_type" name="car_no2_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no2_brand" name="car_no2_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no2_color" name="car_no2_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 3</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no3" name="car_no3" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no3_province" name="car_no3_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no3_type" name="car_no3_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no3_brand" name="car_no3_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no3_color" name="car_no3_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 4</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no4" name="car_no4" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no4_province" name="car_no4_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no4_type" name="car_no4_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no4_brand" name="car_no4_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no4_color" name="car_no4_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 5</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no5" name="car_no5" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no5_province" name="car_no5_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no5_type" name="car_no5_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no5_brand" name="car_no5_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no5_color" name="car_no5_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 6</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no6" name="car_no6" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no6_province" name="car_no6_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no6_type" name="car_no6_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no6_brand" name="car_no6_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no6_color" name="car_no6_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-2"><strong>รถคันที่ 7</strong></div>
+                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ประเภท</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no7" name="car_no7" placeholder="ทะเบียน">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no7_province" name="car_no7_province" placeholder="จังหวัด">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no7_type" name="car_no7_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no7_brand" name="car_no7_brand" placeholder="ยี่ห้อ-รุ่น">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no7_color" name="car_no7_color" placeholder="สี">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnSaveEdit">บันทึก</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
@@ -255,6 +493,13 @@ FROM ims_house;";
                         "data": null,
                         "render": function(data, type, row) {
                             return '<button type="button" class="btn btn-sm btn-info btn-detail" data-house="' + row.house_number + '"><i class="fas fa-eye"></i> ดู</button>';
+                        },
+                        "orderable": false
+                    },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return '<button type="button" class="btn btn-sm btn-warning btn-edit" data-house="' + row.house_number + '"><i class="fas fa-edit"></i> แก้ไข</button>';
                         },
                         "orderable": false
                     }
@@ -363,6 +608,197 @@ FROM ims_house;";
                 $('#detailContent').html(detailHtml);
                 $('#houseDetailModal').modal('show');
             });
+
+            // Edit button click
+            $('#TableRecordList').on('click', '.btn-edit', function() {
+                let houseNumber = $(this).data('house');
+                let rowData = table.row($(this).closest('tr')).data();
+
+                $('#editHouseNumber').text(houseNumber);
+                $('#edit_house_number').val(houseNumber);
+
+                // Clear all fields
+                for (let i = 1; i <= 7; i++) {
+                    $('#edit_car_no' + i).val('');
+                    $('#edit_car_no' + i + '_province').val('');
+                    $('#edit_car_no' + i + '_type').val('');
+                    $('#edit_car_no' + i + '_brand').val('');
+                    $('#edit_car_no' + i + '_color').val('');
+                }
+
+                // Fill data
+                if (rowData.car_no1) {
+                    $('#edit_car_no1').val(rowData.car_no1);
+                    $('#edit_car_no1_province').val(rowData.car_no1_province || '');
+                    $('#edit_car_no1_type').val(rowData.car_no1_type || '');
+                    $('#edit_car_no1_brand').val(rowData.car_no1_brand || '');
+                    $('#edit_car_no1_color').val(rowData.car_no1_color || '');
+                }
+                if (rowData.car_no2) {
+                    $('#edit_car_no2').val(rowData.car_no2);
+                    $('#edit_car_no2_province').val(rowData.car_no2_province || '');
+                    $('#edit_car_no2_type').val(rowData.car_no2_type || '');
+                    $('#edit_car_no2_brand').val(rowData.car_no2_brand || '');
+                    $('#edit_car_no2_color').val(rowData.car_no2_color || '');
+                }
+                if (rowData.car_no3) {
+                    $('#edit_car_no3').val(rowData.car_no3);
+                    $('#edit_car_no3_province').val(rowData.car_no3_province || '');
+                    $('#edit_car_no3_type').val(rowData.car_no3_type || '');
+                    $('#edit_car_no3_brand').val(rowData.car_no3_brand || '');
+                    $('#edit_car_no3_color').val(rowData.car_no3_color || '');
+                }
+                if (rowData.car_no4) {
+                    $('#edit_car_no4').val(rowData.car_no4);
+                    $('#edit_car_no4_province').val(rowData.car_no4_province || '');
+                    $('#edit_car_no4_type').val(rowData.car_no4_type || '');
+                    $('#edit_car_no4_brand').val(rowData.car_no4_brand || '');
+                    $('#edit_car_no4_color').val(rowData.car_no4_color || '');
+                }
+                if (rowData.car_no5) {
+                    $('#edit_car_no5').val(rowData.car_no5);
+                    $('#edit_car_no5_province').val(rowData.car_no5_province || '');
+                    $('#edit_car_no5_type').val(rowData.car_no5_type || '');
+                    $('#edit_car_no5_brand').val(rowData.car_no5_brand || '');
+                    $('#edit_car_no5_color').val(rowData.car_no5_color || '');
+                }
+                if (rowData.car_no6) {
+                    $('#edit_car_no6').val(rowData.car_no6);
+                    $('#edit_car_no6_province').val(rowData.car_no6_province || '');
+                    $('#edit_car_no6_type').val(rowData.car_no6_type || '');
+                    $('#edit_car_no6_brand').val(rowData.car_no6_brand || '');
+                    $('#edit_car_no6_color').val(rowData.car_no6_color || '');
+                }
+                if (rowData.car_no7) {
+                    $('#edit_car_no7').val(rowData.car_no7);
+                    $('#edit_car_no7_province').val(rowData.car_no7_province || '');
+                    $('#edit_car_no7_type').val(rowData.car_no7_type || '');
+                    $('#edit_car_no7_brand').val(rowData.car_no7_brand || '');
+                    $('#edit_car_no7_color').val(rowData.car_no7_color || '');
+                }
+
+                $('#editStickerModal').modal('show');
+                
+                // Initialize autocomplete after modal is shown
+                for (let i = 1; i <= 7; i++) {
+                    initProvinceAutocomplete("edit_car_no" + i + "_province");
+                    initColorAutocomplete("edit_car_no" + i + "_color");
+                    initBrandAutocomplete("edit_car_no" + i + "_brand");
+                }
+            });
+
+            // Save edit button click
+            $('#btnSaveEdit').on('click', function() {
+                let formData = $('#editStickerForm').serialize();
+
+                $.ajax({
+                    url: 'model/update_sticker_received.php',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        try {
+                            let result = typeof response === 'string' ? JSON.parse(response) : response;
+                            if (result.status === 'success') {
+                                alert('บันทึกสำเร็จ');
+                                $('#editStickerModal').modal('hide');
+                                table.ajax.reload();
+                            } else {
+                                alert('เกิดข้อผิดพลาด: ' + result.message);
+                            }
+                        } catch(e) {
+                            alert('เกิดข้อผิดพลาด: ' + response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('เกิดข้อผิดพลาด: ' + error);
+                    }
+                });
+            });
+
+            function initProvinceAutocomplete(inputId) {
+                $("#" + inputId).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            type: "POST",
+                            url: 'model/get_autocomplete.php',
+                            data: {action: "GET_PROVINCE_AUTOCOMPLETE", search: request.term},
+                            dataType: "json",
+                            success: function (data) {
+                                if (Array.isArray(data)) {
+                                    response(data.map(function(item) {
+                                        return {label: item, value: item};
+                                    }));
+                                } else {
+                                    response([]);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('Province autocomplete error:', status, error);
+                                response([]);
+                            }
+                        });
+                    },
+                    minLength: 0,
+                    appendTo: "#editStickerModal"
+                });
+            }
+
+            function initColorAutocomplete(inputId) {
+                $("#" + inputId).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            type: "POST",
+                            url: 'model/get_autocomplete.php',
+                            data: {action: "GET_COLOR_AUTOCOMPLETE", search: request.term},
+                            dataType: "json",
+                            success: function (data) {
+                                if (Array.isArray(data)) {
+                                    response(data.map(function(item) {
+                                        return {label: item, value: item};
+                                    }));
+                                } else {
+                                    response([]);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('Color autocomplete error:', status, error);
+                                response([]);
+                            }
+                        });
+                    },
+                    minLength: 0,
+                    appendTo: "#editStickerModal"
+                });
+            }
+
+            function initBrandAutocomplete(inputId) {
+                $("#" + inputId).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            type: "POST",
+                            url: 'model/get_autocomplete.php',
+                            data: {action: "GET_BRAND_AUTOCOMPLETE", search: request.term},
+                            dataType: "json",
+                            success: function (data) {
+                                if (Array.isArray(data)) {
+                                    response(data.map(function(item) {
+                                        return {label: item, value: item};
+                                    }));
+                                } else {
+                                    response([]);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('Brand autocomplete error:', status, error);
+                                response([]);
+                            }
+                        });
+                    },
+                    minLength: 0,
+                    appendTo: "#editStickerModal"
+                });
+            }
+
         });
     </script>
     </body>
