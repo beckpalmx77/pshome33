@@ -78,6 +78,8 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
 
+    <script src="js/myadmin.min.js"></script>
+
     <script>
         $(document).ready(function () {
             let dataRecords = $('#TableRecordList').DataTable({
