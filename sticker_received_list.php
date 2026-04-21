@@ -215,7 +215,7 @@ FROM ims_house;";
     <div class="modal fade" id="editStickerModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-warning">
+                <div class="modal-header bg-info-subtle">
                     <h5 class="modal-title">แก้ไขข้อมูลสติกเกอร์ บ้านเลขที่: <span id="editHouseNumber"></span></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -449,9 +449,18 @@ FROM ims_house;";
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!--script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script-->
+    <!--script src="vendor/jquery-easing/jquery.easing.min.js"></script-->
+    <!--script src="js/sb-admin-2.min.js"></script-->
+
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/v11/dataTables.buttons.min.js"></script>
     <script src="vendor/datatables/v11/jszip.min.js"></script>
@@ -459,6 +468,7 @@ FROM ims_house;";
     <script src="vendor/datatables/v11/vfs_fonts.js"></script>
     <script src="vendor/datatables/v11/buttons.html5.min.js"></script>
     <script src="vendor/datatables/v11/buttons.print.min.js"></script>
+
 
     <script>
         $(document).ready(function() {
