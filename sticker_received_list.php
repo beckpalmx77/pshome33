@@ -709,18 +709,18 @@ FROM ims_house;";
                         try {
                             let result = typeof response === 'string' ? JSON.parse(response) : response;
                             if (result.status === 'success') {
-                                alert('บันทึกสำเร็จ');
+                                alertify.success('บันทึกสำเร็จ');
                                 $('#editStickerModal').modal('hide');
                                 table.ajax.reload();
                             } else {
-                                alert('เกิดข้อผิดพลาด: ' + result.message);
+                                alertify.error('เกิดข้อผิดพลาด: ' + result.message);
                             }
                         } catch(e) {
-                            alert('เกิดข้อผิดพลาด: ' + response);
+                            alertify.error('เกิดข้อผิดพลาด: ' + response);
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('เกิดข้อผิดพลาด: ' + error);
+                        alertify.error('เกิดข้อผิดพลาด: ' + error);
                     }
                 });
             });
