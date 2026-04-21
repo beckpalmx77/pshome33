@@ -7,6 +7,28 @@ include('config/connect_db.php');
 if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == "") {
     header("Location: index.php");
 } else {
+
+    $sql_car_data = "SELECT 
+    SUM(
+        (CASE WHEN car_no1 IS NOT NULL AND car_no1 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no2 IS NOT NULL AND car_no2 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no3 IS NOT NULL AND car_no3 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no4 IS NOT NULL AND car_no4 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no5 IS NOT NULL AND car_no5 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no6 IS NOT NULL AND car_no6 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no7 IS NOT NULL AND car_no7 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no8 IS NOT NULL AND car_no8 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no9 IS NOT NULL AND car_no9 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no10 IS NOT NULL AND car_no10 <> '' THEN 1 ELSE 0 END) 
+    ) AS total_cars_count
+FROM ims_house;";
+
+    $query_house_data = $conn->prepare($sql_car_data);
+    $query_house_data->execute();
+    $results_house_data = $query_house_data->fetch(PDO::FETCH_OBJ);
+
+    $total_cars_count = $results_house_data->total_cars_count ?? 0;
+
     ?>
 
     <!DOCTYPE html>
@@ -71,35 +93,47 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         </ol>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <div class="card bg-info text-white">
+                    <div class="row mb-3 flex-nowrap overflow-auto py-2">
+                        <div class="col">
+                            <div class="card bg-info text-white h-100">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ลงทะเบียน</div>
                                     <div class="h4 mb-0 font-weight-bold" id="totalHouse">0 หลัง</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-primary text-white">
+
+                        <div class="col">
+                            <div class="card bg-primary text-white h-100">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถที่ลงทะเบียน</div>
                                     <div class="h4 mb-0 font-weight-bold" id="totalCars">0 คัน</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-success text-white">
+
+                        <div class="col">
+                            <div class="card bg-primary text-white h-100">
+                                <div class="card-body">
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถทั้งหมด (รับสติกเกอร์ + ยังไม่ได้รับสติกเกอร์)</div>
+                                    <div class="h4 mb-0 font-weight-bold" id="total_cars_count"><?= number_format($total_cars_count) ?></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card bg-success text-white h-100">
                                 <div class="card-body">
                                     <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนเงินค่าสติกเกอร์รถเพิ่ม</div>
                                     <div class="h4 mb-0 font-weight-bold" id="totalExtraFee">0 บาท</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card bg-info text-white">
-                                <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 80px;">
-                                    <button type="button" class="btn btn-info btn-lg" id="btnExportCsv">
+
+                        <div class="col">
+                            <div class="card bg-info text-white h-100">
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <button type="button" class="btn btn-info btn-lg border-white" id="btnExportCsv">
                                         <i class="fas fa-file-csv text-white"></i> Export CSV
                                     </button>
                                 </div>
@@ -243,7 +277,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 ],
                 "order": [[10, "desc"]],
                 "lengthMenu": [[5, 10, 20, 50, 100, -1], [5, 10, 20, 50, 100, "All"]], // กำหนดเมนูเลือกจำนวนแถว
-                "pageLength": 10, // ตั้งค่าเริ่มต้นให้แสดง 10 แถว
+                "pageLength": 5, // ตั้งค่าเริ่มต้นให้แสดง 10 แถว
                 "retrieve": true
             });
 
