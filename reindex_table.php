@@ -192,6 +192,14 @@ if (strlen($_SESSION['alogin']) == "") {
         </div>
     </div>
 
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tables        = <?php echo json_encode($tableNames); ?>;

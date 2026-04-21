@@ -228,8 +228,7 @@ FROM ims_house;";
                         <h6 class="text-primary font-weight-bold mb-3">ข้อมูลรถ</h6>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 1</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 1</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
@@ -258,8 +257,7 @@ FROM ims_house;";
                         </div>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 2</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 2</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
@@ -288,8 +286,7 @@ FROM ims_house;";
                         </div>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 3</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 3</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
@@ -318,8 +315,7 @@ FROM ims_house;";
                         </div>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 4</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 4</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
@@ -348,8 +344,7 @@ FROM ims_house;";
                         </div>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 5</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 5</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
@@ -378,8 +373,7 @@ FROM ims_house;";
                         </div>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 6</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 6</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
@@ -408,8 +402,7 @@ FROM ims_house;";
                         </div>
 
                         <div class="row mb-2">
-                            <div class="col-md-2"><strong>รถคันที่ 7</strong></div>
-                            <div class="col-md-2">ทะเบียน</div>
+                            <div class="col-md-2">ทะเบียน 7</div>
                             <div class="col-md-2">จังหวัด</div>
                             <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
