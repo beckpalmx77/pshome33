@@ -85,7 +85,7 @@ FROM ims_house;";
                 ?>
                 <div class="container-fluid" id="container-wrapper">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">รายการบ้านที่รับสติกเกอร์แล้ว</h1>
+                        <h1 class="h3 mb-0 text-gray-800">รายการบ้านที่รับสติกเกอร์</h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
                             <li class="breadcrumb-item">ข้อมูลสติกเกอร์</li>
@@ -94,47 +94,52 @@ FROM ims_house;";
                     </div>
 
                     <div class="row mb-3 flex-nowrap overflow-auto py-2">
-                        <div class="col">
+                        <div class="col" style="min-width: 180px;">
                             <div class="card bg-info text-white h-100">
                                 <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ลงทะเบียน</div>
-                                    <div class="h4 mb-0 font-weight-bold" id="totalHouse">0 หลัง</div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ลงทะเบียน (หลัง)</div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalHouse">0 หลัง</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" style="min-width: 180px;">
                             <div class="card bg-primary text-white h-100">
                                 <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถที่ลงทะเบียน</div>
-                                    <div class="h4 mb-0 font-weight-bold" id="totalCars">0 คัน</div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนรถที่ลงทะเบียน (คัน)</div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalCars">0 คัน</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" style="min-width: 220px;">
                             <div class="card bg-primary text-white h-100">
                                 <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถทั้งหมด (รับสติกเกอร์ + ยังไม่ได้รับสติกเกอร์)</div>
-                                    <div class="h4 mb-0 font-weight-bold" id="total_cars_count"><?= number_format($total_cars_count) ?></div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1" style="line-height: 1.2;">
+                                        จำนวนรถทั้งหมด  (คัน)
+                                    </div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="total_cars_count"><?= number_format($total_cars_count) ?></div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1" style="line-height: 1.2;">
+                                        (รับ + ยังไม่ได้รับ สติกเกอร์)
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" style="min-width: 180px;">
                             <div class="card bg-success text-white h-100">
                                 <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนเงินค่าสติกเกอร์รถเพิ่ม</div>
-                                    <div class="h4 mb-0 font-weight-bold" id="totalExtraFee">0 บาท</div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนเงินค่าสติกเกอร์รถเพิ่ม  (บาท)</div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalExtraFee">0 บาท</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col">
+                        <div class="col" style="min-width: 150px;">
                             <div class="card bg-info text-white h-100">
                                 <div class="card-body d-flex justify-content-center align-items-center">
-                                    <button type="button" class="btn btn-info btn-lg border-white" id="btnExportCsv">
-                                        <i class="fas fa-file-csv text-white"></i> Export CSV
+                                    <button type="button" class="btn btn-info btn-lg border-white w-100" id="btnExportCsv">
+                                        <i class="fas fa-file-csv text-white"></i> Export
                                     </button>
                                 </div>
                             </div>
