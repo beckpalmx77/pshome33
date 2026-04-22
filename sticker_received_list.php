@@ -98,7 +98,7 @@ FROM ims_house;";
                         <div class="col" style="min-width: 180px;">
                             <div class="card bg-info text-white h-100">
                                 <div class="card-body">
-                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ลงทะเบียน (หลัง)</div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนบ้านที่รับสติกเกอร์แล้ว (หลัง)</div>
                                     <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalHouse">0 หลัง</div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@ FROM ims_house;";
                         <div class="col" style="min-width: 180px;">
                             <div class="card bg-primary text-white h-100">
                                 <div class="card-body">
-                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนรถที่ลงทะเบียน (คัน)</div>
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนรถที่รับสติกเกอร์แล้ว (คัน)</div>
                                     <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalCars">0 คัน</div>
                                 </div>
                             </div>
