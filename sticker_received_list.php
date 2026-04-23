@@ -466,7 +466,7 @@ FROM ims_house;";
     <script>
         $(document).ready(function() {
             let table = $('#TableRecordList').DataTable({
-                "processing": true,
+                "processing": false,
                 "serverSide": false,
                 "ajax": {
                     "url": "model/get_sticker_received_list.php",
@@ -533,6 +533,12 @@ FROM ims_house;";
                 "pageLength": 5, // ตั้งค่าเริ่มต้นให้แสดง 10 แถว
                 "retrieve": true
             });
+
+            // Auto-refresh every 5 seconds (no page flicker)
+            setInterval(function() {
+                // Reload table data without showing processing indicator
+                table.ajax.reload(null, false);
+            }, 5000);
 
             // Export CSV button click
             $('#btnExportCsv').on('click', function() {

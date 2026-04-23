@@ -477,7 +477,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     },
                     processing: '<div class="custom-spinner"></div>'
                 },
-                'processing': true,
+                'processing': false,
                 'serverSide': true,
                 'serverMethod': 'post',
                 'scrollX': true,
@@ -518,6 +518,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'initComplete': function (settings, json) {
                 }
             });
+
+            // Auto-refresh every 5 seconds (no page flicker)
+            setInterval(function() {
+                dataRecords.ajax.reload(null, false);
+            }, 5000);
 
             $('#saveButton').on('click', function (event) {
                 event.preventDefault();
