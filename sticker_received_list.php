@@ -535,10 +535,10 @@ FROM ims_house;";
             });
 
             // Auto-refresh every 5 seconds (no page flicker)
-            setInterval(function() {
+            //setInterval(function() {
                 // Reload table data without showing processing indicator
-                table.ajax.reload(null, false);
-            }, 5000);
+                //table.ajax.reload(null, false);
+            //}, 5000);
 
             // Export CSV button click
             $('#btnExportCsv').on('click', function() {
