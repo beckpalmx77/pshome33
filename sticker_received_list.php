@@ -140,7 +140,7 @@ FROM ims_house;";
                             <div class="card bg-info text-white h-100">
                                 <div class="card-body d-flex justify-content-center align-items-center">
                                     <button type="button" class="btn btn-info btn-lg border-white w-100" id="btnExportCsv">
-                                        <i class="fas fa-file-csv text-white"></i> Export
+                                        <i class="fas fa-file-csv text-white"></i> Export Excel
                                     </button>
                                 </div>
                             </div>
