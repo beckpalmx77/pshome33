@@ -296,6 +296,27 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                 </div>
 
                                                                 <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                        <button type="button" class="btn btn-info" id="scanQRBtn">
+                                                                            <i class="fas fa-qrcode"></i> Scan QR Code เพื่อ Verify
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row" id="qrScannerSection" style="display: none;">
+                                                                    <div class="col-sm-12">
+                                                                        <div id="reader" style="width: 100%;"></div>
+                                                                        <button type="button" class="btn btn-secondary btn-sm mt-2" id="closeScannerBtn">ปิดกล้อง</button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row" id="qrVerifyResult" style="display: none;">
+                                                                    <div class="col-sm-12">
+                                                                        <div class="alert" id="qrResultAlert"></div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row">
                                                                     <div class="col-sm-4">
                                                                         <label for="create_by"
                                                                                class="control-label">สร้างรายการ
@@ -443,6 +464,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </a>
 
     <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
@@ -744,6 +766,176 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             } else {
                 alert('ไม่มีรูปภาพที่จะแสดง');
             }
+        }
+
+        // ============================================
+        // QR Code Scanner for Bank Slip Verify (from uploaded image)
+        // ============================================
+        let html5QrCode = null;
+
+        $("#scanQRBtn").on("click", function() {
+            // Get the image src from preview or slip
+            let imageSrc = $("#preview_image").attr("src");
+            if (!imageSrc || imageSrc === "#") {
+                // Try slip image in modal
+                imageSrc = $("#slipImage").attr("src");
+            }
+            
+            if (!imageSrc || imageSrc === "#" || imageSrc === "") {
+                alert("ไม่พบรูปภาพสำหรับ scan QR Code");
+                return;
+            }
+
+            $("#qrVerifyResult").show();
+            $("#qrResultAlert").attr("class", "alert alert-info");
+            $("#qrResultAlert").html("กำลังอ่าน QR Code...");
+
+            scanQRFromImage(imageSrc);
+        });
+
+        function scanQRFromImage(imageSrc) {
+            $("#qrResultAlert").attr("class", "alert alert-info");
+            $("#qrResultAlert").html("กำลังอ่าน QR Code...");
+
+            let img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = function() {
+                let canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                let ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                
+                let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                let code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert"
+                });
+                
+                if (code) {
+                    verifyQRCode(code.data);
+                } else {
+                    // Try with inversion
+                    let codeInvert = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "invertFirst"
+                    });
+                    if (codeInvert) {
+                        verifyQRCode(codeInvert.data);
+                    } else {
+                        $("#qrResultAlert").attr("class", "alert alert-danger");
+                        $("#qrResultAlert").html("<strong>ไม่พบ QR Code</strong><br>ไม่สามารถอ่าน QR Code จากรูปภาพ กรุณาตรวจสอบว่ารูปภาพมี QR Code ที่ชัดเจน");
+                    }
+                }
+            };
+            img.onerror = function() {
+                $("#qrResultAlert").attr("class", "alert alert-danger");
+                $("#qrResultAlert").html("<strong>Error</strong>: ไม่สามารถโหลดรูปภาพได้");
+            };
+            img.src = imageSrc;
+        }
+
+        function verifyQRCode(qrString) {
+            $("#qrVerifyResult").show();
+            
+            try {
+                let qrData = parseThaiQR(qrString);
+                let inputAmount = parseFloat($("#amount").val().replace(/,/g, '')) || 0;
+                
+                let alertClass = "alert-danger";
+                let alertMessage = "<strong>QR Code ไม่ถูกต้อง</strong>";
+                let isValid = false;
+
+                // ตรวจสอบ Amount
+                if (qrData.amount === inputAmount) {
+                    isValid = true;
+                    alertClass = "alert-success";
+                    alertMessage = "<strong>✓ จำนวนเงินตรงกัน</strong><br>" +
+                                "จำนวนเงิน: " + qrData.amount.toLocaleString() + " บาท<br>" +
+                                "ธนาคาร: " + qrData.senderBank + "<br>" +
+                                "บัญชีผู้รับ: " + qrData.receiverAccount;
+                } else {
+                    alertClass = "alert-warning";
+                    alertMessage = "<strong>⚠ จำนวนเงินไม่ตรงกัน</strong><br>" +
+                                "จาก QR: " + qrData.amount.toLocaleString() + " บาท<br>" +
+                                "จากฟอร์ม: " + inputAmount.toLocaleString() + " บาท";
+                }
+
+                $("#qrResultAlert").attr("class", "alert " + alertClass);
+                $("#qrResultAlert").html(alertMessage);
+
+            } catch (e) {
+                $("#qrResultAlert").attr("class", "alert alert-danger");
+                $("#qrResultAlert").html("<strong>Error:</strong> ไม่สามารถอ่าน QR Code ได้: " + e.message);
+            }
+        }
+
+        function parseThaiQR(qrString) {
+            // Thai QR Payment standard (PromptPay)
+            // Format: 000201010211...
+            
+            let result = {
+                amount: 0,
+                receiverAccount: "",
+                senderBank: "",
+                timestamp: ""
+            };
+
+            if (!qrString || qrString.length < 50) {
+                throw new Error("Invalid QR Code format");
+            }
+
+            // Parse using character-based extraction
+            // EMVCo Thai QR Code standard
+            
+            let pos = 0;
+            let data = qrString;
+            
+            // Find Amount (54)
+            let amountMatch = data.match(/54[0-9]{2}(\d{2})/);
+            if (amountMatch) {
+                let amountLen = parseInt(amountMatch[1]);
+                let amountStart = data.indexOf("54") + 4;
+                let amountEnd = amountStart + amountLen;
+                if (amountEnd <= data.length) {
+                    result.amount = parseFloat(data.substring(amountStart, amountEnd)) || 0;
+                }
+            }
+
+            // Find Receiver Account (38)
+            let accMatch = data.match(/38[0-9]{2}(\d{2})/);
+            if (accMatch) {
+                let accLen = parseInt(accMatch[1]);
+                let accStart = data.indexOf("38") + 4;
+                let accEnd = accStart + accLen;
+                if (accEnd <= data.length) {
+                    result.receiverAccount = data.substring(accStart, accEnd);
+                }
+            }
+
+            // Find Sender Bank (30)
+            let bankMatch = data.match(/30[0-9]{2}(\d{2})/);
+            if (bankMatch) {
+                let bankLen = parseInt(bankMatch[1]);
+                let bankStart = data.indexOf("30") + 4;
+                let bankEnd = bankStart + bankLen;
+                if (bankEnd <= data.length) {
+                    result.senderBank = data.substring(bankStart, bankEnd);
+                }
+            }
+
+            if (result.amount === 0) {
+                // Try alternative parsing - look for specific value after ID
+                let parts = data.split("5802TH");
+                if (parts.length > 1) {
+                    // Try to extract amount from hex or numeric
+                    let amountPattern = /54(\d{2})(\d+)/;
+                    let match = data.match(amountPattern);
+                    if (match) {
+                        result.amount = parseFloat(match[2]) / 100;
+                    }
+                }
+            }
+
+            return result;
         }
     </script>
     </body>
