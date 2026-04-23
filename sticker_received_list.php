@@ -466,8 +466,11 @@ FROM ims_house;";
     <script>
         $(document).ready(function() {
             let table = $('#TableRecordList').DataTable({
-                "processing": false,
+                "processing": true,
                 "serverSide": false,
+                "language": {
+                    "loadingRecords": '<div class="text-center p-3"><span class="spinner-border spinner-border-sm text-primary" role="status"></span> กำลังโหลด...</div>'
+                },
                 "ajax": {
                     "url": "model/get_sticker_received_list.php",
                     "type": "POST",

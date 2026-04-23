@@ -497,9 +497,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         last: 'สุดท้าย',
                         next: 'ต่อไป'
                     },
-                    processing: '<div class="custom-spinner"></div>'
+                    processing: '<div class="custom-spinner"></div>',
+                    loadingRecords: '<div class="text-center p-3"><span class="spinner-border spinner-border-sm text-primary" role="status"></span> กำลังโหลด...</div>'
                 },
-                'processing': false,
+                'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
                 'scrollX': true,
@@ -542,9 +543,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
 
             // Auto-refresh every 5 seconds (no page flicker)
-            setInterval(function() {
-                dataRecords.ajax.reload(null, false);
-            }, 5000);
+            //setInterval(function() {
+                //dataRecords.ajax.reload(null, false);
+            //}, 5000);
 
             $('#saveButton').on('click', function (event) {
                 event.preventDefault();
