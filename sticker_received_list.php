@@ -227,9 +227,9 @@ FROM ims_house;";
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 1</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
@@ -239,26 +239,26 @@ FROM ims_house;";
                                 <input type="text" class="form-control" id="edit_car_no1_province" name="car_no1_province" placeholder="">
                             </div>
                             <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no1_brand" name="car_no1_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no1_color" name="car_no1_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no1_type" name="car_no1_type">
                                     <option value="">-- เลือก --</option>
                                     <option value="รถยนต์">รถยนต์</option>
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no1_brand" name="car_no1_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no1_color" name="car_no1_color" placeholder="">
-                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 2</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
@@ -268,34 +268,40 @@ FROM ims_house;";
                                 <input type="text" class="form-control" id="edit_car_no2_province" name="car_no2_province" placeholder="">
                             </div>
                             <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no2_brand" name="car_no2_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no2_color" name="car_no2_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no2_type" name="car_no2_type">
                                     <option value="">-- เลือก --</option>
                                     <option value="รถยนต์">รถยนต์</option>
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no2_brand" name="car_no2_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no2_color" name="car_no2_color" placeholder="">
-                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 3</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
                                 <input type="text" class="form-control" id="edit_car_no3" name="car_no3" placeholder="">
                             </div>
                             <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no3_province" name="car_no3_province" placeholder="
-">
+                                <input type="text" class="form-control" id="edit_car_no3_province" name="car_no3_province" placeholder="">
+                            </div>
+
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no3_brand" name="car_no3_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no3_color" name="car_no3_color" placeholder="">
                             </div>
                             <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no3_type" name="car_no3_type">
@@ -304,20 +310,14 @@ FROM ims_house;";
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no3_brand" name="car_no3_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no3_color" name="car_no3_color" placeholder="">
-                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 4</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
@@ -327,26 +327,26 @@ FROM ims_house;";
                                 <input type="text" class="form-control" id="edit_car_no4_province" name="car_no4_province" placeholder="">
                             </div>
                             <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no4_brand" name="car_no4_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no4_color" name="car_no4_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no4_type" name="car_no4_type">
                                     <option value="">-- เลือก --</option>
                                     <option value="รถยนต์">รถยนต์</option>
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no4_brand" name="car_no4_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no4_color" name="car_no4_color" placeholder="">
-                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 5</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
@@ -356,26 +356,26 @@ FROM ims_house;";
                                 <input type="text" class="form-control" id="edit_car_no5_province" name="car_no5_province" placeholder="">
                             </div>
                             <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no5_brand" name="car_no5_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no5_color" name="car_no5_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no5_type" name="car_no5_type">
                                     <option value="">-- เลือก --</option>
                                     <option value="รถยนต์">รถยนต์</option>
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no5_brand" name="car_no5_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no5_color" name="car_no5_color" placeholder="">
-                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 6</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
@@ -385,26 +385,26 @@ FROM ims_house;";
                                 <input type="text" class="form-control" id="edit_car_no6_province" name="car_no6_province" placeholder="">
                             </div>
                             <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no6_brand" name="car_no6_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no6_color" name="car_no6_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no6_type" name="car_no6_type">
                                     <option value="">-- เลือก --</option>
                                     <option value="รถยนต์">รถยนต์</option>
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no6_brand" name="car_no6_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no6_color" name="car_no6_color" placeholder="">
-                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-2">ทะเบียน 7</div>
                             <div class="col-md-2">จังหวัด</div>
-                            <div class="col-md-2">ประเภท</div>
                             <div class="col-md-2">ยี่ห้อ-รุ่น</div>
                             <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">
@@ -414,17 +414,17 @@ FROM ims_house;";
                                 <input type="text" class="form-control" id="edit_car_no7_province" name="car_no7_province" placeholder="">
                             </div>
                             <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no7_brand" name="car_no7_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no7_color" name="car_no7_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
                                 <select class="form-control" id="edit_car_no7_type" name="car_no7_type">
                                     <option value="">-- เลือก --</option>
                                     <option value="รถยนต์">รถยนต์</option>
                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
                                 </select>
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no7_brand" name="car_no7_brand" placeholder="">
-                            </div>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control" id="edit_car_no7_color" name="car_no7_color" placeholder="">
                             </div>
                         </div>
 
