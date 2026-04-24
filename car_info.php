@@ -302,7 +302,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                         <div class="col-md-2">
                                                             <div class="form-group">
                                                                 <label class="control-label">ประเภท</label>
-<select class="form-control" id="car_no4_type">
+                                                                <select class="form-control" id="car_no4_type">
                                                                     <option value="">-- เลือก --</option>
                                                                     <option value="รถยนต์">รถยนต์</option>
                                                                     <option value="จักรยานยนต์">จักรยานยนต์</option>
