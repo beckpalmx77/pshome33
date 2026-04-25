@@ -111,6 +111,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <button type="button" class="btn btn-outline-success" id="btnReloadTable">
+                                        <i class="fas fa-sync"></i> Reload Data
+                                    </button>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -593,6 +596,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#saveButton').attr('disabled', false);
                     }
                 });
+            });
+
+            // Reload Data button click
+            $('#btnReloadTable').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
 
             $("#TableRecordList").on('click', '.update', function () {
