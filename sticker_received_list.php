@@ -148,6 +148,9 @@ FROM ims_house;";
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <button type="button" class="btn btn-outline-success" id="btnReloadTable">
+                                        <i class="fas fa-sync"></i> Reload Data
+                                    </button>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -535,10 +538,10 @@ FROM ims_house;";
                 "retrieve": true
             });
 
-            // Auto-refresh every 5 seconds (no page flicker)
+// Auto-refresh every 5 seconds (no page flicker)
             //setInterval(function() {
-                // Reload table data without showing processing indicator
-                //table.ajax.reload(null, false);
+            //    Reload table data without showing processing indicator
+            //    table.ajax.reload(null, false);
             //}, 5000);
 
             // Export CSV button click
@@ -576,7 +579,7 @@ FROM ims_house;";
                 });
 
                 // Add total row
-                csvContent += '"รวมทั้งหมด","","","","","","","",' + totalCars + ',' + totalExtraFee + ',""\n';
+                csvContent += '"รวมทั้งหมด","","","","","","",' + totalCars + ',' + totalExtraFee + ',""\n';
 
                 let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 let link = document.createElement("a");
@@ -586,6 +589,11 @@ FROM ims_house;";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+});
+
+            // Reload Data button click (table header)
+            $('#btnReloadTable').on('click', function() {
+                table.ajax.reload();
             });
 
             // Detail button click
