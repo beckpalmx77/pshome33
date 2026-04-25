@@ -110,10 +110,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <button type="button" class="btn btn-outline-success" id="btnReloadTable">
-                                        <i class="fas fa-sync"></i> Reload Data
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                    <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                        <i class="fa fa-refresh"></i> Reload
                                     </button>
+                                    <a href="manage_common_fee_payment_not_confirm.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ค่าส่วนกลางที่ยังไม่ยืนยันการชำระ" class="btn btn-outline-danger ml-2">
+                                        <i class="fas fa-search-dollar"></i> ค้นหายังไม่ชำระ
+                                    </a>
+                                    <a href="show_duplicate_payments.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ตรวจสอบรายการชำระค่าส่วนกลางบันทึกซ้ำ" class="btn btn-outline-warning ml-2">
+                                        <i class="fas fa-copy"></i> ตรวจสอบบันทึกซ้ำ
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -599,79 +605,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
 
             // Reload Data button click
-            $('#btnReloadTable').on('click', function() {
+            $('#btnReload').on('click', function() {
                 $('#TableRecordList').DataTable().ajax.reload();
-            });
-
-            $("#TableRecordList").on('click', '.update', function () {
-                let id = $(this).attr("id");
-                let formData = {action: "GET_DATA", id: id};
-                $.ajax({
-                    type: "POST",
-                    url: 'model/manage_common_fee_payment_process.php',
-                    dataType: "json",
-                    data: formData,
-                    success: function (response) {
-                        if (response && response.length > 0) {
-                            let data = response[0];
-                            let id = data.id;
-                            let doc_id = data.doc_id;
-                            let detail = data.detail;
-                            let payment_date = data.payment_date;
-                            let house_number = data.house_number;
-                            let period_month_start = data.period_month_start;
-                            let period_month_to = data.period_month_to;
-                            let period_year = data.period_year;
-                            let amount = data.amount;
-                            let picture_payment = data.picture_payment;
-                            let payment_status = data.payment_status;
-                            let payment_method = data.payment_method;
-                            let payment_status_desc = (payment_status === "Y") ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
-                            if (payment_status === "Y") {
-                                $('input[name="payment_status"][value="Y"]').prop('checked', true);
-                            } else {
-                                $('input[name="payment_status"][value="N"]').prop('checked', true);
-                            }
-                            let image_path = 'uploads/slips/' + picture_payment;
-                            let create_by = data.create_by;
-                            let created_at = data.created_at;
-                            let remark = data.remark;
-                            let approve_by = data.approve_by;
-                            let updated_at = data.updated_at;
-
-                            $('#recordModal').modal('show');
-                            $('#id').val(id);
-                            $('#doc_id').val(doc_id);
-                            $('#detail').val(detail);
-                            $('#payment_date').val(payment_date);
-                            $('#house_number').val(house_number);
-                            $('#period_month_start').val(period_month_start);
-                            $('#period_month_to').val(period_month_to);
-                            $('#period_year').val(period_year);
-                            $('#amount').val(amount);
-                            $('#payment_status').val(payment_status);
-                            $('#payment_status_desc').val(payment_status_desc);
-                            $('#payment_method').val(payment_method);
-                            $('#create_by').val(create_by);
-                            $('#created_at').val(created_at);
-                            $('#remark').val(remark);
-                            $('#approve_by').val(approve_by);
-                            $('#updated_at').val(updated_at);
-                            $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
-                            $('#action').val('UPDATE');
-                            $('#saveButton').val('Save');
-                            if (data.picture_payment) {
-                                $('#preview_image').attr('src', image_path);
-                                $('#preview_image').show();
-                            } else {
-                                $('#preview_image').hide();
-                            }
-                        }
-                    },
-                    error: function (response) {
-                        alertify.error("error : " + response);
-                    }
-                });
             });
 
             $("#TableRecordList").on('click', '.print', function () {

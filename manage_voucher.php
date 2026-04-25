@@ -49,6 +49,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
+                                            <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                                <i class="fa fa-refresh"></i> Reload
+                                            </button>
                                             <!--button type='button' name='btnExp' id='btnExp'
                                                     class='btn btn-success btn-xs'>Export Excel
                                                 <i class="fa fa-file-excel-o"></i>
@@ -205,11 +208,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'delete'}
                 ]
             });
-        });
-    </script>
+});
 
-    <script>
+            $('#btnReload').on('click', function () {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
 
+        </script>
+
+        <script>
         $("#btnAdd").click(function () {
             let main_menu = document.getElementById("main_menu").value;
             let sub_menu = document.getElementById("sub_menu").value;

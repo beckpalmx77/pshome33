@@ -417,6 +417,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 ]
             });
 
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
+
             <!-- *** FOR SUBMIT FORM *** -->
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();

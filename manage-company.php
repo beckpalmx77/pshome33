@@ -273,6 +273,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 ]
             });
 
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
+
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
                 $('#save').attr('disabled', 'disabled');

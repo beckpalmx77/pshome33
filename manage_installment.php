@@ -49,6 +49,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
+                                            <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                                <i class="fa fa-refresh"></i> Reload
+                                            </button>
 
                                             <button type='button' name='btnExp' id='btnExp'
                                                     class='btn btn-success btn-xs'>หนังสือรับสภาพหนี้
@@ -210,6 +213,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                     {data: 'update'},
                     {data: 'delete'}
                 ]
+            });
+
+            $('#btnReload').on('click', function () {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
         });
     </script>

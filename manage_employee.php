@@ -50,6 +50,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
+                                            <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                                <i class="fa fa-refresh"></i> Reload
+                                            </button>
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
@@ -427,6 +430,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                     {data: 'emp_id'}, {data: 'full_name'}, {data: 'nick_name'}, {data: 'position_desc'},
                     {data: 'start_work_date'}, {data: 'work_time_detail'}, {data: 'status'}, {data: 'update'},
                 ]
+            });
+
+            $('#btnReload').on('click', function () {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
 
             // Helper function: รับนามสกุลไฟล์

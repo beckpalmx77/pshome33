@@ -39,7 +39,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                    <button type="button" class="btn btn-outline-success" id="btnReloadTable">
+                                        <i class="fas fa-sync"></i> Reload Data
+                                    </button>
+                                    <a href="manage_common_fee_payment.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ข้อมูลการจัดเก็บค่าส่วนกลาง" class="btn btn-outline-primary ml-2">
+                                        <i class="fas fa-list"></i> รายการชำระค่าส่วนกลาง
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -518,6 +524,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         $('#saveButton').attr('disabled', false); // เปิดใช้งานปุ่ม Save
                     }
                 });
+            });
+
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
         });
     </script>

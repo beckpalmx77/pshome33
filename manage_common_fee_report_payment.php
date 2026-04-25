@@ -377,6 +377,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     {data: 'update'},
                 ]
             });
+
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
         });
     </script>
 
@@ -470,6 +475,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 todayHighlight: true,
                 language: "th",
                 autoclose: true
+            });
+        });
+    </script>
+
+    </body>
+    </html>
+
+<?php } ?>utoclose: true
             });
         });
     </script>

@@ -58,6 +58,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                             </div>
                                             <div class="col-md-8 text-right">
                                                 <div id="buttons_container"></div>
+                                                <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                                    <i class="fa fa-refresh"></i> Reload
+                                                </button>
                                             </div>
                                         </div>
 
@@ -277,6 +280,10 @@ if (strlen($_SESSION['alogin']) == "") {
                         className: "text-center"
                     }
                 ]
+            });
+
+            $('#btnReload').on('click', function () {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
 
             $('#filter_year').change(function() {

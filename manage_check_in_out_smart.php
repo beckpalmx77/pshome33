@@ -34,6 +34,9 @@ $curr_date = date("d-m-Y");
                             <div class="card-body">
                                 <section class="container-fluid">
                                     <div class="col-md-12 col-md-offset-2">
+                                        <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                            <i class="fa fa-refresh"></i> Reload
+                                        </button>
                                         <table id='TableRecordList' class='display dataTable'>
                                             <thead>
                                             <tr>
@@ -579,6 +582,11 @@ include('includes/Footer.php');
         document.getElementById('mapContainer').innerHTML = mapIframe;
         $('#mapModal').modal('show');
     }
+
+    // Reload Data button click
+    $('#btnReload').on('click', function() {
+        $('#TableRecordList').DataTable().ajax.reload();
+    });
 </script>
 
 

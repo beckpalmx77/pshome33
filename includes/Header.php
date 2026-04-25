@@ -32,22 +32,21 @@ error_reporting(0);
 
     <script src="vendor/alertify/js/alertify.js"></script>
 
-    <link href="../css/select2_4010.css" rel="stylesheet"/>
-    <script src="../js/select2_4010.js"></script>
+    <link href="css/select2_4010.css" rel="stylesheet"/>
+    <script src="js/select2_4010.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
-    <!--link href="../vendor/datatables/v11/fontawesome53.all.min.css" rel="stylesheet"-->
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
 
-    <script src="../vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
-    <script src="../vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <link href="../vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/>
+    <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
+    <link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/>
 
-    <link rel="stylesheet" type="text/css" href="../css/datatables1115.css">
-    <script type="text/javascript" charset="utf8" src="../js/datatables1115.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/datatables1115.css">
+    <script type="text/javascript" charset="utf8" src="js/datatables1115.js"></script>
 
-    <script type="text/javascript" charset="utf8" src="../js/clock_time.js"></script>
+    <script type="text/javascript" charset="utf8" src="js/clock_time.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.5.0/dist/heic2any.min.js"></script>
 

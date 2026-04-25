@@ -389,6 +389,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 ]
             });
 
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
+
             <!-- *** FOR SUBMIT FORM *** -->
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
@@ -512,6 +517,17 @@ if (strlen($_SESSION['alogin']) == "") {
                 },
                 error: function (response) {
                     alertify.error("error : " + response);
+                }
+            });
+        });
+
+    </script>
+
+
+    </body>
+    </html>
+
+<?php } ?> " + response);
                 }
             });
         });

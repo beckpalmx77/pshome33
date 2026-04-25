@@ -111,6 +111,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                        <i class="fa fa-refresh"></i> Reload
+                                    </button>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -515,6 +518,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 },
                 'initComplete': function (settings, json) {
                 }
+            });
+
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
 
             $('#saveButton').on('click', function (event) {

@@ -207,7 +207,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-bordered" id="productTable">
+                                    <table class="table table-bordered display" id="productTable">
                                         <thead>
                                         <tr>
                                             <th>รหัส</th>
@@ -234,7 +234,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-bordered" id="unitTable">
+                                    <table class="table table-bordered display" id="unitTable">
                                         <thead>
                                         <tr>
                                             <th>รหัสหน่วย</th>
@@ -542,29 +542,45 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
 
             function loadProductTable() {
-                $.ajax({
-                    url: 'model/get_products.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        let html = '';
-                        data.forEach(item => {
-                            html += `
-<tr>
-    <td>${item.product_id}</td>
-    <td>${item.product_name}</td>
-    <td>
-        <button class="btn btn-sm btn-primary select-this"
-                data-code="${item.product_id}"
-                data-name="${item.product_name}">เลือก</button>
-    </td>
-</tr>`;
-                        });
-                        $('#productTable tbody').html(html);
+                if ($('#productTable').length && $.fn.DataTable.isDataTable('#productTable')) {
+                    $('#productTable').DataTable().destroy();
+                }
+                $('#productTable').DataTable({
+                    "processing": true,
+                    "serverSide": false,
+                    "ajax": {
+                        "url": "model/get_products.php",
+                        "type": "GET",
+                        "dataSrc": ""
                     },
-                    error: function () {
-                        alert('โหลดข้อมูลสินค้าไม่สำเร็จ');
-                    }
+                    "columns": [
+                        {"data": "product_id"},
+                        {"data": "product_name"},
+                        {
+                            "data": null,
+                            "render": function(data, type, row) {
+                                return '<button class="btn btn-sm btn-primary select-this" data-code="' + row.product_id + '" data-name="' + row.product_name + '">เลือก</button>';
+                            },
+                            "orderable": false
+                        }
+                    ],
+                    "language": {
+                        "emptyTable": "ไม่พบข้อมูล",
+                        "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                        "infoEmpty": "แสดง 0 ถึง 0 จาก 0 รายการ",
+                        "lengthMenu": "แสดง _MENU_ รายการ",
+                        "search": "ค้นหา:",
+                        "zeroRecords": "ไม่พบรายการที่ตรงกัน",
+                        "paginate": {
+                            "first": "หน้าแรก",
+                            "last": "หน้าสุดท้าย",
+                            "next": "ถัดไป",
+                            "previous": "ก่อนหน้า"
+                        }
+                    },
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    "pageLength": 10,
+                    "ordering": true
                 });
             }
         });
@@ -594,29 +610,45 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             });
 
             function loadUnitTable() {
-                $.ajax({
-                    url: 'model/get_unit.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        let html = '';
-                        data.forEach(unit => {
-                            html += `
-<tr>
-    <td>${unit.unit_id}</td>
-    <td>${unit.unit_name}</td>
-    <td>
-        <button class="btn btn-sm btn-primary select-this-unit"
-                data-code="${unit.unit_id}"
-                data-name="${unit.unit_name}">เลือก</button>
-    </td>
-</tr>`;
-                        });
-                        $('#unitTable tbody').html(html);
+                if ($('#unitTable').length && $.fn.DataTable.isDataTable('#unitTable')) {
+                    $('#unitTable').DataTable().destroy();
+                }
+                $('#unitTable').DataTable({
+                    "processing": true,
+                    "serverSide": false,
+                    "ajax": {
+                        "url": "model/get_unit.php",
+                        "type": "GET",
+                        "dataSrc": ""
                     },
-                    error: function () {
-                        alert('โหลดข้อมูลหน่วยนับไม่สำเร็จ');
-                    }
+                    "columns": [
+                        {"data": "unit_id"},
+                        {"data": "unit_name"},
+                        {
+                            "data": null,
+                            "render": function(data, type, row) {
+                                return '<button class="btn btn-sm btn-primary select-this-unit" data-code="' + row.unit_id + '" data-name="' + row.unit_name + '">เลือก</button>';
+                            },
+                            "orderable": false
+                        }
+                    ],
+                    "language": {
+                        "emptyTable": "ไม่พบข้อมูล",
+                        "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                        "infoEmpty": "แสดง 0 ถึง 0 จาก 0 รายการ",
+                        "lengthMenu": "แสดง _MENU_ รายการ",
+                        "search": "ค้นหา:",
+                        "zeroRecords": "ไม่พบรายการที่ตรงกัน",
+                        "paginate": {
+                            "first": "หน้าแรก",
+                            "last": "หน้าสุดท้าย",
+                            "next": "ถัดไป",
+                            "previous": "ก่อนหน้า"
+                        }
+                    },
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    "pageLength": 10,
+                    "ordering": true
                 });
             }
         });

@@ -54,6 +54,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                 </div-->
                                 <div class="card-body">
                                     <section class="container-fluid">
+                                        <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                            <i class="fa fa-refresh"></i> Reload
+                                        </button>
                                         <form method="post" id="MainrecordForm">
                                             <input type="hidden" class="form-control" id="KeyAddData" name="KeyAddData"
                                                    value="">
@@ -396,6 +399,14 @@ if (strlen($_SESSION['alogin']) == "") {
                 // >>> สิ้นสุด footerCallback <<<
             });
         }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#btnReload').on('click', function () {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
+        });
     </script>
 
     <script>

@@ -49,6 +49,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     class='btn btn-primary btn-xs'>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
+                                            <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                                <i class="fa fa-refresh"></i> Reload
+                                            </button>
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
@@ -288,6 +291,10 @@ if (strlen($_SESSION['alogin']) == "") {
                     {data: 'update'},
                     {data: 'delete'}
                 ]
+            });
+
+            $('#btnReload').on('click', function () {
+                $('#TableRecordList').DataTable().ajax.reload();
             });
 
             <!-- *** FOR SUBMIT FORM *** -->

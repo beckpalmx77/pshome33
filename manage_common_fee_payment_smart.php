@@ -35,6 +35,9 @@ $curr_date = date("d-m-Y");
                             <div class="card-body">
                                 <section class="container-fluid">
                                     <div class="col-md-12">
+                                        <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                            <i class="fa fa-refresh"></i> Reload
+                                        </button>
                                         <table id='TableRecordList' class='display dataTable'>
                                             <thead>
                                             <tr>
@@ -733,6 +736,11 @@ include('includes/Footer.php');
         win.document.write('</body></html>');
         win.document.close();
         win.print();
+    });
+
+    // Reload Data button click
+    $('#btnReload').on('click', function() {
+        $('#TableRecordList').DataTable().ajax.reload();
     });
 </script>
 

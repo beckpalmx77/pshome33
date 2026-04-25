@@ -29,6 +29,9 @@ include('includes/Header.php');
                                                 class='btn btn-primary btn-xs'>Add
                                             <i class="fa fa-plus"></i>
                                         </button>
+                                        <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                            <i class="fa fa-refresh"></i> Reload
+                                        </button>
                                         <button type="button" id="backBtn" class="btn btn-danger flex-fill">
                                             <span><i class="fa fa-reply" aria-hidden="true"></i> กลับหน้าแรก</span>
                                         </button>
@@ -247,6 +250,10 @@ include('includes/Footer.php');
                 {data: 'update'},
                 {data: 'delete'}
             ]
+        });
+
+        $('#btnReload').on('click', function () {
+            $('#TableRecordList').DataTable().ajax.reload();
         });
 
         <!-- *** FOR SUBMIT FORM *** -->
