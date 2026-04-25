@@ -148,9 +148,20 @@ FROM ims_house;";
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <button type="button" class="btn btn-outline-success" id="btnReloadTable">
-                                        <i class="fas fa-sync"></i> Reload Data
-                                    </button>
+                                    <div>
+                                        <button type="button" class="btn btn-outline-success" id="btnReloadTable">
+                                            <i class="fas fa-sync"></i> Reload Data
+                                        </button>
+                                    </div>
+                                    <div class="col-md-5 d-flex align-items-center">
+                                        <label for="searchHouseNumber" class="mr-2 mb-0" style="white-space: nowrap;"><b>ค้นหาบ้านเลขที่: </b></label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            </div>
+                                            <input type="text" id="searchHouseNumber" class="form-control" placeholder="ระบุบ้านเลขที่...">
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -594,6 +605,11 @@ FROM ims_house;";
             // Reload Data button click (table header)
             $('#btnReloadTable').on('click', function() {
                 table.ajax.reload();
+            });
+
+            // Search House Number
+            $('#searchHouseNumber').on('keyup', function() {
+                table.column(0).search(this.value).draw();
             });
 
             // Detail button click
