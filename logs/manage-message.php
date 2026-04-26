@@ -1,0 +1,526 @@
+<?php
+include('includes/Header.php');
+if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "") {
+    header("Location: index.php");
+} else {
+    ?>
+
+    <!DOCTYPE html>
+    <html lang="th">
+    <body id="page-top">
+    <div id="wrapper">
+        <?php
+        include('includes/Side-Bar.php');
+        ?>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <?php
+                include('includes/Top-Bar.php');
+                ?>
+                <!-- Container Fluid-->
+                <div class="container-fluid" id="container-wrapper">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">ข้อความติดต่อ</h1>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
+                            <li class="breadcrumb-item">จัดการข้อความ</li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page">ข้อความติดต่อ
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card mb-12">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                </div>
+                                <div class="card-body">
+                                    <section class="container-fluid">
+                                        <div class="col-md-12 col-md-offset-2">
+                                            <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                                <i class="fa fa-refresh"></i> Reload
+                                            </button>
+                                            <table id='TableRecordList' class='display dataTable'>
+                                                <thead>
+                                                <tr>
+                                                    <th>วันที่รับข้อความ</th>
+                                                    <th>ชื่อ</th>
+                                                    <th>นามสกุล</th>
+                                                    <th>บ้านเลขที่</th>
+                                                    <th>ข้อความ</th>
+                                                    <th>สถานะ</th>
+                                                    <th>action</th>
+                                                    <th>action</th>
+                                                </tr>
+                                                </thead>
+                                                <tfoot>
+                                                <tr>
+                                                    <th>วันที่รับข้อความ</th>
+                                                    <th>ชื่อ</th>
+                                                    <th>นามสกุล</th>
+                                                    <th>บ้านเลขที่</th>
+                                                    <th>ข้อความ</th>
+                                                    <th>สถานะ</th>
+                                                    <th>action</th>
+                                                    <th>action</th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+
+                                            <div id="result"></div>
+
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal fade" id="recordModal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Modal title</h4>
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-hidden="true">×
+                                </button>
+                            </div>
+                            <form method="post" id="recordForm">
+                                <div class="modal-body">
+                                    <div class="modal-body">
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="f_name" class="control-label">ชื่อ</label>
+                                                <input type="f_name" class="form-control"
+                                                       id="f_name" name="f_name"
+                                                       readonly="true"
+                                                       placeholder="ชื่อ">
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="l_name"
+                                                       class="control-label">นามสกุล</label>
+                                                <input type="text" class="form-control"
+                                                       id="l_name" name="l_name"
+                                                       readonly="true"
+                                                       placeholder="นามสกุล">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="phone" class="control-label">โทรศัพท์</label>
+                                                <input type="phone" class="form-control"
+                                                       id="phone" name="phone"
+                                                       readonly="true"
+                                                       placeholder="โทรศัพท์">
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="house_number"
+                                                       class="control-label">บ้านเลขที่</label>
+                                                <input type="text" class="form-control"
+                                                       id="house_number" name="house_number"
+                                                       readonly="true"
+                                                       placeholder="บ้านเลขที่">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="images">ภาพ: (Cick ที่รูปเพื่อขยาย)</label>
+                                                <div id="imagePreview" class="d-flex flex-wrap gap-2"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="remark" class="control-label">ข้อความ</label>
+                                                <textarea class="form-control" id="remark" name="remark" rows="4"
+                                                          placeholder=""></textarea>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="answer" class="control-label">คำตอบ</label>
+                                                <textarea class="form-control" id="answer" name="answer" rows="4"
+                                                          placeholder=""></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="status" class="control-label">Status</label>
+                                            <select id="status" name="status"
+                                                    class="form-control" data-live-search="true"
+                                                    title="Please select">
+                                                <option value="N">ยังไม่ตอบ</option>
+                                                <option value="Y">ตอบแล้ว</option>
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="contact_name" class="control-label">ผู้ติดต่อ</label>
+                                                <input type="text" class="form-control"
+                                                       id="contact_name" name="contact_name"
+                                                       placeholder="ผู้ติดต่อ">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="contact_date"
+                                                       class="control-label">วันที่่ติดต่อ</label>
+                                                <input type="text" class="form-control"
+                                                       id="contact_date"
+                                                       name="contact_date"
+                                                       required="required"
+                                                       readonly="true"
+                                                       placeholder="วันที่่ติดต่อ">
+                                                <div class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-th"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="contact_time" class="control-label">เวลาที่ติดต่อ</label>
+                                                <input type="time" class="form-control"
+                                                       id="contact_time" name="contact_time"
+                                                       placeholder="เวลาที่ติดต่อ">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="update_date"
+                                                       class="control-label">ปรับปรุงล่าสุด</label>
+                                                <input type="text" class="form-control"
+                                                       id="update_date" name="update_date"
+                                                       readonly="true"
+                                                       placeholder="ปรับปรุงล่าสุด">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" name="id" id="id"/>
+                                    <input type="hidden" name="line_user_id" id="line_user_id" value=""/>
+                                    <input type="hidden" name="action" id="action" value=""/>
+                                    <span class="icon-input-btn">
+                                                                <i class="fa fa-check"></i>
+                                                            <input type="submit" name="save" id="save"
+                                                                   class="btn btn-primary" value="Save"/>
+                                                            </span>
+                                    <button type="button" class="btn btn-danger"
+                                            data-dismiss="modal">Close <i
+                                                class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <!-- ภาพที่จะแสดงใน modal -->
+                                <img id="modalImage" src="" class="img-fluid rounded" style="max-height: 80vh;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+                     aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="confirmDeleteLabel">ยืนยันการลบ</h5>
+                                <button type="button" class="close text-white"
+                                        data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                คุณต้องการลบข้อมูลนี้ใช่หรือไม่?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">ยกเลิก
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        id="confirmDeleteBtn">ลบข้อมูล
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <?php
+    include('includes/Modal-Logout.php');
+    include('includes/Footer.php');
+    ?>
+
+
+    <!-- Scroll to top -->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
+
+    <script src="vendor/datatables/v11/bootbox.min.js"></script>
+    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+
+
+    <script src="vendor/date-picker-1.9/js/bootstrap-datepicker.js"></script>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
+    <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
+    <style>
+
+        .icon-input-btn {
+            display: inline-block;
+            position: relative;
+        }
+
+        .icon-input-btn input[type="submit"] {
+            padding-left: 2em;
+        }
+
+        .icon-input-btn .fa {
+            display: inline-block;
+            position: absolute;
+            left: 0.65em;
+            top: 30%;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('#contact_date').datepicker({
+                format: "dd-mm-yyyy",
+                todayHighlight: true,
+                language: "th",
+                autoclose: true
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(".icon-input-btn").each(function () {
+                let btnFont = $(this).find(".btn").css("font-size");
+                let btnColor = $(this).find(".btn").css("color");
+                $(this).find(".fa").css({'font-size': btnFont, 'color': btnColor});
+            });
+        });
+    </script>
+
+    <script>
+        let dataRecords;
+        $(document).ready(function () {
+
+            let formData = {action: "GET_MESSAGE", sub_action: "GET_MASTER"};
+
+            dataRecords = $('#TableRecordList').DataTable({
+                'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
+                'language': {
+                    search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
+                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+                    infoEmpty: 'ไม่มีข้อมูล',
+                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+                    paginate: {
+                        previous: 'ก่อนหน้า',
+                        last: 'สุดท้าย',
+                        next: 'ต่อไป'
+                    }
+                },
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url': 'model/manage_message_process.php',
+                    'data': formData
+                },
+                'columns': [
+                    {data: 'create_date'},
+                    {data: 'f_name'},
+                    {data: 'l_name'},
+                    {data: 'house_number'},
+                    {data: 'remark'},
+                    {data: 'status'},
+                    {data: 'update'},
+                    {data: 'delete'},
+
+                ]
+            });
+
+            // Reload Data button click
+            $('#btnReload').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
+        });
+
+    </script>
+
+    <script>
+
+        $("#TableRecordList").on('click', '.update', function () {
+            let id = $(this).attr("id");
+            //alert(id);
+            let formData = {action: "GET_DATA", id: id};
+            $.ajax({
+                type: "POST",
+                url: 'model/manage_message_process.php',
+                dataType: "json",
+                data: formData,
+                success: function (response) {
+                    let len = response.length;
+                    for (let i = 0; i < len; i++) {
+                        let id = response[i].id;
+                        let f_name = response[i].f_name;
+                        let l_name = response[i].l_name;
+                        let phone = response[i].phone;
+                        let house_number = response[i].house_number;
+                        let contact_name = response[i].contact_name;
+                        let contact_date = response[i].contact_date;
+                        let contact_time = response[i].contact_time;
+                        let remark = response[i].remark;
+                        let answer = response[i].answer;
+                        let status = response[i].status;
+                        let line_user_id = response[i].line_user_id;
+                        let update_date = response[i].update_date;
+                        let images = response[i].images;
+
+                        $('#recordModal').modal('show');
+                        $('#id').val(id);
+                        $('#f_name').val(f_name);
+                        $('#l_name').val(l_name);
+                        $('#phone').val(phone);
+                        $('#house_number').val(house_number);
+                        $('#contact_name').val(contact_name);
+                        $('#contact_date').val(contact_date);
+                        $('#contact_time').val(contact_time);
+                        $('#remark').val(remark);
+                        $('#answer').val(answer);
+                        $('#status').val(status);
+                        $('#line_user_id').val(line_user_id);
+                        $('#update_date').val(update_date);
+                        $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
+                        $('#action').val('UPDATE');
+                        $('#save').val('Save')
+
+                        $('#imagePreview').html('');
+
+                        if (images && images.trim() !== "") {
+                            let filenames = images.split(',');
+                            filenames.forEach(filename => {
+                                filename = filename.trim();
+                                if (filename !== "") {
+                                    let imgTag = `<img src="line_oa/house/uploads/${filename}" class="img-thumbnail m-1 img-preview" style="height: 100px; cursor: pointer;">`;
+                                    $('#imagePreview').append(imgTag);
+                                }
+                            });
+                        }
+
+
+                    }
+                },
+                error: function (response) {
+                    alertify.error("error : " + response);
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#recordModal").on('submit', '#recordForm', function (event) {
+                event.preventDefault();
+                $('#save').attr('disabled', 'disabled');
+                let formData = $(this).serialize();
+                $.ajax({
+                    url: 'model/manage_message_process.php',
+                    method: "POST",
+                    data: formData,
+                    success: function (data) {
+                        alertify.success(data);
+                        $('#recordForm')[0].reset();
+                        $('#recordModal').modal('hide');
+                        $('#save').attr('disabled', false);
+                        dataRecords.ajax.reload();
+                    }
+                })
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '.img-preview', function () {
+            let imgSrc = $(this).attr('src');  // ดึง src ของภาพที่ถูกคลิก
+            $('#modalImage').attr('src', imgSrc);  // เปลี่ยน src ของ modal image ให้เป็นภาพที่ถูกคลิก
+            $('#imageModal').modal('show');  // แสดง modal ที่มีภาพขนาดใหญ่
+        });
+    </script>
+
+    <script>
+        // ประกาศตัวแปร deleteId ไว้ด้านนอกเพื่อให้ทุกฟังก์ชันเข้าถึงได้
+        let deleteId = null;
+
+        // เมื่อคลิกปุ่ม "ลบ" ในตาราง
+        $("#TableRecordList").on('click', '.delete', function () {
+            // กำหนดค่า id ให้กับตัวแปร deleteId
+            deleteId = $(this).attr("id");
+            // แสดง Modal ยืนยัน
+            $("#confirmDeleteModal").modal("show");
+        });
+
+        // เมื่อคลิกปุ่ม "ยืนยันการลบ" ใน Modal
+        $("#confirmDeleteBtn").on("click", function () {
+            // ตรวจสอบว่ามีค่า id ที่จะลบหรือไม่
+            if (deleteId) {
+                $.ajax({
+                    url: "model/manage_message_process.php",
+                    method: "POST",
+                    data: {id: deleteId, action: "DELETE"}, // ใช้ตัวแปร deleteId
+                    success: function (response) {
+                        $("#confirmDeleteModal").modal("hide");
+                        $('#TableRecordList').DataTable().ajax.reload();
+                        alertify.success("ลบข้อมูลเรียบร้อยแล้ว");
+                        // รีเซ็ตค่า deleteId กลับเป็น null หลังการลบสำเร็จ
+                        deleteId = null;
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการลบข้อมูล");
+                    }
+                });
+            }
+        });
+    </script>
+
+
+    </body>
+    </html>
+
+<?php } ?>
