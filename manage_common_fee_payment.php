@@ -701,6 +701,78 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     });
                 }
             });
+
+            $("#TableRecordList").on('click', '.update', function () {
+                let id = $(this).attr("id");
+                let formData = {action: "GET_DATA", id: id};
+
+                $.ajax({
+                    type: "POST",
+                    url: 'model/manage_common_fee_payment_process.php',
+                    dataType: "json",
+                    data: formData,
+                    success: function (response) {
+                        if (response && response.length > 0) {
+                            let data = response[0];
+
+                            let id = data.id;
+                            let doc_id = data.doc_id;
+                            let detail = data.detail;
+                            let payment_date = data.payment_date;
+                            let house_number = data.house_number;
+                            let period_month_start = data.period_month_start;
+                            let period_month_to = data.period_month_to;
+                            let period_year = data.period_year;
+                            let amount = data.amount;
+                            let remark = data.remark;
+                            let picture_payment = data.picture_payment;
+                            let payment_status = data.payment_status;
+                            let payment_method = data.payment_method;
+                            let payment_status_desc = (payment_status === "Y") ? "ชำระเรียบร้อยแล้ว" : "ยังไม่ยืนยันการชำระ";
+
+                            if (payment_status === "Y") {
+                                $('input[name="payment_status"][value="Y"]').prop('checked', true);
+                                $('#saveButton').attr('disabled', true);
+                            } else {
+                                $('input[name="payment_status"][value="N"]').prop('checked', true);
+                                $('#saveButton').attr('disabled', false);
+                            }
+
+                            if (picture_payment && picture_payment !== "") {
+                                $("#preview_image").attr("src", picture_payment);
+                                $("#preview_image").show();
+                            } else {
+                                $("#preview_image").attr("src", "#");
+                                $("#preview_image").hide();
+                            }
+
+                            $("#recordModal .modal-title").text("แก้ไขข้อมูลการชำระค่าส่วนกลาง");
+                            $("#id").val(id);
+                            $("#doc_id").val(doc_id);
+                            $("#payment_date").val(payment_date);
+                            $("#house_number").val(house_number);
+                            $("#detail").val(detail);
+                            $("#period_month_start").val(period_month_start);
+                            $("#period_month_to").val(period_month_to);
+                            $("#period_year").val(period_year);
+                            $("#amount").val(amount);
+                            $("#payment_method").val(payment_method);
+                            $("#payment_status_desc").val(payment_status_desc);
+                            $("#remark").val(remark);
+                            $("#create_by").val(data.create_by);
+                            $("#created_at").val(data.created_at);
+                            $("#approve_by").val(data.approve_by);
+                            $("#updated_at").val(data.updated_at);
+                            $("#action").val("UPDATE");
+
+                            $("#recordModal").modal("show");
+                        }
+                    },
+                    error: function () {
+                        alertify.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
+                    }
+                });
+            });
         });
 
         // ฟังก์ชันเปิดรูปในหน้าต่างใหม่
