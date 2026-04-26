@@ -304,13 +304,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="form-group row">
+                                                                <!--div class="form-group row">
                                                                     <div class="col-sm-12">
                                                                         <button type="button" class="btn btn-info" id="scanQRBtn">
                                                                             <i class="fas fa-qrcode"></i> Scan QR Code เพื่อ Verify
                                                                         </button>
                                                                     </div>
-                                                                </div>
+                                                                </div-->
 
                                                                 <div class="form-group row" id="qrScannerSection" style="display: none;">
                                                                     <div class="col-sm-12">
@@ -739,7 +739,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             }
 
                             if (picture_payment && picture_payment !== "") {
-                                $("#preview_image").attr("src", picture_payment);
+                                $("#preview_image").attr("src", "uploads/slips/" + picture_payment);
                                 $("#preview_image").show();
                             } else {
                                 $("#preview_image").attr("src", "#");
