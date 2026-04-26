@@ -16,6 +16,8 @@ $stmt = $conn->prepare($sql);
 $stmt->execute();
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$allCars = array();
+
 foreach ($results as $row) {
     $cars = array(
         $row['car_no1'] ?? '',
@@ -27,13 +29,14 @@ foreach ($results as $row) {
         $row['car_no7'] ?? ''
     );
     
-    $nonEmpty = array_filter($cars, function($v) {
-        return !empty(trim($v));
-    });
-    
-    if (!empty($nonEmpty)) {
-        fputcsv($output, array_values($nonEmpty), ',', '"');
+    foreach ($cars as $car) {
+        if (!empty(trim($car))) {
+            $allCars[] = trim($car);
+        }
     }
 }
+
+$line = implode(',', $allCars);
+fwrite($output, $line . "\n");
 
 fclose($output);
