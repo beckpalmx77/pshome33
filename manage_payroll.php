@@ -62,7 +62,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-<th>เลขที่เอกสาร</th>
+                                                    <th>เลขที่เอกสาร</th>
                                                     <th>วันที่</th>
                                                     <th>ชื่อพนักงาน</th>
                                                     <th>เดือน</th>
