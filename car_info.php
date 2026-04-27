@@ -444,7 +444,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <?php
     include('includes/Modal-Logout.php');
-    //include('includes/Footer.php');
     ?>
 
     <a class="scroll-to-top rounded" href="#page-top">
