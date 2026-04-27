@@ -62,12 +62,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                             <table id='TableRecordList' class='display dataTable'>
                                                 <thead>
                                                 <tr>
-                                                    <th>เลขที่เอกสาร</th>
+<th>เลขที่เอกสาร</th>
                                                     <th>วันที่</th>
                                                     <th>ชื่อพนักงาน</th>
                                                     <th>เดือน</th>
                                                     <th>ปี</th>
-                                                    <th>จำนวนเงิน</th>
+                                                    <th>จำนวนเงิน (บาท)</th>
+                                                    <th>Action</th>
                                                     <th>Action</th>
                                                 </tr>
                                                 </thead>
@@ -201,7 +202,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'employee_fullname'},
                     {data: 'payroll_month'},
                     {data: 'payroll_year'},
-                    {data: 'total_amount'},
+                    {data: 'total_amount', className: 'text-right'},
                     {data: 'update'},
                     {data: 'delete'}
                 ]

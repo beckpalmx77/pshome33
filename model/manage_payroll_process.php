@@ -154,9 +154,9 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PAYROLL') {
                 "doc_date" => $row['doc_date'],
                 "payroll_month" => $payroll_month,
                 "payroll_year" => $row['payroll_year'],
+                "total_amount" => number_format($row['total_amount'], 2),
                 "payment_method" => $row['payment_method'],
                 "bank_no" => $row['bank_no'],
-                "total_amount" => $row['total_amount'],
                 "update" => "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
                 "info" => "<button type='button' name='info' id='{$row['id']}' class='btn btn-info btn-xs info'>Info</button>",
                 "delete" => "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>"
