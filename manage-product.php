@@ -521,21 +521,9 @@ if (strlen($_SESSION['alogin']) == "") {
             });
         });
 
-    </script>
+</script>
 
 
-    </body>
-    </html>
-
-<?php } ?> " + response);
-                }
-            });
-        });
-
-    </script>
-
-
-    </body>
-    </html>
-
+</body>
+</html>
 <?php } ?>
