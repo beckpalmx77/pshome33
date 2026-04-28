@@ -38,6 +38,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                 </div>
+                                <div class="col-md-12 col-md-offset-2">
+                                    <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+                                        <i class="fa fa-refresh"></i> Reload
+                                    </button>
+                                </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
                                         <div class="col-md-12 col-md-offset-2">
@@ -183,6 +188,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'info'}
                 ]
             });
+        });
+    </script>
+
+    <script>
+        $('#btnReload').on('click', function () {
+            $('#TableRecordList').DataTable().ajax.reload();
         });
     </script>
 
