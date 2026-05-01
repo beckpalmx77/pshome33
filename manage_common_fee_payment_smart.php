@@ -35,10 +35,13 @@ $curr_date = date("d-m-Y");
                             <div class="card-body">
                                 <section class="container-fluid">
                                     <div class="col-md-12">
-                                        <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
-                                            <i class="fa fa-refresh"></i> Reload
-                                        </button>
-                                        <table id='TableRecordList' class='display dataTable'>
+<button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
+    <i class="fa fa-refresh"></i> Reload
+</button>
+<button type="button" id="btnExportExcel" class="btn btn-outline-primary btn-xs" data-toggle="tooltip" title="Export Excel">
+    <i class="fa fa-file-excel-o"></i> Export Excel
+</button>
+<table id='TableRecordList' class='display dataTable'>
                                             <thead>
                                             <tr>
                                                 <th>วันที่เอกสาร</th>
@@ -614,7 +617,7 @@ include('includes/Footer.php');
 <script src="line_oa/house/jsconfig/config_house_history_payment.js"></script>
 
 <script>
-    let houseNumber = ''; // ตัวแปรไว้ใช้ร่วมกับ DataTable
+    window.houseNumber = ''; // ตัวแปรไว้ใช้ร่วมกับ DataTable
 
     liff.init({liffId: LIFF_ID})
         .then(() => {
@@ -741,6 +744,29 @@ include('includes/Footer.php');
     // Reload Data button click
     $('#btnReload').on('click', function() {
         $('#TableRecordList').DataTable().ajax.reload();
+    });
+
+    // Export Excel button click
+    $('#btnExportExcel').on('click', function() {
+        if (!window.houseNumber) {
+            alert('ไม่พบหมายเลขบ้าน กรุณารีเฟรชหน้าเว็บ');
+            return;
+        }
+        // สร้าง form สำหรับส่งข้อมูล (รองรับมือถือ)
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = 'export_process/export_common_fee_excel.php';
+        form.target = '_blank';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'house_number';
+        input.value = window.houseNumber;
+        form.appendChild(input);
+        
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     });
 </script>
 

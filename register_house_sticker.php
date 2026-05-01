@@ -410,7 +410,9 @@ include('includes/Header.php');
                                         <p>กำลังบันทึกข้อมูล...</p>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary btn-block">บันทึกข้อมูล
+                                    <button type="submit" class="btn btn-primary btn-block">บันทึกข้อมูล</button>
+                                    <button type="button" id="btnExportExcel" class="btn btn-outline-primary btn-block">
+                                        <i class="fa fa-file-excel-o"></i> Export Excel
                                     </button>
                                     <button type="button" id="BackBtn" class="btn btn-danger btn-block">
                                         กลับหน้าแรก
@@ -761,6 +763,30 @@ function calculateExtraCarFee() {
 
     $('#BackBtn').on('click', function() {
         window.location.href = 'https://liff.line.me/2007370141-AxBy7eGD';
+    });
+
+    // Export Excel button click
+    $('#btnExportExcel').on('click', function() {
+        const houseNumber = document.getElementById('house_number').value;
+        if (!houseNumber) {
+            alert('ไม่พบหมายเลขบ้าน กรุณารีเฟรชหน้าเว็บ');
+            return;
+        }
+        // สร้าง form สำหรับส่งข้อมูล (รองรับมือถือ)
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = 'export_process/export_sticker_excel.php';
+        form.target = '_blank';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'house_number';
+        input.value = houseNumber;
+        form.appendChild(input);
+        
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     });
 </script>
 
