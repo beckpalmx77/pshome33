@@ -37,6 +37,63 @@ include('includes/Header.php');
                     </div>
                 </div>
 
+                <!-- สถิติรถและสติกเกอร์ -->
+                <div class="row mb-4">
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            จำนวนรถที่ลงทะเบียน (คัน)
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalCars">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-car fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            จำนวนรถที่รับสติกเกอร์แล้ว  (คัน)
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="carsWithSticker">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            จำนวนบ้านที่รับสติกเกอร์แล้ว  (หลัง)
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="stickerReceived">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-home fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card mb-12">
@@ -205,6 +262,9 @@ include('includes/Header.php');
 <script>
     $(document).ready(function() {
 
+        // Load statistics
+        loadStatistics();
+
         // When the "Sticker" button is clicked
         $('#stickerBtn').on('click', function() {
             // Redirect to the sticker page URL
@@ -218,6 +278,19 @@ include('includes/Header.php');
         });
 
     });
+
+    function loadStatistics() {
+        fetch('model/get_sticker_statistics.php')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('totalCars').innerText = data.total_cars || 0;
+                document.getElementById('carsWithSticker').innerText = data.cars_with_sticker || 0;
+                document.getElementById('stickerReceived').innerText = data.sticker_received || 0;
+            })
+            .catch(error => {
+                console.error('Error loading statistics:', error);
+            });
+    }
 </script>
 
 
