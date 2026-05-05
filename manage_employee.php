@@ -53,6 +53,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                                             <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
                                                 <i class="fa fa-refresh"></i> Reload
                                             </button>
+                                            <button type="button" id="btnExport" class="btn btn-outline-primary btn-xs" data-toggle="tooltip" title="Export Excel">
+                                                <i class="fa fa-file-excel-o"></i> Export Excel
+                                            </button>
+                                            <select id="export_status" class="form-control form-control-sm d-inline-block" style="width: auto; display: inline-block;">
+                                                <option value="ALL">ทั้งหมด</option>
+                                                <option value="Y">ทำงานปกติ</option>
+                                                <option value="N">ลาออก</option>
+                                            </select>
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
@@ -434,6 +442,90 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
 
             $('#btnReload').on('click', function () {
                 $('#TableRecordList').DataTable().ajax.reload();
+            });
+
+            $('#btnExport').on('click', function () {
+                let exportStatus = $('#export_status').val();
+                let exportFormData = {action: "EXPORT_EXCEL", export_status: exportStatus};
+                $.ajax({
+                    url: 'model/manage_employee_process.php',
+                    method: 'POST',
+                    data: exportFormData,
+                    success: function (response) {
+                        if (response.trim() === 'error') {
+                            alertify.error('ไม่สามารถ export ข้อมูลได้');
+                            return;
+                        }
+                        let data = JSON.parse(response);
+                        if (data.length === 0) {
+                            alertify.warning('ไม่มีข้อมูลสำหรับ export');
+                            return;
+                        }
+
+                        let headers = [
+                            'รหัสพนักงาน', 'คำนำหน้า', 'ชื่อ', 'นามสกุล', 'ชื่อเล่น',
+                            'เพศ', 'วันเริ่มงาน', 'อายุงาน', 'สถานะ', 'วันหยุดประจำสัปดาห์',
+                            'โทรศัพท์', 'ประเภทพนักงาน', 'เงินเดือน/ค่าจ้าง',
+                            'เงินเดือนก่อนหน้า', 'ตำแหน่ง', 'ตารางเวลาทำงาน'
+                        ];
+
+                        let csvContent = '\uFEFF';
+                        csvContent += headers.join(',') + '\n';
+
+                        data.forEach(function (row) {
+                            let status = row.status === 'Y' ? 'ทำงานปกติ' : 'ลาออก';
+                            let sex = '';
+                            if (row.sex === 'M') sex = 'ชาย';
+                            else if (row.sex === 'F') sex = 'หญิง';
+                            else sex = 'ไม่ระบุ';
+
+                            let salary_type = row.salary_type === 'M' ? 'รายเดือน' : 'รายวัน';
+
+                            let week_holiday = '';
+                            let holidayMap = {
+                                '0': 'ไม่ระบุ', '1': 'วันจันทร์', '2': 'วันอังคาร',
+                                '3': 'วันพุธ', '4': 'วันพฤหัสบดี', '5': 'วันศุกร์',
+                                '6': 'วันเสาร์', '7': 'วันอาทิตย์'
+                            };
+                            week_holiday = holidayMap[row.week_holiday] || 'ไม่ระบุ';
+
+                            let values = [
+                                '"' + (row.emp_id || '') + '"',
+                                '"' + (row.prefix || '') + '"',
+                                '"' + (row.f_name || '') + '"',
+                                '"' + (row.l_name || '') + '"',
+                                '"' + (row.nick_name || '') + '"',
+                                '"' + sex + '"',
+                                '"' + (row.start_work_date || '') + '"',
+                                '"' + (row.work_age || '') + '"',
+                                '"' + status + '"',
+                                '"' + week_holiday + '"',
+                                '"' + (row.phone || '') + '"',
+                                '"' + salary_type + '"',
+                                '"' + (row.salary || '') + '"',
+                                '"' + (row.salary_history || '') + '"',
+                                '"' + (row.position_desc || '') + '"',
+                                '"' + (row.work_time_detail || '') + '"'
+                            ];
+                            csvContent += values.join(',') + '\n';
+                        });
+
+                        let blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+                        let link = document.createElement('a');
+                        let url = URL.createObjectURL(blob);
+                        link.setAttribute('href', url);
+                        link.setAttribute('download', 'employee_' + new Date().toISOString().slice(0, 10) + '.csv');
+                        link.style.visibility = 'hidden';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        alertify.success('Export Excel สำเร็จ');
+                    },
+                    error: function () {
+                        alertify.error('เกิดข้อผิดพลาดในการ export');
+                    }
+                });
             });
 
             // Helper function: รับนามสกุลไฟล์
