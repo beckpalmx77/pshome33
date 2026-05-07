@@ -36,10 +36,62 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <th>เลขที่บ้าน</th>
                                             <th>ซอย</th>
                                             <th>ชื่อใน LINE</th>
-                                            <th>จัดการ</th>
-                                        </tr>
-                                        </thead>
-                                    </table>
+                    <th>จัดการ</th>
+                                         </tr>
+                                         </thead>
+                                     </table>
+
+                                    <!-- Update Modal -->
+                                    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-warning text-white">
+                                                    <h5 class="modal-title">แก้ไขข้อมูล ims_house_line_user</h5>
+                                                    <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+                                                </div>
+                                                <form id="updateForm">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" id="update_id" name="id">
+                                                        <input type="hidden" name="action" value="UPDATE">
+                                                        <div class="form-group row">
+                                                             <label class="col-sm-3 col-form-label">เบอร์โทร (LINE Phone)</label>
+                                                             <div class="col-sm-9">
+                                                                 <input type="text" class="form-control" id="update_line_phone" name="line_phone" readonly>
+                                                             </div>
+                                                         </div>
+                                                         <div class="form-group row">
+                                                             <label class="col-sm-3 col-form-label">เลขที่บ้าน</label>
+                                                             <div class="col-sm-9">
+                                                                 <input type="text" class="form-control" id="update_house_number" name="house_number" required>
+                                                             </div>
+                                                         </div>
+                                                         <div class="form-group row">
+                                                             <label class="col-sm-3 col-form-label">ซอย</label>
+                                                             <div class="col-sm-9">
+                                                                 <input type="text" class="form-control" id="update_alley" name="alley">
+                                                             </div>
+                                                         </div>
+                                                         <div class="form-group row">
+                                                             <label class="col-sm-3 col-form-label">ชื่อใน LINE</label>
+                                                             <div class="col-sm-9">
+                                                                 <input type="text" class="form-control" id="update_line_user_name" name="line_user_name" readonly>
+                                                             </div>
+                                                         </div>
+                                                         <div class="form-group row">
+                                                             <label class="col-sm-3 col-form-label">Line User ID</label>
+                                                             <div class="col-sm-9">
+                                                                 <input type="text" class="form-control" id="update_line_user_id" name="line_user_id" readonly>
+                                                             </div>
+                                                         </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-warning btn-lg">บันทึกข้อมูล</button>
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -95,7 +147,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     { data: 'house_number' },
                     { data: 'alley' },
                     { data: 'line_user_name' },
-                    { data: 'delete' }
+                    { data: 'action' }
                 ],
                 'columnDefs': [{ "orderable": false, "targets": [0, 5] }]
             });
@@ -172,6 +224,50 @@ if (strlen($_SESSION['alogin']) == "") {
                         if(response === 'success') {
                             alertify.success("ลบข้อมูลทั้ง 3 ตารางเรียบร้อยแล้ว");
                             $('#deleteModal').modal('hide');
+                            dataRecords.ajax.reload(null, false);
+                        } else {
+                            alertify.error(response);
+                        }
+                    }
+                });
+            });
+
+            // เมื่อคลิกปุ่มแก้ไข
+            $('#TableRecordList').on('click', '.update', function () {
+                let id = $(this).attr("id");
+                $('#update_id').val(id);
+
+                // ดึงข้อมูลปัจจุบัน
+                $.ajax({
+                    url: 'model/manage_user_line_data_process.php',
+                    method: 'POST',
+                    data: { action: 'GET_ALL_FIELDS', id: id },
+                    dataType: 'json',
+                    success: function (res) {
+                        if(res.length > 0) {
+                            let d = res[0];
+                            $('#update_line_phone').val(d.line_phone || '');
+                            $('#update_house_number').val(d.house_number || '');
+                            $('#update_alley').val(d.alley || '');
+                            $('#update_line_user_name').val(d.line_user_name || '');
+                            $('#update_line_user_id').val(d.line_user_id || '');
+                            $('#updateModal').modal('show');
+                        }
+                    }
+                });
+            });
+
+            // กดบันทึกการแก้ไข
+            $('#updateForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: 'model/manage_user_line_data_process.php',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if(response === 'success') {
+                            alertify.success("แก้ไขข้อมูลเรียบร้อยแล้ว");
+                            $('#updateModal').modal('hide');
                             dataRecords.ajax.reload(null, false);
                         } else {
                             alertify.error(response);

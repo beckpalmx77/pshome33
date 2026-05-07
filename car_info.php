@@ -781,6 +781,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 initProvinceAutocomplete("car_no3_province");
                 initProvinceAutocomplete("car_no4_province");
                 initProvinceAutocomplete("car_no5_province");
+                initProvinceAutocomplete("car_no6_province");
+                initProvinceAutocomplete("car_no7_province");
 
                 function initColorAutocomplete(inputId) {
                     $("#" + inputId).autocomplete({
@@ -813,6 +815,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 initColorAutocomplete("car_no3_color");
                 initColorAutocomplete("car_no4_color");
                 initColorAutocomplete("car_no5_color");
+                initColorAutocomplete("car_no6_color");
+                initColorAutocomplete("car_no7_color");
 
                 function initBrandAutocomplete(inputId) {
                     $("#" + inputId).autocomplete({
@@ -845,6 +849,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 initBrandAutocomplete("car_no3_brand");
                 initBrandAutocomplete("car_no4_brand");
                 initBrandAutocomplete("car_no5_brand");
+                initBrandAutocomplete("car_no6_brand");
+                initBrandAutocomplete("car_no7_brand");
             });
         </script>
 

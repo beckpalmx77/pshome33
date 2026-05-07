@@ -63,6 +63,14 @@ $car_no7_type = $_POST['car_no7_type'] ?? '';
 $car_no7_brand = $_POST['car_no7_brand'] ?? '';
 $car_no7_color = $_POST['car_no7_color'] ?? '';
 
+$car_no1_brand = preg_replace('/็/', '', $car_no1_brand);
+$car_no2_brand = preg_replace('/็/', '', $car_no2_brand);
+$car_no3_brand = preg_replace('/็/', '', $car_no3_brand);
+$car_no4_brand = preg_replace('/็/', '', $car_no4_brand);
+$car_no5_brand = preg_replace('/็/', '', $car_no5_brand);
+$car_no6_brand = preg_replace('/็/', '', $car_no6_brand);
+$car_no7_brand = preg_replace('/็/', '', $car_no7_brand);
+
 $sql = "UPDATE ims_house SET 
     car_no1 = :car_no1,
     car_no1_province = :car_no1_province,

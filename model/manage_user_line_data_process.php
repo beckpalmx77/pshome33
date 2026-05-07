@@ -62,9 +62,10 @@ if ($_POST["action"] === 'GET_USER_LINE_DATA') {
             "phone_number"   => $val['line_phone'],
             "member_name"    => $fullName,
             "house_number"   => $val['house_number'],
-            "alley"   => $val['alley'],
+            "alley"          => $val['alley'],
             "line_user_name" => $val['line_user_name'],
-            "delete"         => "<button type='button' id='".$val['id']."' class='btn btn-danger btn-xs delete'><i class='fa fa-trash'></i> ลบข้อมูลทั้งหมด</button>"
+            "action"         => "<button type='button' id='".$val['id']."' class='btn btn-warning btn-xs update mr-1'><i class='fa fa-edit'></i> แก้ไข</button>"
+                                 . "<button type='button' id='".$val['id']."' class='btn btn-danger btn-xs delete'><i class='fa fa-trash'></i> ลบ</button>"
         );
         $no++;
     }
@@ -81,9 +82,14 @@ if ($_POST["action"] === 'GET_USER_LINE_DATA') {
 // --- 2. ดึงข้อมูล "ทุกฟิลด์" จาก 3 ตารางเพื่อแสดงก่อนลบ ---
 if ($_POST["action"] === 'GET_ALL_FIELDS') {
     $id = $_POST["id"];
-    $sql = "SELECT l.*, u.*, h.* FROM ims_house_line_user l
+    $sql = "SELECT l.id, l.line_phone, l.house_number, l.line_user_name, l.line_user_id, l.line_picture_profile, l.create_date,
+                   u.user_id as u_user_id, u.first_name, u.last_name, u.account_type,
+                   h.contact_name, h.house_status,
+                   m.alley
+            FROM ims_house_line_user l
             LEFT JOIN ims_user u ON l.line_phone = u.user_id
             LEFT JOIN ims_house h ON l.line_phone = h.phone_number AND l.house_number = h.house_number
+            LEFT JOIN ims_house_master m ON m.house_number = l.house_number
             WHERE l.id = :id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':id' => $id]);
@@ -93,7 +99,33 @@ if ($_POST["action"] === 'GET_ALL_FIELDS') {
     exit;
 }
 
-// --- 3. ลบข้อมูล 3 ตาราง (Transaction) โดยใช้ Phone Number ---
+// --- 3. แก้ไขข้อมูล ims_house_line_user (house_number) และ ims_house_master (alley) ---
+if ($_POST["action"] === 'UPDATE') {
+    $id = $_POST["id"];
+    $house_number = $_POST["house_number"];
+    $alley = $_POST["alley"];
+
+    try {
+        $conn->beginTransaction();
+
+        // อัปเดต house_number ใน ims_house_line_user
+        $stmt1 = $conn->prepare("UPDATE ims_house_line_user SET house_number = :house_number WHERE id = :id");
+        $stmt1->execute([':house_number' => $house_number, ':id' => $id]);
+
+        // อัปเดต alley ใน ims_house_master
+        $stmt2 = $conn->prepare("UPDATE ims_house_master SET alley = :alley WHERE house_number = :house_number");
+        $stmt2->execute([':alley' => $alley, ':house_number' => $house_number]);
+
+        $conn->commit();
+        echo "success";
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo "Error: " . $e->getMessage();
+    }
+    exit;
+}
+
+// --- 4. ลบข้อมูล 3 ตาราง (Transaction) โดยใช้ Phone Number ---
 if ($_POST["action"] === 'DELETE') {
     $id = $_POST["id"];
     $stmt_find = $conn->prepare("SELECT line_phone FROM ims_house_line_user WHERE id = :id");

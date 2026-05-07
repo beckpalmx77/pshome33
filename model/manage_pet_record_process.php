@@ -201,12 +201,11 @@ if ($_POST["action"] === 'GET_COLOR_AUTOCOMPLETE') {
 
 if ($_POST["action"] === 'GET_BRAND_AUTOCOMPLETE') {
     $search = $_POST["search"] ?? '';
-    //$brands = ['โตโยต้า', 'ฮอนด้า', 'นิสสัน', 'มาสด้า', 'ซูซูกิ', 'มิตซูบิชิ', 'อีซูซุ', 'ฟอร์ด', 'เชฟโรเลต', 'บีเอ็มดับเบิลยู', 'เมอร์เซเดส', 'อาวดี้', 'โวลโว', 'เปโตรนาส', 'ซามซอง', 'ดีเอส', 'เอสเอสซี', 'ฮาวิ์', 'ยามาฮ่า', 'คาวาซากิ', 'ดูคาติ', 'อพอลโล', 'เจ็ท', 'ยามาฮ่า มอเตอร์ไซค์', 'ฮอนด้า มอเตอร์ไซค์', 'ซูซูกิ มอเตอร์ไซค์', 'คาวาซากิ มอเตอร์ไซค์', 'ดีเอ็นเอ็ม', 'บีทีอาร์', 'ไทยแลนด์'];
     $brands = [
         'โตโยต้า', 'ฮอนด้า', 'นิสสัน', 'มาสด้า', 'ซูซูกิ', 'มิตซูบิชิ', 'อีซูซุ', 'ฟอร์ด', 'เชฟโรเลต', 'บีเอ็มดับเบิลยู','เอ็มจี',
         'เมอร์เซเดส', 'อาวดี้', 'โวลโว', 'เปโตรนาส', 'ซามซอง', 'ดีเอส', 'เอสเอสซี', 'ฮาวิ์', 'ยามาฮ่า', 'คาวาซากิ',
         'ดูคาติ', 'อพอลโล', 'เจ็ท', 'ยามาฮ่า มอเตอร์ไซค์', 'ฮอนด้า มอเตอร์ไซค์', 'ซูซูกิ มอเตอร์ไซค์', 'คาวาซากิ มอเตอร์ไซค์', 'ดีเอ็นเอ็ม', 'บีทีอาร์', 'ไทยแลนด์',
-        'Toyota', 'Honda', 'Nissan', 'Mazda', 'Suzuki', 'Mitsubishi', 'Isuzu', 'Ford', 'Chevrolet', 'BMW','MG',
+        'Honda', 'Toyota', 'Nissan', 'Mazda', 'Suzuki', 'Mitsubishi', 'Isuzu', 'Ford', 'Chevrolet', 'BMW','MG',
         'Mercedes-Benz', 'Audi', 'Volvo', 'Petronas', 'Samsung', 'DS', 'SSC', 'Haval', 'Yamaha', 'Kawasaki',
         'Ducati', 'Apollo', 'Jet', 'Yamaha Motorcycle', 'Honda Motorcycle', 'Suzuki Motorcycle', 'Kawasaki Motorcycle', 'DNM', 'BTR', 'Thailand'
     ];
@@ -299,6 +298,14 @@ if ($_POST["action"] === 'UPDATE_CAR_NO') {
     $car_no7_color = $_POST["car_no7_color"] ?? '';
     $car_no7_type = $_POST["car_no7_type"] ?? '';
     $sticker_receive_status = $_POST["sticker_receive_status"];
+
+    $car_no1_brand = preg_replace('/็/', '', $car_no1_brand);
+    $car_no2_brand = preg_replace('/็/', '', $car_no2_brand);
+    $car_no3_brand = preg_replace('/็/', '', $car_no3_brand);
+    $car_no4_brand = preg_replace('/็/', '', $car_no4_brand);
+    $car_no5_brand = preg_replace('/็/', '', $car_no5_brand);
+    $car_no6_brand = preg_replace('/็/', '', $car_no6_brand);
+    $car_no7_brand = preg_replace('/็/', '', $car_no7_brand);
 
     $sql_check = "SELECT sticker_receive_status, sticker_receive_date FROM ims_house WHERE house_number = :house_number";
     $stmt_check = $conn->prepare($sql_check);
