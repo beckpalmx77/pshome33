@@ -232,6 +232,31 @@ if (strlen($_SESSION['alogin']) == "") {
                 });
             });
 
+            // ฟังก์ชันดึงซอยจากเลขที่บ้าน
+            function fetchAlley(houseNumber) {
+                if (houseNumber && houseNumber.trim().length > 0) {
+                    $.ajax({
+                        url: 'model/manage_user_line_data_process.php',
+                        method: 'POST',
+                        data: { action: 'GET_ALLEY_BY_HOUSE_NUMBER', house_number: houseNumber.trim() },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res && res.success) {
+                                $('#update_alley').val(res.alley || '-');
+                            } else {
+                                $('#update_alley').val('ไม่พบข้อมูล');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('AJAX Error:', error);
+                            $('#update_alley').val('เกิดข้อผิดพลาด');
+                        }
+                    });
+                } else {
+                    $('#update_alley').val('');
+                }
+            }
+
             // เมื่อคลิกปุ่มแก้ไข
             $('#TableRecordList').on('click', '.update', function () {
                 let id = $(this).attr("id");
@@ -248,13 +273,23 @@ if (strlen($_SESSION['alogin']) == "") {
                             let d = res[0];
                             $('#update_line_phone').val(d.line_phone || '');
                             $('#update_house_number').val(d.house_number || '');
-                            $('#update_alley').val(d.alley || '');
+                            // ใช้ alley จาก GET_ALL_FIELDS (JOIN มาจาก ims_house_master)
+                            $('#update_alley').val(d.alley || 'ไม่พบข้อมูล');
                             $('#update_line_user_name').val(d.line_user_name || '');
                             $('#update_line_user_id').val(d.line_user_id || '');
                             $('#updateModal').modal('show');
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error fetching data:', error);
+                        alertify.error('เกิดข้อผิดพลาดในการดึงข้อมูล');
                     }
                 });
+            });
+
+            // เมื่อเปลี่ยนเลขที่บ้าน ดึงซอยอัตโนมัติจาก ims_house_master
+            $('#update_house_number').on('input change blur', function () {
+                fetchAlley($(this).val());
             });
 
             // กดบันทึกการแก้ไข

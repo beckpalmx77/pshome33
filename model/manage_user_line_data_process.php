@@ -79,47 +79,61 @@ if ($_POST["action"] === 'GET_USER_LINE_DATA') {
     exit;
 }
 
-// --- 2. ดึงข้อมูล "ทุกฟิลด์" จาก 3 ตารางเพื่อแสดงก่อนลบ ---
+// --- 2.1 ดึงซอยจาก ims_house_master ตามเลขที่บ้าน ---
+if ($_POST["action"] === 'GET_ALLEY_BY_HOUSE_NUMBER') {
+    $house_number = trim($_POST["house_number"]);
+    $sql = "SELECT house_number, alley FROM ims_house_master WHERE house_number = :house_number OR TRIM(house_number) = :house_number2 LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':house_number' => $house_number, ':house_number2' => $house_number]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    header('Content-Type: application/json');
+    if ($row) {
+        echo json_encode(['success' => true, 'alley' => $row['alley'] ?: '-', 'debug_house' => $row['house_number']]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'ไม่พบเลขที่บ้าน ' . $house_number . ' ใน ims_house_master']);
+    }
+    exit;
+}
+
+// --- 2. ดึงข้อมูล "ทุกฟิลด์" จากตารางเพื่อแสดงก่อนลบ ---
 if ($_POST["action"] === 'GET_ALL_FIELDS') {
     $id = $_POST["id"];
-    $sql = "SELECT l.id, l.line_phone, l.house_number, l.line_user_name, l.line_user_id, l.line_picture_profile, l.create_date,
-                   u.user_id as u_user_id, u.first_name, u.last_name, u.account_type,
-                   h.contact_name, h.house_status,
-                   m.alley
+
+    // ดึงข้อมูลหลักจาก ims_house_line_user และ ims_user เท่านั้น
+    $sql = "SELECT l.*, u.user_id as u_user_id, u.first_name, u.last_name, u.account_type
             FROM ims_house_line_user l
             LEFT JOIN ims_user u ON l.line_phone = u.user_id
-            LEFT JOIN ims_house h ON l.line_phone = h.phone_number AND l.house_number = h.house_number
-            LEFT JOIN ims_house_master m ON m.house_number = l.house_number
             WHERE l.id = :id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':id' => $id]);
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // ถ้ามีข้อมูล ให้ดึง alley จาก ims_house_master แยกต่างหาก
+    if (count($result) > 0 && !empty($result[0]['house_number'])) {
+        $house_number = trim($result[0]['house_number']);
+        // ใช้ query เดียวกับ GET_ALLEY_BY_HOUSE_NUMBER ที่ทำงานได้
+        $sql2 = "SELECT alley FROM ims_house_master WHERE house_number = :hn OR TRIM(house_number) = :hn2 LIMIT 1";
+        $stmt2 = $conn->prepare($sql2);
+        $stmt2->execute([':hn' => $house_number, ':hn2' => $house_number]);
+        $row2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+        $result[0]['alley'] = $row2 ? $row2['alley'] : '';
+    }
+
     header('Content-Type: application/json');
     echo json_encode($result);
     exit;
 }
 
-// --- 3. แก้ไขข้อมูล ims_house_line_user (house_number) และ ims_house_master (alley) ---
+// --- 3. แก้ไขข้อมูล ims_house_line_user (house_number เท่านั้น) ---
 if ($_POST["action"] === 'UPDATE') {
     $id = $_POST["id"];
     $house_number = $_POST["house_number"];
-    $alley = $_POST["alley"];
 
     try {
-        $conn->beginTransaction();
-
-        // อัปเดต house_number ใน ims_house_line_user
-        $stmt1 = $conn->prepare("UPDATE ims_house_line_user SET house_number = :house_number WHERE id = :id");
-        $stmt1->execute([':house_number' => $house_number, ':id' => $id]);
-
-        // อัปเดต alley ใน ims_house_master
-        $stmt2 = $conn->prepare("UPDATE ims_house_master SET alley = :alley WHERE house_number = :house_number");
-        $stmt2->execute([':alley' => $alley, ':house_number' => $house_number]);
-
-        $conn->commit();
+        $stmt = $conn->prepare("UPDATE ims_house_line_user SET house_number = :house_number WHERE id = :id");
+        $stmt->execute([':house_number' => $house_number, ':id' => $id]);
         echo "success";
     } catch (Exception $e) {
-        $conn->rollBack();
         echo "Error: " . $e->getMessage();
     }
     exit;
