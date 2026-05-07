@@ -732,7 +732,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                             if (payment_status === "Y") {
                                 $('input[name="payment_status"][value="Y"]').prop('checked', true);
-                                $('#saveButton').attr('disabled', true);
+                                $('#saveButton').attr('disabled', false);
                             } else {
                                 $('input[name="payment_status"][value="N"]').prop('checked', true);
                                 $('#saveButton').attr('disabled', false);

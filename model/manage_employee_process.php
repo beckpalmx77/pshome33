@@ -268,6 +268,60 @@ if ($_POST["action"] === 'DELETE') {
     }
 }
 
+if ($_POST["action"] === 'EXPORT_EXCEL') {
+    
+    $status_where = "";
+    if ($_SESSION['role'] !== 'admin') {
+        $status_where = " AND em.status = 'Y' ";
+    }
+
+    $export_status = $_POST['export_status'] ?? 'ALL';
+    if ($export_status !== 'ALL') {
+        $status_where .= " AND em.status = '" . $export_status . "' ";
+    }
+
+    $sql = "SELECT em.*, mp.position_desc, wt.work_time_detail
+            FROM memployee em
+            LEFT JOIN mposition mp ON mp.position_id = em.position_id
+            LEFT JOIN mwork_time wt ON wt.work_time_id = em.work_time_id
+            WHERE year >= 2024 " . $status_where . "
+            ORDER BY em.status DESC, em.emp_id DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $data = array();
+    foreach ($results as $row) {
+        $startDate = new DateTime($row['start_work_date']);
+        $today = new DateTime();
+        $interval = $today->diff($startDate);
+        $work_age = $interval->y . " ปี " . $interval->m . " เดือน " . $interval->d . " วัน";
+
+        $data[] = array(
+            "emp_id" => $row['emp_id'],
+            "prefix" => $row['prefix'],
+            "f_name" => $row['f_name'],
+            "l_name" => $row['l_name'],
+            "nick_name" => $row['nick_name'],
+            "sex" => $row['sex'],
+            "start_work_date" => $row['start_work_date'],
+            "work_age" => $work_age,
+            "status" => $row['status'],
+            "week_holiday" => $row['week_holiday'],
+            "phone" => $row['phone'],
+            "salary_type" => $row['salary_type'],
+            "salary" => $row['salary'],
+            "salary_history" => $row['salary_history'],
+            "position_desc" => $row['position_desc'],
+            "work_time_detail" => $row['work_time_detail']
+        );
+    }
+
+    echo json_encode($data);
+    exit;
+}
+
 if ($_POST["action"] === 'GET_EMPLOYEE') {
 
     ## Read value
