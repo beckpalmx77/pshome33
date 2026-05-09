@@ -152,6 +152,9 @@ FROM ims_house;";
                                         <button type="button" class="btn btn-outline-success" id="btnReloadTable">
                                             <i class="fas fa-sync"></i> Reload Data
                                         </button>
+                                        <button type="button" class="btn btn-outline-warning" id="btnNotReceived">
+                                            <i class="fas fa-exclamation-triangle"></i> บ้านที่ยังไม่รับสติกเกอร์
+                                        </button>
                                     </div>
                                     <div class="col-md-5 d-flex align-items-center">
                                         <label for="searchHouseNumber" class="mr-2 mb-0" style="white-space: nowrap;"><b>ค้นหาบ้านเลขที่: </b></label>
@@ -219,6 +222,51 @@ FROM ims_house;";
                 </div>
                 <div class="modal-body">
                     <div id="detailContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="notReceivedModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">รายการบ้านที่ยังไม่ได้รับสติกเกอร์</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col" style="min-width: 180px;">
+                            <div class="card bg-danger text-white h-100">
+                                <div class="card-body">
+                                    <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ยังไม่รับสติกเกอร์ (หลัง)</div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="notReceivedCount">0 หลัง</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="TableNotReceived" class="display nowrap" style="width:100%;">
+                            <thead>
+                            <tr>
+                                <th>บ้านเลขที่</th>
+                                <th>ทะเบียนรถ 1</th>
+                                <th>ทะเบียนรถ 2</th>
+                                <th>ทะเบียนรถ 3</th>
+                                <th>ทะเบียนรถ 4</th>
+                                <th>ทะเบียนรถ 5</th>
+                                <th>ทะเบียนรถ 6</th>
+                                <th>ทะเบียนรถ 7</th>
+                                <th>จำนวนรถ</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
@@ -722,6 +770,76 @@ FROM ims_house;";
                     initProvinceAutocomplete("edit_car_no" + i + "_province");
                     initColorAutocomplete("edit_car_no" + i + "_color");
                     initBrandAutocomplete("edit_car_no" + i + "_brand");
+                }
+            });
+
+            // Not Received button click - load modal with DataTable
+            let notReceivedTable = null;
+
+            $('#btnNotReceived').on('click', function() {
+                if (!notReceivedTable) {
+                    notReceivedTable = $('#TableNotReceived').DataTable({
+                        "processing": true,
+                        "serverSide": false,
+                        "language": {
+                            "loadingRecords": '<div class="text-center p-3"><span class="spinner-border spinner-border-sm text-primary" role="status"></span> กำลังโหลด...</div>'
+                        },
+                        "ajax": {
+                            "url": "model/get_houses_not_received_sticker.php",
+                            "type": "POST",
+                            "dataSrc": function(json) {
+                                if (json.total_house !== undefined) {
+                                    $('#notReceivedCount').text(json.total_house + ' หลัง');
+                                }
+                                return json.data;
+                            }
+                        },
+                        "columns": [
+                            { "data": "house_number" },
+                            { "data": "car_no1" },
+                            { "data": "car_no2" },
+                            { "data": "car_no3" },
+                            { "data": "car_no4" },
+                            { "data": "car_no5" },
+                            { "data": "car_no6" },
+                            { "data": "car_no7" },
+                            { "data": "car_count", "className": "text-right" }
+                        ],
+                        "language": {
+                            "emptyTable": "ไม่พบข้อมูล",
+                            "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                            "infoEmpty": "แสดง 0 ถึง 0 จาก 0 รายการ",
+                            "infoFiltered": "(กรองจาก _MAX_ รายการ)",
+                            "lengthMenu": "แสดง _MENU_ รายการ",
+                            "loadingRecords": "กำลังโหลด...",
+                            "processing": "กำลังประมวลผล...",
+                            "search": "ค้นหา:",
+                            "zeroRecords": "ไม่พบรายการที่ตรงกัน",
+                            "paginate": {
+                                "first": "หน้าแรก",
+                                "last": "หน้าสุดท้าย",
+                                "next": "ถัดไป",
+                                "previous": "ก่อนหน้า"
+                            }
+                        },
+                        "dom": 'Blfrtip',
+                        "buttons": ['copy', 'excel', 'print'],
+                        "order": [[0, "asc"]],
+                        "lengthMenu": [[5, 10, 20, 50, 100, -1], [5, 10, 20, 50, 100, "All"]],
+                        "pageLength": 5,
+                        "retrieve": true
+                    });
+                } else {
+                    notReceivedTable.ajax.reload();
+                }
+                $('#notReceivedModal').modal('show');
+            });
+
+            // Destroy DataTable when modal is hidden to prevent memory leaks
+            $('#notReceivedModal').on('hidden.bs.modal', function() {
+                if (notReceivedTable) {
+                    notReceivedTable.destroy();
+                    notReceivedTable = null;
                 }
             });
 
