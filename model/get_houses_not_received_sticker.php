@@ -11,7 +11,7 @@ $sql = "SELECT house_number,
         car_no7,
         sticker_receive_status
         FROM ims_house 
-        WHERE sticker_receive_status IS NULL OR sticker_receive_status <> 'Y' 
+        WHERE (sticker_receive_status IS NULL OR sticker_receive_status <> 'Y') AND car_no1 IS NOT NULL AND car_no1 <> '' 
         ORDER BY CAST(house_number AS UNSIGNED) ASC";
 
 $stmt = $conn->prepare($sql);
