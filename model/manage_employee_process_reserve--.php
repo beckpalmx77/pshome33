@@ -353,6 +353,9 @@ if ($_POST["action"] === 'GET_EMPLOYEE') {
     }
 
     $status_where = "";
+    //if ($_SESSION['role'] !== 'admin') {
+        //$status_where = " AND em.status = 'Y' ";
+    //}
 
 ## Total number of records without filtering
     $stmt = $conn->prepare("SELECT COUNT(*) AS allcount FROM memployee " . $status_where );

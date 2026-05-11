@@ -418,7 +418,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
             const pdfLogo = "img/pdf_logo.png";
 
             // DataTables Setup
-            let formData = {action: "GET_EMPLOYEE", sub_action: "GET_MASTER",};
+            let formData = {action: "GET_EMPLOYEE", sub_action: "GET_MASTER", page_manage: "ADMIN",};
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[7, 10, 20, 50, 100], [7, 10, 20, 50, 100]],
                 'language': {
@@ -433,7 +433,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 'serverSide': true,
                 'serverMethod': 'post',
                 <?php if ($_SESSION['deviceType'] !== 'computer') { echo "'scrollX': true,"; } ?>
-                'ajax': { 'url': 'model/manage_employee_process.php', 'data': formData },
+                'ajax': { 'url': 'model/manage_employee_process_reserve.php', 'data': formData },
                 'columns': [
                     {data: 'emp_id'}, {data: 'full_name'}, {data: 'nick_name'}, {data: 'position_desc'},
                     {data: 'start_work_date'}, {data: 'work_time_detail'}, {data: 'status'}, {data: 'update'},
@@ -448,7 +448,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 let exportStatus = $('#export_status').val();
                 let exportFormData = {action: "EXPORT_EXCEL", export_status: exportStatus};
                 $.ajax({
-                    url: 'model/manage_employee_process.php',
+                    url: 'model/manage_employee_process_reserve.php',
                     method: 'POST',
                     data: exportFormData,
                     success: function (response) {
@@ -623,7 +623,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
                 $('#save').attr('disabled', 'disabled');
                 let formData = new FormData(this);
                 $.ajax({
-                    url: 'model/manage_employee_process.php',
+                    url: 'model/manage_employee_process_reserve.php',
                     method: "POST",
                     data: formData,
                     contentType: false,
@@ -661,7 +661,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['position_desc']) == "
 
             $.ajax({
                 type: "POST",
-                url: 'model/manage_employee_process.php',
+                url: 'model/manage_employee_process_reserve.php',
                 dataType: "json",
                 data: formData,
                 success: function (response) {
