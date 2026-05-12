@@ -270,18 +270,21 @@ if (strlen($_SESSION['alogin']) == "") {
                     <div class="row mb-3">
                         <div class="col-lg-12">
                             <div class="card">
-                                <div class="card-body d-flex align-items-center gap-3">
-                                    <div class="form-check me-3">
+                                <div class="card-body d-flex flex-wrap align-items-center py-3" style="gap: 16px;">
+                                    <div class="form-check mb-0" style="padding-left: 1.8em;">
                                         <input type="checkbox" class="form-check-input" id="selectAll">
                                         <label class="form-check-label font-weight-bold" for="selectAll">เลือกทั้งหมด</label>
                                     </div>
-                                    <button type="button" class="btn btn-line me-2" id="btnPreviewSelected">
-                                        <i class="fas fa-eye"></i> ดูตัวอย่างข้อความ
+                                    <div class="border-start" style="height: 28px;"></div>
+                                    <button type="button" class="btn btn-line px-4" id="btnPreviewSelected">
+                                        <i class="fas fa-eye"></i> ดูตัวอย่าง
                                     </button>
-                                    <button type="button" class="btn btn-success me-2" id="btnSendSelected">
-                                        <i class="fab fa-line"></i> ส่งแจ้งเตือน (LINE)
+                                    <button type="button" class="btn btn-success px-4" id="btnSendSelected">
+                                        <i class="fab fa-line"></i> ส่งแจ้งเตือน
                                     </button>
-                                    <span class="text-muted small ms-3" id="selectedCount">เลือก 0 รายการ</span>
+                                    <div class="ms-auto">
+                                        <span class="badge bg-info fs-6 px-3 py-2" id="selectedCount">เลือก 0 รายการ</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
