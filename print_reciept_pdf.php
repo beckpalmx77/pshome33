@@ -86,7 +86,6 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
             <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . $receipt['doc_id'] . '</td>
         </tr>
         <tr>
-            <!--td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code'] . '<br><b>โทร:</b> ' . $company['phone'] . '</td-->
             <td><b>ที่อยู่:</b> ' . $company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code']  . '</td>
             <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($receipt['reciept_date'])) . '</td>
         </tr>
@@ -111,7 +110,8 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     }
 
     $html .= '<tr>
-        <td colspan="3" align="right"><b>รวมทั้งสิ้น:</b></td>
+        <td colspan="2" align="left"><b>วิธีการชำระเงิน:</b> ' . ($receipt['payment_method'] ?: 'เงินสด') . '</td>
+        <td colspan="1" align="right"><b>รวมทั้งสิ้น:</b></td>
         <td align="right"><b>' . number_format($total, 2) . '</b></td>
     </tr>';
 
