@@ -109,7 +109,7 @@ $pdf_headers = [
     "บ้านเลขที่",
     "เงินต้น", // Added based on new schema
     "ดอกเบี้ย", // Added based on new schema
-    "จำนวนเงิน (รวม)", // Changed from "จำนวนเงิน"
+    "จำนวนเงินชำระรวม", // Changed from "จำนวนเงิน"
     "วิธีการชำระ",
     "สถานะ" // Added based on new schema
 ];
@@ -239,7 +239,7 @@ $html_table .= '</tr>
 $grand_total_amount = 0;
 $line_no = 0;
 foreach ($payment_data as $row) {
-    $amount_for_month = (float)($row['principal_per_installment'] ?? 0) + (float)($row['interest_per_installment'] ?? 0); // Calculate total amount per installment
+    $amount_for_month = (float)($row['amount_paid'] ?? 0);
     $grand_total_amount += $amount_for_month;
     $line_no++;
     $html_table .= '<tr>';
