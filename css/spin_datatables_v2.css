@@ -1,0 +1,27 @@
+/* ซ่อนข้อความ 'Processing...' เริ่มต้นของ DataTables */
+.dataTables_wrapper .dataTables_processing {
+    visibility: hidden; /* ซ่อนข้อความ */
+    background-color: rgba(255, 255, 255, 0.7); /* เพิ่มพื้นหลังโปร่งแสง (ถ้าต้องการ) */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* ทำให้แสดงอยู่ด้านบนสุด */
+    display: flex; /* ใช้ flexbox ในการจัดกึ่งกลาง */
+    justify-content: center; /* จัดกึ่งกลางแนวนอน */
+    align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+}
+
+/* เพิ่มรูปภาพ spinner.gif เป็นพื้นหลัง */
+.dataTables_wrapper .dataTables_processing::after {
+    content: ''; /* จำเป็นสำหรับ pseudo-element */
+    display: block;
+    width: 50px; /* ปรับขนาดตามขนาดของ GIF ของคุณ */
+    height: 50px; /* ปรับขนาดตามขนาดของ GIF ของคุณ */
+    background-image: url('../img/spin/spin_rect.gif'); /* **เปลี่ยน 'path/to/your/spinner.gif' เป็นพาธที่ถูกต้อง** */
+    background-size: contain; /* ปรับขนาดรูปภาพให้พอดี */
+    background-repeat: no-repeat;
+    background-position: center;
+    visibility: visible; /* ทำให้รูปภาพแสดง */
+}

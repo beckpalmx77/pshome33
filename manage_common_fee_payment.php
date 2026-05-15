@@ -13,7 +13,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <!DOCTYPE html>
     <html lang="th">
     <head>
-        <link rel="stylesheet" href="css/spin_datatables.css"/>
+        <link rel="stylesheet" href="css/spin_datatables_v2.css"/>
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
         <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
         <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
