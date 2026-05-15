@@ -90,7 +90,7 @@ $totalRecords = $stmtTotal->fetchColumn();
 
 echo json_encode([
     "draw" => intval($draw),
-    "iTotalRecords" => $totalRecords,
-    "iTotalDisplayRecords" => $totalFiltered,
-    "aaData" => $data
+    "recordsTotal" => $totalRecords,
+    "recordsFiltered" => $totalFiltered,
+    "data" => $data
 ]);

@@ -7,16 +7,19 @@ if (strlen($_SESSION['alogin']) == "") {
 
     $current_year = date('Y');
     $YearRecords = [];
-    // สร้าง Dropdown ปี ย้อนหลัง-ล่วงหน้า
     for ($y = $current_year + 1; $y >= $current_year - 1; $y--) {
         $YearRecords[] = $y;
     }
+    $url_year = isset($_GET['year']) ? $_GET['year'] : '';
+    $url_date = isset($_GET['date']) ? $_GET['date'] : '';
+    $default_date = !empty($url_date) ? $url_date : date('d/m/Y');
     ?>
 
     <!DOCTYPE html>
     <html lang="th">
     <head>
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"/>
+    <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
     </head>
     <body id="page-top">
     <div id="wrapper">
@@ -26,12 +29,17 @@ if (strlen($_SESSION['alogin']) == "") {
             <div id="content">
                 <?php include('includes/Top-Bar.php'); ?>
                 <div class="container-fluid" id="container-wrapper">
+                    <?php
+                    $sub_menu_name = isset($_GET['s']) ? urldecode($_GET['s']) : 'ตรวจสอบข้อมูลลงทะเบียน';
+                    $main_menu_name = isset($_GET['m']) ? urldecode($_GET['m']) : 'การประชุมหมู่บ้าน';
+                    $dash_page = isset($_SESSION['dashboard_page']) ? $_SESSION['dashboard_page'] : 'dashboard.php';
+                    ?>
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <h1 class="h3 mb-0 text-gray-800"><?php echo $sub_menu_name; ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
-                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
-                            <li class="breadcrumb-item active" aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                            <li class="breadcrumb-item"><a href="<?php echo $dash_page; ?>">Home</a></li>
+                            <li class="breadcrumb-item"><?php echo $main_menu_name; ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?php echo $sub_menu_name; ?></li>
                         </ol>
                     </div>
 
@@ -42,11 +50,11 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <section class="container-fluid">
 
                                         <div class="row mb-3 align-items-end">
-                                            <div class="col-md-4">
+                                            <div class="col-md-2">
                                                 <div class="form-group mb-0">
-                                                    <label for="filter_year" class="font-weight-bold">เลือกปีการประชุม (Year):</label>
-                                                    <select class="form-control" id="filter_year">
-                                                        <option value="">-- แสดงทั้งหมด (All Years) --</option>
+                                                    <label for="filter_year" class="font-weight-bold small mb-1">ปีการประชุม:</label>
+                                                    <select class="form-control form-control-sm" id="filter_year">
+                                                        <option value="">-- แสดงทั้งหมด --</option>
                                                         <?php foreach ($YearRecords as $year) {
                                                             $selected = ($year == $current_year) ? 'selected' : '';
                                                             ?>
@@ -57,13 +65,37 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-8 text-right">
-                                                <div id="buttons_container"></div>
-                                                <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
-                                                    <i class="fa fa-refresh"></i> Reload
-                                                </button>
+                                            <div class="col-md-3">
+                                                <div class="form-group mb-0">
+                                                    <label for="filter_date" class="font-weight-bold small mb-1">วันที่ประชุม:</label>
+                                                    <div class="input-group input-group-sm date" id="datepicker_filter">
+                                                        <input type="text" class="form-control" id="filter_date" value="<?php echo $default_date; ?>">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="d-flex align-items-center justify-content-end" style="gap:6px;">
+                                                    <a href="manage_meeting_register_summary.php?m=<?php echo urlencode($main_menu_name); ?>&s=<?php echo urlencode('รายละเอียดการประชุมหมู่บ้าน'); ?>" class="btn btn-outline-secondary btn-sm">
+                                                        <i class="fas fa-arrow-left"></i> รายการประชุม
+                                                    </a>
+                                                    <a href="manage_house_meeting_record.php?m=<?php echo urlencode($main_menu_name); ?>&s=<?php echo urlencode('จัดการข้อมูลการประชุม'); ?>" class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-users"></i> จัดการข้อมูล
+                                                    </a>
+                                                    <div id="buttons_container" style="white-space:nowrap;"></div>
+                                                    <button type="button" id="btnSearch" class="btn btn-info btn-sm" data-toggle="tooltip" title="ค้นหาข้อมูล">
+                                                        <i class="fas fa-search"></i> ค้นหา
+                                                    </button>
+                                                    <button type="button" id="btnReload" class="btn btn-outline-success btn-sm" data-toggle="tooltip" title="Reload Data">
+                                                        <i class="fa fa-refresh"></i> รีโหลด
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
+                                        <input type="hidden" id="url_year" value="<?php echo $url_year; ?>">
+                                        <input type="hidden" id="url_date" value="<?php echo $url_date; ?>">
 
                                         <div class="col-md-12">
                                             <table id='TableRecordList' class='display dataTable table table-bordered table-striped' style="width:100%">
@@ -75,7 +107,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <th>วันที่ประชุม</th>
                                                     <th>รายละเอียด</th>
                                                     <th>จุดลงทะเบียน</th>
-                                                    <th>จัดการ</th>
+                                                    <th>วันที่ลงทะเบียน</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -176,6 +208,8 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
@@ -197,6 +231,21 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script>
         $(document).ready(function () {
+            $('#datepicker_filter').datepicker({
+                format: 'dd/mm/yyyy',
+                todayBtn: 'linked',
+                todayHighlight: true,
+                autoclose: true,
+                language: 'th'
+            });
+
+            // Auto-load จาก URL params
+            var urlYear = $('#url_year').val();
+            var urlDate = $('#url_date').val();
+            if (urlYear && urlDate) {
+                $('#filter_year').val(urlYear);
+                $('#filter_date').val(urlDate);
+            }
 
             let dataRecords = $('#TableRecordList').DataTable({
                 'dom': 'Blfrtip',
@@ -207,7 +256,8 @@ if (strlen($_SESSION['alogin']) == "") {
                         className: 'btn btn-success btn-sm',
                         action: function ( e, dt, node, config ) {
                             let year = $('#filter_year').val();
-                            window.location.href = 'export_process/export_meeting_excel_process.php?meeting_year=' + year;
+                            let date = $('#filter_date').val();
+                            window.location.href = 'export_process/export_meeting_excel_process.php?meeting_year=' + year + '&meeting_date=' + encodeURIComponent(date);
                         }
                     }
                 ],
@@ -226,6 +276,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     'data': function(d) {
                         d.action = "GET_MEETING_LIST";
                         d.meeting_year = $('#filter_year').val();
+                        d.meeting_date = $('#filter_date').val();
                     }
                 },
                 'columns': [
@@ -264,13 +315,24 @@ if (strlen($_SESSION['alogin']) == "") {
                 'order': [[ 6, 'desc' ]] // เรียงตาม ID ล่าสุดก่อน
             });
 
-            $('#btnReload').on('click', function () {
-                $('#TableRecordList').DataTable().ajax.reload();
-            });
-
-            $('#filter_year').change(function() {
+            $('#btnSearch').on('click', function () {
                 dataRecords.ajax.reload();
             });
+
+            $('#btnReload').on('click', function () {
+                dataRecords.ajax.reload();
+            });
+
+            $('#filter_year, #filter_date').on('change', function() {
+                dataRecords.ajax.reload();
+            });
+
+            // Auto-reload ถ้ามาจาก URL
+            if (urlYear && urlDate) {
+                setTimeout(function(){
+                    $('#btnSearch').trigger('click');
+                }, 500);
+            }
 
             dataRecords.buttons().container().appendTo('#buttons_container');
 

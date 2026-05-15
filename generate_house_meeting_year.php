@@ -27,11 +27,32 @@ if (strlen($_SESSION['alogin']) == "") {
         <title><?php echo $sub_menu_name; ?></title>
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
         <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-        <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/spin_datatables.css"/>
+        <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
         <style>
             .alert-fixed { position: fixed; top: 20px; right: 20px; z-index: 1050; width: 350px; display: none; }
+
+            .card-body { padding: 1rem; }
+
+            .dataTables_wrapper { overflow-x: auto; }
+
+            .dataTables_length { margin-top: 10px; margin-right: 20px; float: left; }
+            .dt-buttons { margin-top: 10px; }
+            .dataTables_wrapper .dataTables_paginate .paginate_button { padding: 0.3em 0.6em; }
+
+            .badge-status {
+                display: inline-block; padding: 0.25em 0.6em;
+                font-size: 0.78rem; font-weight: 600;
+                border-radius: 50px; text-align: center;
+                min-width: 80px;
+            }
+            .badge-status.badge-warning { background-color: #f6c23e; color: #fff; }
+            .badge-status.badge-success { background-color: #1cc88a; color: #fff; }
+            .badge-status.badge-danger  { background-color: #e74a3b; color: #fff; }
+            .badge-status.badge-secondary { background-color: #858796; color: #fff; }
         </style>
     </head>
     <body id="page-top">
@@ -97,11 +118,23 @@ if (strlen($_SESSION['alogin']) == "") {
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
+                                                    <label for="meeting_time">เวลาประชุม :</label>
+                                                    <input type="text" class="form-control" name="meeting_time" id="meeting_time_gen" value="10.00 น. – 12.00 น.">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label for="meeting_location">สถานที่ประชุม :</label>
+                                                    <input type="text" class="form-control" name="meeting_location" id="meeting_location_gen" value="สำนักงานนิติบุคคลหมู่บ้านจัดสรรพฤกษา 33">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
                                                     <label for="discount_value">ส่วนลด (บาท) :</label>
                                                     <input type="number" step="0.01" class="form-control" name="discount_value" id="discount_value" value="0.00">
                                                 </div>
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="remark">หมายเหตุ :</label>
                                                     <input type="text" class="form-control" name="remark" id="remark" placeholder="">
@@ -125,6 +158,66 @@ if (strlen($_SESSION['alogin']) == "") {
                         </div>
                     </div>
 
+                    <!-- Meeting Config Header Card -->
+                    <div class="row mt-4" id="configHeaderCard" style="display:none;">
+                        <div class="col-lg-12">
+                            <div class="card mb-4 border-primary">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary text-white">
+                                    <h6 class="m-0 font-weight-bold">
+                                        <i class="fas fa-info-circle"></i> ข้อมูลการประชุม (Meeting Config)
+                                    </h6>
+                                    <div>
+                                        <button type="button" class="btn btn-light btn-sm" id="btnEditConfig">
+                                            <i class="fas fa-edit"></i> แก้ไขหนังสือเชิญประชุม
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <input type="hidden" id="config_meeting_year">
+                                    <input type="hidden" id="config_meeting_date">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <strong>หัวข้อ:</strong> <span id="disp_topic" class="text-muted">-</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>วันประชุม:</strong> <span id="disp_meeting_day" class="text-muted">-</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>เวลาประชุม:</strong> <span id="disp_meeting_time" class="text-muted">-</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>สถานที่ประชุม:</strong> <span id="disp_meeting_location" class="text-muted">-</span>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <strong>ระเบียบวาระการประชุม:</strong>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-1" id="agendaDisplay">
+                                        <div class="col-md-12">
+                                            <span id="disp_agenda_1" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                            <span id="disp_agenda_2" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                            <span id="disp_agenda_3" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                            <span id="disp_agenda_4" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                            <span id="disp_agenda_5" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                            <span id="disp_agenda_6" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                            <span id="disp_agenda_7" class="badge badge-info mr-1 mb-1" style="display:none;"></span>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <strong>หมายเหตุ:</strong> <span id="disp_remark" class="text-muted">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Data Card: House List -->
                     <div class="row mt-4">
                         <div class="col-lg-12">
                             <div class="card mb-4">
@@ -165,14 +258,111 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
+    <!-- Modal แก้ไขหนังสือเชิญประชุม -->
+    <div class="modal fade" id="agendaModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="agendaForm" method="POST" action="print_meeting_invitation_pdf.php" target="_blank">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="fas fa-edit"></i> แก้ไขหนังสือเชิญประชุม</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="meeting_year" id="agenda_year">
+                        <input type="hidden" name="meeting_date" id="agenda_date">
+
+                        <h6 class="text-primary font-weight-bold">หัวข้อและวัน เวลา สถานที่ประชุม</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>ชื่อการประชุม (Topic)</label>
+                                    <input type="text" class="form-control" name="topic" id="agenda_topic" value="ประชุมวิสามัญประจำปี">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>วันประชุม</label>
+                                    <input type="text" class="form-control" name="meeting_day" id="meeting_day" value="วันอาทิตย์ที่ 22 มิถุนายน">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>เวลาประชุม</label>
+                                    <input type="text" class="form-control" name="meeting_time" id="meeting_time" value="10.00 น. – 12.00 น.">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>สถานที่ประชุม</label>
+                                    <input type="text" class="form-control" name="meeting_location" id="meeting_location" value="สำนักงานนิติบุคคลหมู่บ้านจัดสรรพฤกษา 33">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h6 class="text-primary font-weight-bold">ระเบียบวาระการประชุม</h6>
+                        <div class="form-group">
+                            <label>วาระที่ 1</label>
+                            <input type="text" class="form-control" name="agenda_1" value="เรื่องแจ้งเพื่อทราบ">
+                        </div>
+                        <div class="form-group">
+                            <label>วาระที่ 2</label>
+                            <input type="text" class="form-control" name="agenda_2" value="เรื่องชี้แจงการดำเนินการของคณะกรรมการ">
+                        </div>
+                        <div class="form-group">
+                            <label>วาระที่ 3</label>
+                            <input type="text" class="form-control" name="agenda_3" value="เรื่องพิจารณา">
+                        </div>
+                        <div class="form-group">
+                            <label>วาระที่ 4</label>
+                            <input type="text" class="form-control" name="agenda_4" value="เรื่องอื่น ๆ (ถ้ามี)">
+                        </div>
+                        <div class="form-group">
+                            <label>วาระที่ 5</label>
+                            <input type="text" class="form-control" name="agenda_5" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>วาระที่ 6</label>
+                            <input type="text" class="form-control" name="agenda_6" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>วาระที่ 7</label>
+                            <input type="text" class="form-control" name="agenda_7" value="">
+                        </div>
+
+                        <hr>
+                        <div class="form-group">
+                            <label>หมายเหตุ (เพิ่มเติม)</label>
+                            <textarea class="form-control" name="remark" id="agenda_remark" rows="3">หมายเหตุ: โปรดนำบัตรประชาชนมาด้วยทุกครั้งเพื่อแสดงตนลงเพื่อความเรียบร้อยในการลงทะเบียนเข้าร่วมประชุม
+ถ้าไม่ได้เข้าร่วมประชุมด้วยตนเอง กรุณาลงรายละเอียด หนังสือมอบฉันทะ ที่แนบมากับหนังสือเชิญประชุมนี้</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-file-pdf"></i> พิมพ์หนังสือเชิญ</button>
+                        <button type="button" class="btn btn-info" id="btnPreviewAgenda"><i class="fas fa-eye"></i> ดูตัวอย่าง</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
     <script src="vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 
     <script>
@@ -199,38 +389,201 @@ if (strlen($_SESSION['alogin']) == "") {
                 language: 'th'
             });
 
-            // ตั้งค่า DataTable ให้ดึงข้อมูลจาก ims_house_meeting โดยส่ง param ปี/วันที่ ไปด้วย
             const table = $('#meetingDataTable').DataTable({
                 "processing": true,
                 "serverSide": true,
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14"]],
+                "pageLength": 25,
+                "dom": 'Blfrtip',
+                "buttons": ['copy', 'excel', 'print'],
                 "ajax": {
                     "url": "model/get_generated_meeting_data.php",
                     "type": "POST",
                     "data": function (d) {
-                        // ส่งค่า Filter ไปยัง Server
                         d.meeting_year = $('#meeting_year').val();
                         d.meeting_date = $('#meeting_date').val();
                     }
                 },
                 "columns": [
-                    {"data": "house_number"},
-                    {"data": "meeting_year"},
-                    {"data": "meeting_date"},
-                    {"data": "meeting_name"},
-                    {"data": "discount_value", "className": "text-right"},
-                    {"data": "meeting_status", "className": "text-center"}
+                    { "data": "house_number", "className": "text-center" },
+                    { "data": "meeting_year", "className": "text-center" },
+                    { "data": "meeting_date", "className": "text-center" },
+                    { "data": "meeting_name" },
+                    {
+                        "data": "discount_value",
+                        "className": "text-right",
+                        "render": function (data) {
+                            return parseFloat(data || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        }
+                    },
+                    {
+                        "data": "meeting_status",
+                        "className": "text-center",
+                        "render": function (data) {
+                            var map = {
+                                'N': '<span class="badge-status badge-warning">\u0E23\u0E2D\u0E14\u0E33\u0E40\u0E19\u0E34\u0E19\u0E01\u0E32\u0E23</span>',
+                                'Y': '<span class="badge-status badge-success">\u0E14\u0E33\u0E40\u0E19\u0E34\u0E19\u0E01\u0E32\u0E23\u0E41\u0E25\u0E49\u0E27</span>',
+                                'C': '<span class="badge-status badge-danger">\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01</span>'
+                            };
+                            return map[data] || '<span class="badge-status badge-secondary">' + data + '</span>';
+                        }
+                    }
                 ],
-                "order": [[0, 'asc']], // เรียงตามบ้านเลขที่
-                "language": { "url": "vendor/datatables/thai.json" }
+                "order": [[0, 'asc']],
+                "language": {
+                    "search": "\u0E04\u0E49\u0E19\u0E2B\u0E32:",
+                    "lengthMenu": "\u0E41\u0E2A\u0E14\u0E07 _MENU_ \u0E23\u0E32\u0E22\u0E01\u0E32\u0E23",
+                    "info": "\u0E41\u0E2A\u0E14\u0E07 _START_ \u0E16\u0E36\u0E07 _END_ \u0E08\u0E32\u0E01 _TOTAL_ \u0E23\u0E32\u0E22\u0E01\u0E32\u0E23",
+                    "infoEmpty": "\u0E41\u0E2A\u0E14\u0E07 0 \u0E16\u0E36\u0E07 0 \u0E08\u0E32\u0E01 0 \u0E23\u0E32\u0E22\u0E01\u0E32\u0E23",
+                    "infoFiltered": "(\u0E01\u0E23\u0E2D\u0E07\u0E08\u0E32\u0E01\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14 _MAX_ \u0E23\u0E32\u0E22\u0E01\u0E32\u0E23)",
+                    "zeroRecords": "\u0E44\u0E21\u0E48\u0E1E\u0E1A\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25",
+                    "emptyTable": "\u0E44\u0E21\u0E48\u0E21\u0E35\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E43\u0E19\u0E15\u0E32\u0E23\u0E32\u0E07",
+                    "loadingRecords": "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E42\u0E2B\u0E25\u0E14\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25...",
+                    "processing": "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E1B\u0E23\u0E30\u0E21\u0E27\u0E25\u0E1C\u0E25...",
+                    "paginate": {
+                        "first": "\u0E41\u0E23\u0E01",
+                        "last": "\u0E2A\u0E38\u0E14\u0E17\u0E49\u0E32\u0E22",
+                        "next": "\u0E16\u0E31\u0E14\u0E44\u0E1B",
+                        "previous": "\u0E01\u0E48\u0E2D\u0E19\u0E2B\u0E19\u0E49\u0E32"
+                    }
+                },
+                "retrieve": true
             });
 
-            // ปุ่ม Search: แค่ Reload ตาราง (Logic การดึงข้อมูลอยู่ใน Ajax data function แล้ว)
+            // โหลด Meeting Config และแสดงใน Header Card
+            function loadMeetingConfig(year, date) {
+                if (!year || !date) {
+                    $('#configHeaderCard').hide();
+                    return;
+                }
+                $.getJSON('model/meeting_config.php', { meeting_year: year, meeting_date: date }, function(res){
+                    $('#config_meeting_year').val(year);
+                    $('#config_meeting_date').val(date);
+
+                    if (res.status === 'success' && res.data) {
+                        var d = res.data;
+                        $('#disp_topic').text(d.topic || '-');
+                        $('#disp_meeting_day').text(d.meeting_day || '-');
+                        $('#disp_meeting_time').text(d.meeting_time || '-');
+                        $('#disp_meeting_location').text(d.meeting_location || '-');
+                        $('#disp_remark').text(d.remark || '-');
+                        for (var i = 1; i <= 7; i++) {
+                            var val = d['agenda_' + i] || '';
+                            var $el = $('#disp_agenda_' + i);
+                            if (val.trim() !== '') {
+                                $el.text('วาระที่ ' + i + ': ' + val).show();
+                            } else {
+                                $el.hide();
+                            }
+                        }
+                        $('#configHeaderCard').show();
+                    } else {
+                        // ยังไม่มี config ให้แสดงค่าเริ่มต้น
+                        $('#disp_topic').text('-');
+                        $('#disp_meeting_day').text('-');
+                        $('#disp_meeting_time').text('-');
+                        $('#disp_meeting_location').text('-');
+                        $('#disp_remark').text('-');
+                        for (var i = 1; i <= 7; i++) {
+                            $('#disp_agenda_' + i).hide();
+                        }
+                        $('#configHeaderCard').show();
+                    }
+                });
+            }
+
+            // ปุ่ม Search: โหลด Config + Reload ตาราง
             $('#btnSearch').on('click', function(){
+                var year = $('#meeting_year').val();
+                var date = $('#meeting_date').val();
+                loadMeetingConfig(year, date);
                 table.ajax.reload();
             });
 
-            // เมื่อเปลี่ยนปี หรือ วันที่ ให้ reload ตารางอัตโนมัติเพื่อให้เห็นข้อมูลปัจจุบัน
+            // ปุ่ม Edit Config - เปิด Modal แก้ไขวาระ (โหลดข้อมูลเก่าจาก DB)
+            $('#btnEditConfig').on('click', function(){
+                var year = $('#config_meeting_year').val();
+                var date = $('#config_meeting_date').val();
+                if (!year || !date) return;
+
+                $('#agenda_year').val(year);
+                $('#agenda_date').val(date);
+
+                $.getJSON('model/meeting_config.php', { meeting_year: year, meeting_date: date }, function(res){
+                    if (res.status === 'success' && res.data) {
+                        var d = res.data;
+                        if (d.topic) $('#agenda_topic').val(d.topic);
+                        if (d.meeting_day) $('#meeting_day').val(d.meeting_day);
+                        if (d.meeting_time) $('#meeting_time').val(d.meeting_time);
+                        if (d.meeting_location) $('#meeting_location').val(d.meeting_location);
+                        for (var i = 1; i <= 7; i++) {
+                            if (d['agenda_' + i]) $('input[name="agenda_' + i + '"]').val(d['agenda_' + i]);
+                        }
+                        if (d.remark) $('#agenda_remark').val(d.remark);
+                    } else {
+                        // ยังไม่มีข้อมูล - ใช้ค่า default จาก HTML (value attributes)
+                    }
+                });
+
+                $('#agendaModal').modal('show');
+            });
+
+            // Preview Template
+            $('#btnPreviewAgenda').on('click', function(){
+                saveMeetingConfig(function(){
+                    var action = $('#agendaForm').attr('action');
+                    $('#agendaForm').attr('action', action + '?preview=1').submit().attr('action', action);
+                    $('#agendaModal').modal('hide');
+                });
+            });
+
+            // พิมพ์หนังสือเชิญ - บันทึกข้อมูลก่อน
+            $('#agendaForm').on('submit', function(e){
+                var year = $('#agenda_year').val();
+                var date = $('#agenda_date').val();
+                if (!year || !date) {
+                    e.preventDefault();
+                    showAlert('กรุณาระบุปีและวันที่ประชุมก่อนพิมพ์', 'error');
+                    return;
+                }
+                e.preventDefault();
+                saveMeetingConfig(function(){
+                    $('#agendaForm')[0].submit();
+                    $('#agendaModal').modal('hide');
+                });
+            });
+
+            // บันทึกข้อมูลหนังสือเชิญประชุม
+            function saveMeetingConfig(callback) {
+                var year = $('#agenda_year').val();
+                var date = $('#agenda_date').val();
+                var data = {
+                    meeting_year: year,
+                    meeting_date: date,
+                    meeting_day: $('#meeting_day').val(),
+                    meeting_time: $('#meeting_time').val(),
+                    meeting_location: $('#meeting_location').val(),
+                    topic: $('#agenda_topic').val(),
+                    remark: $('#agenda_remark').val()
+                };
+                for (var i = 1; i <= 7; i++) {
+                    data['agenda_' + i] = $('input[name="agenda_' + i + '"]').val();
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: 'model/meeting_config.php',
+                    data: data,
+                    dataType: 'json',
+                    complete: function() {
+                        loadMeetingConfig(year, date);
+                        if (callback) callback();
+                    }
+                });
+            }
+
+            // เมื่อเปลี่ยนปี หรือ วันที่ ให้ซ่อน Header Config และ reload ตาราง
             $('#meeting_year, #meeting_date').on('change', function(){
+                $('#configHeaderCard').hide();
                 table.ajax.reload();
             });
 

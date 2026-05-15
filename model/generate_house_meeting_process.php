@@ -15,6 +15,8 @@ $meeting_date = isset($_POST['meeting_date']) ? $_POST['meeting_date'] : '';
 $meeting_name = isset($_POST['meeting_name']) ? $_POST['meeting_name'] : '';
 $discount_value = isset($_POST['discount_value']) ? floatval($_POST['discount_value']) : 0;
 $remark = isset($_POST['remark']) ? $_POST['remark'] : '';
+$meeting_time = isset($_POST['meeting_time']) ? $_POST['meeting_time'] : '';
+$meeting_location = isset($_POST['meeting_location']) ? $_POST['meeting_location'] : '';
 
 if ($action == 'GENERATE_MEETING') {
     try {
@@ -46,6 +48,34 @@ if ($action == 'GENERATE_MEETING') {
                        VALUES 
                        (:house_number, :meeting_year, :meeting_date, :meeting_name, :discount_value, :remark, 'N', 'Y')";
         $stmt_insert = $conn->prepare($sql_insert);
+
+        // สร้าง default config ใน ims_meeting_config ถ้ายังไม่มี
+        $sql_check_config = "SELECT COUNT(*) FROM ims_meeting_config WHERE meeting_year = :my AND meeting_date = :md";
+        $stmt_cc = $conn->prepare($sql_check_config);
+        $stmt_cc->bindParam(':my', $meeting_year);
+        $stmt_cc->bindParam(':md', $meeting_date);
+        $stmt_cc->execute();
+        if ($stmt_cc->fetchColumn() == 0) {
+            $sql_ins_config = "INSERT INTO ims_meeting_config (meeting_year, meeting_date, topic, meeting_time, meeting_location, updated_at)
+                               VALUES (:my, :md, :topic, :time, :loc, NOW())";
+            $stmt_ic = $conn->prepare($sql_ins_config);
+            $stmt_ic->bindParam(':my', $meeting_year);
+            $stmt_ic->bindParam(':md', $meeting_date);
+            $stmt_ic->bindParam(':topic', $meeting_name);
+            $stmt_ic->bindParam(':time', $meeting_time);
+            $stmt_ic->bindParam(':loc', $meeting_location);
+            $stmt_ic->execute();
+        } else {
+            $sql_up_cfg = "UPDATE ims_meeting_config SET topic = :topic, meeting_time = :time, meeting_location = :loc
+                           WHERE meeting_year = :my AND meeting_date = :md AND (topic IS NULL OR topic = '')";
+            $stmt_up = $conn->prepare($sql_up_cfg);
+            $stmt_up->bindParam(':topic', $meeting_name);
+            $stmt_up->bindParam(':time', $meeting_time);
+            $stmt_up->bindParam(':loc', $meeting_location);
+            $stmt_up->bindParam(':my', $meeting_year);
+            $stmt_up->bindParam(':md', $meeting_date);
+            $stmt_up->execute();
+        }
 
         $conn->beginTransaction();
 

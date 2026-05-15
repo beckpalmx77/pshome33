@@ -112,10 +112,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
                                     <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
-                                        <i class="fa fa-refresh"></i> Reload
+                                        <i class="fa fa-refresh"></i> Reload Data
                                     </button>
                                     <a href="manage_common_fee_payment_not_confirm.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ค่าส่วนกลางที่ยังไม่ยืนยันการชำระ" class="btn btn-outline-danger ml-2">
-                                        <i class="fas fa-search-dollar"></i> ค้นหายังไม่ชำระ
+                                        <i class="fas fa-search-dollar"></i> ค้นหายังไม่ยืนยันการชำระ
                                     </a>
                                     <a href="show_duplicate_payments.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ตรวจสอบรายการชำระค่าส่วนกลางบันทึกซ้ำ" class="btn btn-outline-warning ml-2">
                                         <i class="fas fa-copy"></i> ตรวจสอบบันทึกซ้ำ

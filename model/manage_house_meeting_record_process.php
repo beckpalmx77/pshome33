@@ -26,12 +26,12 @@ if ($action == 'GET_MEETING_LIST') {
     $columnSortOrder = $_POST['order'][0]['dir'];
     $searchValue = $_POST['search']['value'];
 
-    // --- ส่วนที่เพิ่ม: รับค่าปีการประชุม ---
     $meeting_year_filter = isset($_POST['meeting_year']) ? $_POST['meeting_year'] : '';
+    $meeting_date_filter = isset($_POST['meeting_date']) ? $_POST['meeting_date'] : '';
 
     $columns = array(
         0 => 'house_number',
-        1 => 'alley', // เพิ่ม mapping ให้ตรง
+        1 => 'alley',
         2 => 'meeting_date',
         3 => 'meeting_name',
         4 => 'attendance_name',
@@ -39,14 +39,12 @@ if ($action == 'GET_MEETING_LIST') {
         6 => 'id',
     );
 
-    // กำหนด Column ที่จะ Sort (ถ้าไม่ได้ fix ไว้)
     if (isset($columns[$columnIndex])) {
         $sortColumn = $columns[$columnIndex];
     } else {
         $sortColumn = 'house_number';
     }
 
-    // สร้างเงื่อนไขการค้นหา (Search)
     $searchQuery = " ";
     if ($searchValue != '') {
         $searchQuery = " AND (house_number LIKE :search 
@@ -55,27 +53,30 @@ if ($action == 'GET_MEETING_LIST') {
                           OR meeting_year LIKE :search ) ";
     }
 
-    // --- สร้างเงื่อนไขกรองปี (Year Filter) ---
-    $yearQuery = " ";
+    $filterQuery = " ";
+    $filterParams = [];
     if ($meeting_year_filter != '') {
-        $yearQuery = " AND meeting_year = :meeting_year ";
+        $filterQuery .= " AND meeting_year = :meeting_year ";
+        $filterParams[':meeting_year'] = $meeting_year_filter;
+    }
+    if ($meeting_date_filter != '') {
+        $filterQuery .= " AND meeting_date = :meeting_date ";
+        $filterParams[':meeting_date'] = $meeting_date_filter;
     }
 
-    // 1. นับจำนวนทั้งหมด (Total Records) - ตาม Scope ปีที่เลือก
-    $sql_count = "SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $yearQuery;
+    $sql_count = "SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $filterQuery;
     $stmt = $conn->prepare($sql_count);
-    if ($meeting_year_filter != '') {
-        $stmt->bindValue(':meeting_year', $meeting_year_filter, PDO::PARAM_STR);
+    foreach ($filterParams as $key => $val) {
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
-    // 2. นับจำนวนแบบมี Search (Filtered Records)
-    $sql_count_filter = "SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $yearQuery . $searchQuery;
+    $sql_count_filter = "SELECT COUNT(*) AS allcount FROM v_ims_house_meeting WHERE 1=1 " . $filterQuery . $searchQuery;
     $stmt = $conn->prepare($sql_count_filter);
-    if ($meeting_year_filter != '') {
-        $stmt->bindValue(':meeting_year', $meeting_year_filter, PDO::PARAM_STR);
+    foreach ($filterParams as $key => $val) {
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     if ($searchValue != '') {
         $stmt->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
@@ -84,19 +85,13 @@ if ($action == 'GET_MEETING_LIST') {
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
-    // 3. ดึงข้อมูล (Select Data)
-    // หมายเหตุ: ตรง ORDER BY cast(alley as unsigned) ถ้าต้องการให้คลิกหัวตารางเปลี่ยนการเรียงได้
-    // ควรเปลี่ยนเป็น " ORDER BY " . $sortColumn . " " . $columnSortOrder
-    // แต่ถ้าต้องการ Fix การเรียงตามซอยตัวเลข ให้ใช้โค้ดเดิมด้านล่างนี้ครับ
-    $sql = "SELECT * FROM v_ims_house_meeting WHERE 1=1 " . $yearQuery . $searchQuery .
+    $sql = "SELECT * FROM v_ims_house_meeting WHERE 1=1 " . $filterQuery . $searchQuery .
         " ORDER BY cast(alley as unsigned) ASC, house_number ASC " .
         " LIMIT :offset, :limit";
 
     $stmt = $conn->prepare($sql);
-
-    // Bind Parameters
-    if ($meeting_year_filter != '') {
-        $stmt->bindValue(':meeting_year', $meeting_year_filter, PDO::PARAM_STR);
+    foreach ($filterParams as $key => $val) {
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     if ($searchValue != '') {
         $stmt->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);

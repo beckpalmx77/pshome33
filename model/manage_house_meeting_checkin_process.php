@@ -26,10 +26,9 @@ if ($action == 'GET_MEETING_LIST') {
     $columnSortOrder = $_POST['order'][0]['dir'];
     $searchValue = $_POST['search']['value'];
 
-    // รับค่าปีการประชุม (เอาไว้กรอง String meeting_date)
     $meeting_year_filter = isset($_POST['meeting_year']) ? $_POST['meeting_year'] : '';
+    $meeting_date_filter = isset($_POST['meeting_date']) ? $_POST['meeting_date'] : '';
 
-    // Mapping Column สำหรับ Sort
     $columns = array(
         0 => 'house_number',
         1 => 'fullname',
@@ -43,11 +42,10 @@ if ($action == 'GET_MEETING_LIST') {
     if (isset($columns[$columnIndex])) {
         $sortColumn = $columns[$columnIndex];
     } else {
-        $sortColumn = 'id'; // Default sort by ID (Latest)
+        $sortColumn = 'id';
         $columnSortOrder = 'DESC';
     }
 
-    // สร้างเงื่อนไขการค้นหา (Search)
     $searchQuery = " ";
     if ($searchValue != '') {
         $searchQuery = " AND (house_number LIKE :search 
@@ -56,28 +54,30 @@ if ($action == 'GET_MEETING_LIST') {
                           OR meeting_detail LIKE :search ) ";
     }
 
-    // --- สร้างเงื่อนไขกรองปี (Year Filter) ---
-    // เนื่องจาก meeting_date เป็น varchar (เช่น 25-12-2025) เราจะใช้ LIKE '%YYYY'
-    $yearQuery = " ";
+    $filterQuery = " ";
+    $filterParams = [];
     if ($meeting_year_filter != '') {
-        $yearQuery = " AND meeting_date LIKE :meeting_year ";
+        $filterQuery .= " AND meeting_date LIKE :meeting_year ";
+        $filterParams[':meeting_year'] = '%' . $meeting_year_filter;
+    }
+    if ($meeting_date_filter != '') {
+        $filterQuery .= " AND meeting_date = :meeting_date ";
+        $filterParams[':meeting_date'] = $meeting_date_filter;
     }
 
-    // 1. นับจำนวนทั้งหมด (Total Records)
-    $sql_count = "SELECT COUNT(*) AS allcount FROM ims_register_meeting WHERE 1=1 " . $yearQuery;
+    $sql_count = "SELECT COUNT(*) AS allcount FROM ims_register_meeting WHERE 1=1 " . $filterQuery;
     $stmt = $conn->prepare($sql_count);
-    if ($meeting_year_filter != '') {
-        $stmt->bindValue(':meeting_year', '%' . $meeting_year_filter, PDO::PARAM_STR);
+    foreach ($filterParams as $key => $val) {
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
-    // 2. นับจำนวนแบบมี Search (Filtered Records)
-    $sql_count_filter = "SELECT COUNT(*) AS allcount FROM ims_register_meeting WHERE 1=1 " . $yearQuery . $searchQuery;
+    $sql_count_filter = "SELECT COUNT(*) AS allcount FROM ims_register_meeting WHERE 1=1 " . $filterQuery . $searchQuery;
     $stmt = $conn->prepare($sql_count_filter);
-    if ($meeting_year_filter != '') {
-        $stmt->bindValue(':meeting_year', '%' . $meeting_year_filter, PDO::PARAM_STR);
+    foreach ($filterParams as $key => $val) {
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     if ($searchValue != '') {
         $stmt->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
@@ -86,16 +86,13 @@ if ($action == 'GET_MEETING_LIST') {
     $records = $stmt->fetch();
     $totalRecordwithFilter = $records['allcount'];
 
-    // 3. ดึงข้อมูล (Select Data)
-    $sql = "SELECT * FROM ims_register_meeting WHERE 1=1 " . $yearQuery . $searchQuery .
+    $sql = "SELECT * FROM ims_register_meeting WHERE 1=1 " . $filterQuery . $searchQuery .
         " ORDER BY " . $sortColumn . " " . $columnSortOrder .
         " LIMIT :offset, :limit";
 
     $stmt = $conn->prepare($sql);
-
-    // Bind Parameters
-    if ($meeting_year_filter != '') {
-        $stmt->bindValue(':meeting_year', '%' . $meeting_year_filter, PDO::PARAM_STR);
+    foreach ($filterParams as $key => $val) {
+        $stmt->bindValue($key, $val, PDO::PARAM_STR);
     }
     if ($searchValue != '') {
         $stmt->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);

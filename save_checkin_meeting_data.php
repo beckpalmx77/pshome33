@@ -13,13 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkin_point = $_POST['checkin_point'] ?? '';
     $lat_addr      = $_POST['lat_addr'] ?? '';
     $long_addr     = $_POST['long_addr'] ?? '';
+    $topic         = $_POST['topic'] ?? '';
 
-    // -----------------------------------------------------------
-    // [แก้ไข] เปลี่ยนรูปแบบวันที่เป็น DD/MM/YYYY (เช่น 25-12-2025)
-    // -----------------------------------------------------------
     $current_date  = date('d/m/Y');
 
-    // สร้างรายละเอียดการประชุม
     $meeting_detail = "การประชุมวันที่ : " . $current_date;
 
     try {
@@ -52,9 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // 2. ถ้าไม่ซ้ำ: บันทึกข้อมูลใหม่
             // ---------------------------------------------------------
             $sql = "INSERT INTO ims_register_meeting 
-                    (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr, meeting_date, meeting_detail) 
+                    (fullname, house_number, phone_number, checkin_point, lat_addr, long_addr, meeting_date, meeting_detail, topic) 
                     VALUES 
-                    (:fullname, :house_number, :phone_number, :checkin_point, :lat_addr, :long_addr, :meeting_date, :meeting_detail)";
+                    (:fullname, :house_number, :phone_number, :checkin_point, :lat_addr, :long_addr, :meeting_date, :meeting_detail, :topic)";
 
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':fullname', $fullname);
@@ -65,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':long_addr', $long_addr);
             $stmt->bindParam(':meeting_date', $current_date);
             $stmt->bindParam(':meeting_detail', $meeting_detail);
+            $stmt->bindParam(':topic', $topic);
 
             if ($stmt->execute()) {
                 // --- บันทึกสำเร็จ ---

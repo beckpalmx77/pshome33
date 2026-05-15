@@ -47,7 +47,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                             <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
-                                                <i class="fa fa-refresh"></i> Reload
+                                                <i class="fa fa-refresh"></i> Reload Data
                                             </button>
                                         </div>
 
