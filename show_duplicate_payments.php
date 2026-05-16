@@ -25,16 +25,21 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 ?>
                 <!-- Container Fluid-->
                 <div class="container-fluid" id="container-wrapper">
+                    <?php
+                    $sub_menu_name = isset($_GET['s']) ? urldecode($_GET['s']) : 'ตรวจสอบรายการบันทึกซ้ำ';
+                    $main_menu_name = isset($_GET['m']) ? urldecode($_GET['m']) : 'ข้อมูลเกี่ยวกับการเงิน';
+                    $dash_page = isset($_SESSION['dashboard_page']) ? $_SESSION['dashboard_page'] : 'dashboard.php';
+                    ?>
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <h1 class="h3 mb-0 text-gray-800"><?php echo $sub_menu_name; ?></h1>
                         <input type="hidden" id="account_type" name="account_type"
                                value="<?php echo $_SESSION['account_type']; ?>">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            <li class="breadcrumb-item"><a href="<?php echo $dash_page; ?>">Home</a>
                             </li>
-                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                            <li class="breadcrumb-item"><?php echo $main_menu_name; ?></li>
                             <li class="breadcrumb-item active"
-                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                                aria-current="page"><?php echo $sub_menu_name; ?></li>
                         </ol>
                     </div>
 
@@ -67,8 +72,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 <tr>
                                                     <th>id</th>
                                                     <th>บ้านเลขที่</th>
-                                                    <th>งวดเดือน</th>
-                                                    <th>งวดเดือน</th>
+                                                    <th>งวดเดือนเริ่มต้น</th>
+                                                    <th>งวดเดือนสิ้นสุด</th>
                                                     <th>ปี</th>
                                                     <th>จำนวนเงิน</th>
                                                     <th>Slip</th>
@@ -184,8 +189,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
 
 
     <style>

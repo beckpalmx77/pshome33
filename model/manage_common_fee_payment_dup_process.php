@@ -39,7 +39,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $rowperpage = isset($_POST['length']) ? (int)$_POST['length'] : 10;     // จำนวนแถวต่อหน้า (limit)
     $columnIndex = $_POST['order'][0]['column'];                            // ดัชนีคอลัมน์ที่สั่งเรียง
     $columnName = $_POST['columns'][$columnIndex]['data'];                  // ชื่อคอลัมน์ที่ใช้เรียง
-    $columnSortOrder = 'desc';                                              // สั่งเรียง (แก้ได้ตามต้องการ)
+    $columnSortOrder = $_POST["order"][0]["dir"] ?? "desc";                                              // สั่งเรียง (แก้ได้ตามต้องการ)
     $searchValue = $_POST['search']['value'];                              // คำค้นหา
 
     $searchArray = [];
@@ -187,9 +187,9 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     // สร้าง JSON Response
     $response = [
         "draw" => intval($draw),
-        "iTotalRecords" => intval($totalRecords),
-        "iTotalDisplayRecords" => intval($totalRecordwithFilter),
-        "aaData" => $data
+        "recordsTotal" => intval($totalRecords),
+        "recordsFiltered" => intval($totalRecordwithFilter),
+        "data" => $data
     ];
 
     // ส่ง JSON response กลับ

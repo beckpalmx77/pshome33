@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set("Asia/Bangkok");
-include('db_value.inc');
+include('db_value_host_ps33.inc');
 
 try
 {
