@@ -1,0 +1,86 @@
+Starting Database Optimization - 2026-05-22 14:25:02
+------------------------------------------------------------
+Optimizing `afront_contact` [INNODB]... Done. [0.09 MB -> 0.09 MB] Saved: 0 MB
+Optimizing `checkins` [INNODB]... Done. [0.27 MB -> 0.27 MB] Saved: 0 MB
+Optimizing `ims_category` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_check_user` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_company` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_document_contact` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_employee_line_user` [INNODB]... Done. [0.03 MB -> 0.03 MB] Saved: 0 MB
+Optimizing `ims_expenses` [INNODB]... Done. [0.22 MB -> 0.22 MB] Saved: 0 MB
+Optimizing `ims_house` [INNODB]... Done. [0.27 MB -> 0.27 MB] Saved: 0 MB
+Optimizing `ims_house_line_user` [INNODB]... Done. [0.25 MB -> 0.25 MB] Saved: 0 MB
+Optimizing `ims_house_master` [INNODB]... Done. [0.08 MB -> 0.08 MB] Saved: 0 MB
+Optimizing `ims_house_meeting` [INNODB]... Done. [0.03 MB -> 0.03 MB] Saved: 0 MB
+Optimizing `ims_house_payment` [INNODB]... Done. [2.94 MB -> 2.94 MB] Saved: 0 MB
+Optimizing `ims_house_payment_monthly_summary` [INNODB]... Done. [0.03 MB -> 0.03 MB] Saved: 0 MB
+Optimizing `ims_house_payment_split_monthly_summary` [INNODB]... Done. [0.63 MB -> 0.63 MB] Saved: 0 MB
+Optimizing `ims_house_pet` [INNODB]... Done. [0.03 MB -> 0.03 MB] Saved: 0 MB
+Optimizing `ims_installment` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_installment_detail` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_inventory` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_inventory_detail` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_meeting_config` [INNODB]... Done. [0.03 MB -> 0.03 MB] Saved: 0 MB
+Optimizing `ims_month` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_payment_voucher` [INNODB]... Done. [0.16 MB -> 0.16 MB] Saved: 0 MB
+Optimizing `ims_payment_voucher_items` [INNODB]... Done. [0.13 MB -> 0.13 MB] Saved: 0 MB
+Optimizing `ims_payroll` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_payroll_detail` [INNODB]... Done. [0.05 MB -> 0.05 MB] Saved: 0 MB
+Optimizing `ims_permission` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_petty_cash` [INNODB]... Done. [0.08 MB -> 0.08 MB] Saved: 0 MB
+Optimizing `ims_pgroup` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_products` [INNODB]... Done. [0.06 MB -> 0.06 MB] Saved: 0 MB
+Optimizing `ims_provinces` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_purchase` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_purchase_detail` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_reciepts` [INNODB]... Done. [0.11 MB -> 0.11 MB] Saved: 0 MB
+Optimizing `ims_register_meeting` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_supplier` [INNODB]... Done. [0.05 MB -> 0.05 MB] Saved: 0 MB
+Optimizing `ims_unit` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `ims_user` [INNODB]... Done. [0.14 MB -> 0.14 MB] Saved: 0 MB
+Optimizing `ims_user_login_logs` [INNODB]... Done. [0.05 MB -> 0.05 MB] Saved: 0 MB
+Optimizing `ims_visitor_contact` [INNODB]... Done. [0.09 MB -> 0.09 MB] Saved: 0 MB
+Optimizing `inventory_items` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `jobrecord` [INNODB]... Done. [0.09 MB -> 0.09 MB] Saved: 0 MB
+Optimizing `line_oa_images` [MYISAM]... Done. [0 MB -> 0 MB] Saved: 0 MB
+Optimizing `line_oa_messages` [MYISAM]... Done. [0 MB -> 0 MB] Saved: 0 MB
+Optimizing `memployee` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `menu_main` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `menu_sub` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `mposition` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `mwork_time` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `m_brand` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `m_category` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `m_config` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `m_income_deduct_type` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `m_plan` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+Optimizing `users` [MYISAM]... Done. [0 MB -> 0 MB] Saved: 0 MB
+Optimizing `visitor_badges` [INNODB]... Done. [0.02 MB -> 0.02 MB] Saved: 0 MB
+[SKIP] `v_checkins` is a VIEW
+[SKIP] `v_checkins_time` is a VIEW
+[SKIP] `v_ims_expenses` is a VIEW
+[SKIP] `v_ims_house` is a VIEW
+[SKIP] `v_ims_house_meeting` is a VIEW
+[SKIP] `v_ims_house_payment` is a VIEW
+[SKIP] `v_ims_house_payment_date` is a VIEW
+[SKIP] `v_ims_installment` is a VIEW
+[SKIP] `v_ims_installment_detail` is a VIEW
+[SKIP] `v_ims_inventory` is a VIEW
+[SKIP] `v_ims_inventory_detail` is a VIEW
+[SKIP] `v_ims_inventory_total` is a VIEW
+[SKIP] `v_ims_payment_voucher` is a VIEW
+[SKIP] `v_ims_payroll` is a VIEW
+[SKIP] `v_ims_products` is a VIEW
+[SKIP] `v_ims_purchase` is a VIEW
+[SKIP] `v_ims_purchase_detail` is a VIEW
+[SKIP] `v_ims_reciepts` is a VIEW
+[SKIP] `v_ims_user` is a VIEW
+[SKIP] `v_inventory_items` is a VIEW
+[SKIP] `v_i_payment_voucher` is a VIEW
+[SKIP] `v_jobrecord` is a VIEW
+[SKIP] `v_memployee` is a VIEW
+------------------------------------------------------------
+Optimization Completed - 2026-05-22 14:25:05
+Total Tables Processed: 56
+Total Tables Skipped: 23
+Total Space Saved: 0 MB

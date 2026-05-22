@@ -8,6 +8,9 @@
 $root_path = dirname(__FILE__);
 require_once $root_path . '/config/connect_db.php';
 
+// Start output buffering to capture all echo statements
+ob_start();
+
 // Set timeout to unlimited as this might take a while for large databases
 set_time_limit(0);
 
@@ -80,7 +83,21 @@ try {
     echo "Total Tables Skipped: $skippedCount\n";
     echo "Total Space Saved: " . round($totalSaved, 2) . " MB\n";
 
+    // Capture the buffer content
+    $output = ob_get_clean();
+
+    // Write to file (Overwrite mode)
+    file_put_contents($root_path . '/reindex_log.txt', $output);
+
+    // Also output to console for manual run visibility
+    echo $output;
+
 } catch (Exception $e) {
-    echo "CRITICAL ERROR: " . $e->getMessage() . "\n";
+    // If an error occurs, still try to log what we have
+    $output = ob_get_clean();
+    $output .= "\nCRITICAL ERROR: " . $e->getMessage() . "\n";
+    file_put_contents($root_path . '/reindex_log.txt', $output);
+    
+    echo $output;
     exit(1);
 }
