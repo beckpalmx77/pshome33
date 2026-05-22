@@ -131,7 +131,7 @@ try {
         'format' => 'A4'
     ]);
     $mpdf->WriteHTML($html);
-    $mpdf->Output("receipt_" . htmlspecialchars($row["doc_id"], ENT_QUOTES, 'UTF-8') . ".pdf", "D");
+    $mpdf->Output("receipt_" . htmlspecialchars($row["doc_id"] ?? '', ENT_QUOTES, 'UTF-8') . ".pdf", "D");
 
 } catch (Exception $e) {
     die("เกิดข้อผิดพลาด: " . $e->getMessage());

@@ -21,8 +21,8 @@ $output = '';
 foreach ($results as $row) {
     $output .= '<a href="#" class="list-group-item list-group-item-action supplier-item" 
                        data-id="' . $row['supplier_id'] . '" 
-                       data-name="' . htmlspecialchars($row['supplier_name']) . '">'
-        . htmlspecialchars($row['supplier_name']) .
+                       data-name="' . htmlspecialchars($row['supplier_name'] ?? '') . '">'
+        . htmlspecialchars($row['supplier_name'] ?? '') .
         '</a>';
 }
 

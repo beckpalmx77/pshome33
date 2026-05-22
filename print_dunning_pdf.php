@@ -31,7 +31,7 @@ $stmt->execute();
 $house = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$house) {
-    die("ไม่พบข้อมูลบ้านเลขที่ " . htmlspecialchars($house_number));
+    die("ไม่พบข้อมูลบ้านเลขที่ " . htmlspecialchars($house_number ?? ''));
 }
 
 // ดึงข้อมูลการชำระเงินของบ้านนี้
@@ -180,7 +180,7 @@ $html .= '
 $html .= '
 <p style="font-size:14pt; line-height: 1.8;">
 &nbsp;&nbsp;&nbsp;&nbsp;ตามที่ ' . $company['company_name'] . ' ได้มีมติเรียกเก็บค่าส่วนกลางจากสมาชิกเพื่อใช้ในการบริหารจัดการส่วนกลางของหมู่บ้าน นั้น<br><br>
-&nbsp;&nbsp;&nbsp;&nbsp;เนื่องจากท่านยังมิได้ชำระค่าส่วนกลางสำหรับบ้านเลขที่ <b>' . htmlspecialchars($house['house_number']) . '</b> ซอย <b>' . htmlspecialchars($house['alley']) . '</b> เป็นจำนวนทั้งสิ้น <b>' . number_format($total_overdue, 2) . ' บาท (' . $thai_text_total . ')</b> รายละเอียดตามตารางเดือนที่ค้างชำระดังนี้
+&nbsp;&nbsp;&nbsp;&nbsp;เนื่องจากท่านยังมิได้ชำระค่าส่วนกลางสำหรับบ้านเลขที่ <b>' . htmlspecialchars($house['house_number'] ?? '') . '</b> ซอย <b>' . htmlspecialchars($house['alley'] ?? '') . '</b> เป็นจำนวนทั้งสิ้น <b>' . number_format($total_overdue, 2) . ' บาท (' . $thai_text_total . ')</b> รายละเอียดตามตารางเดือนที่ค้างชำระดังนี้
 </p>
 <br>';
 

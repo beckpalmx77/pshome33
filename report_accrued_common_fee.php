@@ -102,7 +102,7 @@ $results = $stmt->fetchAll();
     <div class="card shadow-sm">
         <div class="card-header bg-danger text-white">
             <h3 class="mb-0"><i class="bi bi-file-earmark-excel-fill"></i> รายงานบ้านที่ค้างชำระค่าส่วนกลาง</h3>
-            <p class="mb-0">ข้อมูลประจำเดือน: <strong><?= htmlspecialchars($display_month_name) ?></strong> ปี <strong><?= $selected_year + 543 ?></strong></p>
+            <p class="mb-0">ข้อมูลประจำเดือน: <strong><?= htmlspecialchars($display_month_name ?? '') ?></strong> ปี <strong><?= $selected_year + 543 ?></strong></p>
         </div>
         <div class="card-body">
             <div class="table-responsive">

@@ -209,7 +209,7 @@ if ($_POST["action"] === 'GET_SUPPLIER') {
                 "supplier_id" => $row['supplier_id'],
                 "address" => $row['address'],
                 "supplier_name" => $row['supplier_name'],
-                "select" => "<button type='button' name='select' id='" . $row['supplier_id'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select' data-id='" . $row['supplier_id'] . "' data-name='" . htmlspecialchars($row['supplier_name']) . "' data-address='" . htmlspecialchars($row['address']) . "'>select <i class='fa fa-check' aria-hidden='true'></i></button>",
+                "select" => "<button type='button' name='select' id='" . $row['supplier_id'] . "' class='btn btn-outline-success btn-xs select' data-toggle='tooltip' title='select' data-id='" . $row['supplier_id'] . "' data-name='" . htmlspecialchars($row['supplier_name'] ?? '') . "' data-address='" . htmlspecialchars($row['address'] ?? '') . "'>select <i class='fa fa-check' aria-hidden='true'></i></button>",
             );
         }
 

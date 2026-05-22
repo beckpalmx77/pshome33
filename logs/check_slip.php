@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['slip_image'])) {
 
             <?php if ($qrResult): ?>
                 <p><strong>ข้อมูลดิบ (Raw Payload) สำหรับนำไปเช็ค API:</strong></p>
-                <code><?php echo htmlspecialchars($qrResult); ?></code>
+                <code><?php echo htmlspecialchars($qrResult ?? ''); ?></code>
                 <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
                     * หมายเหตุ: นี่คือรหัสสำหรับตรวจสอบ ไม่ใช่ยอดเงินโดยตรง ท่านต้องนำรหัสนี้ไปส่งให้ Bank API หรือผู้ให้บริการตรวจสอบสลิปอีกที
                 </p>

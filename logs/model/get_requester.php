@@ -16,9 +16,9 @@ if (isset($_POST['query'])) {
 
     foreach ($rows as $row) {
         echo '<a href="#" class="list-group-item list-group-item-action requester-item"
-                data-id="' . htmlspecialchars($row['emp_id']) . '"
-                data-name="' . htmlspecialchars($row['requester_name']) . '">' .
-            htmlspecialchars($row['requester_name']) .
+                data-id="' . htmlspecialchars($row['emp_id'] ?? '') . '"
+                data-name="' . htmlspecialchars($row['requester_name'] ?? '') . '">' .
+            htmlspecialchars($row['requester_name'] ?? '') .
             '</a>';
     }
 }

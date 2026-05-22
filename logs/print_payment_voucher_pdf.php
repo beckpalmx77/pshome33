@@ -17,7 +17,7 @@ $stmt_get_doc_no->execute();
 $result_doc_no = $stmt_get_doc_no->fetch(PDO::FETCH_ASSOC);
 
 if (!$result_doc_no || empty($result_doc_no['doc_no'])) {
-    die("ไม่พบเลขที่เอกสาร (doc_no) สำหรับ ID ที่ระบุ: " . htmlspecialchars($id));
+    die("ไม่พบเลขที่เอกสาร (doc_no) สำหรับ ID ที่ระบุ: " . htmlspecialchars($id ?? ''));
 }
 
 $doc_no = $result_doc_no['doc_no'];
@@ -35,7 +35,7 @@ $stmt->execute();
 $voucher_header = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$voucher_header) {
-    die("ไม่พบข้อมูลใบสำคัญจ่ายสำหรับเอกสารเลขที่ " . htmlspecialchars($doc_no));
+    die("ไม่พบข้อมูลใบสำคัญจ่ายสำหรับเอกสารเลขที่ " . htmlspecialchars($doc_no ?? ''));
 }
 
 // ดึงรายการ (Details from ims_payment_voucher_items โดยใช้ doc_no)
@@ -97,7 +97,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
     // ถ้าไม่ใช่เงินสดและไม่ใช่โอนเงิน ถือเป็นอื่นๆ
     if ($payment_method_value !== 'เงินสด' && $payment_method_value !== 'โอนเงิน') {
         $is_other_checked = 'checked="checked"';
-        $other_payment_method_display = ' (' . htmlspecialchars($payment_method_value) . ')';
+        $other_payment_method_display = ' (' . htmlspecialchars($payment_method_value ?? '') . ')';
     }
 
 
@@ -108,7 +108,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
                 <img src="img/logo/niti_ps33_header.png" height="40">
             </td>
             <td width="70%" align="left" valign="top">
-                ' . htmlspecialchars($company['company_name']) . '
+                ' . htmlspecialchars($company['company_name'] ?? '') . '
                 ' . htmlspecialchars($company['address_1'] . ' ' . $company['address_2'] . ' ' . $company['state'] . ' ' . $company['zip_code']) . '
             </td>
         </tr>
@@ -124,13 +124,13 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
 
     <table border="0" cellspacing="0" cellpadding="4" width="100%" style="font-size:12pt;">
         <tr>
-            <td align="left" width="50%"><b>เลขที่เอกสาร:</b> ' . htmlspecialchars($voucher_header['doc_no']) . '</td>
+            <td align="left" width="50%"><b>เลขที่เอกสาร:</b> ' . htmlspecialchars($voucher_header['doc_no'] ?? '') . '</td>
             <td align="right" width="50%"><b>วันที่:</b> ' . date('d/m/Y', strtotime($voucher_header['doc_date'])) . '</td>
         </tr>
         <tr>
             <td width="30%"><b>จ่ายให้แก่:</b> ' . htmlspecialchars($voucher_header['supplier_name'] ?? ' - ') . '</td>
-            <td width="40%"><b>ที่อยู่:</b> ' . htmlspecialchars($voucher_header['address']) . '</td>
-            <td width="30%"><b>จ่ายเพื่อ:</b> ' . htmlspecialchars($voucher_header['purpose']) . '</td>
+            <td width="40%"><b>ที่อยู่:</b> ' . htmlspecialchars($voucher_header['address'] ?? '') . '</td>
+            <td width="30%"><b>จ่ายเพื่อ:</b> ' . htmlspecialchars($voucher_header['purpose'] ?? '') . '</td>
         </tr>
         <tr>
             <td width="50%">
@@ -162,9 +162,9 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
 
             $html .= '<tr>
                 <td align="center">' . ($index + 1) . '</td>
-                <td>' . htmlspecialchars($item['product_name']) . ' (' . htmlspecialchars($item['remark']) . ') '. '</td>
+                <td>' . htmlspecialchars($item['product_name'] ?? '') . ' (' . htmlspecialchars($item['remark'] ?? '') . ') '. '</td>
                 <td align="right">' . number_format($quantity, 2) . '</td>
-                <td align="center">' . htmlspecialchars($item['unit_name']) . '</td>
+                <td align="center">' . htmlspecialchars($item['unit_name'] ?? '') . '</td>
                 <td align="right">' . number_format($item_amount, 2) . '</td>
             </tr>';
         }
@@ -188,22 +188,22 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
             <td width="25%" align="center">
                 <b>ผู้จัดทำ</b><br>
                 ' . $signature_placeholder . '<br>
-                (' . htmlspecialchars($voucher_header['create_name']) . ')
+                (' . htmlspecialchars($voucher_header['create_name'] ?? '') . ')
             </td>
             <td width="25%" align="center">
                 <b>ผู้ตรวจสอบ</b><br>
                 ' . $signature_placeholder . '<br>
-                (' . htmlspecialchars($voucher_header['checker_name']) . ')
+                (' . htmlspecialchars($voucher_header['checker_name'] ?? '') . ')
             </td>
             <td width="25%" align="center">
                 <b>ผู้อนุมัติ</b><br>
                 ' . $signature_placeholder . '<br>
-                (' . htmlspecialchars($voucher_header['approve_name']) . ')
+                (' . htmlspecialchars($voucher_header['approve_name'] ?? '') . ')
             </td>
             <td width="25%" align="center">
                 <b>ผู้รับเงิน</b><br>
                 ' . $signature_placeholder . '<br>
-                (' . htmlspecialchars($voucher_header['receipt_name']) . ')
+                (' . htmlspecialchars($voucher_header['receipt_name'] ?? '') . ')
             </td>
         </tr>
     </table>';
@@ -216,7 +216,7 @@ function generate_receipt_html($company, $voucher_header, $items, $total, $thai_
                     วันที่พิมพ์: ' . date('d/m/Y H:i') . '
                 </td>
                 <td align="right">
-                    ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'เจ้าหน้าที่นิติฯ') . '
+                    ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name'] ?? '') : 'เจ้าหน้าที่นิติฯ') . '
                 </td>
             </tr>
         </table>';

@@ -88,13 +88,13 @@ if (strlen($_SESSION['alogin']) == "") {
                                                     <label for="start_badge_number">หมายเลขบัตร เริ่มต้น :</label>
                                                     <input type="number" name="start_badge_number" id="start_badge_number"
                                                            class="form-control" required min="1"
-                                                           value="<?php echo htmlspecialchars($new_start_number); ?>">
+                                                           value="<?php echo htmlspecialchars($new_start_number ?? ''); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="end_badge_number">หมายเลขบัตร ถึง :</label>
                                                     <input type="number" name="end_badge_number" id="end_badge_number"
                                                            class="form-control" required min="1"
-                                                           value="<?php echo htmlspecialchars($new_end_number); ?>">
+                                                           value="<?php echo htmlspecialchars($new_end_number ?? ''); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="print_date">วันที่พิมพ์ :</label>

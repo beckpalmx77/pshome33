@@ -1,8 +1,8 @@
 <?php
 // checkin_meeting_complete.php
 
-$fullname = isset($_GET['name']) ? htmlspecialchars($_GET['name']) : 'ผู้ใช้งาน';
-$point = isset($_GET['point']) ? htmlspecialchars($_GET['point']) : '';
+$fullname = isset($_GET['name']) ? htmlspecialchars($_GET['name'] ?? '') : 'ผู้ใช้งาน';
+$point = isset($_GET['point']) ? htmlspecialchars($_GET['point'] ?? '') : '';
 $status = isset($_GET['status']) ? $_GET['status'] : 'success';
 
 // กำหนดข้อความและสีตามสถานะ

@@ -61,7 +61,7 @@ $receipt = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // หากไม่พบข้อมูลใบเสร็จ ให้แสดงข้อความผิดพลาดและหยุดการทำงาน
 if (!$receipt) {
-    die("ไม่พบข้อมูลใบเสร็จสำหรับการผ่อนชำระนี้ (Installment ID: " . htmlspecialchars($installment_id) . ", Line No: " . htmlspecialchars($line_no) . ")");
+    die("ไม่พบข้อมูลใบเสร็จสำหรับการผ่อนชำระนี้ (Installment ID: " . htmlspecialchars($installment_id ?? '') . ", Line No: " . htmlspecialchars($line_no ?? '') . ")");
 }
 
 // สำหรับใบเสร็จงวดผ่อนชำระนี้ จะมีเพียง 1 รายการ
@@ -168,7 +168,7 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
     <td align="center">
         <b>ผู้รับเงิน</b><br>
         ' . $signature_img . '<br>
-        (' . htmlspecialchars($full_name) . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: เจ้าหน้าที่นิติฯ
+        (' . htmlspecialchars($full_name ?? '') . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: เจ้าหน้าที่นิติฯ
     </td>
 </tr>
 <tr>

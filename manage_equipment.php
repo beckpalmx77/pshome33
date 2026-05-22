@@ -142,7 +142,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                         $stmt->execute();
                                                                         $item_names = $stmt->fetchAll(PDO::FETCH_COLUMN);
                                                                         foreach ($item_names as $item_name) {
-                                                                            echo '<option value="' . htmlspecialchars($item_name) . '">';
+                                                                            echo '<option value="' . htmlspecialchars($item_name ?? '') . '">';
                                                                         }
                                                                         ?>
                                                                     </datalist>

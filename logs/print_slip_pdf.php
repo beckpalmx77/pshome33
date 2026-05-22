@@ -159,7 +159,7 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
         if (isset($income_items[$i])) {
             $item = $income_items[$i];
             $html .= '<tr>
-                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' .  '<small style="font-size: 9px !important;"><i>' . htmlspecialchars($item['remark']) . '</i></small>' . '</td>
+                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' .  '<small style="font-size: 9px !important;"><i>' . htmlspecialchars($item['remark'] ?? '') . '</i></small>' . '</td>
                 <td align="right">' . number_format($item['quantity'] ?? 0, 2) . '</td>
                 <td align="right">' . number_format($item['total_amount'] ?? 0, 2) . '</td>
             </tr>';
@@ -203,7 +203,7 @@ function generate_payslip_html($company, $payroll_master, $payroll_details, $tha
             $item = $deduction_items[$i];
             // Corrected: htmlspecialchars added, font-size in px with !important, and cleaner parentheses
             $html .= '<tr>
-                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' . '<small style="font-size: 9px !important;"><i>(' . htmlspecialchars($item['remark']) . ')</i></small>' . '</td>
+                <td>' . ($item['icd_type_desc'] ?? $item['icd_type_id']) . ' ' . '<small style="font-size: 9px !important;"><i>(' . htmlspecialchars($item['remark'] ?? '') . ')</i></small>' . '</td>
                 <td align="right">' . number_format($item['quantity'] ?? 0, 2) . '</td>
                 <td align="right">' . number_format($item['total_amount'] ?? 0, 2) . '</td>
             </tr>';

@@ -32,7 +32,7 @@ $point = isset($_GET['point']) ? $_GET['point'] : 'General';
             </div>
 
             <form action="save_checkin_meeting_data.php" method="POST">
-                <input type="hidden" name="checkin_point" value="<?php echo htmlspecialchars($point); ?>">
+                <input type="hidden" name="checkin_point" value="<?php echo htmlspecialchars($point ?? ''); ?>">
                 <input type="hidden" name="lat_addr" id="lat_addr" value="">
                 <input type="hidden" name="long_addr" id="long_addr" value="">
 

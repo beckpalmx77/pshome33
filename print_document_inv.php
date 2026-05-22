@@ -95,13 +95,13 @@ if (!$data) {
     <hr>
     <div class="row">
         <div class="col-6 bordered p-2">
-            <b>เลขที่บ้าน:</b> <?= htmlspecialchars($data['house_number']) ?><br>
-            <b>รายละเอียด:</b> <?= htmlspecialchars($data['detail']) ?><br>
-            <b>ประเภทการชำระ:</b> <?= htmlspecialchars($data['payment_type']) ?>
+            <b>เลขที่บ้าน:</b> <?= htmlspecialchars($data['house_number'] ?? '') ?><br>
+            <b>รายละเอียด:</b> <?= htmlspecialchars($data['detail'] ?? '') ?><br>
+            <b>ประเภทการชำระ:</b> <?= htmlspecialchars($data['payment_type'] ?? '') ?>
         </div>
         <div class="col-6 bordered p-2">
-            <b>วันที่ชำระ:</b> <?= htmlspecialchars($data['payment_date']) ?><br>
-            <b>เลขที่เอกสาร:</b> <?= htmlspecialchars($data['doc_id']) ?><br>
+            <b>วันที่ชำระ:</b> <?= htmlspecialchars($data['payment_date'] ?? '') ?><br>
+            <b>เลขที่เอกสาร:</b> <?= htmlspecialchars($data['doc_id'] ?? '') ?><br>
         </div>
     </div>
     <table class="table table-bordered mt-3">
@@ -115,22 +115,22 @@ if (!$data) {
         </thead>
         <tbody>
         <tr>
-            <td><?= htmlspecialchars($data['period_year']) ?></td>
-            <td><?= htmlspecialchars($period_month_start_name) ?></td>
-            <td><?= htmlspecialchars($period_month_to_name) ?></td>
-            <td><?= htmlspecialchars($data['amount']) ?></td>
+            <td><?= htmlspecialchars($data['period_year'] ?? '') ?></td>
+            <td><?= htmlspecialchars($period_month_start_name ?? '') ?></td>
+            <td><?= htmlspecialchars($period_month_to_name ?? '') ?></td>
+            <td><?= htmlspecialchars($data['amount'] ?? '') ?></td>
         </tr>
         </tbody>
     </table>
     <div class="row">
         <div class="col-6">
-            <p><b>หมายเหตุ:</b> <?= htmlspecialchars($data['remark']) ?></p>
+            <p><b>หมายเหตุ:</b> <?= htmlspecialchars($data['remark'] ?? '') ?></p>
         </div>
         <div class="col-6">
             <table class="table table-bordered">
                 <tr>
                     <td><b>รวมทั้งสิ้น</b></td>
-                    <td><?= htmlspecialchars($data['amount']) ?> บาท</td>
+                    <td><?= htmlspecialchars($data['amount'] ?? '') ?> บาท</td>
                 </tr>
             </table>
         </div>

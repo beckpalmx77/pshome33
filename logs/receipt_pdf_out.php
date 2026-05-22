@@ -194,14 +194,14 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $html .= '<tr>
         <td width="4%">' . $i++ . '</td>
         <td width="10%">' . date('d/m/Y', strtotime($row['payment_date'])) . '</td>
-        <td width="8%">' . htmlspecialchars($row['house_number']) . '</td>
-        <td width="12%">' . htmlspecialchars($row['month_name_start']) . '</td>
-        <td width="12%">' . htmlspecialchars($row['month_name_to']) . '</td>
-        <td width="7%" align="center">' . htmlspecialchars($row['period_year']) . '</td>
+        <td width="8%">' . htmlspecialchars($row['house_number'] ?? '') . '</td>
+        <td width="12%">' . htmlspecialchars($row['month_name_start'] ?? '') . '</td>
+        <td width="12%">' . htmlspecialchars($row['month_name_to'] ?? '') . '</td>
+        <td width="7%" align="center">' . htmlspecialchars($row['period_year'] ?? '') . '</td>
         <td width="10%" align="right">' . number_format($amount, 2) . '</td>
-        <td width="14%">' . htmlspecialchars($row['payment_status_desc']) . '</td>
-        <td width="17%">' . htmlspecialchars($row['create_by']) . '</td>
-        <td width="8%">' . htmlspecialchars($row['payment_method']) . '</td>
+        <td width="14%">' . htmlspecialchars($row['payment_status_desc'] ?? '') . '</td>
+        <td width="17%">' . htmlspecialchars($row['create_by'] ?? '') . '</td>
+        <td width="8%">' . htmlspecialchars($row['payment_method'] ?? '') . '</td>
     </tr>';
 }
 

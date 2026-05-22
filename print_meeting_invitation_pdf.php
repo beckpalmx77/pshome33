@@ -130,7 +130,7 @@ $html_content = '
 
 if (!empty($agenda_items)) {
     foreach ($agenda_items as $item) {
-        $html_content .= '<li>' . htmlspecialchars($item) . '</li>';
+        $html_content .= '<li>' . htmlspecialchars($item ?? '') . '</li>';
     }
 } else {
     $html_content .= '
@@ -162,7 +162,7 @@ $html_signature = '
 $remark = isset($_POST['remark']) ? trim($_POST['remark']) : '';
 if (!empty($remark)) {
     $html_signature .= '<hr style="margin-top: 5px; margin-bottom: 3px;">';
-    $html_signature .= '<p style="font-size: 10pt; margin: 0;">' . htmlspecialchars($remark) . '</p>';
+    $html_signature .= '<p style="font-size: 10pt; margin: 0;">' . htmlspecialchars($remark ?? '') . '</p>';
 }
 
 $pdf->writeHTML($html_header . $html_content . $html_signature, true, false, true, false, '');

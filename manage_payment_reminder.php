@@ -222,7 +222,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <select name="alley" class="form-select">
                                                 <option value="">ทั้งหมด</option>
                                                 <?php foreach ($alleys as $a): ?>
-                                                    <option value="<?= htmlspecialchars($a['alley']) ?>" <?= ($filter_alley == $a['alley']) ? 'selected' : '' ?>>ซอย <?= htmlspecialchars($a['alley']) ?></option>
+                                                    <option value="<?= htmlspecialchars($a['alley'] ?? '') ?>" <?= ($filter_alley == $a['alley']) ? 'selected' : '' ?>>ซอย <?= htmlspecialchars($a['alley'] ?? '') ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -372,7 +372,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <tr>
                                                     <td class="text-center">
                                                         <input type="checkbox" class="form-check-input row-checkbox"
-                                                               value="<?= htmlspecialchars($row['house_number']) ?>"
+                                                               value="<?= htmlspecialchars($row['house_number'] ?? '') ?>"
                                                                data-contact="<?= htmlspecialchars($row['contact_name'] ?? '-') ?>"
                                                                data-phone="<?= htmlspecialchars($row['phone_number'] ?? '-') ?>"
                                                                data-alley="<?= htmlspecialchars($row['alley'] ?? '-') ?>"
@@ -383,7 +383,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <?= $row['has_line'] ? '' : 'disabled' ?>>
                                                     </td>
                                                     <td class="text-center"><?= $i++ ?></td>
-                                                    <td><?= htmlspecialchars($row['house_number']) ?></td>
+                                                    <td><?= htmlspecialchars($row['house_number'] ?? '') ?></td>
                                                     <td><?= htmlspecialchars($row['alley'] ?? '') ?></td>
                                                     <td><?= htmlspecialchars($row['contact_name'] ?? '') ?></td>
                                                     <td><?= htmlspecialchars($row['phone_number'] ?? '') ?></td>

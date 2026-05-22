@@ -131,6 +131,18 @@ if ($pm === "cash") {
     $payment_method_display = 'โอนเงิน';
 }
 
+function formatRemark($remark)
+{
+    if (empty($remark)) {
+        return '';
+    }
+    // ถ้าข้อความเป็นเลขที่บ้าน เช่น 67/8 หรือ 68/56 ให้ใส่คำว่า บ้านเลขที่ ตามด้วย remark
+    if (preg_match('/^\d+\/\d+$/', trim($remark))) {
+        return 'บ้านเลขที่ ' . $remark;
+    }
+    return $remark;
+}
+
 // ===== 4. สร้าง PDF ด้วยคลาสใหม่ MYPDF =====
 $pdf = new MYPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator('My System');
@@ -181,10 +193,11 @@ $html = '<table border="1" cellpadding="4" cellspacing="0" style="font-size:9pt;
             <th width="5%" align="center">ลำดับ</th>
             <th width="10%" align="center">วันที่</th>
             <th width="5%" align="center">ปี</th>
-            <th width="30%" align="center">รายละเอียดรายรับ</th>
+            <th width="20%" align="center">รายละเอียดรายรับ</th>
             <th width="15%" align="center">ผู้ชำระ</th>
             <th width="10%" align="center">วิธีชำระ</th>
-            <th width="15%" align="center">จำนวนเงิน (บาท)</th>
+            <th width="15%" align="center">หมายเหตุ</th>
+            <th width="10%" align="center">จำนวนเงิน (บาท)</th>
             <th width="10%" align="center">สถานะ</th>            
         </tr>
     </thead>
@@ -199,12 +212,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $html .= '<tr>
         <td width="5%">' . $i++ . '</td>
         <td width="10%">' . date('d/m/Y', strtotime($row['reciept_date'])) . '</td>
-        <td width="5%">' . htmlspecialchars($row['rec_year']) . '</td>        
-        <td width="30%">' . htmlspecialchars($row['description']) . '</td>
-        <td width="15%">' . htmlspecialchars($row['supplier_name']) . '</td>        
-        <td width="10%">' . htmlspecialchars($row['payment_method']) . '</td>
-        <td width="15%" align="right">' . number_format($amount, 2) . '</td>
-        <td width="10%">' . htmlspecialchars($approve_status_desc) . '</td>
+        <td width="5%">' . htmlspecialchars($row['rec_year'] ?? '') . '</td>        
+        <td width="20%">' . htmlspecialchars($row['description'] ?? '') . '</td>
+        <td width="15%">' . htmlspecialchars($row['supplier_name'] ?? '') . '</td>        
+        <td width="10%">' . htmlspecialchars($row['payment_method'] ?? '') . '</td>
+        <td width="15%">' . htmlspecialchars(formatRemark($row['remark'])) . '</td>
+        <td width="10%" align="right">' . number_format($amount, 2) . '</td>
+        <td width="10%">' . htmlspecialchars($approve_status_desc ?? '') . '</td>
     </tr>';
 }
 
@@ -214,10 +228,11 @@ $html .= '</tbody>
             <td width="5%"></td>
             <td width="10%"></td>            
             <td width="5%"></td>
-            <td width="30%"></td>
+            <td width="20%"></td>
             <td width="15%"></td>
-            <td width="10%" align="center">รวม</td>
-            <td width="15%" align="right">' . number_format($total_amount, 2) . '</td>            
+            <td width="10%"></td>
+            <td width="15%" align="center">รวม</td>
+            <td width="10%" align="right">' . number_format($total_amount, 2) . '</td>            
             <td width="10%"></td>
         </tr>
     </tfoot>

@@ -79,7 +79,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <small class="text-muted d-block mb-3">Path: <?php echo htmlspecialchars($sqlLogFile); ?></small>
+                                    <small class="text-muted d-block mb-3">Path: <?php echo htmlspecialchars($sqlLogFile ?? ''); ?></small>
 
                                     <div class="log-container">
                                         <?php if (empty($logs) || (count($logs) == 1 && trim($logs[0]) == "")): ?>
@@ -101,7 +101,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                                             <div class="timestamp-box">
                                                                 <i class="far fa-clock text-primary"></i>
-                                                                <span><?php echo htmlspecialchars($timeInfo); ?></span>
+                                                                <span><?php echo htmlspecialchars($timeInfo ?? ''); ?></span>
                                                             </div>
                                                             <button class="btn btn-xs btn-primary btn-copy shadow-sm"
                                                                     onclick="copyToClipboard(this, `<?php echo addslashes($sqlQuery); ?>;`)">
@@ -109,7 +109,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             </button>
                                                         </div>
                                                         <div class="position-relative">
-                                                            <pre><code><?php echo htmlspecialchars($sqlQuery); ?>;</code></pre>
+                                                            <pre><code><?php echo htmlspecialchars($sqlQuery ?? ''); ?>;</code></pre>
                                                         </div>
                                                     </div>
                                                 </div>

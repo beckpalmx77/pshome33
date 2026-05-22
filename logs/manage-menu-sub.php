@@ -160,7 +160,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                             $stmt->execute();
                                                                             $icons = $stmt->fetchAll(PDO::FETCH_COLUMN);
                                                                             foreach ($icons as $icon) {
-                                                                                echo '<option value="' . htmlspecialchars($icon) . '">';
+                                                                                echo '<option value="' . htmlspecialchars($icon ?? '') . '">';
                                                                             }
                                                                             ?>
                                                                         </datalist>

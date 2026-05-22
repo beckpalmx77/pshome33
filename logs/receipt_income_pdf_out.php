@@ -199,12 +199,12 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $html .= '<tr>
         <td width="5%">' . $i++ . '</td>
         <td width="10%">' . date('d/m/Y', strtotime($row['reciept_date'])) . '</td>
-        <td width="5%">' . htmlspecialchars($row['rec_year']) . '</td>        
-        <td width="30%">' . htmlspecialchars($row['description']) . '</td>
-        <td width="15%">' . htmlspecialchars($row['supplier_name']) . '</td>        
-        <td width="10%">' . htmlspecialchars($row['payment_method']) . '</td>
+        <td width="5%">' . htmlspecialchars($row['rec_year'] ?? '') . '</td>        
+        <td width="30%">' . htmlspecialchars($row['description'] ?? '') . '</td>
+        <td width="15%">' . htmlspecialchars($row['supplier_name'] ?? '') . '</td>        
+        <td width="10%">' . htmlspecialchars($row['payment_method'] ?? '') . '</td>
         <td width="15%" align="right">' . number_format($amount, 2) . '</td>
-        <td width="10%">' . htmlspecialchars($approve_status_desc) . '</td>
+        <td width="10%">' . htmlspecialchars($approve_status_desc ?? '') . '</td>
     </tr>';
 }
 

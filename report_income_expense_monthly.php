@@ -251,7 +251,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <?php foreach ($expenses_by_cat as $cat => $val): ?>
                                                     <tr>
                                                         <td>รายจ่าย</td>
-                                                        <td><?= htmlspecialchars($cat) ?></td>
+                                                        <td><?= htmlspecialchars($cat ?? '') ?></td>
                                                         <td class="text-end font-weight-bold text-danger"><?= number_format($val, 2) ?></td>
                                                     </tr>
                                                     <?php endforeach; ?>

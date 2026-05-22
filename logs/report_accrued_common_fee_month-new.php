@@ -172,7 +172,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                     <div class="mt-4">
                                         <h5><i class="bi bi-file-earmark-text-fill"></i> ผลการค้นหา:
                                             บ้านที่ค้างชำระประจำเดือน
-                                            <span class="text-danger font-weight-bold"><?= htmlspecialchars($col_month_thai) ?></span>
+                                            <span class="text-danger font-weight-bold"><?= htmlspecialchars($col_month_thai ?? '') ?></span>
                                             ปี <strong><?= $col_year_thai ?></strong>
                                         </h5>
 

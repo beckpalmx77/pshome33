@@ -21,8 +21,8 @@ $output = '';
 foreach ($results as $row) {
     $output .= '<a href="#" class="list-group-item list-group-item-action unit-item" 
                        data-id="' . $row['unit_id'] . '" 
-                       data-unit_name="' . htmlspecialchars($row['unit_name']) . '">'
-        . htmlspecialchars($row['unit_name']) . '</a>';
+                       data-unit_name="' . htmlspecialchars($row['unit_name'] ?? '') . '">'
+        . htmlspecialchars($row['unit_name'] ?? '') . '</a>';
 }
 
 echo $output ?: '<div class="list-group-item">ไม่พบข้อมูล</div>';

@@ -178,7 +178,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                     <div class="mt-4">
                                         <h5><i class="bi bi-file-earmark-text-fill"></i> ผลการค้นหา:
-                                            รายการค้างชำระช่วง <span class="text-danger font-weight-bold"><?= htmlspecialchars($display_range_name) ?></span>
+                                            รายการค้างชำระช่วง <span class="text-danger font-weight-bold"><?= htmlspecialchars($display_range_name ?? '') ?></span>
                                             ปี <strong><?= $selected_year + 543 ?></strong>
                                         </h5>
 

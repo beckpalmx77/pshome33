@@ -39,19 +39,19 @@ $html = '
     <div class="info-box">
         <div class="info-row">
             <span class="label">รหัส:</span>
-            <span class="value">' . htmlspecialchars($row['id']) . '</span>
+            <span class="value">' . htmlspecialchars($row['id'] ?? '') . '</span>
         </div>
         <div class="info-row">
             <span class="label">ชื่อ:</span>
-            <span class="value">' . htmlspecialchars($row['name']) . '</span>
+            <span class="value">' . htmlspecialchars($row['name'] ?? '') . '</span>
         </div>
         <div class="info-row">
             <span class="label">ที่อยู่:</span>
-            <span class="value">' . htmlspecialchars($row['address']) . '</span>
+            <span class="value">' . htmlspecialchars($row['address'] ?? '') . '</span>
         </div>
         <div class="info-row">
             <span class="label">ห้อง:</span>
-            <span class="value">' . htmlspecialchars($row['room']) . '</span>
+            <span class="value">' . htmlspecialchars($row['room'] ?? '') . '</span>
         </div>
     </div>
     

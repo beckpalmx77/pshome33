@@ -42,7 +42,7 @@ $html = '
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>สลิปเงินเดือน - ' . htmlspecialchars($master_data['doc_no']) . '</title>
+    <title>สลิปเงินเดือน - ' . htmlspecialchars($master_data['doc_no'] ?? '') . '</title>
     <style>
         body {
             font-family: "thsarabunnew", "Garuda", "sans-serif"; /* Use a font that supports Thai characters */
@@ -125,16 +125,16 @@ $html = '
             <h2>สลิปเงินเดือน</h2>
             <p>[ชื่อบริษัทของคุณ]</p>
             <p>[ที่อยู่บริษัทของคุณ]</p>
-            <p>ประจำเดือน: ' . htmlspecialchars(getThaiMonthName($master_data['payroll_month'])) . ' ' . htmlspecialchars($master_data['payroll_year']) . '</p>
+            <p>ประจำเดือน: ' . htmlspecialchars(getThaiMonthName($master_data['payroll_month'])) . ' ' . htmlspecialchars($master_data['payroll_year'] ?? '') . '</p>
         </div>
 
         <table>
             <tr>
-                <td style="width: 50%;"><strong>เลขที่เอกสาร:</strong> ' . htmlspecialchars($master_data['doc_no']) . '</td>
-                <td style="width: 50%;"><strong>วันที่เอกสาร:</strong> ' . htmlspecialchars($master_data['doc_date']) . '</td>
+                <td style="width: 50%;"><strong>เลขที่เอกสาร:</strong> ' . htmlspecialchars($master_data['doc_no'] ?? '') . '</td>
+                <td style="width: 50%;"><strong>วันที่เอกสาร:</strong> ' . htmlspecialchars($master_data['doc_date'] ?? '') . '</td>
             </tr>
             <tr>
-                <td><strong>รหัสพนักงาน:</strong> ' . htmlspecialchars($master_data['emp_id']) . '</td>
+                <td><strong>รหัสพนักงาน:</strong> ' . htmlspecialchars($master_data['emp_id'] ?? '') . '</td>
                 <td><strong>ชื่อพนักงาน:</strong> [ดึงจาก DB หรือส่งมา]</td>
             </tr>
             <tr>
@@ -157,7 +157,7 @@ foreach ($detail_data as $item) {
     if ($item['icd_type_sign'] === '+') {
         $html .= '
                     <tr>
-                        <td>' . htmlspecialchars($item['icd_type_desc']) . '</td>
+                        <td>' . htmlspecialchars($item['icd_type_desc'] ?? '') . '</td>
                         <td class="text-right">' . htmlspecialchars(number_format($item['amount'], 2)) . '</td>
                     </tr>';
         $total_income += $item['amount'];
@@ -185,7 +185,7 @@ foreach ($detail_data as $item) {
     if ($item['icd_type_sign'] === '-') {
         $html .= '
                     <tr>
-                        <td>' . htmlspecialchars($item['icd_type_desc']) . '</td>
+                        <td>' . htmlspecialchars($item['icd_type_desc'] ?? '') . '</td>
                         <td class="text-right">' . htmlspecialchars(number_format($item['amount'], 2)) . '</td>
                     </tr>';
         $total_deduction += $item['amount'];

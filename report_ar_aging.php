@@ -221,8 +221,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <select name="alley" id="alley" class="form-select">
                                                 <option value="">ทั้งหมด</option>
                                                 <?php foreach ($alleys as $a): ?>
-                                                    <option value="<?= htmlspecialchars($a['alley']) ?>" <?= ($filter_alley == $a['alley']) ? 'selected' : '' ?>>
-                                                        ซอย <?= htmlspecialchars($a['alley']) ?>
+                                                    <option value="<?= htmlspecialchars($a['alley'] ?? '') ?>" <?= ($filter_alley == $a['alley']) ? 'selected' : '' ?>>
+                                                        ซอย <?= htmlspecialchars($a['alley'] ?? '') ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
@@ -378,7 +378,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <td class="text-center">
                                                                 <button type="button"
                                                                         class="btn btn-outline-success btn-sm btn-line-notify"
-                                                                        data-house="<?= htmlspecialchars($row['house_number']) ?>"
+                                                                        data-house="<?= htmlspecialchars($row['house_number'] ?? '') ?>"
                                                                         data-ref_year="<?= $ref_year ?>"
                                                                         data-ref_month="<?= $ref_month ?>"
                                                                         title="ส่งแจ้งเตือนผ่าน LINE">

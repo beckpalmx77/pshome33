@@ -24,6 +24,18 @@ if (isset($_POST["payment_method"])) {
 
 $reciepts_data = fetchRecieptsData($conn, 'v_ims_reciepts', $start_date, $end_date, $payment_method_sql);
 
+function formatRemark($remark)
+{
+    if (empty($remark)) {
+        return '';
+    }
+    // ถ้าข้อความเป็นเลขที่บ้าน เช่น 67/8 หรือ 68/56 ให้ใส่คำว่า บ้านเลขที่ ตามด้วย remark
+    if (preg_match('/^\d+\/\d+$/', trim($remark))) {
+        return 'บ้านเลขที่ ' . $remark;
+    }
+    return $remark;
+}
+
 function fetchRecieptsData($conn, $table, $start_date, $end_date, $payment_method_sql)
 {
     if (empty($start_date) || empty($end_date)) {
@@ -65,7 +77,7 @@ function exportToCSV($data, $start_date, $end_date)
     $output = fopen('php://output', 'w');
 
     // Header
-    fputcsv($output, ['ลำดับ', 'วันที่', 'ปี', 'รายละเอียดรายรับ', 'ผู้ชำระ', 'วิธีชำระ', 'จำนวนเงิน (บาท)', 'สถานะ']);
+    fputcsv($output, ['ลำดับ', 'วันที่', 'ปี', 'รายละเอียดรายรับ', 'ผู้ชำระ', 'วิธีชำระ', 'หมายเหตุ', 'จำนวนเงิน (บาท)', 'สถานะ']);
 
     $sum_amount = 0; // ตัวแปรเก็บยอดรวม
 
@@ -84,6 +96,7 @@ function exportToCSV($data, $start_date, $end_date)
             $row->description,
             $row->supplier_name,
             $row->payment_method,
+            formatRemark($row->remark),
             number_format($amount, 2), // รูปแบบ 2 ตำแหน่งทศนิยม
             $approve_status_desc
         ]);
@@ -91,7 +104,7 @@ function exportToCSV($data, $start_date, $end_date)
 
     // แสดงแถวสุดท้ายเป็นยอดรวม
     fputcsv($output, [
-        '', '', '', '', '', 'รวมทั้งหมด',
+        '', '', '', '', '', '', 'รวมทั้งหมด',
         number_format($sum_amount, 2),
         '', ''
     ]);
@@ -199,6 +212,7 @@ function exportToCSV($data, $start_date, $end_date)
                     <th>รายละเอียดรายรับ</th>
                     <th>ผู้ชำระ</th>
                     <th>วิธีชำระ</th>
+                    <th>หมายเหตุ</th>
                     <th>จำนวนเงิน (บาท)</th>
                     <th>สถานะ</th>
                 </tr>
@@ -225,6 +239,7 @@ function exportToCSV($data, $start_date, $end_date)
                         <td><?php echo htmlentities($row_reciepts->description); ?></td>
                         <td><?php echo htmlentities($row_reciepts->supplier_name); ?></td>
                         <td><?php echo htmlentities($row_reciepts->payment_method); ?></td>
+                        <td><?php echo htmlentities(formatRemark($row_reciepts->remark)); ?></td>
                         <td class="text-end"><?php echo htmlentities($row_reciepts->amount); ?></td>
                         <td><?php echo $approve_status_desc; ?></td>
                     </tr>
@@ -232,8 +247,8 @@ function exportToCSV($data, $start_date, $end_date)
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="6" class="text-end">รวมทั้งหมด:</th>
-                    <th class="text-end">id="totalAmountFooter"></th>
+                    <th colspan="7" class="text-end">รวมทั้งหมด:</th>
+                    <th class="text-end" id="totalAmountFooter"></th>
                     <th colspan="1"></th>
                 </tr>
                 </tfoot>
@@ -294,14 +309,14 @@ function exportToCSV($data, $start_date, $end_date)
 
                 // รวมคอลัมน์จำนวนเงินที่ index (คอลัมน์ "จำนวนเงินที่ชำระ")
                 let total = api
-                    .column(6, {page: 'all'}) // ใช้ข้อมูลทั้งตาราง
+                    .column(7, {page: 'all'}) // ใช้ข้อมูลทั้งตาราง
                     .data()
                     .reduce(function (a, b) {
                         return parseValue(a) + parseValue(b);
                     }, 0);
 
                 // แสดงผลรวมใน footer
-                $(api.column(6).footer()).html(
+                $(api.column(7).footer()).html(
                     total.toLocaleString('en-US', {minimumFractionDigits: 2})
                 );
             }

@@ -10,10 +10,10 @@ if (isset($_POST['query'])) {
 
     foreach ($suppliers as $row) {
         echo '<a href="#" class="list-group-item list-group-item-action supplier-item" 
-                 data-id="' . htmlspecialchars($row['supplier_id']) . '" 
-                 data-address="' . htmlspecialchars($row['address']) . '" 
-                 data-name="' . htmlspecialchars($row['supplier_name']) . '">'
-            . htmlspecialchars($row['supplier_name']) .
+                 data-id="' . htmlspecialchars($row['supplier_id'] ?? '') . '" 
+                 data-address="' . htmlspecialchars($row['address'] ?? '') . '" 
+                 data-name="' . htmlspecialchars($row['supplier_name'] ?? '') . '">'
+            . htmlspecialchars($row['supplier_name'] ?? '') .
             '</a>';
     }
 }

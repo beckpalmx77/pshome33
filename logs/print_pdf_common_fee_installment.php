@@ -23,7 +23,7 @@ $stmt_main->execute();
 $main_installment = $stmt_main->fetch(PDO::FETCH_ASSOC);
 
 if (!$main_installment) {
-    die("ไม่พบข้อมูลการผ่อนชำระสำหรับ Installment ID: " . htmlspecialchars($installment_id_param));
+    die("ไม่พบข้อมูลการผ่อนชำระสำหรับ Installment ID: " . htmlspecialchars($installment_id_param ?? ''));
 }
 
 // เตรียมรายการสำหรับใบเสร็จ (เน้น down_payment เป็นหลัก)
@@ -89,16 +89,16 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
 
     <table border="0" cellspacing="0" cellpadding="2" width="100%" style="font-size:11pt;">
         <tr>        
-            <td><b>' . htmlspecialchars($company['company_name']) . '</b></td>
-            <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . htmlspecialchars($main_installment['installment_id']) . '</td>
+            <td><b>' . htmlspecialchars($company['company_name'] ?? '') . '</b></td>
+            <td align="right"><b>เลขที่ใบเสร็จ:</b> ' . htmlspecialchars($main_installment['installment_id'] ?? '') . '</td>
         </tr>
         <tr>
-            <td><b>ที่อยู่:</b> ' . htmlspecialchars($company['address_1']) . ' ' . htmlspecialchars($company['address_2']) . ' ' . htmlspecialchars($company['state']) . ' ' . htmlspecialchars($company['zip_code']) . '</td>
+            <td><b>ที่อยู่:</b> ' . htmlspecialchars($company['address_1'] ?? '') . ' ' . htmlspecialchars($company['address_2'] ?? '') . ' ' . htmlspecialchars($company['state'] ?? '') . ' ' . htmlspecialchars($company['zip_code'] ?? '') . '</td>
             <td align="right"><b>วันที่:</b> ' . date('d/m/Y', strtotime($main_installment['doc_date'])) . '</td>
         </tr>
         <tr>
-            <td><b>บ้านเลขที่:</b> ' . htmlspecialchars($main_installment['house_number']) . '</td>
-            <td align="right"><b>ผู้ทำสัญญา/ผ่อนชำระ:</b> ' . htmlspecialchars($main_installment['debtor']) . '</td>
+            <td><b>บ้านเลขที่:</b> ' . htmlspecialchars($main_installment['house_number'] ?? '') . '</td>
+            <td align="right"><b>ผู้ทำสัญญา/ผ่อนชำระ:</b> ' . htmlspecialchars($main_installment['debtor'] ?? '') . '</td>
         </tr>
     </table>';
 
@@ -118,8 +118,8 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
         foreach ($items as $index => $item) {
             $html .= '<tr>
                 <td align="center">' . ($index + 1) . '</td>
-                <td>' . htmlspecialchars($item['description']) . '</td>
-                <td align="right">' . htmlspecialchars($item['quantity']) . '</td>
+                <td>' . htmlspecialchars($item['description'] ?? '') . '</td>
+                <td align="right">' . htmlspecialchars($item['quantity'] ?? '') . '</td>
                 <td align="right">' . number_format($item['amount'], 2) . '</td>
             </tr>';
         }
@@ -132,7 +132,7 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
 </tr>';
 
     $html .= '<tr>
-        <td colspan="4" align="right"><i>( ' . htmlspecialchars($thai_text_total) . ' )</i></td>
+        <td colspan="4" align="right"><i>( ' . htmlspecialchars($thai_text_total ?? '') . ' )</i></td>
     </tr>';
 
     $html .= '</table><br>';
@@ -152,7 +152,7 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
             <td width="50%"><b>ยอดเงินที่ต้องผ่อนชำระ (หลังหักเงินทำสัญญา):</b> ' . number_format($main_installment['principal_amount_balance'], 2) . ' บาท</td>
         </tr>
         <tr>
-            <td width="50%"><b>จำนวนงวด:</b> ' . htmlspecialchars($main_installment['num_installments']) . ' งวด</td>
+            <td width="50%"><b>จำนวนงวด:</b> ' . htmlspecialchars($main_installment['num_installments'] ?? '') . ' งวด</td>
             <td width="50%"><b>ยอดผ่อนแต่ละงวด:</b> ' . number_format($main_installment['installment_per_period'], 2) . ' บาท</td>
         </tr>
         <tr>
@@ -164,11 +164,11 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
 
     $html .= '<table border="0" cellspacing="0" cellpadding="3" width="100%" style="margin-top:5px; margin-bottom:5px; font-size:11pt;">
 <tr>
-    <td align="left"><b>ผู้ชำระเงิน:</b> ' . htmlspecialchars($main_installment['debtor']) . '</td>
+    <td align="left"><b>ผู้ชำระเงิน:</b> ' . htmlspecialchars($main_installment['debtor'] ?? '') . '</td>
     <td align="center">
         <b>ผู้รับเงิน</b><br>
         ' . $signature_img_html . '<br>
-        (' . htmlspecialchars($full_name) . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: เจ้าหน้าที่นิติฯ
+        (' . htmlspecialchars($full_name ?? '') . ')  &nbsp; &nbsp; &nbsp;ตำแหน่ง: เจ้าหน้าที่นิติฯ
     </td>
 </tr>
 <tr>
@@ -176,7 +176,7 @@ function generate_receipt_html($company, $main_installment, $items, $total, $tha
         วันที่พิมพ์: ' . date('d/m/Y H:i') . '
     </td>
     <td align="right" style="font-size:10pt;">
-        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name']) : 'เจ้าหน้าที่นิติฯ') . '
+        ผู้พิมพ์: ' . (isset($_SESSION['user_name']) ? htmlspecialchars($_SESSION['user_name'] ?? '') : 'เจ้าหน้าที่นิติฯ') . '
     </td>
 </tr>
 </table>';

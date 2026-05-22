@@ -7,8 +7,8 @@
 
 // ตรวจสอบและดึงค่าจาก Cookie พร้อมทำ Security Escaping เพื่อป้องกัน XSS
 // **สำคัญ: เราจะไม่ดึงรหัสผ่านจาก Cookie เด็ดขาด**
-$username_cookie = isset($_COOKIE["username"]) ? htmlspecialchars($_COOKIE["username"], ENT_QUOTES, 'UTF-8') : '';
-$remember_chk_cookie = isset($_COOKIE["remember_chk"]) ? htmlspecialchars($_COOKIE["remember_chk"], ENT_QUOTES, 'UTF-8') : '';
+$username_cookie = isset($_COOKIE["username"]) ? htmlspecialchars($_COOKIE["username"] ?? '', ENT_QUOTES, 'UTF-8') : '';
+$remember_chk_cookie = isset($_COOKIE["remember_chk"]) ? htmlspecialchars($_COOKIE["remember_chk"] ?? '', ENT_QUOTES, 'UTF-8') : '';
 
 // สมมติว่า includes/Header.php และ includes/CheckDevice.php มีอยู่จริง
 include('includes/Header.php');

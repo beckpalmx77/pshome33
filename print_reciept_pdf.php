@@ -35,6 +35,18 @@ foreach ($items as $item) {
 }
 $thai_text_total = converNumberToThaiText($total);
 
+function formatRemark($remark)
+{
+    if (empty($remark)) {
+        return '';
+    }
+    // ถ้าข้อความเป็นเลขที่บ้าน เช่น 67/8 หรือ 68/56 ตามตัวอย่างให้ ใส่คำว่า บ้านเลขที่ ตามด้วย remark
+    if (preg_match('/^\d+\/\d+$/', trim($remark))) {
+        return 'บ้านเลขที่ ' . $remark;
+    }
+    return $remark;
+}
+
 // กำหนดคลาส TCPDF ใหม่เพื่อสร้าง footer
 class CustomPDF extends TCPDF
 {
@@ -109,8 +121,16 @@ function generate_receipt_html($company, $receipt, $items, $total, $thai_text_to
         </tr>';
     }
 
+    $remark_formatted = formatRemark($receipt['remark']);
     $html .= '<tr>
-        <td colspan="2" align="left"><b>วิธีการชำระเงิน:</b> ' . ($receipt['payment_method'] ?: 'เงินสด') . '</td>
+        <td colspan="2" align="left">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td align="left"><b>วิธีการชำระเงิน:</b> ' . ($receipt['payment_method'] ?: 'เงินสด') . '</td>
+                    <td align="right">' . $remark_formatted . '</td>
+                </tr>
+            </table>
+        </td>
         <td colspan="1" align="right"><b>รวมทั้งสิ้น:</b></td>
         <td align="right"><b>' . number_format($total, 2) . '</b></td>
     </tr>';
