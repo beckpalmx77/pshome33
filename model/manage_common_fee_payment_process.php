@@ -437,17 +437,27 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $columnIndex = $_POST['order'][0]['column']; // Index of the column to sort by
     $columnName = $_POST['columns'][$columnIndex]['data']; // Column name for sorting
     $columnSortOrder = 'desc'; // Always sort descending
-    $searchValue = $_POST['search']['value']; // User-input search value
+    $searchValue = isset($_POST['search']['value']) ? $_POST['search']['value'] : ''; // User-input search value
+    $searchHouseNumber = isset($_POST['searchHouseNumber']) ? $_POST['searchHouseNumber'] : ''; // Exact House Number search
 
     $searchArray = array();
 
     ## Search Query
     $searchQuery = " ";
-    if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number) ";
-        $searchArray = array(
-            'house_number' => "%$searchValue%"
-        );
+    if ($searchHouseNumber != '') {
+        $searchQuery = " AND house_number = :house_number_exact ";
+        $searchArray['house_number_exact'] = $searchHouseNumber;
+    } elseif ($searchValue != '') {
+        $searchQuery = " AND (doc_id LIKE :search1 OR 
+                             house_number LIKE :search2 OR 
+                             detail LIKE :search3 OR 
+                             alley LIKE :search4 OR 
+                             remark LIKE :search5) ";
+        $searchArray['search1'] = "%$searchValue%";
+        $searchArray['search2'] = "%$searchValue%";
+        $searchArray['search3'] = "%$searchValue%";
+        $searchArray['search4'] = "%$searchValue%";
+        $searchArray['search5'] = "%$searchValue%";
     }
 
     $where_house_number = " ";
@@ -456,14 +466,14 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     }
 
     ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
     ## Total number of records with filtering
-    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute($searchArray);
     $records = $stmt->fetch();

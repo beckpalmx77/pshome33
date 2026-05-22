@@ -114,6 +114,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                     <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
                                         <i class="fa fa-refresh"></i> Reload Data
                                     </button>
+                                    <div class="input-group input-group-sm ml-2" style="width: 250px;">
+                                        <input type="text" id="search_house_number" class="form-control" placeholder="ค้นหา บ้านเลขที่ (ระบุตรงตัว)">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button" id="btnSearch">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <a href="manage_common_fee_payment_not_confirm.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ค่าส่วนกลางที่ยังไม่ยืนยันการชำระ" class="btn btn-outline-danger ml-2">
                                         <i class="fas fa-search-dollar"></i> ค้นหายังไม่ยืนยันการชำระ
                                     </a>
@@ -495,7 +503,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             let dataRecords = $('#TableRecordList').DataTable({
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
-                    search: 'ค้นหา บ้านเลขที่',
+                    search: 'ค้นหาข้อมูล',
                     lengthMenu: 'แสดง _MENU_ รายการ',
                     info: 'หน้าที่ _PAGE_ จาก _PAGES_',
                     infoEmpty: 'ไม่มีข้อมูล',
@@ -520,6 +528,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         d.action = 'GET_COMMON_FEE';
                         d.sub_action = 'GET_MASTER';
                         d.page_manage = 'ADMIN';
+                        d.searchHouseNumber = $('#search_house_number').val();
                         return d;
                     }
                 },
@@ -607,6 +616,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             // Reload Data button click
             $('#btnReload').on('click', function() {
                 $('#TableRecordList').DataTable().ajax.reload();
+            });
+
+            // House Number Search button click
+            $('#btnSearch').on('click', function() {
+                $('#TableRecordList').DataTable().ajax.reload();
+            });
+
+            // House Number Search on Enter key
+            $('#search_house_number').on('keyup', function(e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    $('#TableRecordList').DataTable().ajax.reload();
+                }
             });
 
             $("#TableRecordList").on('click', '.print', function () {

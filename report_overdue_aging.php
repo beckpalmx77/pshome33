@@ -7,6 +7,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
     $ref_year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
     $ref_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
+    $start_year = isset($_GET['start_year']) ? (int)$_GET['start_year'] : 2025;
     $filter_category = isset($_GET['category']) ? $_GET['category'] : '';
 
     $thai_months = [
@@ -14,7 +15,6 @@ if (strlen($_SESSION['alogin']) == "") {
         "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
 
-    $start_year = 2025; // 2568 BE
     $start_month = 1;
 
     // ----- สร้างช่วงเดือนย้อนหลังจากเดือนอ้างอิง ถอยหลังไปจนถึง ม.ค. 2568 -----
@@ -109,7 +109,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 'unpaid_count' => $unpaid_count,
                 'total_amount' => $total_amount,
                 'category' => $category,
-                'unpaid_list' => implode(", ", array_slice($unpaid_list, 0, 3)) . (count($unpaid_list) > 3 ? " ..." : "")
+                'unpaid_list' => $unpaid_list // Store full array of unpaid months
             ]);
         }
     }
@@ -174,6 +174,19 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <form action="" method="GET" class="row g-3 align-items-end mb-4">
                                         <input type="hidden" name="m" value="<?= htmlspecialchars($_GET['m'] ?? '') ?>">
                                         <input type="hidden" name="s" value="<?= htmlspecialchars($_GET['s'] ?? '') ?>">
+
+                                        <div class="col-md-2">
+                                            <label for="start_year" class="form-label font-weight-bold">ปี เริ่มต้น (พ.ศ.)</label>
+                                            <select name="start_year" id="start_year" class="form-select">
+                                                <?php
+                                                $current_y = (int)date('Y');
+                                                for($y = 2020; $y <= $current_y; $y++) {
+                                                    $sel = ($y == $start_year) ? 'selected' : '';
+                                                    echo "<option value=\"$y\" $sel>" . ($y + 543) . "</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
 
                                         <div class="col-md-2">
                                             <label for="year" class="form-label font-weight-bold">ปี อ้างอิง (พ.ศ.)</label>
@@ -293,10 +306,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <th>บ้านเลขที่</th>
                                                         <th>ชื่อผู้ติดต่อ</th>
                                                         <th>เบอร์โทรศัพท์</th>
-                                                        <th class="text-center">จำนวนเดือนที่ค้าง</th>
-                                                        <th class="text-center">กลุ่มระยะเวลา</th>
                                                         <th class="text-right">ยอดค้างรวม</th>
-                                                        <th>ตัวอย่างเดือนที่ค้าง</th>
+                                                        <th>รายการเดือนที่ค้างทั้งหมด</th>
+                                                        <th class="text-center">ประวัติ</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -306,14 +318,21 @@ if (strlen($_SESSION['alogin']) == "") {
                                                             <td class="font-weight-bold"><?= htmlspecialchars($row['house_number'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['contact_name'] ?? '') ?></td>
                                                             <td><?= htmlspecialchars($row['phone_number'] ?? '') ?></td>
-                                                            <td class="text-center">
-                                                                <span class="badge badge-<?= ($row['unpaid_count'] ?? 0) > 6 ? 'dark' : (($row['unpaid_count'] ?? 0) >= 6 ? 'danger' : (($row['unpaid_count'] ?? 0) >= 3 ? 'warning' : 'secondary')) ?>">
-                                                                    <?= htmlspecialchars($row['unpaid_count'] ?? 0) ?> เดือน
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-center"><?= htmlspecialchars($row['category'] ?? '') ?></td>
                                                             <td class="text-right font-weight-bold text-danger"><?= number_format($row['total_amount'] ?? 0, 2) ?></td>
-                                                            <td class="small text-muted"><?= htmlspecialchars($row['unpaid_list'] ?? '') ?></td>
+                                                            <td class="small">
+                                                                <?php 
+                                                                if (is_array($row['unpaid_list'])) {
+                                                                    foreach ($row['unpaid_list'] as $m_y) {
+                                                                        echo '<span class="badge badge-light border mb-1 mr-1">' . htmlspecialchars($m_y) . '</span>';
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <button type="button" class="btn btn-outline-info btn-sm view-history" data-house="<?= htmlspecialchars($row['house_number'] ?? '') ?>">
+                                                                    <i class="fas fa-history"></i>
+                                                                </button>
+                                                            </td>
                                                         </tr>
                                                     <?php endforeach; ?>
                                                 </tbody>
@@ -331,6 +350,45 @@ if (strlen($_SESSION['alogin']) == "") {
     </div>
 
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+    <!-- Individual House Payment History Modal -->
+    <div class="modal fade" id="houseHistoryModal" tabindex="-1" role="dialog" aria-labelledby="houseHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="houseHistoryModalLabel"><i class="fas fa-history"></i> ประวัติการชำระเงิน: <span id="modalHouseNumber"></span></h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="historyLoading" class="text-center d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p>กำลังโหลดข้อมูล...</p>
+                    </div>
+                    <div id="historyContent">
+                        <table class="table table-sm table-striped table-bordered">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-center">วันที่ชำระ</th>
+                                    <th class="text-center">งวดที่ชำระ</th>
+                                    <th class="text-right">ยอดเงิน (บาท)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -365,6 +423,45 @@ if (strlen($_SESSION['alogin']) == "") {
                         title: 'รายงานค้างชำระแยกตามระยะเวลา'
                     }
                 ]
+            });
+
+            $('.view-history').click(function() {
+                const house = $(this).data('house');
+                $('#modalHouseNumber').text(house);
+                $('#historyTableBody').html('');
+                $('#historyLoading').removeClass('d-none');
+                $('#houseHistoryModal').modal('show');
+
+                $.ajax({
+                    url: 'model/get_house_payment_history.php',
+                    type: 'GET',
+                    data: { house_number: house },
+                    dataType: 'json',
+                    success: function(response) {
+                        $('#historyLoading').addClass('d-none');
+                        if (response.status === 'success') {
+                            let html = '';
+                            if (response.data.length > 0) {
+                                response.data.forEach(function(item) {
+                                    html += `<tr>
+                                        <td class="text-center">${item.payment_date}</td>
+                                        <td class="text-center">${item.period}</td>
+                                        <td class="text-right text-success">${item.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                    </tr>`;
+                                });
+                            } else {
+                                html = '<tr><td colspan="3" class="text-center text-muted">ไม่พบประวัติการชำระเงิน</td></tr>';
+                            }
+                            $('#historyTableBody').html(html);
+                        } else {
+                            alert('เกิดข้อผิดพลาด: ' + (response.message || 'ไม่ทราบสาเหตุ'));
+                        }
+                    },
+                    error: function() {
+                        $('#historyLoading').addClass('d-none');
+                        alert('ไม่สามารถดึงข้อมูลได้');
+                    }
+                });
             });
         });
     </script>
