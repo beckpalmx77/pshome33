@@ -17,8 +17,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
         <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
         <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css"/>
 
         <style>
+            /* CSS สำหรับ FixedHeader background */
+            #TableRecordList thead th {
+                background-color: #f8f9fc;
+            }
+
+            .fixedHeader-floating {
+                background-color: white !important;
+                z-index: 1000;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
             /* ปรับให้หน้าเพจกระชับขึ้น */
             .card-body {
                 padding: 1rem;
@@ -454,6 +466,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     <script src="vendor/date-picker-1.9/locales/bootstrap-datepicker.th.min.js"></script>
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -464,6 +477,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
             });
 
             let dataRecords = $('#TableRecordList').DataTable({
+                'fixedHeader': true,
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
                     search: 'ค้นหา บ้านเลขที่',

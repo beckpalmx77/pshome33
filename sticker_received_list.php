@@ -34,12 +34,25 @@ FROM ims_house;";
         <link rel="stylesheet" href="css/spin_datatables.css"/>
         <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
         <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
 
         <style>
             .card-body {
                 padding: 1rem;
             }
+
+            /* CSS สำหรับ FixedHeader background */
+            #TableRecordList thead th {
+                background-color: #f8f9fc;
+            }
+
+            .fixedHeader-floating {
+                background-color: white !important;
+                z-index: 1000;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
             .dataTables_wrapper {
                 overflow-x: auto;
             }
@@ -525,11 +538,13 @@ FROM ims_house;";
     <script src="vendor/datatables/v11/vfs_fonts.js"></script>
     <script src="vendor/datatables/v11/buttons.html5.min.js"></script>
     <script src="vendor/datatables/v11/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
 
 
     <script>
         $(document).ready(function() {
             let table = $('#TableRecordList').DataTable({
+                "fixedHeader": true,
                 "processing": true,
                 "serverSide": false,
                 "language": {

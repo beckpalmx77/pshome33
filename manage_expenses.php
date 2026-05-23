@@ -447,8 +447,19 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css"/>
 
     <style>
+        /* CSS สำหรับ FixedHeader background */
+        #TableRecordList thead th {
+            background-color: #f8f9fc;
+        }
+
+        .fixedHeader-floating {
+            background-color: white !important;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
         .icon-input-btn {
             display: inline-block;
@@ -566,6 +577,7 @@ if (strlen($_SESSION['alogin']) == "") {
         $(document).ready(function () {
             let formDataObj = {action: "GET_EXPENSE", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
+                'fixedHeader': true,
                 'lengthMenu': [[5, 10, 20, 50, 100], [5, 10, 20, 50, 100]],
                 'language': {
                     search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',

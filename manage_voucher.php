@@ -142,10 +142,22 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css"/>
 
     <style>
+        /* CSS สำหรับ FixedHeader background */
+        #TableRecordList thead th {
+            background-color: #f8f9fc;
+        }
+
+        .fixedHeader-floating {
+            background-color: white !important;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
         .icon-input-btn {
             display: inline-block;
@@ -177,6 +189,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
         $(document).ready(function () {
             let formData = {action: "GET_PURCHASE", sub_action: "GET_MASTER"};
             let dataRecords = $('#TableRecordList').DataTable({
+                'fixedHeader': true,
                 'lengthMenu': [[7, 10, 20, 50, 100], [7, 10, 20, 50, 100]],
                 'language': {
                     search: 'ค้นหา', lengthMenu: 'แสดง _MENU_ รายการ',
