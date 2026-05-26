@@ -33,11 +33,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                 <thead>
                                     <tr>
                                         <th>วันที่</th>
-                                        <th>เลขที่</th>
+                                        <th>เลขที่เอกสาร</th>
                                         <th>รายการ</th>
-                                        <th>รหัสบัญชี</th>
-                                        <th class="text-right">Debit</th>
-                                        <th class="text-right">Credit</th>
+                                        <th class="text-right">ยอดรวม</th>
                                         <th>จัดการ</th>
                                     </tr>
                                 </thead>
@@ -106,20 +104,37 @@ if (strlen($_SESSION['alogin']) == "") {
     <script>
         $(document).ready(function () {
             let table = $('#TableGL').DataTable({
-                "ajax": { "url": "model/get_gl_report.php", "type": "POST", "data": {} },
+                "processing": true,
+                "serverSide": true,
+                "ajax": { 
+                    "url": "model/get_gl_report.php", 
+                    "type": "POST", 
+                    "data": {} 
+                },
                 "columns": [
                     { "data": "gl_date" },
                     { "data": "doc_no" },
                     { "data": "description" },
-                    { "data": "acc_code" },
-                    { "data": "dr_amount", "className": "text-right" },
-                    { "data": "cr_amount", "className": "text-right" },
-                    { "render": function(data, type, row) {
-                        return `<button class="btn btn-warning btn-xs btn-edit" data-id="${row.gl_id}">แก้ไข</button>`;
-                    }}
+                    { "data": "total_amount", "className": "text-right" },
+                    { 
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return `<button class="btn btn-warning btn-xs btn-edit" data-id="${row.gl_id}">แก้ไข</button>`;
+                        }
+                    }
                 ],
                 "order": [[0, "desc"]],
-                "displayLength": 50
+                "pageLength": 5,
+                "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+                "language": {
+                    "search": "ค้นหารวดเร็ว:",
+                    "lengthMenu": "แสดง _MENU_ รายการ",
+                    "info": "แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ",
+                    "paginate": {
+                        "previous": "ก่อนหน้า",
+                        "next": "ถัดไป"
+                    }
+                }
             });
 
             $(document).on('click', '.btn-edit', function() {
@@ -142,19 +157,24 @@ if (strlen($_SESSION['alogin']) == "") {
                         data.details.forEach((d, i) => {
                             html += `<tr>
                                 <td>
-                                    <select class="form-control form-control-sm acc-select">
+                                    <select class="form-control form-control-sm acc-select" data-val="${d.acc_code}">
                                         <?php foreach($accounts as $a){ ?>
-                                            <option value="<?php echo $a['acc_code']; ?>" \${d.acc_code == '<?php echo $a['acc_code']; ?>' ? 'selected' : ''}>
+                                            <option value="<?php echo $a['acc_code']; ?>">
                                                 <?php echo $a['acc_code'].' - '.$a['acc_name']; ?>
                                             </option>
                                         <?php } ?>
                                     </select>
                                 </td>
-                                <td><input type="number" class="form-control form-control-sm text-right dr-input" value="${d.dr_amount}"></td>
-                                <td><input type="number" class="form-control form-control-sm text-right cr-input" value="${d.cr_amount}"></td>
+                                <td><input type="number" step="0.01" class="form-control form-control-sm text-right dr-input" value="${d.dr_amount}"></td>
+                                <td><input type="number" step="0.01" class="form-control form-control-sm text-right cr-input" value="${d.cr_amount}"></td>
                             </tr>`;
                         });
                         $('#TableEditDetails tbody').html(html);
+                        
+                        $('#TableEditDetails .acc-select').each(function() {
+                            $(this).val($(this).data('val'));
+                        });
+
                         $('#EditGLModal').modal('show');
                         checkBalance();
                     }

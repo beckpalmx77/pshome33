@@ -88,21 +88,11 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <th>วันที่</th>
                                                 <th>เลขที่เอกสาร</th>
                                                 <th>รายการ</th>
-                                                <th>รหัสบัญชี</th>
-                                                <th>ชื่อบัญชี</th>
-                                                <th class="text-right">Debit (Dr)</th>
-                                                <th class="text-right">Credit (Cr)</th>
+                                                <th class="text-right">ยอดเงินรวม</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             </tbody>
-                                            <tfoot>
-                                                <tr style="background-color: #f8f9fc; font-weight: bold;">
-                                                    <td colspan="5" class="text-right">รวมทั้งสิ้น:</td>
-                                                    <td id="sum_dr" class="text-right text-primary">0.00</td>
-                                                    <td id="sum_cr" class="text-right text-danger">0.00</td>
-                                                </tr>
-                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -134,24 +124,17 @@ if (strlen($_SESSION['alogin']) == "") {
                         d.date_start = $('#date_start').val();
                         d.date_end = $('#date_end').val();
                         d.acc_code = $('#acc_code').val();
-                    },
-                    "dataSrc": function(json) {
-                        $('#sum_dr').text(json.total_dr);
-                        $('#sum_cr').text(json.total_cr);
-                        return json.aaData;
                     }
                 },
                 "columns": [
                     {"data": "gl_date"},
                     {"data": "doc_no"},
                     {"data": "description"},
-                    {"data": "acc_code"},
-                    {"data": "acc_name"},
-                    {"data": "dr_amount", "className": "text-right"},
-                    {"data": "cr_amount", "className": "text-right"}
+                    {"data": "total_amount", "className": "text-right"}
                 ],
                 "order": [[0, "desc"]],
-                "pageLength": 50,
+                "pageLength": 5,
+                "lengthMenu": [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
                 "language": {
                     "search": "ค้นหารวดเร็ว:",
                     "lengthMenu": "แสดง _MENU_ รายการ",
