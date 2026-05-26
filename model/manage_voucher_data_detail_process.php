@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include('../config/connect_db.php');
+include('../util/gl_util.php');
 
 // รับข้อมูล JSON จาก POST
 $data = json_decode(file_get_contents('php://input'), true);
@@ -278,6 +279,34 @@ try {
         $create_name, $checker_name, $receipt_name, $approve_name,
         $approve_status, $address, $doc_no
     ]);
+
+    // 9. Accounting Posting (GL)
+    // สำหรับ UPDATE ให้ลบของเก่าออกก่อน
+    if ($action === 'UPDATE') {
+        RemoveGLByDocNo($conn, $doc_no);
+    }
+
+    // เตรียมรายการบัญชี (Dr/Cr)
+    $gl_entries = [];
+    
+    // ฝั่ง Debit (ค่าใช้จ่าย) - ลงตามรายรายการ (หรือจะรวมยอดก็ได้)
+    // ในที่นี้เราใช้รหัสบัญชี 5101 เป็นหลัก (สามารถปรับให้ดึงตาม pgroup_id ได้ในอนาคต)
+    $gl_entries[] = [
+        'acc_code' => '5101', 
+        'dr' => $total_amount_header,
+        'cr' => 0
+    ];
+
+    // ฝั่ง Credit (เงินที่จ่ายออก) - ตรวจสอบว่าจ่ายด้วยอะไร
+    $payment_acc = GetAccountCodeMapping($conn, $payment_method, 'payment');
+    $gl_entries[] = [
+        'acc_code' => $payment_acc,
+        'dr' => 0,
+        'cr' => $total_amount_header
+    ];
+
+    $gl_desc = "จ่ายเงินให้ " . $supplier_name . " (" . $purpose . ") ตามเอกสาร " . $doc_no;
+    PostToGL($conn, $doc_date, $doc_no, $gl_desc, $gl_entries, 'PV');
 
     $conn->commit();
     echo json_encode(['status' => 'success', 'doc_no' => $doc_no]);

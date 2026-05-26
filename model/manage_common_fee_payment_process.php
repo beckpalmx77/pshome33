@@ -3,6 +3,7 @@ session_start();
 error_reporting(0); // It's recommended to turn this off in a production environment.
 
 include('../config/connect_db.php'); // Database connection file
+include('../util/gl_util.php'); // Utility for GL
 include('../config/lang.php'); // Language file
 include('../util/record_util.php'); // Utility for records
 include('../util/reorder_record.php'); // Utility for reordering records
@@ -154,6 +155,42 @@ if ($_POST["action"] === 'UPDATE') {
             $query->execute();
 
             echo $save_success;
+
+            // --- Step 2.1: Accounting Posting (GL) ---
+            $sql_fetch_doc = "SELECT doc_id, payment_date, house_number FROM ims_house_payment WHERE id = :id";
+            $stmt_doc = $conn->prepare($sql_fetch_doc);
+            $stmt_doc->bindParam(':id', $id);
+            $stmt_doc->execute();
+            $doc_info = $stmt_doc->fetch(PDO::FETCH_ASSOC);
+            $doc_id = $doc_info['doc_id'];
+            $payment_date = $doc_info['payment_date'];
+            $house_no = $doc_info['house_number'];
+
+            // ลบรายการเดิมออกก่อนเสมอ (ถ้ามี)
+            RemoveGLByDocNo($conn, $doc_id);
+
+            // ถ้าสถานะเป็น 'Y' ให้ลงบัญชีใหม่
+            if ($payment_status === 'Y') {
+                $gl_entries = [];
+                
+                // Debit: Cash or Bank (1101/1102)
+                $payment_acc = GetAccountCodeMapping($conn, $payment_method, 'payment');
+                $gl_entries[] = [
+                    'acc_code' => $payment_acc,
+                    'dr' => $amount,
+                    'cr' => 0
+                ];
+
+                // Credit: Common Fee Revenue (4101)
+                $gl_entries[] = [
+                    'acc_code' => '4101', 
+                    'dr' => 0,
+                    'cr' => $amount
+                ];
+
+                $gl_desc = "รับชำระค่าส่วนกลาง บ้านเลขที่ $house_no (งวด $month_name_start - $month_name_to ปี $period_year) ตามเอกสาร $doc_id";
+                PostToGL($conn, $payment_date, $doc_id, $gl_desc, $gl_entries, 'RV');
+            }
 
             // --- Step 3: Send LINE Notification if conditions are met ---
             // Condition: payment_status is 'Y' and it's the first update (update_count = 1)
