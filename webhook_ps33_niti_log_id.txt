@@ -1,0 +1,16 @@
+เวลา: 2026-05-27 00:46:30
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uc2648cdcef0f0608ce5c835883488bc7
+Group ID: Cd6b5e1dfc01ac62b37a7f84e9a951ae2
+-----------------------
+
+เวลา: 2026-05-27 01:01:56
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uc2648cdcef0f0608ce5c835883488bc7
+Group ID: Ca579b4e8daae57c0f07c3508696074ae
+-----------------------
+
