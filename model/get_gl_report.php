@@ -23,22 +23,8 @@ $columns = [
 ];
 $columnName = $columns[$columnIndex] ?? 'h.gl_date';
 
-function convertThaiDate($date) {
-    if (strpos($date, '/') !== false) {
-        $parts = explode('/', $date);
-        if (count($parts) === 3) {
-            // Convert DD/MM/YYYY to YYYY-MM-DD
-            // If year is Buddhist Era (BE) > 2400, convert to AD
-            $year = (int)$parts[2];
-            if ($year > 2400) $year -= 543;
-            return $year . '-' . $parts[1] . '-' . $parts[0];
-        }
-    }
-    return $date;
-}
-
-$date_start = convertThaiDate($_POST['date_start'] ?? '');
-$date_end = convertThaiDate($_POST['date_end'] ?? '');
+$date_start = $_POST['date_start'] ?? '';
+$date_end = $_POST['date_end'] ?? '';
 $acc_code = $_POST['acc_code'] ?? '';
 
 try {
@@ -107,21 +93,11 @@ try {
     $stmt->execute();
     $records = $stmt->fetchAll();
 
-    function formatThaiDate($date) {
-        if (!$date || $date == '0000-00-00') return '';
-        $parts = explode('-', $date);
-        if (count($parts) === 3) {
-            $year = (int)$parts[0] + 543;
-            return $parts[2] . '/' . $parts[1] . '/' . $year;
-        }
-        return $date;
-    }
-
     $data = [];
     foreach ($records as $row_data) {
         $data[] = [
             "gl_id" => $row_data['gl_id'],
-            "gl_date" => formatThaiDate($row_data['gl_date']),
+            "gl_date" => date('d-m-Y', strtotime($row_data['gl_date'])),
             "doc_no" => $row_data['doc_no'],
             "description" => $row_data['description'],
             "acc_code" => $row_data['acc_code'],

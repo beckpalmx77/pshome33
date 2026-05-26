@@ -1,21 +1,9 @@
 <?php
 include('../config/connect_db.php');
 
-function convertThaiDate($date) {
-    if (strpos($date, '/') !== false) {
-        $parts = explode('/', $date);
-        if (count($parts) === 3) {
-            $year = (int)$parts[2];
-            if ($year > 2400) $year -= 543;
-            return $year . '-' . $parts[1] . '-' . $parts[0];
-        }
-    }
-    return $date;
-}
-
 $action = $_POST['action'] ?? '';
-$date_start = convertThaiDate($_POST['date_start'] ?? '');
-$date_end = convertThaiDate($_POST['date_end'] ?? '');
+$date_start = $_POST['date_start'] ?? '';
+$date_end = $_POST['date_end'] ?? '';
 
 if ($action === 'GET_TRIAL_BALANCE') {
     $searchQuery = "";

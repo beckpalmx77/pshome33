@@ -3,18 +3,6 @@ session_start();
 error_reporting(0);
 include('../config/connect_db.php');
 
-function convertThaiDate($date) {
-    if (strpos($date, '/') !== false) {
-        $parts = explode('/', $date);
-        if (count($parts) === 3) {
-            $year = (int)$parts[2];
-            if ($year > 2400) $year -= 543;
-            return $year . '-' . $parts[1] . '-' . $parts[0];
-        }
-    }
-    return $date;
-}
-
 if ($_POST["action"] === 'GET_GL_DATA') {
     $gl_id = $_POST["gl_id"];
     
@@ -54,7 +42,7 @@ if ($_POST["action"] === 'GET_GL_DATA_BY_DOC') {
 
 if ($_POST["action"] === 'UPDATE_GL_ENTRY') {
     $gl_id = $_POST["gl_id"];
-    $gl_date = convertThaiDate($_POST["gl_date"]);
+    $gl_date = $_POST["gl_date"];
     $description = $_POST["description"];
     $details = $_POST["details"]; // Array of {acc_code, dr, cr}
 
