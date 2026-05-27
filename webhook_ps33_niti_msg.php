@@ -1,24 +1,25 @@
 <?php
-$channelAccessToken = 'j5zwyVzjucFBCOkUBsn2O9TRv8D+kZz3xFTveCT4EgHB7Hca24vmdJXtG0ckOb6m1lf9shpLJcoLZqV3OkV0ewdPEq+sQ6e8D7MuRhnIpqbdFpgBY7aJ3tHq8Y/JPiudr4TWqn1IgZFIsqPPrUyR0QdB04t89/1O/w1cDnyilFU=';
+// คำเตือน: อย่าลืมลบ Token เก่าใน LINE Developers และกด Reissue ใหม่นะครับ เพราะ Token นี้หลุดเข้าสู่สาธารณะแล้ว
+$channelAccessToken = 'ใส่_TOKEN_ที่กด_REISSUE_มาใหม่ที่นี่';
 $group1_id = 'Cd6b5e1dfc01ac62b37a7f84e9a951ae2';
 $group2_id = 'Ca579b4e8daae57c0f07c3508696074ae';
-$baseUrl = 'https://ps33home.com/webhook_bot_folder'; // URL หลักที่เก็บไฟล์นี้ (สำหรับรูปภาพ)
+
+// ตรวจสอบให้แน่ใจว่าไฟล์นี้อยู่ในโฟลเดอร์เดียวกันกับโฟลเดอร์ visitor นะครับ
+$baseUrl = 'https://ps33home.com/uploads';
 
 // 1. รับข้อมูล Webhook
 $content = file_get_contents('php://input');
 $events = json_decode($content, true);
 
-// แก้ไขบรรทัดนี้เพื่อป้องกัน Error 500
 if (isset($events['events']) && is_array($events['events'])) {
     foreach ($events['events'] as $event) {
 
         if ($event['type'] === 'message') {
 
-            // ดึงแค่ Group ID ออกมา
             $sourceGroupId = isset($event['source']['groupId']) ? $event['source']['groupId'] : '';
             $messageType = $event['message']['type'];
 
-            // 2. ตรวจสอบแค่ว่า ส่งมาจาก "กลุ่ม 1" ใช่หรือไม่
+            // 2. ตรวจสอบกลุ่มต้นทาง
             if ($sourceGroupId === $group1_id) {
 
                 $messagesToSend = [];
@@ -26,11 +27,10 @@ if (isset($events['events']) && is_array($events['events'])) {
                 // --- กรณีข้อความตัวอักษร ---
                 if ($messageType === 'text') {
                     $textMessage = $event['message']['text'];
-                    $formattedMessage = "💬 ข้อความจากกลุ่ม 1:\n" . $textMessage;
 
                     $messagesToSend[] = [
                         'type' => 'text',
-                        'text' => $formattedMessage
+                        'text' => $textMessage // ส่งแค่ข้อความล้วนๆ ไม่มีคำนำหน้า
                     ];
                 }
 
@@ -39,16 +39,14 @@ if (isset($events['events']) && is_array($events['events'])) {
                     $messageId = $event['message']['id'];
                     $imageBinary = getMessageContent($messageId, $channelAccessToken);
 
+                    // บังคับเซฟเป็น .jpg ซึ่งปลอดภัยและรองรับโดย LINE API
                     $fileName = $messageId . '.jpg';
-                    $savePath = __DIR__ . '/uploads/' . $fileName;
+                    $savePath = __DIR__ . '/visitor/' . $fileName;
                     file_put_contents($savePath, $imageBinary);
 
-                    $imageUrl = $baseUrl . '/uploads/' . $fileName;
+                    $imageUrl = $baseUrl . '/visitor/' . $fileName;
 
-                    $messagesToSend[] = [
-                        'type' => 'text',
-                        'text' => "📷 มีรูปภาพส่งมาจากกลุ่ม 1:"
-                    ];
+                    // ใส่แค่ image object อย่างเดียว (ลบ text object ที่ว่างเปล่าออกแล้ว)
                     $messagesToSend[] = [
                         'type' => 'image',
                         'originalContentUrl' => $imageUrl,
@@ -67,7 +65,6 @@ if (isset($events['events']) && is_array($events['events'])) {
 
 http_response_code(200);
 echo "OK";
-
 
 // =========================================================================
 // ฟังก์ชันย่อย
