@@ -29,13 +29,17 @@ if (isset($events['events']) && is_array($events['events'])) {
             $logData .= "---------------------------\n";
             file_put_contents($logPath, $logData, FILE_APPEND); // FILE_APPEND คือการเขียนต่อท้ายไฟล์ไปเรื่อยๆ
 
-            // ตรวจสอบว่าส่งมาจาก "กลุ่ม 1" ใช่หรือไม่
-            if ($sourceGroupId === $group1_id) {
+            // ตรวจสอบว่าส่งมาจาก "กลุ่ม 1" หรือ "กลุ่ม 2"
+            if ($sourceGroupId === $group1_id || $sourceGroupId === $group2_id) {
 
                 $messagesToSend = [];
                 $message_text = '';
                 $photo_path = '';
-                $display_name = '';
+                
+                // ดึงข้อมูล Profile จาก LINE API
+                $profile = getMemberProfile($sourceGroupId, $sourceUserId, $channelAccessToken);
+                $display_name = isset($profile['displayName']) ? $profile['displayName'] : '';
+                
                 $f_name = '-';
                 $l_name = '-';
                 $house_number = '-';
@@ -48,32 +52,35 @@ if (isset($events['events']) && is_array($events['events'])) {
                     $textMessage = $event['message']['text'];
                     $message_text = $textMessage;
 
-                    $messagesToSend[] = [
-                        'type' => 'flex',
-                        'altText' => '💬 ',
-                        'contents' => [
-                            'type' => 'bubble',
-                            'body' => [
-                                'type' => 'box',
-                                'layout' => 'vertical',
-                                'contents' => [
-                                    [
-                                        'type' => 'text',
-                                        'text' => '💬 ',
-                                        'weight' => 'bold',
-                                        'color' => '#1DB446',
-                                        'size' => 'sm'
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'text' => $textMessage,
-                                        'wrap' => true,
-                                        'margin' => 'md'
+                    // เตรียม Flex Message (เฉพาะกรณีส่งมาจาก กลุ่ม 1 เพื่อส่งไป กลุ่ม 2)
+                    if ($sourceGroupId === $group1_id) {
+                        $messagesToSend[] = [
+                            'type' => 'flex',
+                            'altText' => '💬 ',
+                            'contents' => [
+                                'type' => 'bubble',
+                                'body' => [
+                                    'type' => 'box',
+                                    'layout' => 'vertical',
+                                    'contents' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => '💬 ',
+                                            'weight' => 'bold',
+                                            'color' => '#1DB446',
+                                            'size' => 'sm'
+                                        ],
+                                        [
+                                            'type' => 'text',
+                                            'text' => $textMessage,
+                                            'wrap' => true,
+                                            'margin' => 'md'
+                                        ]
                                     ]
                                 ]
                             ]
-                        ]
-                    ];
+                        ];
+                    }
                 }
 
                 // ==========================================
@@ -96,41 +103,44 @@ if (isset($events['events']) && is_array($events['events'])) {
                     $message_text = 'รูปภาพ';
                     $photo_path = $fileName;
 
-                    $messagesToSend[] = [
-                        'type' => 'flex',
-                        'altText' => '📷 ',
-                        'contents' => [
-                            'type' => 'bubble',
-                            'hero' => [
-                                'type' => 'image',
-                                'url' => $imageUrl,
-                                'size' => 'full',
-                                'aspectRatio' => '1:1',
-                                'aspectMode' => 'fit',
-                                'action' => [
-                                    'type' => 'uri',
-                                    'uri' => $imageUrl
-                                ]
-                            ],
-                            'body' => [
-                                'type' => 'box',
-                                'layout' => 'vertical',
-                                'contents' => [
-                                    [
-                                        'type' => 'text',
-                                        'text' => '📷  ',
-                                        'weight' => 'bold',
-                                        'color' => '#1DB446',
-                                        'size' => 'sm',
-                                        'align' => 'center'
+                    // เตรียม Flex Message (เฉพาะกรณีส่งมาจาก กลุ่ม 1 เพื่อส่งไป กลุ่ม 2)
+                    if ($sourceGroupId === $group1_id) {
+                        $messagesToSend[] = [
+                            'type' => 'flex',
+                            'altText' => '📷 ',
+                            'contents' => [
+                                'type' => 'bubble',
+                                'hero' => [
+                                    'type' => 'image',
+                                    'url' => $imageUrl,
+                                    'size' => 'full',
+                                    'aspectRatio' => '1:1',
+                                    'aspectMode' => 'fit',
+                                    'action' => [
+                                        'type' => 'uri',
+                                        'uri' => $imageUrl
+                                    ]
+                                ],
+                                'body' => [
+                                    'type' => 'box',
+                                    'layout' => 'vertical',
+                                    'contents' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => '📷  ',
+                                            'weight' => 'bold',
+                                            'color' => '#1DB446',
+                                            'size' => 'sm',
+                                            'align' => 'center'
+                                        ]
                                     ]
                                 ]
                             ]
-                        ]
-                    ];
+                        ];
+                    }
                 }
 
-                // บันทึกข้อมูลลงตาราง ims_line_webhook_messages
+                // บันทึกข้อมูลลงตาราง ims_line_webhook_messages (ทั้ง 2 กลุ่ม)
                 if ($message_text !== '' || $photo_path !== '') {
                     $sql_insert = "INSERT INTO ims_line_webhook_messages 
                                    (line_user_id, line_display_name, first_name, last_name, house_number, phone, message_type, message_text, photo_path, group_id, status) 
@@ -149,8 +159,8 @@ if (isset($events['events']) && is_array($events['events'])) {
                     $stmt_insert->execute();
                 }
 
-                // ส่งข้อความไปยังกลุ่ม 2
-                if (count($messagesToSend) > 0) {
+                // ส่งข้อความจากกลุ่ม 1 ไปยังกลุ่ม 2
+                if ($sourceGroupId === $group1_id && count($messagesToSend) > 0) {
                     pushMessage($group2_id, $messagesToSend, $channelAccessToken);
                 }
             }
@@ -203,3 +213,17 @@ function pushMessage($to_id, $messages_array, $token) {
 
     return $result;
 }
+
+function getMemberProfile($groupId, $userId, $token) {
+    $url = "https://api.line.me/v2/bot/group/" . $groupId . "/member/" . $userId;
+    $headers = ['Authorization: Bearer ' . $token];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    return json_decode($result, true);
+}
+?>

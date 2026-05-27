@@ -29,10 +29,9 @@ if (isset($events['events']) && is_array($events['events'])) {
             $logData .= "---------------------------\n";
             file_put_contents($logPath, $logData, FILE_APPEND); // FILE_APPEND คือการเขียนต่อท้ายไฟล์ไปเรื่อยๆ
 
-            // ตรวจสอบว่าส่งมาจาก "กลุ่ม 1" ใช่หรือไม่
-            if ($sourceGroupId === $group1_id) {
+            // ตรวจสอบว่าส่งมาจาก "กลุ่ม 2" ใช่หรือไม่
+            if ($sourceGroupId === $group2_id) {
 
-                $messagesToSend = [];
                 $message_text = '';
                 $photo_path = '';
                 $display_name = '';
@@ -47,33 +46,6 @@ if (isset($events['events']) && is_array($events['events'])) {
                 if ($messageType === 'text') {
                     $textMessage = $event['message']['text'];
                     $message_text = $textMessage;
-
-                    $messagesToSend[] = [
-                        'type' => 'flex',
-                        'altText' => '💬 ',
-                        'contents' => [
-                            'type' => 'bubble',
-                            'body' => [
-                                'type' => 'box',
-                                'layout' => 'vertical',
-                                'contents' => [
-                                    [
-                                        'type' => 'text',
-                                        'text' => '💬 ',
-                                        'weight' => 'bold',
-                                        'color' => '#1DB446',
-                                        'size' => 'sm'
-                                    ],
-                                    [
-                                        'type' => 'text',
-                                        'text' => $textMessage,
-                                        'wrap' => true,
-                                        'margin' => 'md'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ];
                 }
 
                 // ==========================================
@@ -86,48 +58,14 @@ if (isset($events['events']) && is_array($events['events'])) {
                     $fileName = $messageId . '.jpg';
                     $savePath = __DIR__ . '/uploads/visitor/' . $fileName;
                     
+                    // ตรวจสอบว่าโฟลเดอร์มีอยู่จริงหรือไม่ ถ้าไม่มีให้สร้าง
                     if (!file_exists(__DIR__ . '/uploads/visitor/')) {
                         mkdir(__DIR__ . '/uploads/visitor/', 0777, true);
                     }
                     
                     file_put_contents($savePath, $imageBinary);
-
-                    $imageUrl = $baseUrl . '/' . $fileName;
                     $message_text = 'รูปภาพ';
                     $photo_path = $fileName;
-
-                    $messagesToSend[] = [
-                        'type' => 'flex',
-                        'altText' => '📷 ',
-                        'contents' => [
-                            'type' => 'bubble',
-                            'hero' => [
-                                'type' => 'image',
-                                'url' => $imageUrl,
-                                'size' => 'full',
-                                'aspectRatio' => '1:1',
-                                'aspectMode' => 'fit',
-                                'action' => [
-                                    'type' => 'uri',
-                                    'uri' => $imageUrl
-                                ]
-                            ],
-                            'body' => [
-                                'type' => 'box',
-                                'layout' => 'vertical',
-                                'contents' => [
-                                    [
-                                        'type' => 'text',
-                                        'text' => '📷  ',
-                                        'weight' => 'bold',
-                                        'color' => '#1DB446',
-                                        'size' => 'sm',
-                                        'align' => 'center'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ];
                 }
 
                 // บันทึกข้อมูลลงตาราง ims_line_webhook_messages
@@ -147,11 +85,6 @@ if (isset($events['events']) && is_array($events['events'])) {
                     $stmt_insert->bindParam(':photo_path', $photo_path);
                     $stmt_insert->bindParam(':group_id', $sourceGroupId);
                     $stmt_insert->execute();
-                }
-
-                // ส่งข้อความไปยังกลุ่ม 2
-                if (count($messagesToSend) > 0) {
-                    pushMessage($group2_id, $messagesToSend, $channelAccessToken);
                 }
             }
         }

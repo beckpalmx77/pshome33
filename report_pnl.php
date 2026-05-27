@@ -146,6 +146,18 @@ if (strlen($_SESSION['alogin']) == "") {
         }
 
         $(document).ready(function () {
+            // Set default date range: 1st of current month to today (Local Time)
+            let now = new Date();
+            let year = now.getFullYear();
+            let month = String(now.getMonth() + 1).padStart(2, '0');
+            let day = String(now.getDate()).padStart(2, '0');
+            
+            let firstDay = `${year}-${month}-01`;
+            let today = `${year}-${month}-${day}`;
+
+            $('#date_start').val(firstDay);
+            $('#date_end').val(today);
+
             loadData();
             $('#btnSearch').click(loadData);
         });
