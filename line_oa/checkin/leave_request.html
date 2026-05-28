@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#FF9800" />
+    <meta name="description" content="ระบบแจ้งลางาน" />
+    <meta name="author" content="PS33" />
+    <title>แจ้งลางาน - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="jsconfig/config_leave.js"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header-section img {
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .header-section h4 {
+            color: #e65100;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .profile-info {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #ffe082;
+        }
+
+        .profile-info img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .profile-info span {
+            font-weight: 600;
+            font-size: 15px;
+            color: #5d4037;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #616161;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        select,
+        textarea,
+        input[type="date"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            background-color: #fdfdfd;
+            color: #333;
+            border: 1.5px solid #eee;
+            border-radius: 10px;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        select:focus,
+        textarea:focus,
+        input[type="date"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff9800;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: block;
+            padding: 12px;
+            text-align: center;
+            background: #fff;
+            border: 2px dashed #ffcc80;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #ef6c00;
+            font-weight: 600;
+            margin-bottom: 15px;
+            transition: background 0.2s;
+        }
+
+        .custom-file-upload:active {
+            background: #fff3e0;
+        }
+
+        button#submitBtn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.3);
+            margin-top: 10px;
+        }
+
+        button#submitBtn:disabled {
+            background: #ccc;
+            box-shadow: none;
+        }
+
+        #imagePreview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #imagePreview img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .row-dates {
+            display: flex;
+            gap: 12px;
+        }
+
+        .row-dates > div {
+            flex: 1;
+        }
+
+        #spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff9800;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-section">
+        <img src="ps33_logo.png" width="60" alt="Logo" />
+        <h4>แจ้งลางาน / สลับวันหยุด</h4>
+    </div>
+
+    <div id="profileBox" class="profile-info" style="display:none;">
+        <img id="userImg" src="" alt="Profile">
+        <span id="userName">กำลังโหลดข้อมูล...</span>
+    </div>
+
+    <form id="leaveForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="leave_type">📋 ประเภทการลา :</label>
+            <select id="leave_type" name="leave_type" onchange="toggleSwapDate()" required>
+                <option value="">-- เลือกประเภทการลา --</option>
+                <option value="ลาป่วย">ลาป่วย</option>
+                <option value="ลากิจ">ลากิจ</option>
+                <option value="ลาพักร้อน">ลาพักร้อน</option>
+                <option value="สลับวันหยุด">สลับวันหยุด (ระบุวันชดเชย)</option>
+                <option value="ลาอื่นๆ">ลาอื่นๆ</option>
+            </select>
+        </div>
+
+        <div id="swap_date_container" class="form-group" style="display:none;">
+            <label for="swap_date">🔄 วันที่มาทำงานชดเชย :</label>
+            <input type="date" id="swap_date" name="swap_date" />
+        </div>
+
+        <div class="row-dates form-group">
+            <div>
+                <label id="label_start_date" for="start_date">📅 วันที่เริ่ม :</label>
+                <input type="date" id="start_date" name="start_date" required />
+            </div>
+            <div>
+                <label id="label_end_date" for="end_date">📅 วันที่สิ้นสุด :</label>
+                <input type="date" id="end_date" name="end_date" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="remark">✍️ เหตุผล/รายละเอียด :</label>
+            <textarea id="remark" name="remark" placeholder="ระบุเหตุผลการลา..." rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>📷 รูปภาพแนบ (ถ้ามี) :</label>
+            <label for="photoInput" class="custom-file-upload">
+                <span>➕ คลิกเพื่อเลือกรูปภาพ</span>
+            </label>
+            <input type="file" name="photo[]" id="photoInput" accept="image/*" multiple />
+            <div id="imagePreview"></div>
+        </div>
+
+        <button type="button" id="submitBtn" onclick="submitLeave()">✅ ส่งคำขอลางาน</button>
+    </form>
+
+    <div id="spinner">
+        <div class="loader"></div>
+        <p class="small text-muted">กำลังส่งข้อมูล โปรดรอสักครู่...</p>
+    </div>
+</div>
+
+<script>
+    // Preview images
+    document.getElementById('photoInput').addEventListener('change', function (event) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        const files = event.target.files;
+        [...files].forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    // Initialize LIFF and get profile
+    let liffInitialized = false;
+
+    async function initLiff() {
+        if (liffInitialized) {
+            return await liff.getProfile();
+        }
+
+        try {
+            if (typeof LIFF_ID === 'undefined') {
+                throw new Error('LIFF_ID is not defined. Please check jsconfig/config_leave.js');
+            }
+
+            await liff.init({ liffId: LIFF_ID });
+            liffInitialized = true;
+
+            if (!liff.isLoggedIn()) {
+                liff.login();
+                return null;
+            } else {
+                const profile = await liff.getProfile();
+                document.getElementById('profileBox').style.display = 'flex';
+                document.getElementById('userImg').src = profile.pictureUrl || '';
+                document.getElementById('userName').textContent = profile.displayName;
+                return profile;
+            }
+        } catch (err) {
+            console.error('LIFF Error:', err);
+            alert('ไม่สามารถเชื่อมต่อ LINE ได้: ' + err.message);
+            return null;
+        }
+    }
+
+    function toggleSwapDate() {
+        const leaveType = document.getElementById('leave_type').value;
+        const swapContainer = document.getElementById('swap_date_container');
+        const labelStart = document.getElementById('label_start_date');
+        const labelEnd = document.getElementById('label_end_date');
+
+        if (leaveType === 'สลับวันหยุด') {
+            swapContainer.style.display = 'block';
+            labelStart.textContent = '📅 วันที่ขอหยุด :';
+            labelEnd.textContent = '📅 ถึงวันที่ :';
+        } else {
+            swapContainer.style.display = 'none';
+            labelStart.textContent = '📅 วันที่เริ่ม :';
+            labelEnd.textContent = '📅 วันที่สิ้นสุด :';
+        }
+    }
+
+    async function submitLeave() {
+        const profile = await initLiff();
+        if (!profile) return;
+
+        const form = document.getElementById('leaveForm');
+        const leaveType = document.getElementById('leave_type').value;
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+        const remark = document.getElementById('remark').value;
+        const swapDate = document.getElementById('swap_date').value;
+        const photoInput = document.getElementById('photoInput');
+        const btn = document.getElementById('submitBtn');
+
+        if (!leaveType || !startDate || !endDate || !remark) {
+            return alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        }
+
+        if (leaveType === 'สลับวันหยุด' && !swapDate) {
+            return alert('กรุณาระบุวันที่มาทำงานชดเชย');
+        }
+
+        btn.disabled = true;
+        document.getElementById('spinner').style.display = 'block';
+
+        const formData = new FormData();
+        formData.append('user_id', profile.userId);
+        formData.append('display_name', profile.displayName);
+        formData.append('leave_type', leaveType);
+        formData.append('start_date', startDate);
+        formData.append('end_date', endDate);
+        formData.append('swap_date', swapDate);
+        formData.append('remark', remark);
+
+        for (let i = 0; i < photoInput.files.length; i++) {
+            formData.append('photo[]', photoInput.files[i]);
+        }
+
+        fetch('leave_request_api.php', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(res => res.text())
+        .then(result => {
+            alert(result);
+            if (result.includes('สำเร็จ')) {
+                liff.closeWindow();
+            }
+        })
+        .catch(err => {
+            alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            document.getElementById('spinner').style.display = 'none';
+        });
+    }
+
+    // Set default dates to today
+    window.onload = () => {
+        initLiff();
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start_date').value = today;
+        document.getElementById('end_date').value = today;
+    };
+</script>
+</body>
+</html>

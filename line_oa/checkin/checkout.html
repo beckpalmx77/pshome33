@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#00B900" />
-  <meta name="description" content="ระบบจัดการข้อมูล" />
   <meta name="author" content="PS33" />
   <title>PS33 Home System</title>
   <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script src="jsconfig/config_out.js"></script> <style>
+  <script src="jsconfig/config_out.js"></script>
+  <style>
   body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -81,6 +81,26 @@
       transform: rotate(360deg);
     }
   }
+  .profile-info {
+    background: #ffebee;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #ffcdd2;
+  }
+  .profile-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  .profile-info span {
+    font-weight: bold;
+    font-size: 14px;
+    color: #c62828;
+  }
 </style>
 </head>
 <body>
@@ -89,6 +109,12 @@
     <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
     <h4>📍 Check Out</h4>
   </div>
+
+  <div id="profileBox" class="profile-info" style="display:none;">
+    <img id="userImg" src="" alt="Profile">
+    <span id="userName">กำลังโหลดข้อมูล...</span>
+  </div>
+
   <form id="checkinForm" enctype="multipart/form-data">
     <label for="place_name">📌 สถานที่ : </label>
     <input type="text" id="place_name" placeholder="สถานที่" value="พฤกษา 33" required />
@@ -108,18 +134,39 @@
 
 <script>
   let isSubmitting = false; // เพิ่มตัวแปรสถานะ เพื่อป้องกันการกดซ้ำ
+  let liffInitialized = false;
+
+  async function initLiff() {
+    if (liffInitialized) return await liff.getProfile();
+    try {
+      await liff.init({ liffId: LIFF_ID });
+      liffInitialized = true;
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return null;
+      } else {
+        const profile = await liff.getProfile();
+        document.getElementById('profileBox').style.display = 'flex';
+        document.getElementById('userImg').src = profile.pictureUrl || '';
+        document.getElementById('userName').textContent = profile.displayName;
+        return profile;
+      }
+    } catch (err) {
+      console.error('LIFF Error:', err);
+      return null;
+    }
+  }
+
+  window.onload = () => {
+    initLiff();
+  };
 
   async function checkin() {
     if (isSubmitting) return; // ถ้ากำลังส่งข้อมูลอยู่ ให้หยุด
 
     try {
-      await liff.init({ liffId: LIFF_ID }); // LIFF_ID ควรถูกกำหนดใน config_out.js
-      if (!liff.isLoggedIn()) {
-        liff.login();
-        return;
-      }
-
-      const profile = await liff.getProfile();
+      const profile = await initLiff();
+      if (!profile) return;
       const photoInput = document.getElementById('photoInput');
       const check_type = document.getElementById('check_type');
       const placeNameInput = document.getElementById('place_name');

@@ -190,3 +190,28 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     echo json_encode($response);
     exit;
 }
+
+if (isset($_POST["action"]) && $_POST["action"] === 'GET_SUMMARY') {
+    include('../util/month_util.php');
+    $sql = "SELECT doc_month, doc_year, SUM(total_amount) as total_sum 
+            FROM ims_payment_voucher 
+            GROUP BY doc_year, doc_month 
+            ORDER BY doc_year DESC, CAST(doc_month AS UNSIGNED) DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $data = [];
+    foreach ($results as $row) {
+        $month_num = (int)$row['doc_month'];
+        $data[] = array(
+            "month_num" => $month_num,
+            "month_name" => $month_arr[$month_num],
+            "doc_year" => $row['doc_year'],
+            "total_sum" => number_format($row['total_sum'], 2)
+        );
+    }
+
+    echo json_encode(["aaData" => $data]);
+    exit;
+}

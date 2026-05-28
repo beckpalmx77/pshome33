@@ -52,6 +52,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                             <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
                                                 <i class="fa fa-refresh"></i> Reload
                                             </button>
+                                            <button type='button' name='btnSummary' id='btnSummary'
+                                                    class='btn btn-info btn-xs'>Summary
+                                                <i class="fa fa-list"></i>
+                                            </button>
                                             <!--button type='button' name='btnExp' id='btnExp'
                                                     class='btn btn-success btn-xs'>Export Excel
                                                 <i class="fa fa-file-excel-o"></i>
@@ -79,6 +83,38 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                         </div>
 
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="payrollSummaryModal" tabindex="-1" role="dialog"
+                         aria-labelledby="payrollSummaryLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-info text-white">
+                                    <h5 class="modal-title" id="payrollSummaryLabel">สรุปยอดเงินเดือนรายเดือน</h5>
+                                    <button type="button" class="close text-white"
+                                            data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table id='TableSummaryList' class='display dataTable table table-bordered' width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>เดือน</th>
+                                            <th>ปี</th>
+                                            <th>ยอดรวมเงินเดือน (บาท)</th>
+                                            <th style="display: none;">เดือน (เลข)</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">ปิด
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -210,6 +246,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
             $('#btnReload').on('click', function () {
                 $('#TableRecordList').DataTable().ajax.reload();
+            });
+
+            let tableSummary = null;
+            $('#btnSummary').on('click', function () {
+                if (tableSummary === null) {
+                    tableSummary = $('#TableSummaryList').DataTable({
+                        'processing': true,
+                        'serverSide': false,
+                        'ajax': {
+                            'url': 'model/manage_payroll_process.php',
+                            'type': 'post',
+                            'data': {action: "GET_SUMMARY"}
+                        },
+                        'columns': [
+                            {data: 'payroll_month'},
+                            {data: 'payroll_year'},
+                            {data: 'total_sum', className: 'text-right'},
+                            {data: 'month_num', visible: false}
+                        ],
+                        'order': [[1, 'desc'], [3, 'desc']],
+                        'language': {
+                            search: 'ค้นหา',
+                            info: 'แสดง _PAGE_ จาก _PAGES_',
+                            infoEmpty: 'ไม่มีข้อมูล',
+                            zeroRecords: "ไม่พบข้อมูล"
+                        }
+                    });
+                } else {
+                    tableSummary.ajax.reload();
+                }
+                $('#payrollSummaryModal').modal('show');
             });
         });
     </script>

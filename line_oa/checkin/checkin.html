@@ -82,6 +82,26 @@
         transform: rotate(360deg);
       }
     }
+    .profile-info {
+      background: #e8f5e9;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #c8e6c9;
+    }
+    .profile-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    .profile-info span {
+      font-weight: bold;
+      font-size: 14px;
+      color: #2e7d32;
+    }
   </style>
 </head>
 <body>
@@ -90,6 +110,12 @@
     <img src="ps33_logo.png" width="70" height="117" alt="Logo" />
     <h4>📍 Check In</h4>
   </div>
+
+  <div id="profileBox" class="profile-info" style="display:none;">
+    <img id="userImg" src="" alt="Profile">
+    <span id="userName">กำลังโหลดข้อมูล...</span>
+  </div>
+
   <form id="checkinForm" enctype="multipart/form-data">
     <label for="place_name">📌 สถานที่ : </label>
     <input
@@ -115,18 +141,39 @@
 
 <script>
   let isSubmitting = false; // เพิ่มตัวแปรสถานะ
+  let liffInitialized = false;
+
+  async function initLiff() {
+    if (liffInitialized) return await liff.getProfile();
+    try {
+      await liff.init({ liffId: LIFF_ID });
+      liffInitialized = true;
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return null;
+      } else {
+        const profile = await liff.getProfile();
+        document.getElementById('profileBox').style.display = 'flex';
+        document.getElementById('userImg').src = profile.pictureUrl || '';
+        document.getElementById('userName').textContent = profile.displayName;
+        return profile;
+      }
+    } catch (err) {
+      console.error('LIFF Error:', err);
+      return null;
+    }
+  }
+
+  window.onload = () => {
+    initLiff();
+  };
 
   async function checkin() {
     if (isSubmitting) return; // ถ้ากำลังส่งข้อมูลอยู่ ให้หยุด
 
     try {
-      await liff.init({ liffId: LIFF_ID });
-      if (!liff.isLoggedIn()) {
-        liff.login();
-        return;
-      }
-
-      const profile = await liff.getProfile();
+      const profile = await initLiff();
+      if (!profile) return;
       const photoInput = document.getElementById('photoInput');
       const check_type = document.getElementById('check_type');
       const placeNameInput = document.getElementById('place_name');

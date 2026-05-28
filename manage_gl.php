@@ -16,6 +16,11 @@ if (strlen($_SESSION['alogin']) == "") {
         <style>
             #TableGL td { white-space: nowrap; }
             .row-deleted { text-decoration: line-through; color: red; }
+            @media (min-width: 1200px) {
+                .modal-xl {
+                    max-width: 95%;
+                }
+            }
         </style>
     </head>
     <body id="page-top">
@@ -47,7 +52,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
                 <!-- Edit Modal -->
                 <div class="modal fade" id="EditGLModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">แก้ไขรายการบัญชี</h5>

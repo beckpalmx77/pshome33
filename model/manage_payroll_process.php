@@ -181,3 +181,26 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PAYROLL') {
     echo json_encode($response);
     exit;
 }
+
+if (isset($_POST["action"]) && $_POST["action"] === 'GET_SUMMARY') {
+    $sql = "SELECT payroll_month, payroll_year, SUM(total_amount) as total_sum 
+            FROM ims_payroll 
+            GROUP BY payroll_year, payroll_month 
+            ORDER BY payroll_year DESC, payroll_month DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $data = [];
+    foreach ($results as $row) {
+        $data[] = array(
+            "month_num" => (int)$row['payroll_month'],
+            "payroll_month" => $month_arr[$row['payroll_month']],
+            "payroll_year" => $row['payroll_year'],
+            "total_sum" => number_format($row['total_sum'], 2)
+        );
+    }
+
+    echo json_encode(["aaData" => $data]);
+    exit;
+}
