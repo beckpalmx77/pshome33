@@ -623,3 +623,15 @@ INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, ch
 -- Generated at 2026-04-24 09:02:36 by Joy
 INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U80a32a9fff05635ec1c608e24f3f45e2', 'Joy', 'พฤกษา 33', '13.8984424', '100.3665214', '2026-04-24 09:02:36', NULL, 'IN', 'ps33_69eacf3c5368a7.05632903');
 
+-- Generated at 2026-05-29 14:54:36 by เรือน  อุ้ตมา
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U735c91c0863d77bf4721dcb98a7ec14c', 'เรือน  อุ้ตมา', 'พฤกษา 33', '0', '0', '2026-05-29 14:54:36', NULL, 'OUT', 'ps33_6a19463ca443f5.80388857');
+
+-- Generated at 2026-05-29 14:57:05 by เรือน  อุ้ตมา
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U735c91c0863d77bf4721dcb98a7ec14c', 'เรือน  อุ้ตมา', 'พฤกษา 33', '13.9023193', '100.3671116', '2026-05-29 14:57:05', NULL, 'OUT', 'ps33_6a1946d19886a6.86656509');
+
+-- Generated at 2026-05-29 15:06:39 by สุภาภรณ์ (ติ๋ว)
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U747ceba406526bea886b7c33173de840', 'สุภาภรณ์ (ติ๋ว)', 'พฤกษา 33', '0', '0', '2026-05-29 15:06:39', NULL, 'OUT', 'ps33_6a19490f2b8cc0.66812208');
+
+-- Generated at 2026-05-29 15:07:50 by สุภาภรณ์ (ติ๋ว)
+INSERT INTO checkins (user_id, display_name, place_name, latitude, longitude, checkin_time, photo_path, check_type, token_checkin) VALUES ('U747ceba406526bea886b7c33173de840', 'สุภาภรณ์ (ติ๋ว)', 'พฤกษา 33', '13.8996567', '100.3675946', '2026-05-29 15:07:50', NULL, 'OUT', 'ps33_6a1949568ff3a7.79990697');
+
