@@ -163,6 +163,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file_path = $upload_dir . $file_name;
 
         if (move_uploaded_file($picture_payment['tmp_name'], $file_path)) {
+            
+            // --- Google Drive Upload Section ---
+            try {
+                include_once('../util/google_drive_util.php');
+                $googleConfig = include('../config/google_drive_config.php');
+                if (!empty($googleConfig['folder_id']) && $googleConfig['folder_id'] !== 'YOUR_GOOGLE_DRIVE_FOLDER_ID') {
+                    uploadToGoogleDrive($file_path, $file_name, $googleConfig['folder_id'], $googleConfig['auth_config_path']);
+                }
+            } catch (Exception $e) {
+                error_log("Google Drive Upload Error: " . $e->getMessage());
+            }
+            // ------------------------------------
+
             $ins_str = "INSERT INTO ims_house_payment (doc_id, payment_date, house_number, detail,runno,period_month_start,period_month_to,period_year,amount,picture_payment,remark,payment_type,line_user_id,line_picture_profile_show,create_by,payment_method) 
             VALUES (:doc_id, :payment_date, :house_number,:detail, :runno,:period_month_start,:period_month_to,:period_year,:amount,:picture_payment,:remark,:payment_type,:line_user_id,:line_picture_profile_show,:create_by,:payment_method)";
             $stmt = $conn->prepare($ins_str);

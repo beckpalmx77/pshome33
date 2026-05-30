@@ -269,6 +269,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
         writeToCustomLog("File successfully uploaded to: {$file_path}.");
+
+        // --- Google Drive Upload Section ---
+        try {
+            include_once('../util/google_drive_util.php');
+            $googleConfig = include('../config/google_drive_config.php');
+            if (!empty($googleConfig['folder_id']) && $googleConfig['folder_id'] !== 'YOUR_GOOGLE_DRIVE_FOLDER_ID') {
+                uploadToGoogleDrive($file_path, $file_name, $googleConfig['folder_id'], $googleConfig['auth_config_path']);
+                writeToCustomLog("File successfully uploaded to Google Drive: {$file_name}.");
+            }
+        } catch (Exception $e) {
+            writeToCustomLog("Google Drive Upload Error: " . $e->getMessage());
+            error_log("Google Drive Upload Error: " . $e->getMessage());
+        }
+        // ------------------------------------
     } else if ($picture_payment && $picture_payment['error'] != UPLOAD_ERR_NO_FILE) {
         writeToCustomLog("Error: File upload error code " . $picture_payment['error'] . " for " . ($picture_payment['name'] ?? 'unknown file') . ".");
         echo "Error: File upload error code " . $picture_payment['error'] . ". Please try again.";

@@ -27,6 +27,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/dompdf/dompdf" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dompdf/php-font-lib" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dompdf/php-svg-lib" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/firebase/php-jwt" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fontawesome-4.7/css" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fontawesome-free-5.15.4-web/css" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fontawesome-free-5.15.4-web/js" />
@@ -43,12 +44,16 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/fontawesome-free/sprites" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fontawesome-free/svgs" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fontawesome-free/webfonts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/google/apiclient" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/google/apiclient-services" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/google/auth" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/jquery/53" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maennchen/zipstream-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/markbaker/complex" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/markbaker/matrix" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/masterminds/html5" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mobiledetect/mobiledetectlib" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/monolog/monolog" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mpdf/mpdf" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mpdf/psr-http-message-shim" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mpdf/psr-log-aware-trait" />
@@ -69,6 +74,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/php-amqplib/php-amqplib" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpoffice/phpspreadsheet" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpseclib/phpseclib" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-factory" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-message" />
