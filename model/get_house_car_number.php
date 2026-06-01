@@ -18,11 +18,11 @@ if (!empty($userId)) {
     lhuser.house_number, 
     lhuser.f_name, 
     lhuser.l_name, 
-    h.car_no1, h.car_no2, h.car_no3, h.car_no4, h.car_no5, h.car_no6, h.car_no7, 
-    h.car_no1_province, h.car_no2_province, h.car_no3_province, h.car_no4_province, h.car_no5_province, h.car_no6_province, h.car_no7_province,
-    h.car_no1_brand, h.car_no2_brand, h.car_no3_brand, h.car_no4_brand, h.car_no5_brand, h.car_no6_brand, h.car_no7_brand,
-    h.car_no1_color, h.car_no2_color, h.car_no3_color, h.car_no4_color, h.car_no5_color, h.car_no6_color, h.car_no7_color,
-    h.car_no1_type, h.car_no2_type, h.car_no3_type, h.car_no4_type, h.car_no5_type, h.car_no6_type, h.car_no7_type,
+    h.car_no1, h.car_no2, h.car_no3, h.car_no4, h.car_no5, h.car_no6, h.car_no7, h.car_no8,
+    h.car_no1_province, h.car_no2_province, h.car_no3_province, h.car_no4_province, h.car_no5_province, h.car_no6_province, h.car_no7_province, h.car_no8_province,
+    h.car_no1_brand, h.car_no2_brand, h.car_no3_brand, h.car_no4_brand, h.car_no5_brand, h.car_no6_brand, h.car_no7_brand, h.car_no8_brand,
+    h.car_no1_color, h.car_no2_color, h.car_no3_color, h.car_no4_color, h.car_no5_color, h.car_no6_color, h.car_no7_color, h.car_no8_color,
+    h.car_no1_type, h.car_no2_type, h.car_no3_type, h.car_no4_type, h.car_no5_type, h.car_no6_type, h.car_no7_type, h.car_no8_type,
     h.status, 
     h.house_status, 
     h.phone_number,
@@ -86,7 +86,12 @@ if (!empty($userId)) {
             'car_no7_province' => $row['car_no7_province'] ?? '',
             'car_no7_brand' => $row['car_no7_brand'] ?? '',
             'car_no7_color' => $row['car_no7_color'] ?? '',
-            'car_no7_type' => $row['car_no7_type'] ?? ''
+            'car_no7_type' => $row['car_no7_type'] ?? '',
+            'car_no8' => $row['car_no8'] ?? '',
+            'car_no8_province' => $row['car_no8_province'] ?? '',
+            'car_no8_brand' => $row['car_no8_brand'] ?? '',
+            'car_no8_color' => $row['car_no8_color'] ?? '',
+            'car_no8_type' => $row['car_no8_type'] ?? ''
 
         ]);
     } else {
@@ -133,7 +138,12 @@ if (!empty($userId)) {
             'car_no7_province' => '',
             'car_no7_brand' => '',
             'car_no7_color' => '',
-            'car_no7_type' => ''
+            'car_no7_type' => '',
+            'car_no8' => '',
+            'car_no8_province' => '',
+            'car_no8_brand' => '',
+            'car_no8_color' => '',
+            'car_no8_type' => ''
         ]);
     }
 } else {
@@ -182,6 +192,11 @@ if (!empty($userId)) {
         'car_no7_province' => '',
         'car_no7_brand' => '',
         'car_no7_color' => '',
-        'car_no7_type' => ''
+        'car_no7_type' => '',
+        'car_no8' => '',
+        'car_no8_province' => '',
+        'car_no8_brand' => '',
+        'car_no8_color' => '',
+        'car_no8_type' => ''
     ]);
 }

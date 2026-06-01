@@ -9,6 +9,7 @@ $sql = "SELECT house_number,
         car_no5,
         car_no6,
         car_no7,
+        car_no8,
         sticker_receive_status
         FROM ims_house 
         WHERE (sticker_receive_status IS NULL OR sticker_receive_status <> 'Y') AND car_no1 IS NOT NULL AND car_no1 <> '' 
@@ -30,6 +31,7 @@ foreach ($results as $result) {
     if (!empty($result['car_no5'])) $carCount++;
     if (!empty($result['car_no6'])) $carCount++;
     if (!empty($result['car_no7'])) $carCount++;
+    if (!empty($result['car_no8'])) $carCount++;
     
     $return_arr[] = array(
         "house_number" => $result['house_number'],
@@ -40,6 +42,7 @@ foreach ($results as $result) {
         "car_no5" => $result['car_no5'] ?? '',
         "car_no6" => $result['car_no6'] ?? '',
         "car_no7" => $result['car_no7'] ?? '',
+        "car_no8" => $result['car_no8'] ?? '',
         "car_count" => $carCount
     );
 }

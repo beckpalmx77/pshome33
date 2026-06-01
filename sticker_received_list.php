@@ -16,7 +16,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
         (CASE WHEN car_no4 IS NOT NULL AND car_no4 <> '' THEN 1 ELSE 0 END) +
         (CASE WHEN car_no5 IS NOT NULL AND car_no5 <> '' THEN 1 ELSE 0 END) +
         (CASE WHEN car_no6 IS NOT NULL AND car_no6 <> '' THEN 1 ELSE 0 END) +
-        (CASE WHEN car_no7 IS NOT NULL AND car_no7 <> '' THEN 1 ELSE 0 END)
+        (CASE WHEN car_no7 IS NOT NULL AND car_no7 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no8 IS NOT NULL AND car_no8 <> '' THEN 1 ELSE 0 END)
     ) AS total_cars_count
 FROM ims_house;";
 
@@ -194,6 +195,7 @@ FROM ims_house;";
                                                     <th>ทะเบียนรถ 5</th>
                                                     <th>ทะเบียนรถ 6</th>
                                                     <th>ทะเบียนรถ 7</th>
+                                                    <th>ทะเบียนรถ 8</th>
                                                     <th>จำนวนรถ</th>
                                                     <th>ค่าสติกเกอร์(บาท)</th>
                                                     <th>วันที่รับสติกเกอร์</th>
@@ -275,6 +277,7 @@ FROM ims_house;";
                                 <th>ทะเบียนรถ 5</th>
                                 <th>ทะเบียนรถ 6</th>
                                 <th>ทะเบียนรถ 7</th>
+                                <th>ทะเบียนรถ 8</th>
                                 <th>จำนวนรถ</th>
                             </tr>
                             </thead>
@@ -507,6 +510,35 @@ FROM ims_house;";
                             </div>
                         </div>
 
+                        <div class="row mb-2">
+                            <div class="col-md-2">ทะเบียน 8</div>
+                            <div class="col-md-2">จังหวัด</div>
+                            <div class="col-md-2">ยี่ห้อ-รุ่น</div>
+                            <div class="col-md-2">สี</div>
+                            <div class="col-md-2">ประเภท</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no8" name="car_no8" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no8_province" name="car_no8_province" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no8_brand" name="car_no8_brand" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="edit_car_no8_color" name="car_no8_color" placeholder="">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="edit_car_no8_type" name="car_no8_type">
+                                    <option value="">-- เลือก --</option>
+                                    <option value="รถยนต์">รถยนต์</option>
+                                    <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                </select>
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -571,6 +603,7 @@ FROM ims_house;";
                     { "data": "car_no5" },
                     { "data": "car_no6" },
                     { "data": "car_no7" },
+                    { "data": "car_no8" },
                     { "data": "car_count", "className": "text-right" },
                     { "data": "extra_car_fee", "className": "text-right" },
                     { "data": "sticker_receive_date" },
@@ -631,7 +664,7 @@ FROM ims_house;";
                 }
 
                 let csvContent = "\uFEFF"; // BOM for UTF-8
-                csvContent += "ลำดับ,บ้านเลขที่,ทะเบียนรถ 1,ทะเบียนรถ 2,ทะเบียนรถ 3,ทะเบียนรถ 4,ทะเบียนรถ 5,ทะเบียนรถ 6,ทะเบียนรถ 7,จำนวนรถ,ค่าสติกเกอร์รถเพิ่ม (บาท),วันที่รับสติกเกอร์\n";
+                csvContent += "ลำดับ,บ้านเลขที่,ทะเบียนรถ 1,ทะเบียนรถ 2,ทะเบียนรถ 3,ทะเบียนรถ 4,ทะเบียนรถ 5,ทะเบียนรถ 6,ทะเบียนรถ 7,ทะเบียนรถ 8,จำนวนรถ,ค่าสติกเกอร์รถเพิ่ม (บาท),วันที่รับสติกเกอร์\n";
 
                 let totalCars = 0;
                 let totalExtraFee = 0;
@@ -647,6 +680,7 @@ FROM ims_house;";
                     csvContent += '"' + row.car_no5 + '",';
                     csvContent += '"' + row.car_no6 + '",';
                     csvContent += '"' + row.car_no7 + '",';
+                    csvContent += '"' + row.car_no8 + '",';
                     csvContent += row.car_count + ',';
                     csvContent += row.extra_car_fee + ',';
                     csvContent += '"' + row.sticker_receive_date + '"\n';
@@ -657,7 +691,7 @@ FROM ims_house;";
                 });
 
                 // Add total row
-                csvContent += '"รวมทั้งหมด","","","","","","",' + totalCars + ',' + totalExtraFee + ',""\n';
+                csvContent += '"รวมทั้งหมด","","","","","","","",' + totalCars + ',' + totalExtraFee + ',""\n';
 
                 let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 let link = document.createElement("a");
@@ -696,6 +730,7 @@ FROM ims_house;";
                 if (rowData.car_no5) cars.push({no: 5, car_no: rowData.car_no5, province: rowData.car_no5_province, brand: rowData.car_no5_brand, color: rowData.car_no5_color, type: rowData.car_no5_type});
                 if (rowData.car_no6) cars.push({no: 6, car_no: rowData.car_no6, province: rowData.car_no6_province, brand: rowData.car_no6_brand, color: rowData.car_no6_color, type: rowData.car_no6_type});
                 if (rowData.car_no7) cars.push({no: 7, car_no: rowData.car_no7, province: rowData.car_no7_province, brand: rowData.car_no7_brand, color: rowData.car_no7_color, type: rowData.car_no7_type});
+                if (rowData.car_no8) cars.push({no: 8, car_no: rowData.car_no8, province: rowData.car_no8_province, brand: rowData.car_no8_brand, color: rowData.car_no8_color, type: rowData.car_no8_type});
 
                 for (let i = 0; i < cars.length; i++) {
                     detailHtml += '<tr><td>' + cars[i].no + '</td><td>' + cars[i].car_no + '</td><td>' + cars[i].province + '</td><td>' + cars[i].brand + '</td><td>' + cars[i].color + '</td><td>' + cars[i].type + '</td></tr>';
@@ -719,7 +754,7 @@ FROM ims_house;";
                 $('#edit_house_number').val(houseNumber);
 
                 // Clear all fields
-                for (let i = 1; i <= 7; i++) {
+                for (let i = 1; i <= 8; i++) {
                     $('#edit_car_no' + i).val('');
                     $('#edit_car_no' + i + '_province').val('');
                     $('#edit_car_no' + i + '_type').val('');
@@ -728,60 +763,20 @@ FROM ims_house;";
                 }
 
                 // Fill data
-                if (rowData.car_no1) {
-                    $('#edit_car_no1').val(rowData.car_no1);
-                    $('#edit_car_no1_province').val(rowData.car_no1_province || '');
-                    $('#edit_car_no1_type').val(rowData.car_no1_type || '');
-                    $('#edit_car_no1_brand').val(rowData.car_no1_brand || '');
-                    $('#edit_car_no1_color').val(rowData.car_no1_color || '');
-                }
-                if (rowData.car_no2) {
-                    $('#edit_car_no2').val(rowData.car_no2);
-                    $('#edit_car_no2_province').val(rowData.car_no2_province || '');
-                    $('#edit_car_no2_type').val(rowData.car_no2_type || '');
-                    $('#edit_car_no2_brand').val(rowData.car_no2_brand || '');
-                    $('#edit_car_no2_color').val(rowData.car_no2_color || '');
-                }
-                if (rowData.car_no3) {
-                    $('#edit_car_no3').val(rowData.car_no3);
-                    $('#edit_car_no3_province').val(rowData.car_no3_province || '');
-                    $('#edit_car_no3_type').val(rowData.car_no3_type || '');
-                    $('#edit_car_no3_brand').val(rowData.car_no3_brand || '');
-                    $('#edit_car_no3_color').val(rowData.car_no3_color || '');
-                }
-                if (rowData.car_no4) {
-                    $('#edit_car_no4').val(rowData.car_no4);
-                    $('#edit_car_no4_province').val(rowData.car_no4_province || '');
-                    $('#edit_car_no4_type').val(rowData.car_no4_type || '');
-                    $('#edit_car_no4_brand').val(rowData.car_no4_brand || '');
-                    $('#edit_car_no4_color').val(rowData.car_no4_color || '');
-                }
-                if (rowData.car_no5) {
-                    $('#edit_car_no5').val(rowData.car_no5);
-                    $('#edit_car_no5_province').val(rowData.car_no5_province || '');
-                    $('#edit_car_no5_type').val(rowData.car_no5_type || '');
-                    $('#edit_car_no5_brand').val(rowData.car_no5_brand || '');
-                    $('#edit_car_no5_color').val(rowData.car_no5_color || '');
-                }
-                if (rowData.car_no6) {
-                    $('#edit_car_no6').val(rowData.car_no6);
-                    $('#edit_car_no6_province').val(rowData.car_no6_province || '');
-                    $('#edit_car_no6_type').val(rowData.car_no6_type || '');
-                    $('#edit_car_no6_brand').val(rowData.car_no6_brand || '');
-                    $('#edit_car_no6_color').val(rowData.car_no6_color || '');
-                }
-                if (rowData.car_no7) {
-                    $('#edit_car_no7').val(rowData.car_no7);
-                    $('#edit_car_no7_province').val(rowData.car_no7_province || '');
-                    $('#edit_car_no7_type').val(rowData.car_no7_type || '');
-                    $('#edit_car_no7_brand').val(rowData.car_no7_brand || '');
-                    $('#edit_car_no7_color').val(rowData.car_no7_color || '');
+                for (let i = 1; i <= 8; i++) {
+                    if (rowData['car_no' + i]) {
+                        $('#edit_car_no' + i).val(rowData['car_no' + i]);
+                        $('#edit_car_no' + i + '_province').val(rowData['car_no' + i + '_province'] || '');
+                        $('#edit_car_no' + i + '_type').val(rowData['car_no' + i + '_type'] || '');
+                        $('#edit_car_no' + i + '_brand').val(rowData['car_no' + i + '_brand'] || '');
+                        $('#edit_car_no' + i + '_color').val(rowData['car_no' + i + '_color'] || '');
+                    }
                 }
 
                 $('#editStickerModal').modal('show');
                 
                 // Initialize autocomplete after modal is shown
-                for (let i = 1; i <= 7; i++) {
+                for (let i = 1; i <= 8; i++) {
                     initProvinceAutocomplete("edit_car_no" + i + "_province");
                     initColorAutocomplete("edit_car_no" + i + "_color");
                     initBrandAutocomplete("edit_car_no" + i + "_brand");
@@ -818,6 +813,7 @@ FROM ims_house;";
                             { "data": "car_no5" },
                             { "data": "car_no6" },
                             { "data": "car_no7" },
+                            { "data": "car_no8" },
                             { "data": "car_count", "className": "text-right" }
                         ],
                         "language": {

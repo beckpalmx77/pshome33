@@ -63,6 +63,12 @@ $car_no7_type = $_POST['car_no7_type'] ?? '';
 $car_no7_brand = $_POST['car_no7_brand'] ?? '';
 $car_no7_color = $_POST['car_no7_color'] ?? '';
 
+$car_no8 = $_POST['car_no8'] ?? '';
+$car_no8_province = $_POST['car_no8_province'] ?? '';
+$car_no8_type = $_POST['car_no8_type'] ?? '';
+$car_no8_brand = $_POST['car_no8_brand'] ?? '';
+$car_no8_color = $_POST['car_no8_color'] ?? '';
+
 $car_no1_brand = preg_replace('/็/', '', $car_no1_brand);
 $car_no2_brand = preg_replace('/็/', '', $car_no2_brand);
 $car_no3_brand = preg_replace('/็/', '', $car_no3_brand);
@@ -70,6 +76,7 @@ $car_no4_brand = preg_replace('/็/', '', $car_no4_brand);
 $car_no5_brand = preg_replace('/็/', '', $car_no5_brand);
 $car_no6_brand = preg_replace('/็/', '', $car_no6_brand);
 $car_no7_brand = preg_replace('/็/', '', $car_no7_brand);
+$car_no8_brand = preg_replace('/็/', '', $car_no8_brand);
 
 $sql = "UPDATE ims_house SET 
     car_no1 = :car_no1,
@@ -106,7 +113,12 @@ $sql = "UPDATE ims_house SET
     car_no7_province = :car_no7_province,
     car_no7_type = :car_no7_type,
     car_no7_brand = :car_no7_brand,
-    car_no7_color = :car_no7_color
+    car_no7_color = :car_no7_color,
+    car_no8 = :car_no8,
+    car_no8_province = :car_no8_province,
+    car_no8_type = :car_no8_type,
+    car_no8_brand = :car_no8_brand,
+    car_no8_color = :car_no8_color
 WHERE house_number = :house_number";
 
 try {
@@ -147,6 +159,11 @@ try {
     $stmt->bindParam(':car_no7_type', $car_no7_type, PDO::PARAM_STR);
     $stmt->bindParam(':car_no7_brand', $car_no7_brand, PDO::PARAM_STR);
     $stmt->bindParam(':car_no7_color', $car_no7_color, PDO::PARAM_STR);
+    $stmt->bindParam(':car_no8', $car_no8, PDO::PARAM_STR);
+    $stmt->bindParam(':car_no8_province', $car_no8_province, PDO::PARAM_STR);
+    $stmt->bindParam(':car_no8_type', $car_no8_type, PDO::PARAM_STR);
+    $stmt->bindParam(':car_no8_brand', $car_no8_brand, PDO::PARAM_STR);
+    $stmt->bindParam(':car_no8_color', $car_no8_color, PDO::PARAM_STR);
 
     $stmt->execute();
 

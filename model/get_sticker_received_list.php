@@ -9,6 +9,7 @@ $sql = "SELECT house_number,
         car_no5, car_no5_province, car_no5_brand, car_no5_color, car_no5_type,
         car_no6, car_no6_province, car_no6_brand, car_no6_color, car_no6_type,
         car_no7, car_no7_province, car_no7_brand, car_no7_color, car_no7_type,
+        car_no8, car_no8_province, car_no8_brand, car_no8_color, car_no8_type,
         sticker_receive_date 
         FROM ims_house 
         WHERE sticker_receive_status = 'Y' 
@@ -32,6 +33,7 @@ foreach ($results as $result) {
     if (!empty($result['car_no5'])) $carCount++;
     if (!empty($result['car_no6'])) $carCount++;
     if (!empty($result['car_no7'])) $carCount++;
+    if (!empty($result['car_no8'])) $carCount++;
     
     $extraCarFee = 0;
     if ($carCount > 2) {
@@ -78,6 +80,11 @@ foreach ($results as $result) {
         "car_no7_brand" => $result['car_no7_brand'] ?? '',
         "car_no7_color" => $result['car_no7_color'] ?? '',
         "car_no7_type" => $result['car_no7_type'] ?? '',
+        "car_no8" => $result['car_no8'] ?? '',
+        "car_no8_province" => $result['car_no8_province'] ?? '',
+        "car_no8_brand" => $result['car_no8_brand'] ?? '',
+        "car_no8_color" => $result['car_no8_color'] ?? '',
+        "car_no8_type" => $result['car_no8_type'] ?? '',
         "car_count" => $carCount,
         "extra_car_fee" => $extraCarFee,
         "sticker_receive_date" => $result['sticker_receive_date'] ?? ''

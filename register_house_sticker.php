@@ -383,6 +383,46 @@ include('includes/Header.php');
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
+                                                    <label for="car_no8">ทะเบียนรถ (8)</label>
+                                                    <input type="text" name="car_no8" id="car_no8" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no8_province">จังหวัด (8)</label>
+                                                    <input type="text" name="car_no8_province" id="car_no8_province" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no8_brand">ยี่ห้อ-รุ่น (8)</label>
+                                                    <input type="text" name="car_no8_brand" id="car_no8_brand" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no8_color">สี (8)</label>
+                                                    <input type="text" name="car_no8_color" id="car_no8_color" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="car_no8_type">ประเภท (8)</label>
+                                                    <select name="car_no8_type" id="car_no8_type" class="form-control">
+                                                        <option value="">-- เลือก --</option>
+                                                        <option value="รถยนต์">รถยนต์</option>
+                                                        <option value="จักรยานยนต์">จักรยานยนต์</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
                                                     <label for="area_size">พื้นที่บ้าน ตรว.</label>
                                                     <input type="text" name="area_size" id="area_size" class="form-control" readonly="true">
                                                 </div>
@@ -468,6 +508,7 @@ function calculateExtraCarFee() {
     if ($('#car_no5').val() && $('#car_no5').val().trim() !== '') carCount++;
     if ($('#car_no6').val() && $('#car_no6').val().trim() !== '') carCount++;
     if ($('#car_no7').val() && $('#car_no7').val().trim() !== '') carCount++;
+    if ($('#car_no8').val() && $('#car_no8').val().trim() !== '') carCount++;
     
     let extraCarFee = 0;
     if (carCount > 2) {
@@ -599,6 +640,7 @@ function calculateExtraCarFee() {
         initProvinceAutocomplete("car_no5_province");
         initProvinceAutocomplete("car_no6_province");
         initProvinceAutocomplete("car_no7_province");
+        initProvinceAutocomplete("car_no8_province");
 
         function initColorAutocomplete(inputId) {
             $("#" + inputId).autocomplete({
@@ -633,8 +675,9 @@ function calculateExtraCarFee() {
         initColorAutocomplete("car_no5_color");
         initColorAutocomplete("car_no6_color");
         initColorAutocomplete("car_no7_color");
+        initColorAutocomplete("car_no8_color");
 
-        $('#car_no1, #car_no2, #car_no3, #car_no4, #car_no5, #car_no6, #car_no7').on('change', function() {
+        $('#car_no1, #car_no2, #car_no3, #car_no4, #car_no5, #car_no6, #car_no7, #car_no8').on('change', function() {
             calculateExtraCarFee();
         });
 
@@ -671,6 +714,7 @@ function calculateExtraCarFee() {
         initBrandAutocomplete("car_no5_brand");
         initBrandAutocomplete("car_no6_brand");
         initBrandAutocomplete("car_no7_brand");
+        initBrandAutocomplete("car_no8_brand");
     });
 </script>
 
@@ -741,9 +785,21 @@ function calculateExtraCarFee() {
                             document.getElementById('car_no7_brand').value = data.car_no7_brand || '';
                             document.getElementById('car_no7_color').value = data.car_no7_color || '';
                             document.getElementById('car_no7_type').value = data.car_no7_type || '';
+                            document.getElementById('car_no8').value = data.car_no8 || '';
+                            document.getElementById('car_no8_province').value = data.car_no8_province || '';
+                            document.getElementById('car_no8_brand').value = data.car_no8_brand || '';
+                            document.getElementById('car_no8_color').value = data.car_no8_color || '';
+                            document.getElementById('car_no8_type').value = data.car_no8_type || '';
                             document.getElementById('user-info-liff3').innerText = displayName;
                             document.getElementById('sticker_receive_status').value = data.sticker_receive_status === 'Y' ? 'รับแล้ว' : data.sticker_receive_status === 'N' ? 'ยังไม่ได้รับ' : '';
                             document.getElementById('sticker_receive_date').value = data.sticker_receive_date || '';
+                            
+                            if (data.sticker_receive_status === 'Y') {
+                                // Disable form elements if already received
+                                $('#sticker_form input, #sticker_form select').not('#BackBtn, #btnExportExcel').prop('readonly', true);
+                                $('#sticker_form select').prop('disabled', true);
+                            }
+                            
                             $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
                             
                             calculateExtraCarFee();
@@ -785,6 +841,14 @@ function calculateExtraCarFee() {
         form.appendChild(input);
         
         document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    });
+</script>
+
+</body>
+</html>
+ppendChild(form);
         form.submit();
         document.body.removeChild(form);
     });
