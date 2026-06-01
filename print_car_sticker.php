@@ -26,7 +26,7 @@ function generateCarStickerPdf($house_number, $output = 'I') {
     
     $carNos = [];
     $carData = [];
-    for ($i = 1; $i <= 7; $i++) {
+    for ($i = 1; $i <= 8; $i++) {
         $carNo = $result['car_no' . $i] ?? '';
         if (!empty($carNo)) {
             $carNos[] = $carNo;
