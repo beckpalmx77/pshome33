@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 include_once('../util/google_drive_util.php');
                 $googleConfig = include('../config/google_drive_config.php');
                 if (!empty($googleConfig['folder_id']) && $googleConfig['folder_id'] !== 'YOUR_GOOGLE_DRIVE_FOLDER_ID') {
-                    uploadToGoogleDrive($file_path, $file_name, $googleConfig['folder_id'], $googleConfig['auth_config_path']);
+                    uploadToGoogleDrive($file_path, $file_name, $googleConfig['folder_id'], $googleConfig);
                 }
             } catch (Exception $e) {
                 error_log("Google Drive Upload Error: " . $e->getMessage());

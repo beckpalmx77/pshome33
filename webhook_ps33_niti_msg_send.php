@@ -99,6 +99,18 @@ if (isset($events['events']) && is_array($events['events'])) {
                     
                     file_put_contents($savePath, $imageBinary);
 
+                    // --- Google Drive Upload Section ---
+                    try {
+                        include_once('util/google_drive_util.php');
+                        $googleConfig = include('config/google_drive_config.php');
+                        if (!empty($googleConfig['visitor_folder_id'])) {
+                            uploadToGoogleDrive($savePath, $fileName, $googleConfig['visitor_folder_id'], $googleConfig);
+                        }
+                    } catch (Exception $e) {
+                        error_log("Google Drive Visitor Upload Error: " . $e->getMessage());
+                    }
+                    // ------------------------------------
+
                     $imageUrl = $baseUrl . '/' . $fileName;
                     $message_text = 'รูปภาพ';
                     $photo_path = $fileName;

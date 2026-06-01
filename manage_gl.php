@@ -61,13 +61,12 @@ if (strlen($_SESSION['alogin']) == "") {
                     </div>
                 </div>
 
-                <!-- Edit Modal -->
                 <div class="modal fade" id="EditGLModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header bg-primary text-white">
                                 <h5 class="modal-title">แก้ไขรายการบัญชี</h5>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
                                 <form id="GLForm">
@@ -86,11 +85,11 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <h6>รายการบันทึกบัญชี (Dr/Cr)</h6>
                                     <table class="table table-sm" id="TableEditDetails">
                                         <thead>
-                                            <tr>
-                                                <th>บัญชี</th>
-                                                <th width="150">Debit</th>
-                                                <th width="150">Credit</th>
-                                            </tr>
+                                        <tr>
+                                            <th>บัญชี</th>
+                                            <th width="150">Debit</th>
+                                            <th width="150">Credit</th>
+                                        </tr>
                                         </thead>
                                         <tbody></tbody>
                                     </table>
