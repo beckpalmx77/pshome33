@@ -1,0 +1,22 @@
+# Dependency directories
+/vendor/
+/node_modules/
+
+# Config files with secrets
+config/ps33home-b60da901fe86.json
+config/google_drive_config.php
+config/connect_db*.php
+config/*.inc
+config/env.*.inc
+
+# Logs
+*.log
+webhook_ps33_niti_log_id.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.bak
