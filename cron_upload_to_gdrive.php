@@ -12,27 +12,44 @@ if (!file_exists($logDir)) {
 
 echo "--- Starting Google Drive Sync: " . date('Y-m-d H:i:s') . " ---\n";
 
-// 1. ค้นหารูปภาพที่ยังไม่ได้ Sync
-// ค้นหาเฉพาะรายการที่ message_type เป็น image, มีชื่อไฟล์ และ is_google_drive_synced ยังเป็น 0
-// จำกัดครั้งละ 10 รูปเพื่อไม่ให้ PHP ทำงานหนักเกินไปในหนึ่งรอบ
-$sql = "SELECT id, photo_path FROM ims_line_webhook_messages 
-        WHERE message_type = 'image' 
-        AND photo_path IS NOT NULL 
-        AND photo_path != ''
-        AND is_google_drive_synced = 0 
-        ORDER BY id ASC LIMIT 10";
+/**
+ * ป้องกันการ Upload ซ้ำกรณี Cronjob รันซ้อนกัน (Race Condition)
+ * เราจะใช้สถานะดังนี้:
+ * 0 = ยังไม่ได้ส่ง (Pending)
+ * 1 = ส่งสำเร็จแล้ว (Synced)
+ * 2 = กำลังประมวลผล (Processing)
+ * 9 = เกิดข้อผิดพลาด/ไม่พบไฟล์ (Error)
+ */
 
 try {
+    // 1. จองคิว: เปลี่ยนสถานะจาก 0 เป็น 2 สำหรับ 10 แถวแรก
+    // เราใช้ Batch ID (เวลาปัจจุบัน) เพื่อระบุเฉพาะแถวที่โปรเซสนี้จองไว้
+    $batchId = time() . rand(100, 999);
+    $lockSql = "UPDATE ims_line_webhook_messages 
+                SET is_google_drive_synced = 2, remark = :batchId
+                WHERE is_google_drive_synced = 0 
+                AND message_type = 'image'
+                AND photo_path IS NOT NULL 
+                AND photo_path != ''
+                ORDER BY id ASC LIMIT 10";
+    
+    // หมายเหตุ: หากตารางไม่มีคอลัมน์ remark ให้รัน: ALTER TABLE ims_line_webhook_messages ADD remark VARCHAR(100);
+    // หรือถ้าไม่ต้องการใช้ remark ให้ใช้แค่การจองสถานะ 2 ก็ได้ครับ
+    $lockStmt = $conn->prepare($lockSql);
+    $lockStmt->execute([':batchId' => $batchId]);
+
+    // 2. ดึงรายการที่เราจองไว้ (สถานะ = 2 และ remark = batchId ของเรา)
+    $sql = "SELECT id, photo_path FROM ims_line_webhook_messages 
+            WHERE is_google_drive_synced = 2 AND remark = :batchId";
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([':batchId' => $batchId]);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (count($rows) === 0) {
-        echo "No pending images to sync.\n";
+        echo "No pending images to sync in this batch.\n";
         exit;
     }
 
-    // ดึงค่าคอนฟิก Google Drive
     $googleConfig = include(__DIR__ . '/config/google_drive_config.php');
 
     foreach ($rows as $row) {
@@ -43,12 +60,10 @@ try {
         if (file_exists($filePath)) {
             try {
                 echo "Processing ID $id: $fileName ... ";
-                
-                // เริ่มอัพโหลด
                 uploadToGoogleDrive($filePath, $fileName, $googleConfig['visitor_folder_id'], $googleConfig);
                 
-                // 2. อัพเดตสถานะในฐานข้อมูลเมื่อ Sync สำเร็จ
-                $updateSql = "UPDATE ims_line_webhook_messages SET is_google_drive_synced = 1 WHERE id = :id";
+                // 3. อัพเดตสถานะเป็น 1 (Synced) เมื่อสำเร็จ
+                $updateSql = "UPDATE ims_line_webhook_messages SET is_google_drive_synced = 1, remark = 'Synced at " . date('H:i:s') . "' WHERE id = :id";
                 $updateStmt = $conn->prepare($updateSql);
                 $updateStmt->execute([':id' => $id]);
                 
@@ -56,19 +71,21 @@ try {
                 file_put_contents($logPath, date('Y-m-d H:i:s') . " | SUCCESS | ID: $id | File: $fileName\n", FILE_APPEND);
             } catch (Exception $e) {
                 echo "FAILED: " . $e->getMessage() . "\n";
+                // หากพลาด ให้ตีกลับไปเป็น 0 เพื่อให้รอบหน้าลองใหม่ หรือเป็น 9 ถ้า Error ถาวร
+                $conn->prepare("UPDATE ims_line_webhook_messages SET is_google_drive_synced = 0, remark = :err WHERE id = :id")
+                     ->execute([':id' => $id, ':err' => substr($e->getMessage(), 0, 99)]);
                 file_put_contents($logPath, date('Y-m-d H:i:s') . " | FAILED  | ID: $id | File: $fileName | Error: " . $e->getMessage() . "\n", FILE_APPEND);
             }
         } else {
-            echo "ID $id: File not found ($fileName) - Skipping\n";
-            // มาร์คสถานะเป็น 9 (Error - File missing) เพื่อไม่ให้ดึงมาซ้ำอีก
-            $conn->prepare("UPDATE ims_line_webhook_messages SET is_google_drive_synced = 9 WHERE id = :id")->execute([':id' => $id]);
+            echo "ID $id: File not found ($fileName) - Marking Error\n";
+            $conn->prepare("UPDATE ims_line_webhook_messages SET is_google_drive_synced = 9, remark = 'File not found' WHERE id = :id")->execute([':id' => $id]);
             file_put_contents($logPath, date('Y-m-d H:i:s') . " | MISSING | ID: $id | File: $fileName\n", FILE_APPEND);
         }
     }
 
-} catch (PDOException $e) {
-    echo "Database Error: " . $e->getMessage() . "\n";
-    file_put_contents($logPath, date('Y-m-d H:i:s') . " | DB ERROR | " . $e->getMessage() . "\n", FILE_APPEND);
+} catch (Exception $e) {
+    echo "General Error: " . $e->getMessage() . "\n";
+    file_put_contents($logPath, date('Y-m-d H:i:s') . " | SYSTEM ERROR | " . $e->getMessage() . "\n", FILE_APPEND);
 }
 
 echo "--- Sync Task Finished: " . date('Y-m-d H:i:s') . " ---\n";
