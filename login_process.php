@@ -56,6 +56,9 @@ if ($query->rowCount() == 1) {
             $_SESSION['line_picture_profile'] = $result->line_picture_profile;
             $_SESSION['phone_number'] = $result->line_phone;
             $_SESSION['user_signature'] = $result->user_signature;
+            $_SESSION['theme_topbar'] = $result->theme_topbar;
+            $_SESSION['theme_sidebar'] = $result->theme_sidebar;
+            $_SESSION['theme_sidebar_color'] = $result->theme_sidebar_color;
 
 /*
             $myfile = fopen("login.txt", "w") or die("Unable to open file!");

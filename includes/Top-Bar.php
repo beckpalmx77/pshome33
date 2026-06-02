@@ -5,7 +5,6 @@ ini_set('display_errors', 1);
 
 ?>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
     /* Custom CSS */
     @media (max-width: 768px) {
@@ -45,8 +44,14 @@ ini_set('display_errors', 1);
 
 </style>
 
+<?php
+$topbar_theme = isset($_SESSION['theme_topbar']) && $_SESSION['theme_topbar'] != "" ? $_SESSION['theme_topbar'] : "bg-navbar";
+$sidebar_theme = isset($_SESSION['theme_sidebar']) && $_SESSION['theme_sidebar'] != "" ? $_SESSION['theme_sidebar'] : "sidebar-light";
+$sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sidebar_color'] != "" ? $_SESSION['theme_sidebar_color'] : "";
+?>
+
 <!-- TopBar -->
-<nav class="navbar navbar-expand navbar-light bg-navbar topbar mb-4 static-top">
+<nav class="navbar navbar-expand navbar-light <?php echo $topbar_theme; ?> topbar mb-4 static-top">
     <button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3">
         <i class="fa fa-bars"></i>
     </button>
@@ -121,6 +126,11 @@ ini_set('display_errors', 1);
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                          aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#themeModal">
+                            <i class="fas fa-palette fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Theme Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Logout
@@ -131,6 +141,80 @@ ini_set('display_errors', 1);
         <?php } ?>
     </div>
 </nav>
+
+<!-- Theme Modal -->
+<div class="modal fade" id="themeModal" tabindex="-1" role="dialog" aria-labelledby="themeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="themeModalLabel">Theme Settings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="themeForm">
+                    <div class="form-group">
+                        <label for="theme_topbar">Topbar Color</label>
+                        <select class="form-control" id="theme_topbar" name="theme_topbar">
+                            <option value="bg-navbar" <?php echo $topbar_theme == 'bg-navbar' ? 'selected' : ''; ?>>Default Blue</option>
+                            <option value="bg-gradient-primary" <?php echo $topbar_theme == 'bg-gradient-primary' ? 'selected' : ''; ?>>Gradient Blue</option>
+                            <option value="bg-gradient-success" <?php echo $topbar_theme == 'bg-gradient-success' ? 'selected' : ''; ?>>Gradient Green</option>
+                            <option value="bg-gradient-danger" <?php echo $topbar_theme == 'bg-gradient-danger' ? 'selected' : ''; ?>>Gradient Red</option>
+                            <option value="bg-gradient-warning" <?php echo $topbar_theme == 'bg-gradient-warning' ? 'selected' : ''; ?>>Gradient Yellow</option>
+                            <option value="bg-gradient-dark" <?php echo $topbar_theme == 'bg-gradient-dark' ? 'selected' : ''; ?>>Gradient Dark</option>
+                            <option value="bg-gradient-info" <?php echo $topbar_theme == 'bg-gradient-info' ? 'selected' : ''; ?>>Gradient Info</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="theme_sidebar">Sidebar Style</label>
+                        <select class="form-control" id="theme_sidebar" name="theme_sidebar">
+                            <option value="sidebar-light" <?php echo $sidebar_theme == 'sidebar-light' ? 'selected' : ''; ?>>Light</option>
+                            <option value="sidebar-dark" <?php echo $sidebar_theme == 'sidebar-dark' ? 'selected' : ''; ?>>Dark</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="theme_sidebar_color">Sidebar Color (Optional)</label>
+                        <select class="form-control" id="theme_sidebar_color" name="theme_sidebar_color">
+                            <option value="" <?php echo $sidebar_color == '' ? 'selected' : ''; ?>>Default</option>
+                            <option value="bg-gradient-primary" <?php echo $sidebar_color == 'bg-gradient-primary' ? 'selected' : ''; ?>>Gradient Blue</option>
+                            <option value="bg-gradient-success" <?php echo $sidebar_color == 'bg-gradient-success' ? 'selected' : ''; ?>>Gradient Green</option>
+                            <option value="bg-gradient-danger" <?php echo $sidebar_color == 'bg-gradient-danger' ? 'selected' : ''; ?>>Gradient Red</option>
+                            <option value="bg-gradient-warning" <?php echo $sidebar_color == 'bg-gradient-warning' ? 'selected' : ''; ?>>Gradient Yellow</option>
+                            <option value="bg-gradient-dark" <?php echo $sidebar_color == 'bg-gradient-dark' ? 'selected' : ''; ?>>Gradient Dark</option>
+                            <option value="bg-gradient-info" <?php echo $sidebar_color == 'bg-gradient-info' ? 'selected' : ''; ?>>Gradient Info</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveThemeBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#saveThemeBtn').on('click', function() {
+        let formData = $('#themeForm').serialize();
+        $.ajax({
+            url: 'model/save_theme_process.php',
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response == 1) {
+                    alertify.success('Theme updated successfully');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alertify.error('Failed to update theme');
+                }
+            }
+        });
+    });
+</script>
 
 <!-- Clock Script -->
 <script>

@@ -17,8 +17,13 @@ include('config/lang.php');
     }
 </style>
 
+<?php
+$sidebar_theme = isset($_SESSION['theme_sidebar']) && $_SESSION['theme_sidebar'] != "" ? $_SESSION['theme_sidebar'] : "sidebar-light";
+$sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sidebar_color'] != "" ? $_SESSION['theme_sidebar_color'] : "";
+?>
+
 <!-- Sidebar -->
-<ul class="navbar-nav sidebar sidebar-light accordion" id="accordionSidebar">
+<ul class="navbar-nav sidebar <?php echo $sidebar_theme; ?> <?php echo $sidebar_color; ?> accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center"
        href="<?php echo $_SESSION['dashboard_page'] ?>">
         <!--div class="sidebar-brand-icon">
@@ -112,6 +117,12 @@ include('config/lang.php');
         }
     } ?>
     <hr class="sidebar-divider">
+
+    <li class="nav-item">
+        <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#themeModal">
+            <i class="fas fa-palette"></i>
+            <span>Theme Settings</span></a>
+    </li>
 
     <li class="nav-item active">
         <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
