@@ -88,5 +88,52 @@ try {
     file_put_contents($logPath, date('Y-m-d H:i:s') . " | SYSTEM ERROR | " . $e->getMessage() . "\n", FILE_APPEND);
 }
 
+// --- Cleanup Old Images (Older than 20 days) ---
+echo "--- Starting Cleanup Task (Older than 20 days) ---\n";
+try {
+    $cleanupSql = "SELECT id, photo_path FROM ims_line_webhook_messages 
+                   WHERE created_at < DATE_SUB(NOW(), INTERVAL 20 DAY) 
+                   AND message_type = 'image' 
+                   AND photo_path IS NOT NULL 
+                   AND photo_path != ''";
+    $cleanupStmt = $conn->prepare($cleanupSql);
+    $cleanupStmt->execute();
+    $cleanupRows = $cleanupStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (count($cleanupRows) > 0) {
+        $googleConfig = include(__DIR__ . '/config/google_drive_config.php');
+        $folderId = $googleConfig['visitor_folder_id'];
+
+        foreach ($cleanupRows as $row) {
+            $id = $row['id'];
+            $fileName = $row['photo_path'];
+            $filePath = __DIR__ . '/uploads/visitor/' . $fileName;
+
+            echo "Cleaning up ID $id: $fileName ... ";
+
+            // 1. Delete Local File
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+
+            // 2. Delete from Google Drive
+            deleteFromGoogleDriveByName($fileName, $folderId, $googleConfig);
+
+            // 3. Delete Record from DB
+            $delSql = "DELETE FROM ims_line_webhook_messages WHERE id = :id";
+            $delStmt = $conn->prepare($delSql);
+            $delStmt->execute([':id' => $id]);
+
+            echo "DELETED\n";
+            file_put_contents($logPath, date('Y-m-d H:i:s') . " | CLEANUP | ID: $id | File: $fileName deleted globally.\n", FILE_APPEND);
+        }
+    } else {
+        echo "No old images to clean up.\n";
+    }
+} catch (Exception $e) {
+    echo "Cleanup Error: " . $e->getMessage() . "\n";
+    file_put_contents($logPath, date('Y-m-d H:i:s') . " | CLEANUP ERROR | " . $e->getMessage() . "\n", FILE_APPEND);
+}
+
 echo "--- Sync Task Finished: " . date('Y-m-d H:i:s') . " ---\n";
 ?>
