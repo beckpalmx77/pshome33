@@ -29,18 +29,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">เลือกปีที่ต้องการดูรายงาน</h6>
+                            <div class="card mb-4 search-card">
+                                <div class="card-header py-3 search-card-header">
+                                    <h6><i class="fas fa-chart-bar"></i> ตัวเลือกรายงานกราฟรายเดือน</h6>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
 
-                                        <div class="row mb-4 g-3 align-items-end">
+                                        <div class="form-row align-items-end mb-4">
 
                                             <div class="col-auto">
-                                                <label for="selectYear" class="control-label"><b>ปี พ.ศ.</b></label>
-                                                <select id="selectYear" class="form-control" style="min-width: 120px;">
+                                                <label for="selectYear" class="control-label font-weight-bold">ปี พ.ศ.</label>
+                                                <select id="selectYear" class="form-control" style="min-width: 150px;">
                                                     <?php
                                                     for ($y = $current_year_en + 543; $y >= $current_year_en + 543 - 5; $y--) {
                                                         $selected = ($y - 543 == $current_year_en) ? 'selected' : '';
@@ -52,20 +52,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                                             <div class="col-auto">
                                                 <button type='button' name='btnLoadChart' id='btnLoadChart'
-                                                        class='btn btn-success'>แสดงกราฟ (Reload Data)
-                                                    <i class="fa fa-chart-bar"></i>
+                                                        class='btn btn-success'>
+                                                    <i class="fas fa-sync-alt"></i> แสดงกราฟ (Reload Data)
                                                 </button>
                                             </div>
                                         </div>
 
                                         <hr/>
 
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4 id="chartTitle" class="text-center mb-4"></h4>
-                                                <div class="chart-container" style="position: relative; height:40vh; width:100%">
-                                                    <canvas id="monthlyBarChart"></canvas>
-                                                </div>
+                                        <div class="chart-wrapper">
+                                            <h5 id="chartTitle" class="text-center mb-4 text-gray-800 font-weight-bold"></h5>
+                                            <div class="chart-container" style="position: relative; height:50vh; width:100%">
+                                                <canvas id="monthlyBarChart"></canvas>
                                             </div>
                                         </div>
 
@@ -139,6 +137,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
                     chartTitle.textContent = data.report_title;
 
+                    // สร้าง vertical gradient สำหรับกราฟแท่ง
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                    gradient.addColorStop(0, 'rgba(78, 115, 223, 0.85)'); // Primary Blue
+                    gradient.addColorStop(1, 'rgba(102, 126, 234, 0.3)');  // Indigo-Purple
+                    
+                    const hoverGradient = ctx.createLinearGradient(0, 0, 0, 300);
+                    hoverGradient.addColorStop(0, 'rgba(78, 115, 223, 1)');
+                    hoverGradient.addColorStop(1, 'rgba(102, 126, 234, 0.6)');
+
                     // --- สร้างกราฟแท่ง ---
                     myBarChart = new Chart(ctx, {
                         type: 'bar',
@@ -148,9 +155,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                             datasets: [{
                                 label: 'ยอดชำระต่อเดือน (บาท)',
                                 data: amounts,
-                                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: hoverGradient,
+                                borderColor: '#4e73df',
+                                borderWidth: 1.5,
+                                borderRadius: 6, // ทำขอบด้านบนให้มน
+                                borderSkipped: 'bottom'
                             }]
                         },
                         options: {
@@ -205,9 +215,66 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
     </script>
 
     <style>
-        .icon-input-btn { display: inline-block; position: relative; }
-        .icon-input-btn input[type="submit"] { padding-left: 2em; }
-        .icon-input-btn .fa { display: inline-block; position: absolute; left: 0.65em; top: 30%; }
+        /* Card Container */
+        .search-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .search-card-header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+            border: none;
+            padding: 12px 20px !important;
+        }
+        .search-card-header h6 {
+            color: #ffffff !important;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #d1d3e2;
+            padding: 0.6rem 1rem;
+            height: 45px;
+            transition: all 0.2s;
+        }
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%) !important;
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #13855c 0%, #0e6243 100%) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(28, 200, 138, 0.2);
+            color: white;
+        }
+        .chart-wrapper {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid #eaecf4;
+            margin-top: 20px;
+        }
     </style>
 
 

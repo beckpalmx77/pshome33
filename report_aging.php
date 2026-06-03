@@ -2,6 +2,7 @@
 include('includes/Header.php');
 if (strlen($_SESSION['alogin']) == "") {
     header("Location: index.php");
+    exit();
 } else {
     include('config/connect_db.php');
 
@@ -26,7 +27,7 @@ if (strlen($_SESSION['alogin']) == "") {
                   ORDER BY m.house_number ASC";
     $houses = $conn->query($sql_house)->fetchAll(PDO::FETCH_ASSOC);
 
-    // ----- ดึงข้อมูลการชำระเงินทั้งหมด (ทุกปี) -----
+    // ----- ดึงข้อมูลการชำระเงินทั้งหมด -----
     $sql_pay = "SELECT house_number, period_month_start, period_month_to, period_year, amount
                 FROM ims_house_payment
                 WHERE payment_status = 'Y'";
@@ -44,7 +45,6 @@ if (strlen($_SESSION['alogin']) == "") {
                 $paid_months_by_house[$hn][$year][$m] = true;
             }
         } else {
-            // wrap-around: start -> Dec of same year, Jan -> end of next year
             for ($m = $start; $m <= 12; $m++) {
                 $paid_months_by_house[$hn][$year][$m] = true;
             }
@@ -56,7 +56,6 @@ if (strlen($_SESSION['alogin']) == "") {
 
     // ----- สร้างช่วงเดือนย้อนหลังจากเดือนอ้างอิง -----
     $months_to_check = [];
-    $total_checked = 0;
     for ($i = 0; $i < $lookback_months; $i++) {
         $m = $ref_month - $i;
         $y = $ref_year;
@@ -65,7 +64,6 @@ if (strlen($_SESSION['alogin']) == "") {
             $y--;
         }
         $months_to_check[] = ['y' => $y, 'm' => $m];
-        $total_checked++;
     }
 
     // ----- คำนวณยอดค้างต่อบ้าน -----
@@ -90,7 +88,6 @@ if (strlen($_SESSION['alogin']) == "") {
             $paid = isset($paid_months_by_house[$hn][$y][$m]);
 
             if (!$paid) {
-                // อายุหนี้ (จำนวนเดือนนับจากเดือนอ้างอิง): เดือนปัจจุบัน = 1, เดือนที่แล้ว = 2, ...
                 $months_old = $idx + 1;
                 if ($months_old >= 1 && $months_old <= 3) {
                     $aging['bucket_1_3'] += $fee;
@@ -137,16 +134,146 @@ if (strlen($_SESSION['alogin']) == "") {
     <html lang="th">
     <body id="page-top">
     <style>
+        /* Card Container */
+        .search-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .search-card-header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+            border: none;
+            padding: 12px 20px !important;
+        }
+        .search-card-header h6 {
+            color: #ffffff !important;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+            border: 1px solid #d1d3e2;
+            padding: 0.6rem 1rem;
+            height: 45px;
+            transition: all 0.2s;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        .btn-search {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-search:hover {
+            background: linear-gradient(135deg, #224abe 0%, #1e3d96 100%);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .btn-reset {
+            background: #ffffff;
+            border: 1px solid #d1d3e2;
+            color: #5a5c69;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            height: 45px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-reset:hover {
+            background: #eaecf4;
+            color: #3a3b45;
+        }
+
+        /* Modern Summary Cards */
+        .summary-card {
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            overflow: hidden;
+            position: relative;
+        }
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        .summary-card.primary::before { background: #4e73df; }
+        .summary-card.warning::before { background: #f6c23e; }
+        .summary-card.danger::before { background: #e74a3b; }
+        .summary-card.dark::before { background: #5a5c69; }
+
+        .summary-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fc;
+        }
+        .summary-card.primary .summary-icon-wrapper { color: #4e73df; background: rgba(78,115,223,0.1); }
+        .summary-card.warning .summary-icon-wrapper { color: #f6c23e; background: rgba(246,194,62,0.1); }
+        .summary-card.danger .summary-icon-wrapper { color: #e74a3b; background: rgba(231,74,59,0.1); }
+        .summary-card.dark .summary-icon-wrapper { color: #5a5c69; background: rgba(90,92,105,0.1); }
+
+        /* Table Design */
         .table-responsive {
             max-height: 60vh;
             overflow-y: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        #reportTable {
+            border: 1px solid #e3e6f0 !important;
+            border-collapse: collapse !important;
         }
         #reportTable thead th {
-            position: sticky;
-            top: 0;
-            background-color: #f8f9fc !important;
-            z-index: 5;
-            box-shadow: inset 0 -2px 0 #e3e6f0;
+            background-color: #f8f9fc;
+            border-bottom: 2px solid #e3e6f0 !important;
+            border-left: 1px solid #e3e6f0 !important;
+            border-right: 1px solid #e3e6f0 !important;
+            border-top: none !important;
+        }
+        #reportTable tbody td {
+            border: 1px solid #eaecf4 !important;
+        }
+        .fixedHeader-floating {
+            background-color: white !important;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .dataTables_wrapper {
+            overflow-x: auto;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.3em 0.6em;
         }
     </style>
     <div id="wrapper">
@@ -166,9 +293,9 @@ if (strlen($_SESSION['alogin']) == "") {
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="card mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">ตัวเลือกการค้นหา</h6>
+                            <div class="card mb-4 search-card">
+                                <div class="card-header py-3 search-card-header">
+                                    <h6><i class="fas fa-filter"></i> ตัวเลือกการค้นหา</h6>
                                 </div>
                                 <div class="card-body">
                                     <form action="" method="GET" class="row g-3 align-items-end mb-4">
@@ -201,67 +328,87 @@ if (strlen($_SESSION['alogin']) == "") {
                                         </div>
 
                                         <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> ค้นหา</button>
+                                            <button type="submit" class="btn btn-search w-100"><i class="fas fa-search"></i> ค้นหา</button>
                                         </div>
                                         <div class="col-md-2">
-                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>" class="btn btn-outline-secondary w-100"><i class="bi bi-arrow-clockwise"></i> ค่าปัจจุบัน</a>
+                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>" class="btn btn-reset w-100"><i class="fas fa-sync-alt"></i> ค่าปัจจุบัน</a>
                                         </div>
                                     </form>
 
                                     <hr>
 
                                     <div class="mt-4">
-                                        <h5><i class="bi bi-file-earmark-text-fill"></i> รายงานยอดค้างชำระ (Aging Report) ณ เดือน <span class="text-danger font-weight-bold"><?= $thai_months[$ref_month - 1] ?></span> ปี <strong><?= $ref_year + 543 ?></strong></h5>
+                                        <h5 class="mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar text-primary"></i> รายงานยอดค้างชำระ (Aging Report) ณ เดือน <span class="text-danger font-weight-bold"><?= $thai_months[$ref_month - 1] ?></span> ปี <strong><?= $ref_year + 543 ?></strong></h5>
 
                                         <!-- แผงสรุป -->
                                         <div class="row mb-4">
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-primary shadow h-100 py-2">
+                                                <div class="card summary-card primary h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> overdue 1-3 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['sum_1_3'], 2) ?> บาท</div>
-                                                                <small><?= $summary['count_1_3'] ?> เดือน</small>
+                                                                <span class="badge bg-light text-primary border mt-1"><i class="fas fa-calendar-alt"></i> <?= $summary['count_1_3'] ?> เดือน</span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-clock fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-warning shadow h-100 py-2">
+                                                <div class="card summary-card warning h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"> overdue 4-6 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['sum_4_6'], 2) ?> บาท</div>
-                                                                <small><?= $summary['count_4_6'] ?> เดือน</small>
+                                                                <span class="badge bg-light text-warning border mt-1"><i class="fas fa-calendar-alt"></i> <?= $summary['count_4_6'] ?> เดือน</span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-exclamation-triangle fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-danger shadow h-100 py-2">
+                                                <div class="card summary-card danger h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1"> overdue เกิน 6 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['sum_over_6'], 2) ?> บาท</div>
-                                                                <small><?= $summary['count_over_6'] ?> เดือน</small>
+                                                                <span class="badge bg-light text-danger border mt-1"><i class="fas fa-calendar-alt"></i> <?= $summary['count_over_6'] ?> เดือน</span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-exclamation-circle fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-dark shadow h-100 py-2">
+                                                <div class="card summary-card dark h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
-                                                                <div class="text-xs font-weight-bold text-dark text-uppercase mb-1"> ยอดค้างรวมทั้งหมด</div>
+                                                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1"> ยอดค้างรวมทั้งหมด</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['total_overdue'], 2) ?> บาท</div>
-                                                                <small><?= $summary['total_houses'] ?> บ้าน</small>
+                                                                <span class="badge bg-light text-secondary border mt-1"><i class="fas fa-home"></i> <?= $summary['total_houses'] ?> บ้าน</span>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-wallet fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -270,8 +417,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                         </div>
 
                                         <div class="table-responsive mt-3">
-                                            <table id="reportTable" class="table table-striped table-bordered" style="width:100%">
-                                                <thead class="thead-light">
+                                            <table id="reportTable" class="display nowrap" style="width:100%">
+                                                <thead>
                                                     <tr>
                                                         <th class="text-center">ลำดับ</th>
                                                         <th>บ้านเลขที่</th>
@@ -330,42 +477,49 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.bootstrap5.js"></script>
+
+    <link rel="stylesheet" href="css/spin_datatables_v2.css"/>
+    <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.3/css/fixedHeader.dataTables.min.css"/>
+
+    <script src="vendor/datatables/v11/bootbox.min.js"></script>
+    <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.bootstrap5.css">
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            pdfMake.fonts = {
-                Sarabun: {
-                    normal: 'https://fonts.gstatic.com/s/sarabun/v13/DtVjJx26TKEr37c9aAFJn2ok.ttf',
-                    bold: 'https://fonts.gstatic.com/s/sarabun/v13/DtVmJx26TKEr37c9YK5sulsc.ttf',
-                    italics: 'https://fonts.gstatic.com/s/sarabun/v13/DtVhJx26TKEr37c9aBBtm2g2.ttf',
-                    bolditalics: 'https://fonts.gstatic.com/s/sarabun/v13/DtVnJx26TKEr37c9aBBxun0s-A.ttf'
-                }
-            };
-
             $('#reportTable').DataTable({
-                language: {url: "//cdn.datatables.net/plug-ins/2.0.8/i18n/th.json"},
-                responsive: true,
-                pageLength: 20,
-                lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
+                'pageLength': 5,
+                'lengthMenu': [[5, 10, 20, 50, 100, -1], [5, 10, 20, 50, 100, "ทั้งหมด"]],
+                'fixedHeader': true,
+                'language': {
+                    search: 'ค้นหาข้อมูล',
+                    lengthMenu: 'แสดง _MENU_ รายการ',
+                    info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+                    infoEmpty: 'ไม่มีข้อมูล',
+                    zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+                    infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+                    paginate: {
+                        previous: 'ก่อนหน้า',
+                        last: 'สุดท้าย',
+                        next: 'ต่อไป'
+                    }
+                },
+                'scrollX': true,
+                'autoWidth': false,
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                     "<'row'<'col-sm-12 mb-3'B>>" +
                      "<'row'<'col-sm-12'tr>>" +
-                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
-                     "<'row'<'col-sm-12'B>>",
+                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 buttons: [
                     {
                         extend: 'excelHtml5',
-                        text: '<i class="bi bi-file-earmark-excel"></i> Export to Excel',
+                        text: '<i class="fas fa-file-excel"></i> Export to Excel',
                         className: 'btn btn-success btn-sm',
                         title: 'Aging-Report-<?= $thai_months[$ref_month - 1] ?>-<?= $ref_year + 543 ?>'
                     }

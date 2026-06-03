@@ -7,7 +7,7 @@ if (strlen($_SESSION['alogin']) == "") {
 
     $ref_year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
     $ref_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
-    $start_year = isset($_GET['start_year']) ? (int)$_GET['start_year'] : 2025;
+    $start_year = isset($_GET['start_year']) ? (int)$_GET['start_year'] : (int)date('Y');
     $filter_category = isset($_GET['category']) ? $_GET['category'] : '';
 
     $thai_months = [
@@ -149,6 +149,151 @@ if (strlen($_SESSION['alogin']) == "") {
     <!DOCTYPE html>
     <html lang="th">
     <body id="page-top">
+    <style>
+        /* Card Container */
+        .search-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .search-card-header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
+            border: none;
+            padding: 12px 20px !important;
+        }
+        .search-card-header h6 {
+            color: #ffffff !important;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+            border: 1px solid #d1d3e2;
+            padding: 0.6rem 1rem;
+            height: 45px;
+            transition: all 0.2s;
+        }
+        .form-select:focus, .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        .btn-search {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            height: 45px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-search:hover {
+            background: linear-gradient(135deg, #224abe 0%, #1e3d96 100%);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .btn-reset {
+            background: #ffffff;
+            border: 1px solid #d1d3e2;
+            color: #5a5c69;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            height: 45px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-reset:hover {
+            background: #eaecf4;
+            color: #3a3b45;
+        }
+
+        /* Modern Summary Cards */
+        .summary-card {
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            overflow: hidden;
+            position: relative;
+        }
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        .summary-card.primary::before { background: #4e73df; }
+        .summary-card.warning::before { background: #f6c23e; }
+        .summary-card.danger::before { background: #e74a3b; }
+        .summary-card.dark::before { background: #5a5c69; }
+
+        .summary-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fc;
+        }
+        .summary-card.primary .summary-icon-wrapper { color: #36b9cc; background: rgba(54,185,204,0.1); }
+        .summary-card.warning .summary-icon-wrapper { color: #f6c23e; background: rgba(246,194,62,0.1); }
+        .summary-card.danger .summary-icon-wrapper { color: #e74a3b; background: rgba(231,74,59,0.1); }
+        .summary-card.dark .summary-icon-wrapper { color: #5a5c69; background: rgba(90,92,105,0.1); }
+        .summary-card.primary::before { background: #36b9cc; }
+
+        /* Table Design */
+        .table-responsive {
+            max-height: 60vh;
+            overflow-y: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        #reportTable {
+            border: 1px solid #e3e6f0 !important;
+            border-collapse: collapse !important;
+        }
+        #reportTable thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fc !important;
+            color: #4e73df !important;
+            font-weight: 700;
+            font-size: 0.85rem;
+            z-index: 5;
+            box-shadow: inset 0 -2px 0 #e3e6f0;
+            border-top: none !important;
+            border-left: 1px solid #e3e6f0 !important;
+            border-right: 1px solid #e3e6f0 !important;
+            padding: 12px 16px;
+        }
+        #reportTable tbody td {
+            padding: 12px 16px;
+            vertical-align: middle;
+            border: 1px solid #eaecf4 !important;
+        }
+        #reportTable tbody tr:hover {
+            background-color: rgba(78, 115, 223, 0.02) !important;
+        }
+    </style>
     <div id="wrapper">
         <?php include('includes/Side-Bar.php'); ?>
         <div id="content-wrapper" class="d-flex flex-column">
@@ -163,18 +308,18 @@ if (strlen($_SESSION['alogin']) == "") {
                             <li class="breadcrumb-item active" aria-current="page">สรุปค้างชำระ</li>
                         </ol>
                     </div>
-
+ 
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="card mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">ตัวเลือกการค้นหา</h6>
+                            <div class="card mb-4 search-card">
+                                <div class="card-header py-3 search-card-header">
+                                    <h6><i class="fas fa-filter"></i> ตัวเลือกการค้นหา</h6>
                                 </div>
                                 <div class="card-body">
                                     <form action="" method="GET" class="row g-3 align-items-end mb-4">
                                         <input type="hidden" name="m" value="<?= htmlspecialchars($_GET['m'] ?? '') ?>">
                                         <input type="hidden" name="s" value="<?= htmlspecialchars($_GET['s'] ?? '') ?>">
-
+ 
                                         <div class="col-md-2">
                                             <label for="start_year" class="form-label font-weight-bold">ปี เริ่มต้น (พ.ศ.)</label>
                                             <select name="start_year" id="start_year" class="form-select">
@@ -187,7 +332,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 ?>
                                             </select>
                                         </div>
-
+ 
                                         <div class="col-md-2">
                                             <label for="year" class="form-label font-weight-bold">ปี อ้างอิง (พ.ศ.)</label>
                                             <select name="year" id="year" class="form-select">
@@ -200,7 +345,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 ?>
                                             </select>
                                         </div>
-
+ 
                                         <div class="col-md-2">
                                             <label for="month" class="form-label font-weight-bold">เดือน อ้างอิง</label>
                                             <select name="month" id="month" class="form-select">
@@ -211,8 +356,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <?php endfor; ?>
                                             </select>
                                         </div>
-
-                                        <div class="col-md-3">
+ 
+                                        <div class="col-md-2">
                                             <label for="category" class="form-label font-weight-bold">กลุ่มระยะเวลา</label>
                                             <select name="category" id="category" class="form-select">
                                                 <option value="">ทั้งหมด</option>
@@ -223,74 +368,85 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <option value="7" <?= ($filter_category == '7') ? 'selected' : '' ?>>ค้างมากกว่า 6 เดือน</option>
                                             </select>
                                         </div>
-
+ 
                                         <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> ค้นหา</button>
+                                            <button type="submit" class="btn btn-search w-100"><i class="fas fa-search"></i> ค้นหา</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <a href="?m=<?= urlencode($_GET['m'] ?? '') ?>&s=<?= urlencode($_GET['s'] ?? '') ?>" class="btn btn-reset w-100"><i class="fas fa-sync-alt"></i> ค่าปัจจุบัน</a>
                                         </div>
                                     </form>
-
+ 
                                     <hr>
-
+ 
                                     <div class="mt-4">
-                                        <h5><i class="bi bi-file-earmark-text-fill"></i> ข้อมูล ณ เดือน <span class="text-danger font-weight-bold"><?= $thai_months[$ref_month - 1] ?></span> ปี <strong><?= $ref_year + 543 ?></strong></h5>
-
+                                        <h5 class="mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar text-primary"></i> ข้อมูล ณ เดือน <span class="text-danger font-weight-bold"><?= $thai_months[$ref_month - 1] ?></span> ปี <strong><?= $ref_year + 543 ?></strong></h5>
+ 
                                         <!-- สรุปยอด -->
                                         <div class="row mb-4">
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-info shadow h-100 py-2">
+                                                <div class="card summary-card primary h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-info text-uppercase mb-1">ค้างชำระ 1-2 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['cat_1']['houses']) ?> หลัง</div>
                                                             </div>
                                                             <div class="col-auto">
-                                                                <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-clock fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-warning shadow h-100 py-2">
+                                                <div class="card summary-card warning h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">ค้างชำระ 3-5 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['cat_3']['houses']) ?> หลัง</div>
                                                             </div>
                                                             <div class="col-auto">
-                                                                <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-exclamation-triangle fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-danger shadow h-100 py-2">
+                                                <div class="card summary-card danger h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
                                                                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">ค้างชำระ 6 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['cat_6']['houses']) ?> หลัง</div>
                                                             </div>
                                                             <div class="col-auto">
-                                                                <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-file-invoice-dollar fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-3">
-                                                <div class="card border-left-dark shadow h-100 py-2">
+                                                <div class="card summary-card dark h-100 py-2">
                                                     <div class="card-body">
-                                                        <div class="row no-gutters align-items-center">
+                                                        <div class="row align-items-center">
                                                             <div class="col mr-2">
-                                                                <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">มากกว่า 6 เดือน</div>
+                                                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">มากกว่า 6 เดือน</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($summary['cat_over_6']['houses']) ?> หลัง</div>
                                                             </div>
                                                             <div class="col-auto">
-                                                                <i class="fas fa-gavel fa-2x text-gray-300"></i>
+                                                                <div class="summary-icon-wrapper">
+                                                                    <i class="fas fa-gavel fa-lg"></i>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -299,8 +455,8 @@ if (strlen($_SESSION['alogin']) == "") {
                                         </div>
 
                                         <div class="table-responsive">
-                                            <table id="reportTable" class="table table-striped table-bordered" style="width:100%">
-                                                <thead class="thead-dark">
+                                             <table id="reportTable" class="table table-striped table-bordered" style="width:100%">
+                                                 <thead class="thead-dark">
                                                     <tr>
                                                         <th class="text-center">ลำดับ</th>
                                                         <th>บ้านเลขที่</th>
@@ -394,7 +550,6 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/myadmin.min.js"></script>
-    
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
@@ -410,11 +565,11 @@ if (strlen($_SESSION['alogin']) == "") {
             $('#reportTable').DataTable({
                 language: { url: "//cdn.datatables.net/plug-ins/2.0.8/i18n/th.json" },
                 pageLength: 5,
-                lengthMenu: [5, 10, 25, 50, 100],
+                lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "ทั้งหมด"]],
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                     "<'row'<'col-sm-12 mb-3'B>>" +
                      "<'row'<'col-sm-12'tr>>" +
-                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
-                     "<'row'<'col-sm-12'B>>",
+                     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 buttons: [
                     {
                         extend: 'excelHtml5',

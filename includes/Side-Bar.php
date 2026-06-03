@@ -130,6 +130,9 @@ $sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sid
             <span>Exit</span></a>
     </li>
 
+    <div class="text-center d-none d-md-block p-2">
+        <img src="img/logo/niti_ps33_header200.png" class="img-fluid" alt="Niti Logo" style="max-width: 80%; opacity: 0.8;">
+    </div>
 
 </ul>
 <!-- Sidebar -->
