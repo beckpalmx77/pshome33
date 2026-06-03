@@ -37,8 +37,12 @@ $sql_select = "
 SELECT 
     m.month_id AS month_index,
     COALESCE(SUM(
-        -- สูตรคำนวณ: ยอดเงินรวม / จำนวนเดือนที่จ่าย (เพื่อกระจายยอด)
-        p.amount / (p.period_month_to - p.period_month_start + 1)
+        -- สูตรคำนวณ: ปัดเศษแต่ละรายก่อนนำมารวม (เพื่อให้ตรงกับเอกสารรายงาน PDF/Excel)
+        CASE
+            WHEN p.period_month_to = p.period_month_start THEN p.amount
+            WHEN p.period_month_to > p.period_month_start THEN ROUND(p.amount / (p.period_month_to - p.period_month_start + 1), 2)
+            ELSE 0
+        END
     ), 0) AS total_amount
 FROM 
     (
@@ -48,9 +52,10 @@ FROM
         UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12
     ) AS m
 LEFT JOIN 
-    v_ims_house_payment p 
+    ims_house_payment p 
 ON 
     p.period_year = :year 
+    AND p.payment_status = 'Y'
     -- เงื่อนไขสำคัญ: เช็คว่าเดือน (m) อยู่ในช่วงที่จ่ายเงิน (Start ถึง To)
     AND m.month_id BETWEEN p.period_month_start AND p.period_month_to
 GROUP BY 
@@ -111,7 +116,7 @@ try {
         // เก็บข้อมูลใส่ Array เพื่อส่งกลับไปแสดงผล JSON
         $chart_data[] = [
             'month' => $i,
-            'month_name' => $month_names_th[$i] . ' ' . $year,
+            'month_name' => $month_names_th[$i] . ' ' . ($year + 543),
             'total_amount' => $amount
         ];
     }
@@ -136,7 +141,7 @@ try {
 echo json_encode([
     'status' => 'success',
     'year' => $year,
-    'report_title' => 'สรุปยอดรวมการชำระค่าส่วนกลางรายเดือน ปี ' . $year ,
+    'report_title' => 'สรุปยอดรวมการชำระค่าส่วนกลางรายเดือน ปี พ.ศ. ' . ($year + 543),
     'message' => 'คำนวณและบันทึกข้อมูลเรียบร้อยแล้ว',
     'data' => $chart_data
 ]);

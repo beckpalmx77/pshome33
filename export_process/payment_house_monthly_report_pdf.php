@@ -64,7 +64,7 @@ SELECT
 FROM
     v_ims_house_payment
 WHERE
-    period_year = $year AND $month BETWEEN period_month_start AND period_month_to 
+    period_year = $year AND payment_status = 'Y' AND $month BETWEEN period_month_start AND period_month_to 
 ORDER BY
     CAST(alley AS UNSIGNED), house_number; 
 

@@ -13,7 +13,10 @@ if (strlen($_SESSION['alogin']) == "") {
         "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
 
-    $lookback_months = 24;
+    $start_year = $ref_year;
+    $start_month = 1;
+    $lookback_months = ($ref_year - $start_year) * 12 + ($ref_month - $start_month) + 1;
+    if ($lookback_months < 1) $lookback_months = 1;
 
     // ----- ดึงข้อมูลบ้านทั้งหมด -----
     $sql_house = "SELECT m.house_number, m.alley, m.area_size, m.common_fee, h.contact_name, h.phone_number
@@ -81,27 +84,25 @@ if (strlen($_SESSION['alogin']) == "") {
             'total_overdue' => 0,
         ];
 
-        $consecutive_unpaid = 0;
         foreach ($months_to_check as $idx => $period) {
             $y = $period['y'];
             $m = $period['m'];
             $paid = isset($paid_months_by_house[$hn][$y][$m]);
 
             if (!$paid) {
-                $consecutive_unpaid++;
-                if ($consecutive_unpaid >= 1 && $consecutive_unpaid <= 3) {
+                // อายุหนี้ (จำนวนเดือนนับจากเดือนอ้างอิง): เดือนปัจจุบัน = 1, เดือนที่แล้ว = 2, ...
+                $months_old = $idx + 1;
+                if ($months_old >= 1 && $months_old <= 3) {
                     $aging['bucket_1_3'] += $fee;
                     $aging['count_1_3']++;
-                } elseif ($consecutive_unpaid >= 4 && $consecutive_unpaid <= 6) {
+                } elseif ($months_old >= 4 && $months_old <= 6) {
                     $aging['bucket_4_6'] += $fee;
                     $aging['count_4_6']++;
-                } elseif ($consecutive_unpaid >= 7) {
+                } elseif ($months_old >= 7) {
                     $aging['bucket_over_6'] += $fee;
                     $aging['count_over_6']++;
                 }
                 $aging['total_overdue'] += $fee;
-            } else {
-                $consecutive_unpaid = 0;
             }
         }
 
@@ -135,6 +136,19 @@ if (strlen($_SESSION['alogin']) == "") {
     <!DOCTYPE html>
     <html lang="th">
     <body id="page-top">
+    <style>
+        .table-responsive {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        #reportTable thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fc !important;
+            z-index: 5;
+            box-shadow: inset 0 -2px 0 #e3e6f0;
+        }
+    </style>
     <div id="wrapper">
         <?php include('includes/Side-Bar.php'); ?>
         <div id="content-wrapper" class="d-flex flex-column">

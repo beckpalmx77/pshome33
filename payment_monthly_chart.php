@@ -41,16 +41,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                             <div class="col-auto">
                                                 <label for="selectYear" class="control-label"><b>ปี พ.ศ.</b></label>
                                                 <select id="selectYear" class="form-control" style="min-width: 120px;">
-                                                    <!--?php
+                                                    <?php
                                                     for ($y = $current_year_en + 543; $y >= $current_year_en + 543 - 5; $y--) {
                                                         $selected = ($y - 543 == $current_year_en) ? 'selected' : '';
                                                         echo "<option value='".($y - 543)."' $selected>$y</option>";
-                                                    }
-                                                    ?-->
-                                                    <?php
-                                                    for ($y = $current_year_en; $y >= $current_year_en - 5; $y--) {
-                                                        $selected = ($y == $current_year_en) ? 'selected' : '';
-                                                        echo "<option value='".($y)."' $selected>$y</option>";
                                                     }
                                                     ?>
                                                 </select>
@@ -148,6 +142,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     // --- สร้างกราฟแท่ง ---
                     myBarChart = new Chart(ctx, {
                         type: 'bar',
+                        plugins: [ChartDataLabels],
                         data: {
                             labels: labels,
                             datasets: [{
@@ -165,6 +160,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                 legend: {
                                     display: false
                                 },
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    formatter: function(value) {
+                                        return value > 0 ? value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '';
+                                    },
+                                    font: {
+                                        weight: 'bold',
+                                        size: 11
+                                    },
+                                    color: '#5a5c69'
+                                }
                             },
                             scales: {
                                 y: {
