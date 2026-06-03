@@ -27,6 +27,25 @@ if (strlen($_SESSION['alogin']) == "") {
                         <div class="col-lg-12">
                             <div class="card mb-4">
                                 <div class="card-body">
+                                    <!-- Search Panel -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-0">
+                                                <label for="search_house_number" class="font-weight-bold text-primary">ค้นหาเลขที่บ้าน (house_number = value):</label>
+                                                <div class="input-group">
+                                                    <input type="text" id="search_house_number" class="form-control" placeholder="ระบุเลขที่บ้าน (เช่น 99/9)">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary" type="button" id="btnSearchHouse">
+                                                            <i class="fa fa-search"></i> ค้นหา
+                                                        </button>
+                                                        <button class="btn btn-secondary" type="button" id="btnClearSearchHouse">
+                                                            รีเซ็ต
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <table id='TableRecordList' class='table table-bordered table-striped display' width="100%">
                                         <thead>
                                         <tr>
@@ -139,7 +158,13 @@ if (strlen($_SESSION['alogin']) == "") {
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                'ajax': { 'url': 'model/manage_user_line_data_process.php', 'data': { action: "GET_USER_LINE_DATA" } },
+                'ajax': {
+                    'url': 'model/manage_user_line_data_process.php',
+                    'data': function (d) {
+                        d.action = "GET_USER_LINE_DATA";
+                        d.search_house_number = $('#search_house_number').val();
+                    }
+                },
                 'columns': [
                     { data: 'no' },
                     { data: 'phone_number' },
@@ -150,6 +175,24 @@ if (strlen($_SESSION['alogin']) == "") {
                     { data: 'action' }
                 ],
                 'columnDefs': [{ "orderable": false, "targets": [0, 5] }]
+            });
+
+            // ปุ่มค้นหาเลขที่บ้าน
+            $('#btnSearchHouse').on('click', function () {
+                dataRecords.ajax.reload();
+            });
+
+            // กด Enter ในกล่องค้นหา
+            $('#search_house_number').on('keypress', function (e) {
+                if (e.which === 13) {
+                    dataRecords.ajax.reload();
+                }
+            });
+
+            // รีเซ็ตการค้นหา
+            $('#btnClearSearchHouse').on('click', function () {
+                $('#search_house_number').val('');
+                dataRecords.ajax.reload();
             });
 
             // เมื่อคลิกปุ่มลบ ดึงข้อมูล 3 ตารางมาโชว์

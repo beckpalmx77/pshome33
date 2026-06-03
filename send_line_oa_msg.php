@@ -209,23 +209,77 @@ if (strlen($_SESSION['alogin']) == "") {
     <script src="js/myadmin.min.js"></script>
 
     <script>
+        let selectedFiles = [];
+
         function previewImages(input) {
-            var preview = document.getElementById('image_preview');
-            preview.innerHTML = '';
-            if (input.files) {
-                Array.from(input.files).forEach(file => {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        var div = document.createElement('div');
-                        div.className = 'col-auto mb-2';
-                        div.innerHTML = '<img src="' + e.target.result + '" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">';
-                        preview.appendChild(div);
-                    }
-                    reader.readAsDataURL(file);
-                });
+            if (input.files && input.files.length > 0) {
+                const newFiles = Array.from(input.files);
+                // นำไฟล์ใหม่ไปต่อท้ายไฟล์เดิมที่มีอยู่
+                selectedFiles = selectedFiles.concat(newFiles);
+                renderPreviews();
             }
         }
+
+        function renderPreviews() {
+            const preview = document.getElementById('image_preview');
+            preview.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const div = document.createElement('div');
+                    div.className = 'col-auto mb-3 position-relative';
+                    div.innerHTML = `
+                        <div class="card p-1 shadow-sm">
+                            <img src="${e.target.result}" class="img-thumbnail" style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;" onclick="showLargeImage('${e.target.result}')">
+                            <div class="text-center py-1" style="font-size: 10px; color: #666; cursor: pointer;" onclick="showLargeImage('${e.target.result}')">Click ดูขยายรูปภาพ</div>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm position-absolute" 
+                                style="top: -10px; right: 0px; border-radius: 50%; width: 24px; height: 24px; padding: 0; line-height: 20px; z-index: 10;" 
+                                onclick="removeImage(${index})">&times;</button>
+                    `;
+                    preview.appendChild(div);
+                }
+                reader.readAsDataURL(file);
+            });
+            
+            updateFileInput();
+        }
+
+        function removeImage(index) {
+            selectedFiles.splice(index, 1);
+            renderPreviews();
+        }
+
+        function updateFileInput() {
+            const fileInput = document.getElementById('image_upload');
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        }
+
+        function showLargeImage(src) {
+            $('#largeImageContent').attr('src', src);
+            $('#imageModal').modal('show');
+        }
     </script>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">รูปภาพขยายใหญ่</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center bg-light">
+                    <img src="" id="largeImageContent" class="img-fluid rounded" style="max-height: 80vh;">
+                </div>
+            </div>
+        </div>
+    </div>
     </body>
     </html>
 <?php } ?>

@@ -20,7 +20,13 @@ if ($_POST["action"] === 'GET_USER_LINE_DATA') {
                          OR l.line_phone LIKE :search 
                          OR l.line_user_name LIKE :search 
                          OR u.first_name LIKE :search) ";
-        $searchArray = array('search' => "%$searchValue%");
+        $searchArray['search'] = "%$searchValue%";
+    }
+
+    $search_house_number = isset($_POST['search_house_number']) ? trim($_POST['search_house_number']) : '';
+    if ($search_house_number !== '') {
+        $searchQuery .= " AND l.house_number = :search_house_number ";
+        $searchArray['search_house_number'] = $search_house_number;
     }
 
     // นับจำนวนทั้งหมดจากตารางหลัก l

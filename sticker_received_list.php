@@ -119,7 +119,7 @@ FROM ims_house;";
                             <div class="card bg-primary text-white h-100">
                                 <div class="card-body">
                                     <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนรถที่รับสติกเกอร์แล้ว (คัน)</div>
-                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalCars">0 คัน</div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalCars">0</div>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +142,7 @@ FROM ims_house;";
                             <div class="card bg-primary text-white h-100">
                                 <div class="card-body">
                                     <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนเงินค่าสติกเกอร์รถเพิ่ม  (บาท)</div>
-                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalExtraFee">0 บาท</div>
+                                    <div class="h4 mb-0 font-weight-bold text-end text-right" id="totalExtraFee">0</div>
                                 </div>
                             </div>
                         </div>
@@ -587,8 +587,8 @@ FROM ims_house;";
                     "type": "POST",
                     "dataSrc": function(json) {
                         if (json.summary) {
-                            $('#totalHouse').text(json.summary.total_house);
-                            $('#totalCars').text(json.summary.total_cars);
+                            $('#totalHouse').text(json.summary.total_house.toLocaleString() + '');
+                            $('#totalCars').text(json.summary.total_cars.toLocaleString() + '');
                             $('#totalExtraFee').text(json.summary.total_extra_fee.toLocaleString());
                         }
                         return json.data;
@@ -737,8 +737,8 @@ FROM ims_house;";
                 }
 
                 detailHtml += '</tbody></table>';
-                detailHtml += '<div class="mt-3"><strong>จำนวนรถ: </strong>' + rowData.car_count + ' คัน</div>';
-                detailHtml += '<div><strong>ค่าสติกเกอร์รถเพิ่ม: </strong>' + rowData.extra_car_fee + ' บาท</div>';
+                detailHtml += '<div class="mt-3"><strong>จำนวนรถ: </strong>' + rowData.car_count + '</div>';
+                detailHtml += '<div><strong>ค่าสติกเกอร์รถเพิ่ม: </strong>' + rowData.extra_car_fee + '</div>';
                 detailHtml += '<div><strong>วันที่รับสติกเกอร์: </strong>' + rowData.sticker_receive_date + '</div>';
 
                 $('#detailContent').html(detailHtml);
@@ -799,7 +799,7 @@ FROM ims_house;";
                             "type": "POST",
                             "dataSrc": function(json) {
                                 if (json.total_house !== undefined) {
-                                    $('#notReceivedCount').text(json.total_house + ' หลัง');
+                                    $('#notReceivedCount').text(json.total_house);
                                 }
                                 return json.data;
                             }
