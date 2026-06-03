@@ -192,7 +192,7 @@ foreach ($monthly_expense_list as $row) {
             <?php include('includes/Top-Bar.php'); ?>
 
             <div class="container-fluid"> <div class="card shadow mb-4">
-                    <div class="card-header py-3 bg-primary text-white d-flex justify-content-between align-items-center">
+                    <div class="card-header py-3 <?= $topbar_theme ?> text-white d-flex justify-content-between align-items-center">
                         <h6 class="m-0 font-weight-bold">
                             สรุปข้อมูลภาพรวม
                         </h6>
