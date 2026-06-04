@@ -5,6 +5,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 } else {
     // กำหนดปีปัจจุบันในรูปแบบ ค.ศ. (ใช้สำหรับค่าเริ่มต้นของ select box)
     $current_year_en = date('Y');
+
+    include('config/connect_db.php');
+    // ดึงยอดรวมค่าส่วนกลาง
+    $sql_sum_house_data = " SELECT SUM(common_fee) AS common_fee FROM ims_house_master ";
+    $query_sum_house_data = $conn->prepare($sql_sum_house_data);
+    $query_sum_house_data->execute();
+    $result_sum_house_data = $query_sum_house_data->fetch(PDO::FETCH_OBJ);
+    $total_common_fee = $result_sum_house_data->common_fee ?? 0;
     ?>
 
     <!DOCTYPE html>
@@ -166,6 +174,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            layout: {
+                                padding: {
+                                    top: 25
+                                }
+                            },
                             plugins: {
                                 legend: {
                                     display: false
@@ -180,12 +193,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                         weight: 'bold',
                                         size: 11
                                     },
-                                    color: '#5a5c69'
+                                    color: '#5a5c69',
+                                    offset: 2
                                 }
                             },
                             scales: {
                                 y: {
                                     beginAtZero: true,
+                                    max: <?= (float)$total_common_fee ?>,
+                                    grace: '10%',
                                     title: { display: true, text: 'ยอดรวม (บาท)' }
                                 },
                                 x: {

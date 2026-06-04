@@ -179,6 +179,54 @@ $total_monthly_expense = 0;
 foreach ($monthly_expense_list as $row) {
     $total_monthly_expense += $row['amount'];
 }
+
+// --- ดึงข้อมูลสรุปสติกเกอร์ ---
+// 1. จำนวนรถทั้งหมด (รับ + ยังไม่ได้รับ)
+$sql_all_cars = "SELECT 
+    SUM(
+        (CASE WHEN car_no1 IS NOT NULL AND car_no1 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no2 IS NOT NULL AND car_no2 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no3 IS NOT NULL AND car_no3 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no4 IS NOT NULL AND car_no4 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no5 IS NOT NULL AND car_no5 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no6 IS NOT NULL AND car_no6 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no7 IS NOT NULL AND car_no7 <> '' THEN 1 ELSE 0 END) +
+        (CASE WHEN car_no8 IS NOT NULL AND car_no8 <> '' THEN 1 ELSE 0 END)
+    ) AS total_cars_count
+FROM ims_house;";
+$query_all_cars = $conn->prepare($sql_all_cars);
+$query_all_cars->execute();
+$result_all_cars = $query_all_cars->fetch(PDO::FETCH_OBJ);
+$total_cars_count = $result_all_cars->total_cars_count ?? 0;
+
+// 2. สรุปข้อมูลบ้านที่รับสติกเกอร์แล้ว
+$sql_sticker_summary = "
+    SELECT 
+        COUNT(*) as total_house_received,
+        SUM(car_count) as total_cars_received,
+        SUM(CASE WHEN car_count > 2 THEN (car_count - 2) * 100 ELSE 0 END) as total_extra_fee
+    FROM (
+        SELECT 
+            (CASE WHEN car_no1 IS NOT NULL AND car_no1 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no2 IS NOT NULL AND car_no2 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no3 IS NOT NULL AND car_no3 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no4 IS NOT NULL AND car_no4 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no5 IS NOT NULL AND car_no5 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no6 IS NOT NULL AND car_no6 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no7 IS NOT NULL AND car_no7 <> '' THEN 1 ELSE 0 END) +
+            (CASE WHEN car_no8 IS NOT NULL AND car_no8 <> '' THEN 1 ELSE 0 END) AS car_count
+        FROM ims_house
+        WHERE sticker_receive_status = 'Y'
+    ) AS subquery
+";
+$query_sticker_summary = $conn->prepare($sql_sticker_summary);
+$query_sticker_summary->execute();
+$result_sticker_summary = $query_sticker_summary->fetch(PDO::FETCH_OBJ);
+
+$total_house_received = $result_sticker_summary->total_house_received ?? 0;
+$total_cars_received = $result_sticker_summary->total_cars_received ?? 0;
+$total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
+// --- จบดึงข้อมูลสรุปสติกเกอร์ ---
 ?>
 
 <!DOCTYPE html>
@@ -341,8 +389,99 @@ foreach ($monthly_expense_list as $row) {
                         </div>
                     </div>
                 </div>
-            </div> </div> <?php include('includes/Footer.php'); ?>
-    </div> </div> <?php include('includes/Modal-Logout.php'); ?>
+
+                <!-- Sticker Summary Section -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-light text-primary d-flex align-items-center">
+                        <h6 class="m-0 font-weight-bold"><i class="fas fa-car"></i> สรุปการรับสติกเกอร์</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl col-md-6 mb-4">
+                                <div class="card bg-info text-white shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนบ้านที่รับสติกเกอร์ (หลัง)</div>
+                                                <div class="h5 mb-0 font-weight-bold"><?= number_format($total_house_received) ?> หลัง</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-home fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl col-md-6 mb-4">
+                                <div class="card bg-primary text-white shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถที่รับสติกเกอร์ (คัน)</div>
+                                                <div class="h5 mb-0 font-weight-bold"><?= number_format($total_cars_received) ?> คัน</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-car fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl col-md-6 mb-4">
+                                <div class="card bg-info text-white shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">จำนวนรถทั้งหมด (คัน)</div>
+                                                <div class="h5 mb-0 font-weight-bold"><?= number_format($total_cars_count) ?> คัน</div>
+                                                <div class="text-xs mt-1">(รับ + ยังไม่ได้รับ)</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-car-side fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl col-md-6 mb-4">
+                                <div class="card bg-primary text-white shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-uppercase mb-1">เงินค่าสติกเกอร์รถเพิ่ม (บาท)</div>
+                                                <div class="h5 mb-0 font-weight-bold"><?= number_format($total_extra_fee_received, 2) ?> บาท</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-hand-holding-usd fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl col-md-6 mb-4">
+                                <div class="card bg-success text-white shadow h-100 py-2">
+                                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                        <div class="text-xs font-weight-bold text-uppercase mb-2 text-center">ดูรายละเอียดการรับสติกเกอร์</div>
+                                        <button type="button" class="btn btn-light btn-sm shadow-sm font-weight-bold" data-toggle="modal" data-target="#stickerDetailModal">
+                                            <i class="fas fa-search"></i> Click Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End of container-fluid -->
+        </div> <!-- End of content -->
+        <?php include('includes/Footer.php'); ?>
+    </div> <!-- End of content-wrapper -->
+    <?php include('includes/Modal-Logout.php'); ?>
+</div> <!-- End of wrapper -->
 
     <!-- Modal แสดงรายละเอียดรายรับประจำเดือน -->
     <div class="modal fade" id="monthlyIncomeModal" tabindex="-1" role="dialog" aria-labelledby="monthlyIncomeModalLabel" aria-hidden="true">
@@ -566,6 +705,45 @@ foreach ($monthly_expense_list as $row) {
         </div>
     </div>
 
+    <!-- Modal แสดงรายละเอียดการรับสติกเกอร์ -->
+    <div class="modal fade" id="stickerDetailModal" tabindex="-1" role="dialog" aria-labelledby="stickerDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="stickerDetailModalLabel"><i class="fas fa-car"></i> รายละเอียดการรับสติกเกอร์</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="stickerDetailTable" class="display nowrap table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>บ้านเลขที่</th>
+                                    <th>ทะเบียน 1</th>
+                                    <th>ทะเบียน 2</th>
+                                    <th>ทะเบียน 3</th>
+                                    <th>ทะเบียน 4</th>
+                                    <th>ทะเบียน 5</th>
+                                    <th>ทะเบียน 6</th>
+                                    <th>ทะเบียน 7</th>
+                                    <th>ทะเบียน 8</th>
+                                    <th class="text-right">จำนวนรถ</th>
+                                    <th class="text-right">ค่าสติกเกอร์ (บาท)</th>
+                                    <th>วันที่รับสติกเกอร์</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- DataTables Buttons and Custom CSS Dependencies -->
     <link rel="stylesheet" href="css/spin_datatables_v2.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
@@ -650,6 +828,11 @@ foreach ($monthly_expense_list as $row) {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 25
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
@@ -664,12 +847,15 @@ foreach ($monthly_expense_list as $row) {
                                 weight: 'bold',
                                 size: 11
                             },
-                            color: '#5a5c69'
+                            color: '#5a5c69',
+                            offset: 2
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            max: <?= (float)$total_common_fee ?>,
+                            grace: '10%',
                             title: { display: true, text: 'ยอดรวม (บาท)' }
                         },
                         x: {
@@ -846,6 +1032,70 @@ foreach ($monthly_expense_list as $row) {
 
     $('#monthlyExpenseModal').on('shown.bs.modal', function () {
         expenseTable.columns.adjust().draw();
+    });
+
+    // Initialize Sticker Detail DataTable
+    const stickerTable = $('#stickerDetailTable').DataTable({
+        'paging': true,
+        'lengthChange': true,
+        'pageLength': 10,
+        'lengthMenu': [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
+        'language': {
+            search: 'ค้นหาข้อมูล',
+            lengthMenu: 'แสดง _MENU_ รายการ',
+            info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+            infoEmpty: 'ไม่มีข้อมูล',
+            zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+            infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+            paginate: {
+                previous: 'ก่อนหน้า',
+                last: 'สุดท้าย',
+                next: 'ต่อไป'
+            }
+        },
+        "ajax": {
+            "url": "model/get_sticker_received_list.php",
+            "type": "POST",
+            "dataSrc": "data"
+        },
+        "columns": [
+            { "data": "house_number" },
+            { "data": "car_no1" },
+            { "data": "car_no2" },
+            { "data": "car_no3" },
+            { "data": "car_no4" },
+            { "data": "car_no5" },
+            { "data": "car_no6" },
+            { "data": "car_no7" },
+            { "data": "car_no8" },
+            { "data": "car_count", "className": "text-right" },
+            { 
+                "data": "extra_car_fee", 
+                "className": "text-right",
+                "render": function(data) {
+                    return parseFloat(data).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            },
+            { "data": "sticker_receive_date" }
+        ],
+        'order': [[0, 'asc']],
+        'scrollY': '45vh',
+        'scrollCollapse': true,
+        'scrollX': true,
+        'autoWidth': false,
+        dom: 'Blfrtip',
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                className: 'btn btn-success btn-sm',
+                title: 'รายละเอียดการรับสติกเกอร์'
+            }
+        ]
+    });
+
+    $('#stickerDetailModal').on('shown.bs.modal', function () {
+        stickerTable.columns.adjust().draw();
     });
 </script>
 </body>

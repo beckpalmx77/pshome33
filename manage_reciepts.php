@@ -58,7 +58,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
-                                            <table id='TableRecordList' class='display dataTable'>
+                                            <table id='TableRecordList' class='display nowrap dataTable' width="100%">
                                                 <thead>
                                                 <tr>
                                                     <th>เลขที่</th>
@@ -130,24 +130,14 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                 <div class="col-sm-8">
                                                                     <label for="description"
                                                                            class="control-label">รายการรายรับ/รายได้</label>
-                                                                    <input list="descriptionList" type="text" class="form-control"
+                                                                    <input type="text" class="form-control"
                                                                            id="description" name="description" required="required" placeholder="">
-                                                                    <datalist id="descriptionList">
-                                                                        <?php
-                                                                        $stmt = $conn->prepare("SELECT DISTINCT description FROM ims_expenses WHERE description IS NOT NULL AND description != '' ORDER BY description ASC");
-                                                                        $stmt->execute();
-                                                                        $descriptions = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                                                                        foreach ($descriptions as $description) {
-                                                                            echo '<option value="' . htmlspecialchars($description ?? '') . '">';
-                                                                        }
-                                                                        ?>
-                                                                    </datalist>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
                                                                 <input type="hidden" class="form-control"
                                                                        id="category_id"
-                                                                       name="category_id" value="T012">
+                                                                       name="category_id" value="">
                                                                 <div class="col-sm-4">
                                                                     <label for="category_name"
                                                                            class="control-label">ประเภทรายรับ/รายได้</label>
@@ -441,6 +431,9 @@ if (strlen($_SESSION['alogin']) == "") {
     <!--link href="vendor/date-picker-1.9/css/date_picker_style.css" rel="stylesheet"/-->
     <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
+    <link rel="stylesheet" href="vendor/mycalendar/jqueryui/custom-theme/jquery-ui-1.10.4.custom.min.css">
+    <script src="vendor/mycalendar/jqueryui/jqueryui.min.js"></script>
+
     <script src="vendor/datatables/v11/bootbox.min.js"></script>
     <script src="vendor/datatables/v11/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script>
@@ -452,12 +445,56 @@ if (strlen($_SESSION['alogin']) == "") {
         /* CSS สำหรับ FixedHeader background */
         #TableRecordList thead th {
             background-color: #f8f9fc;
+            white-space: nowrap;
+        }
+
+        #TableRecordList tbody td {
+            white-space: nowrap;
         }
 
         .fixedHeader-floating {
             background-color: white !important;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .ui-autocomplete {
+            z-index: 2147483647 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+            border: 1px solid #d1d3e2 !important;
+            background: white !important;
+            padding: 8px 0 !important;
+            margin-bottom: 12px !important;
+        }
+
+        /* Balloon Arrow */
+        .ui-autocomplete::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            right: 30px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent;
+            display: block;
+            width: 0;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+        }
+
+        .ui-menu-item {
+            padding: 8px 15px !important;
+            font-size: 0.9rem;
+            color: #4e73df;
+            transition: all 0.2s;
+        }
+
+        .ui-state-focus {
+            background: #4e73df !important;
+            color: white !important;
+            border: none !important;
+            margin: 0 !important;
+            font-weight: bold;
         }
 
         .icon-input-btn {
@@ -557,9 +594,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
-                <?php  if ($_SESSION['deviceType'] !== 'computer') {
-                    echo "'scrollX': true,";
-                }?>
+                'scrollX': true,
                 'ajax': {
                     'url': 'model/manage_reciepts_process.php',
                     'data': formDataObj
@@ -1054,6 +1089,41 @@ if (strlen($_SESSION['alogin']) == "") {
             if (selected) {
                 document.getElementById('payment_method').value = selected.value;
             }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#description").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        type: "POST",
+                        url: 'model/manage_reciepts_process.php',
+                        data: {
+                            action: "GET_DESCRIPTION_AUTOCOMPLETE",
+                            search: request.term
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            response(data);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Autocomplete Error:', error);
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 1,
+                appendTo: "#recordModal .modal-body",
+                position: {
+                    my: "left bottom-15",
+                    at: "left top",
+                    collision: "flip"
+                },
+                open: function() {
+                    $(this).autocomplete("widget").outerWidth($(this).outerWidth());
+                }
+            });
         });
     </script>
 
