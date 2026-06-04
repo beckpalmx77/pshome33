@@ -10,6 +10,9 @@ config/connect_*.php
 config/*.inc
 config/env.*.inc
 
+/line_oa/checkin/jsconfig
+/line_oa/house/jsconfig
+
 # Logs
 *.log
 webhook_ps33_niti_log_id.txt
