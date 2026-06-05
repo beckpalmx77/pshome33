@@ -464,8 +464,23 @@ if (strlen($_SESSION['alogin']) == "") {
             box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
             border: 1px solid #d1d3e2 !important;
             background: white !important;
-            padding: 8px 0 !important;
+            padding: 0 !important; /* เปลี่ยนเป็น 0 เพื่อให้ header ติดขอบ */
             margin-bottom: 12px !important;
+            overflow: hidden;
+        }
+
+        /* Header ใน Balloon */
+        .ui-autocomplete::before {
+            content: "เลือกข้อมูลจาก list";
+            display: block;
+            padding: 8px 15px;
+            font-weight: bold;
+            color: #858796;
+            font-size: 0.75rem;
+            background: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Balloon Arrow */
@@ -715,7 +730,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#reciept_date').val(formattedDate);
                 $('#supplier_name').val("");
                 $('#description').val("");
-                $('#category_id').val("T012");
+                $('#category_id').val("");
                 $('#category_name').val("รายรับ");
                 $('#unit_id').val("U001");
                 $('#unit_name').val("รายการ");
