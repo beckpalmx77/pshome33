@@ -22,7 +22,7 @@ echo "--- Starting Google Drive Sync: " . date('Y-m-d H:i:s') . " ---\n";
  */
 
 try {
-    // 1. จองคิว: เปลี่ยนสถานะจาก 0 เป็น 2 สำหรับ 10 แถวแรก
+    // 1. จองคิว: เปลี่ยนสถานะจาก 0 เป็น 2 สำหรับ 20 แถวแรก
     // เราใช้ Batch ID (เวลาปัจจุบัน) เพื่อระบุเฉพาะแถวที่โปรเซสนี้จองไว้
     $batchId = time() . rand(100, 999);
     $lockSql = "UPDATE ims_line_webhook_messages 
@@ -31,7 +31,7 @@ try {
                 AND message_type = 'image'
                 AND photo_path IS NOT NULL 
                 AND photo_path != ''
-                ORDER BY id ASC LIMIT 10";
+                ORDER BY id ASC LIMIT 20";
     
     // หมายเหตุ: หากตารางไม่มีคอลัมน์ remark ให้รัน: ALTER TABLE ims_line_webhook_messages ADD remark VARCHAR(100);
     // หรือถ้าไม่ต้องการใช้ remark ให้ใช้แค่การจองสถานะ 2 ก็ได้ครับ
