@@ -17,7 +17,65 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
-    </head>
+    <style>
+        .preview-box {
+            width: 120px;
+            height: 150px;
+            margin: 10px;
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #f8f9fc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .preview-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .preview-box img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+        .preview-box .pdf-icon {
+            font-size: 50px;
+            color: #e74a3b;
+            margin-bottom: 10px;
+        }
+        .preview-box .file-name {
+            font-size: 10px;
+            word-break: break-all;
+            padding: 5px;
+            text-align: center;
+            background: rgba(255,255,255,0.8);
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            z-index: 10;
+            background: rgba(231, 74, 59, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
     <body id="page-top">
     <div id="wrapper">
         <div id="content-wrapper" class="d-flex flex-column">
@@ -174,6 +232,18 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>สถานะการยืนยัน</label>
+                                        <select id="approve_status" name="approve_status" class="form-control">
+                                            <option value="Y" selected>ยืนยัน</option>
+                                            <option value="N">ไม่ยืนยัน</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <input type="file" id="pictures" multiple accept="image/*,application/pdf">
                             <input type="hidden" id="picture_doc" name="picture_doc">
                             <input type="hidden" id="deleted_images" name="deleted_images" value="">
@@ -183,7 +253,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                             <div class="modal-footer">
                                 <input type="hidden" name="id" id="id"/>
                                 <input type="hidden" name="action" id="action" value=""/>
-                                <input type="hidden" id="approve_status" name="approve_status value="">
 
                                 <button type="submit" name="save" id="save" class="btn btn-primary">
                                     บันทึก <i class="fa fa-save"></i>
@@ -353,46 +422,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                         let fileExtension = file.split('.').pop().toLowerCase();
                         let isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
-
-                        let fileBox = $('<div>').addClass('position-relative m-2').css({display: 'inline-block'});
                         let filePath = 'uploads/files/' + file;
 
-                        if (isImage) {
-                            let imgLink = $('<a>').attr({'href': filePath, 'target': '_blank'}); // Added for click to enlarge
-                            let img = $('<img>')
-                                .attr('src', filePath)
-                                .css({width: '120px', height: 'auto', border: '1px solid #ccc', padding: '2px'});
-                            imgLink.append(img);
-                            fileBox.append(imgLink);
-                        } else if (fileExtension === 'pdf') {
-                            let pdfPlaceholder = $('<div>').css({
-                                'width': '120px',
-                                'height': '120px',
-                                'background-color': '#f0f0f0',
-                                'border': '1px solid #ccc',
-                                'display': 'flex',
-                                'flex-direction': 'column',
-                                'justify-content': 'center',
-                                'align-items': 'center',
-                                'text-align': 'center',
-                                'overflow': 'hidden',
-                                'padding': '5px'
-                            });
-                            pdfPlaceholder.append($('<p>').text('PDF File').css('font-weight', 'bold'));
-                            pdfPlaceholder.append($('<p>').text(file).css({'font-size': '0.7em', 'word-break': 'break-all'}));
-                            pdfPlaceholder.append($('<a>').attr({'href': filePath, 'target': '_blank'}).text('View').addClass('btn btn-sm btn-primary mt-1'));
-                            fileBox.append(pdfPlaceholder);
-                        }
-
-                        let deleteBtn = $('<button>')
-                            .addClass('btn btn-danger btn-sm position-absolute top-0 end-0')
+                        let previewBox = $('<div>').addClass('preview-box');
+                        
+                        let removeBtn = $('<button>')
+                            .addClass('remove-btn')
                             .html('&times;')
-                            .css({zIndex: 2, padding: '2px 6px', borderRadius: '50%'})
+                            .attr('title', 'ลบไฟล์นี้')
                             .on('click', function () {
-                                // Remove image from display
-                                fileBox.remove();
-
-                                // Add filename to deleted_images hidden field
+                                previewBox.remove();
                                 let deleted = $('#deleted_images').val();
                                 let deletedArray = deleted ? deleted.split(',') : [];
                                 if (!deletedArray.includes(file)) {
@@ -401,8 +440,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 }
                             });
 
-                        fileBox.append(deleteBtn);
-                        imagePreviewContainer.append(fileBox);
+                        let contentLink = $('<a>').attr({'href': filePath, 'target': '_blank', 'title': 'คลิกเพื่อดูขนาดใหญ่'});
+
+                        if (isImage) {
+                            contentLink.append($('<img>').attr('src', filePath));
+                        } else if (fileExtension === 'pdf') {
+                            contentLink.append($('<i>').addClass('fa fa-file-pdf-o pdf-icon'));
+                        } else {
+                            contentLink.append($('<i>').addClass('fa fa-file pdf-icon'));
+                        }
+
+                        contentLink.append($('<div>').addClass('file-name').text(file));
+                        previewBox.append(removeBtn).append(contentLink);
+                        imagePreviewContainer.append(previewBox);
                     });
                 }
             }
@@ -876,83 +926,68 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             files.forEach((file) => {
                 const fileIndex = uploadedImages.push(file) - 1;
 
-                const filePreviewBox = document.createElement('div');
-                filePreviewBox.classList.add('col-md-2', 'position-relative', 'mb-2');
+                let previewBox = document.createElement('div');
+                previewBox.classList.add('preview-box');
 
-                const removeButton = document.createElement('button');
-                removeButton.setAttribute('type', 'button');
-                removeButton.classList.add('btn', 'btn-sm', 'btn-danger', 'position-absolute', 'top-0', 'end-0', 'remove-new-img');
-                removeButton.setAttribute('data-file-index', fileIndex);
-                removeButton.innerHTML = '&times;';
-                removeButton.style.cssText = 'z-index: 2; padding: 2px 6px; border-radius: 50%;';
+                let removeBtn = document.createElement('button');
+                removeBtn.classList.add('remove-btn');
+                removeBtn.innerHTML = '&times;';
+                removeBtn.setAttribute('data-file-index', fileIndex);
+                removeBtn.onclick = function() {
+                    const idx = parseInt(this.getAttribute('data-file-index'));
+                    uploadedImages.splice(idx, 1);
+                    previewBox.remove();
+                    // Re-index remaining buttons
+                    document.querySelectorAll('#preview-area .remove-btn').forEach((btn, i) => {
+                        btn.setAttribute('data-file-index', i);
+                    });
+                };
+
+                let contentLink = document.createElement('a');
+                contentLink.setAttribute('target', '_blank');
+                contentLink.setAttribute('title', 'คลิกเพื่อดูไฟล์');
 
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        const img = document.createElement('img');
+                        contentLink.setAttribute('href', e.target.result);
+                        let img = document.createElement('img');
                         img.setAttribute('src', e.target.result);
-                        img.classList.add('img-thumbnail');
-                        img.style.cssText = 'width:100%; height:120px; object-fit:cover;';
-
-                        const imgLink = document.createElement('a'); // New: Create anchor tag
-                        imgLink.setAttribute('href', e.target.result); // Link to the full image
-                        imgLink.setAttribute('target', '_blank');     // Open in new tab
-                        imgLink.appendChild(img);                     // Append image to anchor
-
-                        filePreviewBox.appendChild(imgLink);          // Append anchor to box
-                        filePreviewBox.appendChild(removeButton);
-                        previewArea.appendChild(filePreviewBox);
+                        contentLink.appendChild(img);
                     };
                     reader.readAsDataURL(file);
                 } else if (file.type === 'application/pdf') {
-                    const pdfPlaceholder = document.createElement('div');
-                    pdfPlaceholder.style.cssText = 'width:100%; height:120px; background-color: #f0f0f0; border: 1px solid #ccc; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden;';
-
-                    const pdfText = document.createElement('p');
-                    pdfText.textContent = 'PDF File';
-                    pdfText.style.cssText = 'font-weight: bold; margin-bottom: 5px;';
-
-                    const fileNameShort = document.createElement('p');
-                    fileNameShort.textContent = file.name;
-                    fileNameShort.style.cssText = 'font-size: 0.7em; word-break: break-all; padding: 0 5px;';
-
-                    const viewLink = document.createElement('a');
-                    viewLink.setAttribute('href', URL.createObjectURL(file));
-                    viewLink.setAttribute('target', '_blank');
-                    viewLink.textContent = 'View';
-                    viewLink.classList.add('btn', 'btn-sm', 'btn-primary', 'mt-1');
-
-                    pdfPlaceholder.appendChild(pdfText);
-                    pdfPlaceholder.appendChild(fileNameShort);
-                    pdfPlaceholder.appendChild(viewLink);
-                    filePreviewBox.appendChild(pdfPlaceholder);
-                    filePreviewBox.appendChild(removeButton);
-                    previewArea.appendChild(filePreviewBox);
+                    contentLink.setAttribute('href', URL.createObjectURL(file));
+                    let icon = document.createElement('i');
+                    icon.classList.add('fa', 'fa-file-pdf-o', 'pdf-icon');
+                    contentLink.appendChild(icon);
+                } else {
+                    contentLink.setAttribute('href', URL.createObjectURL(file));
+                    let icon = document.createElement('i');
+                    icon.classList.add('fa', 'fa-file', 'pdf-icon');
+                    contentLink.appendChild(icon);
                 }
+
+                let nameLabel = document.createElement('div');
+                nameLabel.classList.add('file-name');
+                nameLabel.textContent = file.name;
+
+                contentLink.appendChild(nameLabel);
+                previewBox.appendChild(removeBtn);
+                previewBox.appendChild(contentLink);
+                previewArea.appendChild(previewBox);
             });
-        });
-
-        document.getElementById('preview-area').addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-new-img')) {
-                const fileIndex = parseInt(e.target.getAttribute('data-file-index'));
-                uploadedImages.splice(fileIndex, 1);
-                e.target.parentElement.remove();
-
-                $('#preview-area .remove-new-img').each(function (i) {
-                    $(this).attr('data-file-index', i);
-                });
-            }
         });
 
         async function uploadImages() {
             const formData = new FormData();
-            uploadedImages.forEach(file => formData.append('images[]', file)); // The server-side script will need to handle file types
+            uploadedImages.forEach(file => formData.append('images[]', file));
 
             if (uploadedImages.length === 0) {
                 return Promise.resolve([]);
             }
 
-            const response = await fetch('upload_img_doc.php', { // Assuming upload_img_doc.php can handle PDFs
+            const response = await fetch('upload_img_doc.php', {
                 method: 'POST',
                 body: formData
             });
