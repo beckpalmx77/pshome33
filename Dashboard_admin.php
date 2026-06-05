@@ -165,11 +165,11 @@ foreach ($monthly_income_list as $row) {
 
 // ดึงข้อมูลรายจ่ายของเดือนปัจจุบัน
 $sql_monthly_expense = "
-    SELECT ROW_NUMBER() OVER (ORDER BY expense_date ASC) AS row_num,
-           doc_id, expense_date, category_name, description, amount
-    FROM v_ims_expenses
-    WHERE CAST(exp_month AS UNSIGNED) = :month AND exp_year = :year
-    ORDER BY expense_date ASC;
+    SELECT ROW_NUMBER() OVER (ORDER BY doc_date ASC) AS row_num,
+           doc_no, doc_date, supplier_name, purpose, total_amount
+    FROM ims_payment_voucher
+    WHERE CAST(doc_month AS UNSIGNED) = :month AND doc_year = :year
+    ORDER BY doc_date ASC;
 ";
 $query_monthly_expense = $conn->prepare($sql_monthly_expense);
 $query_monthly_expense->execute([':month' => $curr_month, ':year' => $curr_year]);
@@ -177,7 +177,7 @@ $monthly_expense_list = $query_monthly_expense->fetchAll(PDO::FETCH_ASSOC);
 
 $total_monthly_expense = 0;
 foreach ($monthly_expense_list as $row) {
-    $total_monthly_expense += $row['amount'];
+    $total_monthly_expense += $row['total_amount'];
 }
 
 // --- ดึงข้อมูลสรุปสติกเกอร์ ---
@@ -554,7 +554,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                     <th class="text-center">ลำดับ</th>
                                     <th>เลขที่เอกสาร</th>
                                     <th>วันที่</th>
-                                    <th>หมวดหมู่</th>
+                                    <th>จ่ายให้แก่</th>
                                     <th>รายละเอียด</th>
                                     <th class="text-right">จำนวนเงิน (บาท)</th>
                                 </tr>
@@ -564,11 +564,11 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                 foreach ($monthly_expense_list as $row) {
                                     echo "<tr>";
                                     echo "<td class='text-center'>".htmlspecialchars($row['row_num'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['doc_id'])."</td>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['expense_date'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['category_name'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['description'])."</td>";
-                                    echo "<td class='text-right text-danger font-weight-bold'>".number_format($row['amount'], 2)."</td>";
+                                    echo "<td>".htmlspecialchars($row['doc_no'])."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['doc_date'])."</td>";
+                                    echo "<td>".htmlspecialchars($row['supplier_name'])."</td>";
+                                    echo "<td>".htmlspecialchars($row['purpose'])."</td>";
+                                    echo "<td class='text-right text-danger font-weight-bold'>".number_format($row['total_amount'], 2)."</td>";
                                     echo "</tr>";
                                 }
                                 ?>
@@ -747,6 +747,14 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
     <!-- DataTables Buttons and Custom CSS Dependencies -->
     <link rel="stylesheet" href="css/spin_datatables_v2.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/buttons.dataTables.min.css"/>
+
+    <style>
+        @media (min-width: 1200px) {
+            .modal-xl {
+                max-width: 95%;
+            }
+        }
+    </style>
 
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>

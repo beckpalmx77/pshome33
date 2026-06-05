@@ -58,6 +58,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <thead>
                                                 <tr>
                                                     <th>เลขที่</th>
+                                                    <th>ใบสำคัญจ่าย</th>
                                                     <th>วันที่</th>
                                                     <th>เดือน</th>
                                                     <th>ปี</th>
@@ -74,6 +75,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                 <tfoot>
                                                 <tr>
                                                     <th>เลขที่</th>
+                                                    <th>ใบสำคัญจ่าย</th>
                                                     <th>วันที่</th>
                                                     <th>เดือน</th>
                                                     <th>ปี</th>
@@ -453,6 +455,11 @@ if (strlen($_SESSION['alogin']) == "") {
         /* CSS สำหรับ FixedHeader background */
         #TableRecordList thead th {
             background-color: #f8f9fc;
+            white-space: nowrap;
+        }
+
+        #TableRecordList tbody td {
+            white-space: nowrap;
         }
 
         .fixedHeader-floating {
@@ -600,6 +607,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 },
                 'columns': [
                     {data: 'doc_id'},
+                    {data: 'doc_ref'},
                     {data: 'expense_date'},
                     {data: 'month_name'},
                     {data: 'exp_year'},
