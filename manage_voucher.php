@@ -345,26 +345,27 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
                             let main_menu = document.getElementById("main_menu").value;
                             let sub_menu = document.getElementById("sub_menu").value;
-                            let url = "manage_voucher_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
-                                + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
-                                + '&id=' + id
-                                + '&doc_no=' + doc_no
-                                + '&doc_date=' + doc_date
-                                + '&picture_doc=' + picture_doc
-                                + '&purpose=' + purpose
-                                + '&requester=' + requester
-                                + '&supplier_id=' + supplier_id
-                                + '&supplier_name=' + supplier_name
-                                + '&address=' + address
-                                + '&total_amount=' + total_amount
-                                + '&create_name=' + create_name
-                                + '&checker_name=' + checker_name
-                                + '&approve_name=' + approve_name
-                                + '&receipt_name=' + receipt_name
-                                + '&payment_method=' + payment_method
-                                + '&bank_no=' + bank_no
-                                + '&approve_status=' + approve_status
-                                + '&status=' + status
+                            let url = "manage_voucher_data?title=" + encodeURIComponent("จัดซื้อ-จัดจ้าง(Purchase Order)")
+                                + '&main_menu=' + encodeURIComponent(main_menu) 
+                                + '&sub_menu=' + encodeURIComponent(sub_menu)
+                                + '&id=' + encodeURIComponent(id)
+                                + '&doc_no=' + encodeURIComponent(doc_no)
+                                + '&doc_date=' + encodeURIComponent(doc_date)
+                                + '&picture_doc=' + encodeURIComponent(picture_doc)
+                                + '&purpose=' + encodeURIComponent(purpose)
+                                + '&requester=' + encodeURIComponent(requester)
+                                + '&supplier_id=' + encodeURIComponent(supplier_id)
+                                + '&supplier_name=' + encodeURIComponent(supplier_name)
+                                + '&address=' + encodeURIComponent(address)
+                                + '&total_amount=' + encodeURIComponent(total_amount)
+                                + '&create_name=' + encodeURIComponent(create_name)
+                                + '&checker_name=' + encodeURIComponent(checker_name)
+                                + '&approve_name=' + encodeURIComponent(approve_name)
+                                + '&receipt_name=' + encodeURIComponent(receipt_name)
+                                + '&payment_method=' + encodeURIComponent(payment_method)
+                                + '&bank_no=' + encodeURIComponent(bank_no)
+                                + '&approve_status=' + encodeURIComponent(approve_status)
+                                + '&status=' + encodeURIComponent(status)
                                 + '&action=UPDATE';
 
                             console.log("Generated URL for update:", url); // แสดง URL ใน Console เพื่อตรวจสอบ

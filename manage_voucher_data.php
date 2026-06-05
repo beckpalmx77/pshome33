@@ -20,7 +20,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
     <style>
         .preview-box {
             width: 120px;
-            height: 150px;
+            height: 120px;
             margin: 10px;
             position: relative;
             border: 1px solid #ddd;
@@ -28,7 +28,6 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             overflow: hidden;
             background-color: #f8f9fc;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: transform 0.2s;
@@ -39,16 +38,15 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
         }
         .preview-box img {
             width: 100%;
-            height: 100px;
+            height: 100%;
             object-fit: cover;
         }
         .preview-box .pdf-icon {
             font-size: 50px;
             color: #e74a3b;
-            margin-bottom: 10px;
         }
         .preview-box .file-name {
-            font-size: 10px;
+            font-size: 9px;
             word-break: break-all;
             padding: 5px;
             text-align: center;
@@ -56,6 +54,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             width: 100%;
             position: absolute;
             bottom: 0;
+            color: #333;
         }
         .remove-btn {
             position: absolute;
@@ -422,7 +421,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                         let fileExtension = file.split('.').pop().toLowerCase();
                         let isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
-                        let filePath = 'uploads/files/' + file;
+                        let filePath = file;
+                        if (!file.includes('/') && !file.includes('\\')) {
+                            filePath = 'uploads/files/' + file;
+                        }
 
                         let previewBox = $('<div>').addClass('preview-box');
                         
@@ -440,10 +442,17 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 }
                             });
 
-                        let contentLink = $('<a>').attr({'href': filePath, 'target': '_blank', 'title': 'คลิกเพื่อดูขนาดใหญ่'});
+                        let contentLink = $('<a>').attr({'href': filePath, 'target': '_blank', 'title': 'คลิกเพื่อดูไฟล์'});
 
                         if (isImage) {
-                            contentLink.append($('<img>').attr('src', filePath));
+                            let img = $('<img>').attr('src', filePath);
+                            // Fallback for different directory if not found in uploads/files
+                            img.on('error', function() {
+                                if (!file.includes('/') && filePath.startsWith('uploads/files/')) {
+                                    $(this).attr('src', 'uploads/inventory/' + file);
+                                }
+                            });
+                            contentLink.append(img);
                         } else if (fileExtension === 'pdf') {
                             contentLink.append($('<i>').addClass('fa fa-file-pdf-o pdf-icon'));
                         } else {
