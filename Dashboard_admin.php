@@ -348,7 +348,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                         <div class="col-md-6 mb-3">
                                             <div class="card border-left-success shadow h-100 py-2">
                                                 <div class="card-body">
-                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">รายรับรวมเดือนนี้</div>
+                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">รายรับอื่นๆ รวมเดือนนี้</div>
                                                     <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_income, 2) ?></div>
                                                     <button type="button" class="btn btn-outline-success btn-xs mt-2" data-toggle="modal" data-target="#monthlyIncomeModal">
                                                         <i class="fas fa-list"></i> รายละเอียด
