@@ -18,10 +18,14 @@ curl_setopt($ch, CURLOPT_URL, $tokenUrl);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
 // ส่ง Header Content-Type ตามตัวอย่าง cURL
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/x-www-form-urlencoded'
+    'Content-Type: application/x-www-form-urlencoded',
+    'x-test-mode: true',
+    'env-id: OAUTH2'
 ]);
 
 // สำหรับ Authorization: Basic ระบบ cURL จะจับคู่ ID:Secret แล้วเข้ารหัส Base64 ให้เองอัตโนมัติครับ

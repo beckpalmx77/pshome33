@@ -5,14 +5,14 @@ $consumerId     = "wxcEBmEjaLeu1HxqL5AJrEjJRuuMSEnj";
 $consumerSecret = "u6GFTbFG8Y50H7V6";
 
 // หมายเหตุ: URL ด้านล่างนี้เป็นเพียงตัวอย่าง (กรุณาตรวจสอบคู่มือของ KBank อีกครั้งว่าใช้แอปพลิเคชันเวอร์ชัน/Endpoint ไหน)
-$host = "https://openapi-sandbox.kasikornbank.com/v2/oauth/token";
+$host = "https://openapi-sandbox.kasikornbank.com";
 
 // ==========================================
 // STEP 1: ขอ Access Token (OAuth 2.0)
 // ==========================================
 echo "=== Step 1: Requesting Access Token ===\n";
 
-$tokenUrl = $host . "/oauth/token";
+$tokenUrl = $host . "/v2/oauth/token";
 $payload = "grant_type=client_credentials";
 
 $ch = curl_init();
@@ -20,10 +20,14 @@ curl_setopt($ch, CURLOPT_URL, $tokenUrl);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 // ส่งแบบ Basic Authentication (รวม ID และ Secret)
 curl_setopt($ch, CURLOPT_USERPWD, $consumerId . ":" . $consumerSecret);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/x-www-form-urlencoded'
+    'Content-Type: application/x-www-form-urlencoded',
+    'x-test-mode: true',
+    'env-id: OAUTH2'
 ]);
 
 $response = curl_exec($ch);
@@ -67,6 +71,8 @@ curl_setopt($ch2, CURLOPT_URL, $qrcodeUrl);
 curl_setopt($ch2, CURLOPT_POST, true);
 curl_setopt($ch2, CURLOPT_POSTFIELDS, json_encode($qrRequestBody));
 curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch2, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt($ch2, CURLOPT_HTTPHEADER, [
     "Authorization: Bearer " . $accessToken, // แนบ Token ที่ได้จากสเต็ปแรก
     "Content-Type: application/json"
