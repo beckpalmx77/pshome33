@@ -65,18 +65,88 @@ $logFile = 'line_house_user_register_log.txt';
 
 // ค้นหาผู้ใช้งานซ้ำ
 try {
-    $sql_find = "SELECT COUNT(*) FROM ims_house_line_user WHERE line_user_id = :lineUserId OR line_phone = :phone";
-    $stmt_find = $conn->prepare($sql_find);
-    $stmt_find->execute([':lineUserId' => $lineUserId, ':phone' => $linePhone]);
-
-    $nRows = $stmt_find->fetchColumn();
-
-    if ($nRows > 0) {
+    // 1. ตรวจสอบว่า Line User ID นี้ลงทะเบียนแล้วหรือยัง
+    $sql_check_line = "SELECT COUNT(*) FROM ims_house_line_user WHERE line_user_id = :lineUserId";
+    $stmt_check_line = $conn->prepare($sql_check_line);
+    $stmt_check_line->execute([':lineUserId' => $lineUserId]);
+    if ($stmt_check_line->fetchColumn() > 0) {
         echo json_encode([
             "success" => false,
-            "message" => "Line Account - มี User นี้ อยู่ในระบบแล้ว"
+            "message" => "Line Account นี้ได้ลงทะเบียนในระบบเรียบร้อยแล้ว"
         ]);
         exit;
+    }
+
+    // 2. ตรวจสอบว่าเบอร์โทรศัพท์นี้มีในระบบแล้วหรือยัง
+    $sql_check_phone = "SELECT * FROM ims_house_line_user WHERE line_phone = :phone";
+    $stmt_check_phone = $conn->prepare($sql_check_phone);
+    $stmt_check_phone->execute([':phone' => $linePhone]);
+    $existingUser = $stmt_check_phone->fetch(PDO::FETCH_ASSOC);
+
+    if ($existingUser) {
+        // กรณีพบเบอร์โทรศัพท์ซ้ำ -> ตรวจสอบรหัสผ่านเพื่อสลับบัญชี LINE
+        $sql_verify = "SELECT password FROM ims_user WHERE user_id = :phone";
+        $stmt_verify = $conn->prepare($sql_verify);
+        $stmt_verify->execute([':phone' => $linePhone]);
+        $userAuth = $stmt_verify->fetch(PDO::FETCH_ASSOC);
+
+        if ($userAuth && password_verify($password_raw, $userAuth['password'])) {
+            // รหัสผ่านถูกต้อง -> อัปเดตข้อมูล LINE ใหม่เข้าไปแทนที่
+            $sql_update = "UPDATE ims_house_line_user SET 
+                            line_user_id = :lineUserId,
+                            line_user_name = :lineUserName,
+                            line_picture_profile = :linePictureProfile,
+                            line_status_profile = :lineStatusProfile,
+                            f_name = :f_name,
+                            l_name = :l_name,
+                            house_number = :house_number
+                          WHERE line_phone = :phone";
+            $stmt_update = $conn->prepare($sql_update);
+            $stmt_update->execute([
+                ':lineUserId' => $lineUserId,
+                ':lineUserName' => $lineUserName,
+                ':linePictureProfile' => $linePictureProfile,
+                ':lineStatusProfile' => $lineStatusProfile,
+                ':f_name' => $f_name,
+                ':l_name' => $l_name,
+                ':house_number' => $house_number,
+                ':phone' => $linePhone
+            ]);
+
+            // อัปเดตข้อมูลใน ims_user ด้วย (เผื่อมีการเปลี่ยนชื่อ-นามสกุล)
+            $sql_update_user = "UPDATE ims_user SET 
+                                first_name = :f_name,
+                                last_name = :l_name
+                                WHERE user_id = :phone";
+            $stmt_update_user = $conn->prepare($sql_update_user);
+            $stmt_update_user->execute([
+                ':f_name' => $f_name,
+                ':l_name' => $l_name,
+                ':phone' => $linePhone
+            ]);
+
+            $currentDateTime = date("Y-m-d H:i:s");
+            $logData = "[RE-LINK SUCCESS] {$currentDateTime} | Phone: {$linePhone} | New UserID: {$lineUserId}\n";
+            file_put_contents($logFile, $logData, FILE_APPEND | LOCK_EX);
+
+            echo json_encode([
+                "success" => true,
+                "message" => "เชื่อมต่อบัญชี LINE ใหม่สำเร็จ",
+                "user" => [
+                    "f_name" => $f_name,
+                    "l_name" => $l_name,
+                    "house_number" => $house_number,
+                    "line_phone" => $linePhone
+                ]
+            ]);
+            exit;
+        } else {
+            echo json_encode([
+                "success" => false,
+                "message" => "เบอร์โทรศัพท์นี้ถูกใช้งานแล้ว หากคุณต้องการเปลี่ยนบัญชี LINE กรุณากรอกรหัสผ่านเดิมให้ถูกต้อง"
+            ]);
+            exit;
+        }
     }
 } catch (PDOException $e) {
     $currentDateTime = date("Y-m-d H:i:s");
