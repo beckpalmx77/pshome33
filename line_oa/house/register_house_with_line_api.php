@@ -84,7 +84,7 @@ try {
     $existingUser = $stmt_check_phone->fetch(PDO::FETCH_ASSOC);
 
     if ($existingUser) {
-        // กรณีพบเบอร์โทรศัพท์ซ้ำ -> ตรวจสอบรหัสผ่านเพื่อสลับบัญชี LINE
+        // กรณีพบเบอร์โทรศัพท์ซ้ำ -> ตรวจสอบรหัสผ่านเดิมเพื่อสลับบัญชี LINE
         $sql_verify = "SELECT password FROM ims_user WHERE user_id = :phone";
         $stmt_verify = $conn->prepare($sql_verify);
         $stmt_verify->execute([':phone' => $linePhone]);
