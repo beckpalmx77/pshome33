@@ -15,7 +15,7 @@ if (empty($_FILES['images']['name'][0])) { // Check if the first file name is em
     foreach ($_FILES['images']['name'] as $index => $name) {
         $tmpName = $_FILES['images']['tmp_name'][$index];
         $ext = pathinfo($name, PATHINFO_EXTENSION);
-        $newName = uniqid('img_', true) . '.' . $ext; // Generate a unique filename
+        $newName = uniqid('exp_img_', true) . '.' . $ext; // Generate a unique filename
         $targetFile = $targetDir . $newName;
 
         // Attempt to move the uploaded file

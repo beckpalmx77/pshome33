@@ -64,9 +64,16 @@ if ($_POST["action"] === 'ADD') {
         $reciept_date = $_POST["reciept_date"];
         $rec_month = substr($_POST["reciept_date"], 3, 2);
         $rec_year = substr($_POST["reciept_date"], 6, 4);
-        $category_id = $_POST["category_id"];
-        $supplier_name = $_POST["supplier_name"];
+
         $description = $_POST["description"];
+
+        if ($_POST["description"] == 'ค่าขอสติ๊กเกอร์รถ (เพิ่ม)') {
+            $category_id = "T012" ;
+        } else {
+            $category_id = $_POST["category_id"];
+        }
+
+        $supplier_name = $_POST["supplier_name"];
         $approve_status = $_POST["approve_status"];
         $qty = $_POST["qty"];
         $inv = $_POST["inv"];
@@ -74,7 +81,6 @@ if ($_POST["action"] === 'ADD') {
         $amount = $_POST["amount"];
         $remark = $_POST["remark"];
         $payment_method = $_POST["payment_method"];
-
 
         $field = "runno";
         $table = "ims_reciepts";
@@ -113,6 +119,17 @@ if ($_POST["action"] === 'ADD') {
         $file_names = array_unique($file_names);
 
         $file_attach = implode(',', $file_names);
+
+        // --- บันทึกลง ims_income เพื่อทำ Auto Complete ---
+        $sql_income = "SELECT COUNT(*) FROM ims_income WHERE description = :description";
+        $query_income = $conn->prepare($sql_income);
+        $query_income->execute([':description' => $description]);
+        if ($query_income->fetchColumn() == 0) {
+            $sql_insert_income = "INSERT INTO ims_income (description) VALUES (:description)";
+            $query_insert_income = $conn->prepare($sql_insert_income);
+            $query_insert_income->execute([':description' => $description]);
+        }
+        // ----------------------------------------------
 
         $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name,payment_method)
                 VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name,:payment_method)";
@@ -217,6 +234,17 @@ if ($_POST["action"] === 'UPDATE') {
         $combinedFiles = array_unique($combinedFiles);
 
         $finalFileAttach = implode(',', $combinedFiles);
+
+        // --- บันทึกลง ims_income เพื่อทำ Auto Complete ---
+        $sql_income = "SELECT COUNT(*) FROM ims_income WHERE description = :description";
+        $query_income = $conn->prepare($sql_income);
+        $query_income->execute([':description' => $description]);
+        if ($query_income->fetchColumn() == 0) {
+            $sql_insert_income = "INSERT INTO ims_income (description) VALUES (:description)";
+            $query_insert_income = $conn->prepare($sql_insert_income);
+            $query_insert_income->execute([':description' => $description]);
+        }
+        // ----------------------------------------------
 
         // อัพเดตข้อมูลใน DB
         $sql_update = "UPDATE ims_reciepts 
@@ -404,5 +432,17 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_SUMMARY') {
     }
 
     echo json_encode(["aaData" => $data]);
+    exit;
+}
+
+if ($_POST["action"] === 'GET_DESCRIPTION_AUTOCOMPLETE') {
+    $search = $_POST["search"];
+    $sql = "SELECT DISTINCT description FROM ims_income 
+            WHERE description LIKE :search 
+            ORDER BY description ASC LIMIT 20";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':search' => "%$search%"]);
+    $results = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    echo json_encode($results);
     exit;
 }

@@ -228,7 +228,7 @@ try {
             $stmtUpdateExpense->execute([
                 $target_expense_doc_id, $receipt_name, $exp_date, $exp_m, $exp_y,
                 $current_inv, $pgroup_id, $current_product_name, $qty, $current_unit_id,
-                $item_total, $item['remark'] ?? '', 'N', $picture_doc, $payment_method, $price,
+                $item_total, $item['remark'] ?? '', 'Y', $picture_doc, $payment_method, $price,
                 $target_expense_id
             ]);
             $expense_ids_to_keep[] = $target_expense_id;
@@ -241,7 +241,7 @@ try {
             $stmtInsertExpense->execute([
                 $next_expense_global_runno, $target_expense_doc_id, $doc_no, $receipt_name,
                 $exp_date, $exp_m, $exp_y, $current_inv, $pgroup_id, $current_product_name,
-                $qty, $current_unit_id, $item_total, $item['remark'] ?? '', 'N', $picture_doc, $payment_method, $price
+                $qty, $current_unit_id, $item_total, $item['remark'] ?? '', 'Y', $picture_doc, $payment_method, $price
             ]);
             $expense_ids_to_keep[] = $conn->lastInsertId();
         }

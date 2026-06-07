@@ -21,6 +21,7 @@ if ($_POST["action"] === 'GET_DATA') {
     foreach ($results as $result) {
         $return_arr[] = array("id" => $result['id'],
             "doc_id" => $result['doc_id'],
+            "doc_ref" => $result['doc_ref'],
             "runno" => $result['runno'],
             "expense_date" => $result['expense_date'],
             "inv" => $result['inv'],
@@ -336,6 +337,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
 
             $data[] = array(
                 "doc_id" => $row['doc_id'],
+                "doc_ref" => $row['doc_ref'],
                 "runno" => $row['runno'],
                 "expense_date" => $row['expense_date'],
                 "exp_month" => $row['exp_month'],
@@ -347,7 +349,7 @@ if ($_POST["action"] === 'GET_EXPENSE') {
                 "qty" => $row['qty'],
                 "unit_id" => $row['unit_id'],
                 "unit_name" => $row['unit_name'],
-                "file_attach " => $row['file_attach '],
+                "file_attach" => $row['file_attach'],
                 "inv" => $row['inv'],
                 "amount" => $row['amount'],
                 "remark" => $row['remark'],

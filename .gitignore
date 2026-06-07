@@ -6,8 +6,12 @@
 config/ps33home-b60da901fe86.json
 config/google_drive_config.php
 config/connect_db*.php
+config/connect_*.php
 config/*.inc
 config/env.*.inc
+
+/line_oa/checkin/jsconfig
+/line_oa/house/jsconfig
 
 # Logs
 *.log
