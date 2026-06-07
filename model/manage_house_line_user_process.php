@@ -201,12 +201,14 @@ if ($_POST["action"] === 'GET_HOUSE') {
         or line_user_name LIKE :line_user_name
         or f_name LIKE :f_name
         or l_name LIKE :l_name
+        or line_phone LIKE :line_phone
         or house_number LIKE :house_number) ";
         $searchArray = array(
             'line_user_id' => "%$searchValue%",
             'line_user_name' => "%$searchValue%",
             'f_name' => "%$searchValue%",
             'l_name' => "%$searchValue%",
+            'line_phone' => "%$searchValue%",
             'house_number' => "%$searchValue%",
         );
     }
@@ -285,7 +287,7 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "user_type" => $row['user_type'],
                 "line_user_name" => $row['line_user_name'],
                 "house_number" => $row['house_number'],
-                "phone_number" => $row['phone_number'],
+                "line_phone" => $row['line_phone'],
                 "f_name" => $row['f_name'],
                 "l_name" => $row['l_name'],
                 "line_picture_profile" => $row['line_picture_profile'],

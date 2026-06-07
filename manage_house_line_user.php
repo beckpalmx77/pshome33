@@ -53,7 +53,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
-                                            <table id='TableRecordList' class='display dataTable'>
+                                            <table id='TableRecordList' class='display dataTable nowrap' style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th>ลำดับ</th>
@@ -61,6 +61,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                     <th>LINE User NAME</th>
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
+                                                    <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture Profile</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>Action</th>
@@ -74,6 +75,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                     <th>LINE User NAME</th>
                                                     <th>ชื่อ</th>
                                                     <th>นามสกุล</th>
+                                                    <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture Profile</th>
                                                     <th>บ้านเลขที่</th>
                                                     <th>Action</th>
@@ -334,6 +336,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                     {data: 'line_user_name'},
                     {data: 'f_name'},
                     {data: 'l_name'},
+                    {data: 'line_phone'},
                     {
                         data: 'line_picture_profile', // คอลัมน์ที่เก็บ URL รูปภาพ
                         render: function (data, type, row) {
