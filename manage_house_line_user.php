@@ -53,7 +53,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                         </div>
 
                                         <div class="col-md-12 col-md-offset-2">
-                                            <table id='TableRecordList' class='display dataTable nowrap' style="width:100%">
+                                            <table id='TableRecordList' class='display dataTable' style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th>ลำดับ</th>
@@ -64,8 +64,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture Profile</th>
                                                     <th>บ้านเลขที่</th>
-                                                    <th>Action</th>
-                                                    <th>Action</th>
+                                                    <th>แก้ไข</th>
+                                                    <th>ลบ</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -78,8 +78,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['line_user_id']) == ""
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture Profile</th>
                                                     <th>บ้านเลขที่</th>
-                                                    <th>Action</th>
-                                                    <th>Action</th>
+                                                    <th>แก้ไข</th>
+                                                    <th>ลบ</th>
                                                 </tr>
                                                 </tfoot>
                                             </table>
