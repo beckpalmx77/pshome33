@@ -196,7 +196,7 @@ if (strlen($_SESSION['alogin']) === "") {
 
                                         <div class="form-group has-success">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <div class="form-group has-success">
                                                         <label for="detail"
                                                                class="control-label">ชื่อผู้โอน/ผู้ชำระ</label>
@@ -216,10 +216,10 @@ if (strlen($_SESSION['alogin']) === "") {
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-2">
+                                                <div class="col-md-1">
                                                     <div class="form-group has-success">
                                                         <label for="area_size"
-                                                               class="control-label">พื้นที่บ้าน ตรว</label>
+                                                               class="control-label">พื้นที่ ตรว</label>
                                                         <input type="number" name="area_size" id="area_size"
                                                                class="form-control" readonly="true"
                                                                value="<?php echo $area_size ?>">
@@ -239,10 +239,19 @@ if (strlen($_SESSION['alogin']) === "") {
                                                 <div class="col-md-2">
                                                     <div class="form-group has-success">
                                                         <label for="amount"
-                                                               class="control-label">จำนวนเงินที่ชำระ</label>
+                                                               class="control-label">จำนวนเงินชำระ</label>
                                                         <input type="number" id="amount" name="amount"
                                                                class="form-control" required
                                                                required id="amount" step="0.01">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="form-group has-success">
+                                                        <label for="receive_first"
+                                                               class="control-label" style="color: blue;">รับเงินสด</label>
+                                                        <input type="number" id="receive_first" name="receive_first"
+                                                               class="form-control" step="0.01" placeholder="0.00">
                                                     </div>
                                                 </div>
                                             </div>
@@ -467,6 +476,22 @@ if (strlen($_SESSION['alogin']) === "") {
                 } else {
                     amountInput.value = "";
                 }
+                calculateChange();
+            }
+
+            // ฟังก์ชันคำนวณเงินทอน
+            function calculateChange() {
+                const receiveFirst = parseFloat(document.getElementById("receive_first").value) || 0;
+                const amount = parseFloat(amountInput.value) || 0;
+
+                if (receiveFirst > 0) {
+                    const change = receiveFirst - amount;
+                    if (change >= 0) {
+                        remarkInput.value = "รับเงิน " + receiveFirst.toLocaleString() + " บาท หักชำระ " + amount.toLocaleString() + " บาท (ทอน " + change.toLocaleString() + " บาท)";
+                    } else {
+                        remarkInput.value = "รับเงินไม่เพียงพอ (ขาด " + Math.abs(change).toLocaleString() + " บาท)";
+                    }
+                }
             }
 
             // ฟังก์ชันจัดการ Logic รายปี/รายเดือน และโปรโมชั่น
@@ -574,6 +599,9 @@ if (strlen($_SESSION['alogin']) === "") {
 
             // เมื่อเปลี่ยนค่าส่วนกลาง (จากการดึงบ้านเลขที่)
             $(commonFeeInput).on('input change', calculateAmount);
+
+            // เมื่อเปลี่ยนจำนวนเงินที่รับ
+            $("#receive_first").on('input change', calculateChange);
 
             // --- Init State (ทำงานเมื่อโหลดหน้า) ---
             const currentRealYear = new Date().getFullYear();
