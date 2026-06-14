@@ -723,6 +723,7 @@ if (strlen($_SESSION['alogin']) === "") {
                 formData.append('payment_method', $("#payment_method").val());
                 formData.append('phone_number', $("#phone_number").val());
                 formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
+                formData.append('receive_first', parseFloat($("#receive_first").val()) || 0);
                 formData.append('remark', $("#remark").val());
 
                 $.ajax({

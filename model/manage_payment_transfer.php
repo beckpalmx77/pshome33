@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $period_month_to = $_POST['period_month_to'] ?? null;
     $period_year = $_POST['period_year'] ?? null;
     $amount = $_POST['amount'] ?? null;
+    $receive_first = $_POST['receive_first'] ?? 0;
     $remark = $_POST['remark'] ?? null;
     $picture_payment = $_FILES['picture_payment'] ?? null;
     $payment_method = $_POST['payment_method'] ?? null;
@@ -297,12 +298,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $ins_str = "INSERT INTO ims_house_payment (
                         doc_id, payment_date, house_number, detail, runno,
-                        period_month_start, period_month_to, period_year, amount,
+                        period_month_start, period_month_to, period_year, amount, receive_first,
                         picture_payment, remark, payment_type, payment_method, create_by
                     )
                     VALUES (
                         :doc_id, :payment_date, :house_number, :detail, :runno,
-                        :period_month_start, :period_month_to, :period_year, :amount,
+                        :period_month_start, :period_month_to, :period_year, :amount, :receive_first,
                         :picture_payment, :remark, :payment_type, :payment_method, :create_by
                     )";
         $stmt = $conn->prepare($ins_str);
@@ -319,6 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':period_month_to', $period_month_to);
         $stmt->bindParam(':period_year', $period_year);
         $stmt->bindParam(':amount', $amount);
+        $stmt->bindParam(':receive_first', $receive_first);
         $stmt->bindParam(':picture_payment', $picture_payment_value); // ใช้ตัวแปรเดียว
         $stmt->bindParam(':remark', $remark);
         $stmt->bindParam(':payment_type', $payment_type);
