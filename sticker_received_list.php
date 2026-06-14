@@ -48,6 +48,9 @@ FROM ims_house;";
                 background-color: #f8f9fc;
             }
 
+            #TableNotReceived_wrapper .dt-buttons {
+                display: none;
+            }
             .fixedHeader-floating {
                 background-color: white !important;
                 z-index: 1000;
@@ -256,13 +259,18 @@ FROM ims_house;";
                 </div>
                 <div class="modal-body">
                     <div class="row mb-3">
-                        <div class="col" style="min-width: 180px;">
+                        <div class="col-md-9" style="min-width: 180px;">
                             <div class="card bg-danger text-white h-100">
                                 <div class="card-body">
                                     <div class="text-xl font-weight-bold text-uppercase mb-1">จำนวนบ้านที่ยังไม่รับสติกเกอร์ (หลัง)</div>
                                     <div class="h4 mb-0 font-weight-bold text-end text-right" id="notReceivedCount">0 หลัง</div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-success btn-block h-100" id="btnExportNotReceivedExcel">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -702,6 +710,54 @@ FROM ims_house;";
                 link.click();
                 document.body.removeChild(link);
 });
+
+            // Export Not Received Excel button click (Manual CSV)
+            $(document).on('click', '#btnExportNotReceivedExcel', function() {
+                if (notReceivedTable) {
+                    let data = notReceivedTable.rows().data();
+                    if (data.length === 0) {
+                        alert('ไม่มีข้อมูลสำหรับ Export');
+                        return;
+                    }
+
+                    let csvContent = "\uFEFF"; // BOM for UTF-8
+                    csvContent += "ลำดับ,บ้านเลขที่,ทะเบียนรถ 1,ทะเบียนรถ 2,ทะเบียนรถ 3,ทะเบียนรถ 4,ทะเบียนรถ 5,ทะเบียนรถ 6,ทะเบียนรถ 7,ทะเบียนรถ 8,จำนวนรถ\n";
+
+                    let totalCars = 0;
+                    let rowNum = 1;
+
+                    data.each(function(row) {
+                        csvContent += rowNum + ',';
+                        csvContent += '"' + (row.house_number || '') + '",';
+                        csvContent += '"' + (row.car_no1 || '') + '",';
+                        csvContent += '"' + (row.car_no2 || '') + '",';
+                        csvContent += '"' + (row.car_no3 || '') + '",';
+                        csvContent += '"' + (row.car_no4 || '') + '",';
+                        csvContent += '"' + (row.car_no5 || '') + '",';
+                        csvContent += '"' + (row.car_no6 || '') + '",';
+                        csvContent += '"' + (row.car_no7 || '') + '",';
+                        csvContent += '"' + (row.car_no8 || '') + '",';
+                        csvContent += (row.car_count || 0) + '\n';
+
+                        totalCars += parseInt(row.car_count || 0);
+                        rowNum++;
+                    });
+
+                    // Add total row
+                    csvContent += '"รวมทั้งหมด","","","","","","","","",' + totalCars + '\n';
+
+                    let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    let link = document.createElement("a");
+                    let url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", "houses_not_received_sticker.csv");
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert('กรุณารอให้ข้อมูลโหลดเสร็จก่อน');
+                }
+            });
 
             // Reload Data button click (table header)
             $('#btnReloadTable').on('click', function() {

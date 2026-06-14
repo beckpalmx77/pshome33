@@ -180,6 +180,31 @@ foreach ($monthly_expense_list as $row) {
     $total_monthly_expense += $row['total_amount'];
 }
 
+// คำนวณเดือนและปี ย้อนหลัง 1 เดือน สำหรับเงินเดือนพนักงาน
+$prev_month = $curr_month - 1;
+$prev_year = $curr_year;
+if ($prev_month == 0) {
+    $prev_month = 12;
+    $prev_year--;
+}
+
+// ดึงข้อมูลเงินเดือนพนักงานของเดือนที่แล้ว
+$sql_staff_salary = "
+    SELECT ROW_NUMBER() OVER (ORDER BY doc_date ASC) AS row_num,
+           doc_no, doc_date, employee_fullname, total_amount
+    FROM v_ims_payroll
+    WHERE CAST(payroll_month AS UNSIGNED) = :month AND payroll_year = :year
+    ORDER BY doc_date ASC;
+";
+$query_staff_salary = $conn->prepare($sql_staff_salary);
+$query_staff_salary->execute([':month' => $prev_month, ':year' => $prev_year]);
+$staff_salary_list = $query_staff_salary->fetchAll(PDO::FETCH_ASSOC);
+
+$total_staff_salary = 0;
+foreach ($staff_salary_list as $row) {
+    $total_staff_salary += $row['total_amount'];
+}
+
 // --- ดึงข้อมูลสรุปสติกเกอร์ ---
 // 1. จำนวนรถทั้งหมด (รับ + ยังไม่ได้รับ)
 $sql_all_cars = "SELECT 
@@ -359,11 +384,22 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                         <div class="col-md-6 mb-3">
                                             <div class="card border-left-danger shadow h-100 py-2">
                                                 <div class="card-body">
-                                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">รายจ่ายรวมเดือนนี้</div>
-                                                    <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_expense, 2) ?></div>
-                                                    <button type="button" class="btn btn-outline-danger btn-xs mt-2" data-toggle="modal" data-target="#monthlyExpenseModal">
-                                                        <i class="fas fa-list"></i> รายละเอียด
-                                                    </button>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">รายจ่ายรวมเดือนนี้</div>
+                                                            <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_expense, 2) ?></div>
+                                                            <button type="button" class="btn btn-outline-danger btn-xs mt-2" data-toggle="modal" data-target="#monthlyExpenseModal">
+                                                                <i class="fas fa-list"></i> รายละเอียด
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-6 border-left">
+                                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">ยอดจ่ายเงินเดือน (<?= $thai_months[$prev_month] ?>)</div>
+                                                            <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_staff_salary, 2) ?></div>
+                                                            <button type="button" class="btn btn-outline-info btn-xs mt-2" disabled>
+                                                                <i class="fas fa-list"></i> รายละเอียด
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -577,6 +613,57 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                 <tr>
                                     <th colspan="5" class="text-right">ยอดรวมรายจ่าย:</th>
                                     <th class="text-right text-danger font-weight-bold"><?= number_format($total_monthly_expense, 2) ?></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal แสดงรายละเอียดเงินเดือนพนักงานประจำเดือน -->
+    <div class="modal fade" id="staffSalaryModal" tabindex="-1" role="dialog" aria-labelledby="staffSalaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="staffSalaryModalLabel"><i class="fas fa-users-cog"></i> รายละเอียดเงินเดือนพนักงานประจำเดือน <?= $thai_months[$prev_month] ?> <?= $prev_year + 543 ?></h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="staffSalaryTable" class="display nowrap table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">ลำดับ</th>
+                                    <th>เลขที่เอกสาร</th>
+                                    <th>วันที่</th>
+                                    <th>ชื่อพนักงาน</th>
+                                    <th class="text-right">จำนวนเงิน (บาท)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                foreach ($staff_salary_list as $row) {
+                                    echo "<tr>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'])."</td>";
+                                    echo "<td>".htmlspecialchars($row['doc_no'])."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['doc_date'])."</td>";
+                                    echo "<td>".htmlspecialchars($row['employee_fullname'])."</td>";
+                                    echo "<td class='text-right text-info font-weight-bold'>".number_format($row['total_amount'], 2)."</td>";
+                                    echo "</tr>";
+                                }
+                                ?>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-right">ยอดรวมเงินเดือน:</th>
+                                    <th class="text-right text-info font-weight-bold"><?= number_format($total_staff_salary, 2) ?></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -1040,6 +1127,45 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
 
     $('#monthlyExpenseModal').on('shown.bs.modal', function () {
         expenseTable.columns.adjust().draw();
+    });
+
+    // Initialize Staff Salary DataTable
+    const staffSalaryTable = $('#staffSalaryTable').DataTable({
+        'paging': true,
+        'lengthChange': true,
+        'pageLength': 10,
+        'lengthMenu': [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
+        'language': {
+            search: 'ค้นหาข้อมูล',
+            lengthMenu: 'แสดง _MENU_ รายการ',
+            info: 'หน้าที่ _PAGE_ จาก _PAGES_',
+            infoEmpty: 'ไม่มีข้อมูล',
+            zeroRecords: "ไม่มีข้อมูลตามเงื่อนไข",
+            infoFiltered: '(กรองข้อมูลจากทั้งหมด _MAX_ รายการ)',
+            paginate: {
+                previous: 'ก่อนหน้า',
+                last: 'สุดท้าย',
+                next: 'ต่อไป'
+            }
+        },
+        'order': [[0, 'asc']],
+        'scrollY': '45vh',
+        'scrollCollapse': true,
+        'scrollX': true,
+        'autoWidth': false,
+        dom: 'Blfrtip',
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                className: 'btn btn-success btn-sm',
+                title: 'รายละเอียดเงินเดือนพนักงานประจำเดือน <?= $thai_months[$prev_month] ?> <?= $prev_year + 543 ?>'
+            }
+        ]
+    });
+
+    $('#staffSalaryModal').on('shown.bs.modal', function () {
+        staffSalaryTable.columns.adjust().draw();
     });
 
     // Initialize Sticker Detail DataTable
