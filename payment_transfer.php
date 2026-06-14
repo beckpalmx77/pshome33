@@ -251,7 +251,7 @@ if (strlen($_SESSION['alogin']) === "") {
                                                         <label for="receive_first"
                                                                class="control-label" style="color: blue;">รับเงินสด</label>
                                                         <input type="number" id="receive_first" name="receive_first"
-                                                               class="form-control" step="0.01" placeholder="0.00">
+                                                               class="form-control" step="0.01" placeholder="0.00" style="color: blue; font-weight: bold;">
                                                     </div>
                                                 </div>
                                             </div>
@@ -491,6 +491,9 @@ if (strlen($_SESSION['alogin']) === "") {
                     } else {
                         remarkInput.value = "รับเงินไม่เพียงพอ (ขาด " + Math.abs(change).toLocaleString() + " บาท)";
                     }
+                } else {
+                    // ถ้าเป็น 0 หรือว่าง ให้กลับไปใช้ Logic พื้นฐาน (โปรโมชั่น/ค่าว่าง)
+                    updatePaymentLogic();
                 }
             }
 
