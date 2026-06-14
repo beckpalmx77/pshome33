@@ -108,21 +108,45 @@ try {
         ':house_number' => $house_number
     ]);
 
-    // ตาราง ims_user
-    $sql_user = "INSERT INTO ims_user(user_id, email, password, first_name, last_name, account_type, role, picture, status)
-                 VALUES (:user_id, :email, :password, :first_name, :last_name, :account_type, :role, :picture, :status)";
-    $query_user = $conn->prepare($sql_user);
-    $query_user->execute([
-        ':user_id' => $linePhone,
-        ':email' => $linePhone,
-        ':password' => $password,
-        ':first_name' => $f_name,
-        ':last_name' => $l_name,
-        ':account_type' => $account_type,
-        ':role' => $role,
-        ':picture' => $picture,
-        ':status' => $status
-    ]);
+    // ตาราง ims_user (ตรวจสอบก่อนว่ามีหรือยัง)
+    $sql_check_ims_user = "SELECT COUNT(*) FROM ims_user WHERE user_id = :user_id";
+    $stmt_check_ims_user = $conn->prepare($sql_check_ims_user);
+    $stmt_check_ims_user->execute([':user_id' => $linePhone]);
+    $userExists = $stmt_check_ims_user->fetchColumn();
+
+    if ($userExists > 0) {
+        // ถ้ามีอยู่แล้วให้ UPDATE (เพื่อให้รหัสผ่านใหม่และชื่อล่าสุดใช้งานได้)
+        $sql_user = "UPDATE ims_user SET 
+                        password = :password, 
+                        first_name = :first_name, 
+                        last_name = :last_name, 
+                        status = :status
+                     WHERE user_id = :user_id";
+        $query_user = $conn->prepare($sql_user);
+        $query_user->execute([
+            ':password' => $password,
+            ':first_name' => $f_name,
+            ':last_name' => $l_name,
+            ':status' => $status,
+            ':user_id' => $linePhone
+        ]);
+    } else {
+        // ถ้ายังไม่มีให้ INSERT
+        $sql_user = "INSERT INTO ims_user(user_id, email, password, first_name, last_name, account_type, role, picture, status)
+                     VALUES (:user_id, :email, :password, :first_name, :last_name, :account_type, :role, :picture, :status)";
+        $query_user = $conn->prepare($sql_user);
+        $query_user->execute([
+            ':user_id' => $linePhone,
+            ':email' => $linePhone,
+            ':password' => $password,
+            ':first_name' => $f_name,
+            ':last_name' => $l_name,
+            ':account_type' => $account_type,
+            ':role' => $role,
+            ':picture' => $picture,
+            ':status' => $status
+        ]);
+    }
 
     Reorder_Record($conn, "ims_user");
 

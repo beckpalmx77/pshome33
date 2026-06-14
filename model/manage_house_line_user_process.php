@@ -137,41 +137,32 @@ if ($_POST["action"] === 'DELETE') {
 
     $id = $_POST["id"];
 
-    // Find the line_phone from ims_house_line_user using the provided id
     $sql_find_line_phone = "SELECT line_phone FROM ims_house_line_user WHERE id = :id";
     $stmt_find_line_phone = $conn->prepare($sql_find_line_phone);
     $stmt_find_line_phone->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt_find_line_phone->execute();
     $line_phone = $stmt_find_line_phone->fetchColumn();
 
-    if ($line_phone) {
-        try {
-            // Start a transaction to ensure both deletions are successful
-            $conn->beginTransaction();
+    try {
+        $conn->beginTransaction();
 
-            // 1. Delete from ims_house_line_user
-            $sql_delete_house = "DELETE FROM ims_house_line_user WHERE id = :id";
-            $stmt_delete_house = $conn->prepare($sql_delete_house);
-            $stmt_delete_house->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt_delete_house->execute();
+        $sql_delete_house = "DELETE FROM ims_house_line_user WHERE id = :id";
+        $stmt_delete_house = $conn->prepare($sql_delete_house);
+        $stmt_delete_house->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt_delete_house->execute();
 
-            // 2. Delete from ims_user using the line_phone found earlier
+        if ($line_phone) {
             $sql_delete_user = "DELETE FROM ims_user WHERE user_id = :line_phone";
             $stmt_delete_user = $conn->prepare($sql_delete_user);
             $stmt_delete_user->bindParam(':line_phone', $line_phone, PDO::PARAM_STR);
             $stmt_delete_user->execute();
-
-            // Commit the transaction if both queries were successful
-            $conn->commit();
-            echo $del_success;
-        } catch (Exception $e) {
-            // Roll back the transaction if an error occurred
-            $conn->rollBack();
-            echo 'Message: ' . $e->getMessage();
         }
-    } else {
-        // Handle case where id is not found
-        echo "Record not found.";
+
+        $conn->commit();
+        echo $del_success;
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo 'Message: ' . $e->getMessage();
     }
 }
 
@@ -201,12 +192,14 @@ if ($_POST["action"] === 'GET_HOUSE') {
         or line_user_name LIKE :line_user_name
         or f_name LIKE :f_name
         or l_name LIKE :l_name
+        or line_phone LIKE :line_phone
         or house_number LIKE :house_number) ";
         $searchArray = array(
             'line_user_id' => "%$searchValue%",
             'line_user_name' => "%$searchValue%",
             'f_name' => "%$searchValue%",
             'l_name' => "%$searchValue%",
+            'line_phone' => "%$searchValue%",
             'house_number' => "%$searchValue%",
         );
     }
@@ -266,18 +259,6 @@ if ($_POST["action"] === 'GET_HOUSE') {
 
         if ($_POST['sub_action'] === "GET_MASTER") {
 
-            $update_btn = "";
-            $delete_btn = "";
-
-            if ($_SESSION['account_type'] === 'admin') {
-                $update_btn = "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>";
-                $delete_btn = "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>";
-            } else {
-                $update_btn = "<button type='button' class='btn btn-info btn-xs' disabled data-toggle='tooltip' title='Update (เฉพาะแอดมิน)'>Update</button>";
-                $delete_btn = "<button type='button' class='btn btn-danger btn-xs' disabled data-toggle='tooltip' title='Delete (เฉพาะแอดมิน)'>Delete</button>";
-            }
-
-
             $data[] = array(
                 "no" => $counter, // 🆕 ลำดับ
                 "id" => $row['id'],
@@ -285,12 +266,12 @@ if ($_POST["action"] === 'GET_HOUSE') {
                 "user_type" => $row['user_type'],
                 "line_user_name" => $row['line_user_name'],
                 "house_number" => $row['house_number'],
-                "phone_number" => $row['phone_number'],
+                "line_phone" => $row['line_phone'],
                 "f_name" => $row['f_name'],
                 "l_name" => $row['l_name'],
                 "line_picture_profile" => $row['line_picture_profile'],
                 "line_picture_profile_text" => $row['line_picture_profile'],
-                "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' data-toggle='tooltip' title='Update'>Update</button>",
+                "update" => "<button type='button' name='update' id='" . $row['id'] . "' class='btn btn-info btn-xs update' disabled data-toggle='tooltip' title='Update'>Update</button>",
                 "delete" => "<button type='button' name='delete' id='" . $row['id'] . "' class='btn btn-danger btn-xs delete' data-toggle='tooltip' title='Delete'>Delete</button>"
             );
         } else {

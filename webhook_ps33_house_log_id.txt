@@ -1,0 +1,135 @@
+เวลา: 2026-06-07 16:05:30
+ประเภท Event: message
+มาจาก (Source): user
+--- ไอดีที่คุณต้องการ ---
+User ID: U8deb14f80da5173ba8731cead40a8e15
+Group ID: ไม่พบ Group ID
+Group Name: ไม่พบชื่อกลุ่ม (อาจไม่ใช่ Chat กลุ่ม)
+-----------------------
+
+เวลา: 2026-06-07 16:54:24
+ประเภท Event: follow
+มาจาก (Source): user
+--- ไอดีที่คุณต้องการ ---
+User ID: Ufe9b1fcd31fc947e59d9699bc6bd3f50
+Group ID: ไม่พบ Group ID
+Group Name: ไม่พบชื่อกลุ่ม (อาจไม่ใช่ Chat กลุ่ม)
+-----------------------
+
+เวลา: 2026-06-07 16:54:52
+ประเภท Event: message
+มาจาก (Source): user
+--- ไอดีที่คุณต้องการ ---
+User ID: Ufe9b1fcd31fc947e59d9699bc6bd3f50
+Group ID: ไม่พบ Group ID
+Group Name: ไม่พบชื่อกลุ่ม (อาจไม่ใช่ Chat กลุ่ม)
+-----------------------
+
+เวลา: 2026-06-07 16:55:35
+ประเภท Event: message
+มาจาก (Source): user
+--- ไอดีที่คุณต้องการ ---
+User ID: Ufe9b1fcd31fc947e59d9699bc6bd3f50
+Group ID: ไม่พบ Group ID
+Group Name: ไม่พบชื่อกลุ่ม (อาจไม่ใช่ Chat กลุ่ม)
+-----------------------
+
+เวลา: 2026-06-07 17:06:10
+ประเภท Event: memberJoined
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: ไม่พบ User ID
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 17:06:12
+ประเภท Event: memberJoined
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: ไม่พบ User ID
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 17:06:55
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Ufe9b1fcd31fc947e59d9699bc6bd3f50
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:19:37
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:19:37
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:19:38
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:28:34
+ประเภท Event: unsend
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:28:36
+ประเภท Event: unsend
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:28:39
+ประเภท Event: unsend
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:29:09
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
+เวลา: 2026-06-07 18:30:10
+ประเภท Event: message
+มาจาก (Source): group
+--- ไอดีที่คุณต้องการ ---
+User ID: Uab9f09684da420adf014bd6423cb44c3
+Group ID: C8ffe7f9ee48c079a39b38699fbdbf377
+Group Name: 🏡นิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 🏡
+-----------------------
+
