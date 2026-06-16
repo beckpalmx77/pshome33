@@ -31,7 +31,7 @@ try {
                 AND message_type = 'image'
                 AND photo_path IS NOT NULL 
                 AND photo_path != ''
-                ORDER BY id ASC LIMIT 20";
+                ORDER BY id ASC LIMIT 30";
     
     // หมายเหตุ: หากตารางไม่มีคอลัมน์ remark ให้รัน: ALTER TABLE ims_line_webhook_messages ADD remark VARCHAR(100);
     // หรือถ้าไม่ต้องการใช้ remark ให้ใช้แค่การจองสถานะ 2 ก็ได้ครับ

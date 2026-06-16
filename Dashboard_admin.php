@@ -546,11 +546,11 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                 <?php 
                                 foreach ($monthly_income_list as $row) {
                                     echo "<tr>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['doc_id'])."</td>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['reciept_date'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['category_name'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['description'])."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['doc_id'] ?? '')."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['reciept_date'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['category_name'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['description'] ?? '')."</td>";
                                     echo "<td class='text-right text-success font-weight-bold'>".number_format($row['amount'], 2)."</td>";
                                     echo "</tr>";
                                 }
@@ -599,11 +599,11 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                 <?php 
                                 foreach ($monthly_expense_list as $row) {
                                     echo "<tr>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['doc_no'])."</td>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['doc_date'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['supplier_name'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['purpose'])."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['doc_no'] ?? '')."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['doc_date'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['supplier_name'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['purpose'] ?? '')."</td>";
                                     echo "<td class='text-right text-danger font-weight-bold'>".number_format($row['total_amount'], 2)."</td>";
                                     echo "</tr>";
                                 }
@@ -651,10 +651,10 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                 <?php 
                                 foreach ($staff_salary_list as $row) {
                                     echo "<tr>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['doc_no'])."</td>";
-                                    echo "<td class='text-center'>".htmlspecialchars($row['doc_date'])."</td>";
-                                    echo "<td>".htmlspecialchars($row['employee_fullname'])."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['row_num'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['doc_no'] ?? '')."</td>";
+                                    echo "<td class='text-center'>".htmlspecialchars($row['doc_date'] ?? '')."</td>";
+                                    echo "<td>".htmlspecialchars($row['employee_fullname'] ?? '')."</td>";
                                     echo "<td class='text-right text-info font-weight-bold'>".number_format($row['total_amount'], 2)."</td>";
                                     echo "</tr>";
                                 }
