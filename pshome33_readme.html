@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือโครงสร้างและฟีเจอร์ของระบบ Pshome33</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #2980b9;
+            --bg-color: #fcfcfc;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-color: #e2e8f0;
+            --success-color: #27ae60;
+        }
+
+        body {
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 12px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #e11d48;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: #1a5276;
+            text-decoration: underline;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ระบบบริหารจัดการหมู่บ้านและนิติบุคคลอัจฉริยะ</h1>
+            <p class="subtitle">คู่มือโครงสร้างทางเทคนิค ฟีเจอร์ และส่วนประกอบต่างๆ ของโปรเจกต์ พฤกษา 33 (Pshome33)</p>
+        </header>
+
+        <section>
+            <h2>📌 ภาพรวมระบบ (System Overview)</h2>
+            <p>ระบบนี้เป็นเว็บแอปพลิเคชันที่พัฒนาขึ้นเพื่อสนับสนุนงานของนิติบุคคลหมู่บ้านจัดสรร พฤกษา 33 ในการจัดการข้อมูลลูกบ้าน, การติดตามและจัดเก็บค่าส่วนกลาง, การตรวจสอบการชำระเงินโดยสแกนสลิปอัตโนมัติ (OCR Slip Verification), ระบบบันทึกการเข้า-ออกของผู้มาติดต่อ (Visitor), ระบบจัดการคลังพัสดุและแจ้งซ่อม, งานบริหารพนักงาน (HR/Attendance) และการจ่ายเงินเดือน (Payroll) พร้อมเชื่อมโยงกับ LINE OA และ LIFF App เพื่อสร้างช่องทางการสื่อสารที่รวดเร็วและตรวจสอบได้ให้กับลูกบ้าน</p>
+        </section>
+
+        <section>
+            <h2>🛠️ เทคโนโลยีและสถาปัตยกรรม (Technical Stack)</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>Backend:</strong> ภาษา <code>PHP</code> โดยประมวลผลฐานข้อมูลผ่าน PDO (หลักๆ ทำงานร่วมกับ <code>MySQL</code>) และมี API รองรับข้อมูล JSON</li>
+                    <li><strong>Frontend:</strong> <code>HTML5</code>, <code>Bootstrap CSS</code>, <code>Vanilla CSS</code> (ปรับแต่งใน <code>css/myadmin.css</code>), <code>jQuery</code>, <code>Select2</code> (ฟอร์มค้นหาอัจฉริยะ), <code>DataTables</code> (แสดงผลและค้นหาในตาราง), และ <code>AlertifyJS</code> (แสดงป็อปอัปแจ้งเตือน)</li>
+                    <li><strong>Database:</strong> โครงสร้างหลักอยู่ใน <a href="db/house_dbs.sql">db/house_dbs.sql</a> บันทึกรายละเอียดบ้าน สมาชิก และรายการธุรกรรมทั้งหมด</li>
+                    <li><strong>LINE Integration:</strong> ใช้ LINE Messaging API (LINE Bot SDK) ร่วมกับ LINE Mini App (LIFF) เพื่ออำนวยความสะดวกในการลงทะเบียน แจ้งชำระเงิน และลงเวลาทำงานพนักงาน</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>📁 โครงสร้างโฟลเดอร์หลัก (Key Directories)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>โฟลเดอร์ / ไฟล์</th>
+                        <th>คำอธิบายหน้าที่และการทำงาน</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong><code>/</code> (Root)</strong></td>
+                        <td>ไฟล์หลักสำหรับ Admin/นิติบุคคล เช่น <a href="Dashboard_admin.php">Dashboard_admin.php</a>, <a href="visitor_contact.php">visitor_contact.php</a>, <a href="login.php">login.php</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="config/"><code>config/</code></a></strong></td>
+                        <td>ตั้งค่าระบบและการเชื่อมต่อฐานข้อมูล เช่น <a href="config/connect_db.php">connect_db.php</a> และข้อมูลตั้งค่า Google Drive</td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="model/"><code>model/</code></a></strong></td>
+                        <td>ส่วนประมวลผลเบื้องหลัง (Controller) เพื่อบันทึก/แก้ไข/ลบข้อมูลในฐานข้อมูล เช่น <code>manage_common_fee_payment_process.php</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="api/"><code>api/</code></a></strong></td>
+                        <td>Endpoint สำหรับบริการเรียกใช้ข้อมูลในรูปแบบ JSON เพื่อเชื่อมต่อกับหน้าบ้านหรือบริการภายนอก</td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="includes/"><code>includes/</code></a></strong></td>
+                        <td>ส่วนประกอบหน้าเว็บส่วนกลาง (Common UI components) เช่น Header, Footer, Sidebar, Topbar</td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="line_oa/"><code>line_oa/</code></a></strong></td>
+                        <td>ส่วนของ LINE Mini App แยกเป็นระบบลูกบ้าน (<code>house/</code>) และพนักงานตรวจบัตร/ลงเวลา (<code>checkin/</code>)</td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="engine/"><code>engine/</code></a></strong></td>
+                        <td>สคริปต์สืบค้นข้อมูลมาทำกราฟสถิติรายเดือนและรายวัน เพื่อนำไปพ่นในหน้าแดชบอร์ดการเงิน</td>
+                    </tr>
+                    <tr>
+                        <td><strong><a href="db/"><code>db/</code></a></strong></td>
+                        <td>แหล่งเก็บสคริปต์ฐานข้อมูลตั้งต้น (.sql) เช่น <code>house_dbs.sql</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>⚙️ ระบบย่อยและโมดูลสำคัญ (Core Modules)</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>1. ระบบจัดเก็บค่าส่วนกลาง (Common Fee Payment)</h3>
+                    <p>ระบบสร้างและตรวจสอบการจัดเก็บค่าส่วนกลางของลูกบ้านแต่ละหลัง รองรับทั้งเงินสด โอนเงิน และผ่อนชำระ พร้อมทั้งผสานระบบตรวจสอบสลิปโอนเงิน (Slip Verification/OCR) เพื่อป้องกันการทุจริตและออก E-Receipt ทันทีหลังยืนยัน</p>
+                    <p><em>ไฟล์หลัก: <code>manage_common_fee_payment.php</code>, <code>payment_transfer.php</code>, <code>promptpay_verify.php</code></em></p>
+                </div>
+                
+                <div class="card">
+                    <h3>2. การเชื่อมต่อ LINE OA และ LIFF App</h3>
+                    <p>ลูกบ้านสามารถลงทะเบียนผ่านระบบ LINE เพื่อดูสถานะการค้างชำระ ประวัติการจ่ายเงิน และรับการแจ้งเตือนจากทางหมู่บ้านได้โดยตรงโดยไม่ต้องลงแอปเพิ่มเติม</p>
+                    <p><em>ไฟล์หลัก: <code>line_oa/house/register_house_user.php</code>, <code>line_oa/house/send_message_api.php</code></em></p>
+                </div>
+
+                <div class="card">
+                    <h3>3. ระบบจัดการผู้มาติดต่อ (Visitor & Vehicle Tracking)</h3>
+                    <p>บันทึกการเข้าออกของบุคคลภายนอกที่เข้ามาในโครงการ พร้อมระบบจัดการข้อมูลยานพาหนะและการออกสติกเกอร์ที่จอดรถสำหรับรถยนต์และรถจักรยานยนต์ของลูกบ้าน</p>
+                    <p><em>ไฟล์หลัก: <code>visitor_contact.php</code>, <code>register_house_sticker.php</code>, <code>print_car_sticker.php</code></em></p>
+                </div>
+
+                <div class="card">
+                    <h3>4. ระบบบริหารงานบุคคลและจ่ายเงินเดือน (HR & Payroll)</h3>
+                    <p>ควบคุมการทำงานของพนักงาน ตั้งแต่การบันทึกวันลาหยุด, บันทึกวันเวลาการเข้างานของพนักงานผ่านโทรศัพท์มือถือ, จนถึงคำนวณเงินเดือนรายเดือน (Payroll) หักวันลาหยุด/สาย และพิมพ์สลิปเงินเดือนแบบ PDF</p>
+                    <p><em>ไฟล์หลัก: <code>manage_employee.php</code>, <code>manage_work_time.php</code>, <code>payroll_generate_data.php</code>, <code>print_payroll_slip_pdf.php</code></em></p>
+                </div>
+
+                <div class="card">
+                    <h3>5. คลังพัสดุส่วนกลางและการแจ้งซ่อม (Inventory & Jobs)</h3>
+                    <p>ควบคุมพัสดุและวัสดุอุปกรณ์ของนิติบุคคล บันทึกการรับเข้าและการเบิกจ่าย และระบบสำหรับบันทึกประวัติการบำรุงรักษาและปัญหาต่างๆ (Job Record) ในพื้นที่ส่วนกลาง</p>
+                    <p><em>ไฟล์หลัก: <code>manage-inventory-reciept.php</code>, <code>manage-inventory-withdraw.php</code>, <code>manage_job_record.php</code></em></p>
+                </div>
+
+                <div class="card">
+                    <h3>6. บัญชีทั่วไปและเอกสารการเงิน (GL & Ledger)</h3>
+                    <p>ผังบัญชี (Chart of Accounts), การลงรายการสมุดรายวันทั่วไป (General Ledger), บันทึกใบสำคัญจ่าย (Voucher) และประมวลผลรายงานงบกำไรขาดทุนหรืองบทดลองให้เห็นสถานะทางการเงินของหมู่บ้าน</p>
+                    <p><em>ไฟล์หลัก: <code>manage_coa.php</code>, <code>manage_gl.php</code>, <code>manage_voucher.php</code>, <code>report_pnl.php</code></em></p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>📦 การใช้งานไลบรารีภายนอก (External Integrations)</h2>
+            <p>แอปพลิเคชันนี้มีการเรียกใช้ไลบรารีสำคัญผ่าน PHP Composer เพื่อความเสถียรและฟังก์ชันที่ทันสมัย:</p>
+            <span class="tech-badge">mpdf/mpdf (ออกเอกสาร PDF ภาษาไทย)</span>
+            <span class="tech-badge">linecorp/line-bot-sdk (เชื่อมต่อ API ของ LINE)</span>
+            <span class="tech-badge">phpoffice/phpspreadsheet (อ่าน/เขียนไฟล์ Excel)</span>
+            <span class="tech-badge">thiagoalessio/tesseract_ocr (ระบบสแกนสลิป)</span>
+            <span class="tech-badge">google/apiclient (สคริปต์อัปโหลด Drive สำรองฐานข้อมูล)</span>
+            <span class="tech-badge">khanamiryan/qrcode-detector-decoder (อ่านค่า QR Code)</span>
+        </section>
+
+        <section>
+            <h2>🗄️ โครงสร้างตารางฐานข้อมูลที่สำคัญ (Database Tables Schema)</h2>
+            <ul>
+                <li><strong><code>ims_house_master</code>:</strong> เก็บข้อมูลบ้านทั้งหมดในโครงการ เลขที่บ้าน เจ้าของ เนื้อที่ และค่าส่วนกลางรายเดือนที่ต้องจ่าย</li>
+                <li><strong><code>ims_house</code>:</strong> เก็บรายละเอียดบัญชีผู้ลงทะเบียนของแต่ละบ้านและคู่กับ Line User ID</li>
+                <li><strong><code>ims_common_fee_payment</code>:</strong> เก็บธุรกรรมการจ่ายเงินค่าส่วนกลาง ยอดเงิน วิธีการจ่าย และข้อมูลสลิป</li>
+                <li><strong><code>ims_user</code>:</strong> เก็บข้อมูลบัญชีผู้ดูแลระบบ (นิติบุคคล, กรรมการ, เจ้าหน้าที่ระบบ) และสิทธิ์การใช้งานเมนูต่างๆ</li>
+                <li><strong><code>ims_visitor_contact</code>:</strong> บันทึกรายละเอียดประวัติรถยนต์ บุคคลภายนอก และรายละเอียดการเข้าออก</li>
+                <li><strong><code>ims_employee</code>:</strong> ประวัติของพนักงานในนิติบุคคลหมู่บ้าน อัตราค่าจ้าง และตำแหน่งงาน</li>
+                <li><strong><code>ims_work_time</code>:</strong> ประวัติตารางเวลาบันทึกเข้างาน-ออกงานของเจ้าหน้าที่คนงาน</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
