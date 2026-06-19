@@ -81,6 +81,7 @@ fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
 // กำหนดหัวข้อคอลัมน์สำหรับ CSV
 $csv_headers = [
     "วันที่ชำระ",
+    "เลขที่เอกสาร",
     "เดือน",
     "ปี",
     "บ้านเลขที่",
@@ -98,6 +99,7 @@ foreach ($payment_data as $row) {
 
     $csv_row = [
         $row['payment_date'] ?? '',
+        $row['doc_id'] ?? '',
         $selected_months_text ?? '',
         $row['period_year'] ?? '',
         $row['house_number'] ?? '',
@@ -111,7 +113,7 @@ foreach ($payment_data as $row) {
 
 // เพิ่มแถวรวมยอด
 fputcsv($output, [
-    '', '', '', '', '',
+    '', '', '', '', '', '',
     'รวมยอดการชำระทั้งสิ้น:',
     number_format($grand_total_amount, 2),
     ''

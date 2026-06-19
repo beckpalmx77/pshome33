@@ -211,9 +211,14 @@ foreach ($expenses_data as $row) {
 
     $expense_date_formatted = '';
     if (!empty($row['expense_date'])) {
-        $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        $date_obj = DateTime::createFromFormat('Y-m-d', $row['expense_date']);
+        if (!$date_obj) {
+            $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        }
         if ($date_obj) {
             $expense_date_formatted = $date_obj->format('d/m/Y');
+        } else {
+            $expense_date_formatted = $row['expense_date'];
         }
     }
     $html_table .= '<td width="' . $col_widths[1] . '" align="center">' . $expense_date_formatted . '</td>';
