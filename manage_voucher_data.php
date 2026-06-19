@@ -168,10 +168,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     <label for="address" class="control-label">ที่อยู่</label>
                                     <input type="text" class="form-control" name="address" id="address" placeholder="">
                                 </div>
-                                <div class="col-md-7">
-                                    <label for="purpose" class="control-label">จ่ายเพื่อ</label>
-                                    <input type="text" class="form-control" name="purpose" id="purpose" placeholder="">
-                                </div>
+                                 <div class="col-md-7">
+                                     <label for="purpose" class="control-label">จ่ายเพื่อ <span class="text-danger">*</span></label>
+                                     <input type="text" class="form-control" name="purpose" id="purpose" placeholder="" required>
+                                 </div>
                             </div>
 
                             <div class="d-flex align-items-center mt-4 mb-3">
@@ -760,8 +760,19 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
             $('#save').on('click', async function (e) {
                 e.preventDefault();
 
-                if (!$('#doc_date').val() || !$('#supplier_name').val()) {
-                    alertify.error('กรุณากรอกข้อมูลหลักให้ครบถ้วน');
+                if (!$('#doc_date').val() || !$('#supplier_name').val() || !$('#purpose').val()) {
+                    let missingMsg = "กรุณากรอกข้อมูลหลักให้ครบถ้วน";
+                    if (!$('#purpose').val()) {
+                        missingMsg = "กรุณากรอกช่อง 'จ่ายเพื่อ' (วัตถุประสงค์การจ่ายเงิน)";
+                    }
+                    let box = bootbox.alert({
+                        title: "แจ้งเตือน",
+                        message: missingMsg,
+                        centerVertical: true,
+                        backdrop: true
+                    });
+                    box.find('.modal-header').addClass('bg-danger text-white');
+                    box.find('.close').addClass('text-white');
                     return;
                 }
 

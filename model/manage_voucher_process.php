@@ -111,8 +111,11 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
     $searchArray = [];
     $searchQuery = "";
     if (!empty($searchValue)) {
-        $searchQuery = " AND (supplier_name LIKE :supplier_name) ";
-        $searchArray = ['supplier_name' => "%$searchValue%"];
+        $searchQuery = " AND (supplier_name LIKE :supplier_name OR purpose LIKE :purpose) ";
+        $searchArray = [
+            'supplier_name' => "%$searchValue%",
+            'purpose' => "%$searchValue%"
+        ];
     }
 
     // Total records (no filter)
@@ -158,8 +161,9 @@ if (isset($_POST["action"]) && $_POST["action"] === 'GET_PURCHASE') {
                 "doc_no" => $row['doc_no'],
                 "supplier_id" => $row['supplier_id'],
                 "supplier_name" => $row['supplier_name'],
+                "purpose" => $row['purpose'],
                 "doc_date" => $row['doc_date'],
-                "total_amount" => $row['total_amount'],
+                "total_amount" => number_format($row['total_amount'], 2),
                 "approve_status" => $row['approve_status'],
                 "approve_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
                 "status" => $row['status'] === 'Active'

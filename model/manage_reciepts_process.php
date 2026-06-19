@@ -6,6 +6,7 @@ include('../config/connect_db.php');
 include('../config/lang.php');
 include('../util/record_util.php');
 include('../util/reorder_record.php');
+include('../util/gl_util.php');
 
 
 if ($_POST["action"] === 'GET_DATA') {
@@ -131,28 +132,51 @@ if ($_POST["action"] === 'ADD') {
         }
         // ----------------------------------------------
 
-        $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name,payment_method)
-                VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name,:payment_method)";
-        $query = $conn->prepare($sql);
-        $query->bindParam(':runno', $runno, PDO::PARAM_STR);
-        $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
-        $query->bindParam(':reciept_date', $reciept_date, PDO::PARAM_STR);
-        $query->bindParam(':rec_month', $rec_month, PDO::PARAM_STR);
-        $query->bindParam(':rec_year', $rec_year, PDO::PARAM_STR);
-        $query->bindParam(':category_id', $category_id, PDO::PARAM_STR);
-        $query->bindParam(':description', $description, PDO::PARAM_STR);
-        $query->bindParam(':qty', $qty, PDO::PARAM_STR);
-        $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
-        $query->bindParam(':amount', $amount, PDO::PARAM_STR);
-        $query->bindParam(':remark', $remark, PDO::PARAM_STR);
-        $query->bindParam(':inv', $inv, PDO::PARAM_STR);
-        $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
-        $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
-        $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
-        $query->execute();
-        $lastInsertId = $conn->lastInsertId();
+        try {
+            $conn->beginTransaction();
 
-        echo $lastInsertId ? $save_success : $error;
+            $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name, payment_method, approve_status)
+                    VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name, :payment_method, :approve_status)";
+            $query = $conn->prepare($sql);
+            $query->bindParam(':runno', $runno, PDO::PARAM_STR);
+            $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
+            $query->bindParam(':reciept_date', $reciept_date, PDO::PARAM_STR);
+            $query->bindParam(':rec_month', $rec_month, PDO::PARAM_STR);
+            $query->bindParam(':rec_year', $rec_year, PDO::PARAM_STR);
+            $query->bindParam(':category_id', $category_id, PDO::PARAM_STR);
+            $query->bindParam(':description', $description, PDO::PARAM_STR);
+            $query->bindParam(':qty', $qty, PDO::PARAM_STR);
+            $query->bindParam(':unit_id', $unit_id, PDO::PARAM_STR);
+            $query->bindParam(':amount', $amount, PDO::PARAM_STR);
+            $query->bindParam(':remark', $remark, PDO::PARAM_STR);
+            $query->bindParam(':inv', $inv, PDO::PARAM_STR);
+            $query->bindParam(':file_attach', $file_attach, PDO::PARAM_STR);
+            $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
+            $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
+            $query->bindParam(':approve_status', $approve_status, PDO::PARAM_STR);
+            $query->execute();
+            $lastInsertId = $conn->lastInsertId();
+
+            if ($lastInsertId) {
+                // บันทึกรายการบัญชี (GL) หากอนุมัติแล้ว
+                if ($approve_status === 'Y' && (float)$amount > 0) {
+                    $gl_entries = [
+                        ['acc_code' => GetAccountCodeMapping($conn, $payment_method, 'payment'), 'dr' => (float)$amount, 'cr' => 0],
+                        ['acc_code' => '4103', 'dr' => 0, 'cr' => (float)$amount]
+                    ];
+                    $gl_desc = "รับเงินจาก " . $supplier_name . " (" . $description . ") ตามเอกสาร " . $doc_id;
+                    PostToGL($conn, $reciept_date, $doc_id, $gl_desc, $gl_entries, 'RV');
+                }
+                $conn->commit();
+                echo $save_success;
+            } else {
+                $conn->rollBack();
+                echo $error;
+            }
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo 'Error: ' . $e->getMessage();
+        }
     }
 }
 
@@ -177,112 +201,135 @@ if ($_POST["action"] === 'UPDATE') {
         $uploadDir = '../uploads/files/';
         $file_names = [];
 
-        // ดึงชื่อไฟล์เก่าจาก DB
-        $stmt = $conn->prepare("SELECT file_attach FROM ims_reciepts WHERE id = :id");
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $oldFiles = $stmt->fetchColumn(); // เช่น "file1.jpg,file2.png"
-        $oldFileArray = !empty($oldFiles) ? explode(',', $oldFiles) : [];
+        try {
+            $conn->beginTransaction();
 
-        // ไฟล์เดิมที่ยังคงอยู่จากฟอร์ม (ส่งมาเป็น string comma-separated)
-        $existingFilesStr = isset($_POST['existing_files']) ? $_POST['existing_files'] : '';
-        $existingFiles = $existingFilesStr !== '' ? explode(',', $existingFilesStr) : [];
+            // ดึงชื่อไฟล์เก่าและ doc_id จาก DB
+            $stmt = $conn->prepare("SELECT file_attach, doc_id FROM ims_reciepts WHERE id = :id");
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $row_old = $stmt->fetch(PDO::FETCH_ASSOC);
+            $oldFiles = $row_old['file_attach'] ?? '';
+            $doc_id = $row_old['doc_id'] ?? '';
+            $oldFileArray = !empty($oldFiles) ? explode(',', $oldFiles) : [];
 
-        // ลบไฟล์เก่าที่ถูกลบออก (ที่ไม่อยู่ใน existingFiles)
-        foreach ($oldFileArray as $oldFile) {
-            if (!in_array($oldFile, $existingFiles)) {
-                $oldFilePath = $uploadDir . $oldFile;
-                if (file_exists($oldFilePath)) {
-                    unlink($oldFilePath);
-                }
-            }
-        }
+            // ไฟล์เดิมที่ยังคงอยู่จากฟอร์ม (ส่งมาเป็น string comma-separated)
+            $existingFilesStr = isset($_POST['existing_files']) ? $_POST['existing_files'] : '';
+            $existingFiles = $existingFilesStr !== '' ? explode(',', $existingFilesStr) : [];
 
-        // ชื่อไฟล์เก่าที่ยังเหลือ (ในฟอร์ม)
-        $remainingOldFiles = array_intersect($oldFileArray, $existingFiles);
-
-        // อัปโหลดไฟล์ใหม่ (ถ้ามี)
-        if (!empty($_FILES['file_attach']['name'][0])) {
-            foreach ($_FILES['file_attach']['tmp_name'] as $key => $tmp_name) {
-                $originalName = basename($_FILES['file_attach']['name'][$key]);
-                // sanitize ชื่อไฟล์ (ไม่บังคับแต่แนะนำ)
-                $safeOriginalName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
-                $targetPath = $uploadDir . $safeOriginalName;
-
-                // ถ้าไฟล์ชื่อเดียวกับไฟล์เก่าอยู่แล้ว ให้ลบไฟล์เก่าออกก่อน (แทนที่ด้วยไฟล์ใหม่)
-                if (in_array($safeOriginalName, $remainingOldFiles) && file_exists($targetPath)) {
-                    unlink($targetPath);
-                    // เอาออกจากรายชื่อไฟล์เก่าที่เหลือ เพื่อเพิ่มไฟล์ใหม่แทน
-                    $remainingOldFiles = array_filter($remainingOldFiles, function ($f) use ($safeOriginalName) {
-                        return $f !== $safeOriginalName;
-                    });
-                }
-
-                // ถ้าไฟล์นี้ยังไม่ถูกเพิ่ม ให้เพิ่มและอัปโหลด
-                if (!in_array($safeOriginalName, $file_names)) {
-                    if (move_uploaded_file($tmp_name, $targetPath)) {
-                        $file_names[] = $safeOriginalName;
+            // ลบไฟล์เก่าที่ถูกลบออก (ที่ไม่อยู่ใน existingFiles)
+            foreach ($oldFileArray as $oldFile) {
+                if (!in_array($oldFile, $existingFiles)) {
+                    $oldFilePath = $uploadDir . $oldFile;
+                    if (file_exists($oldFilePath)) {
+                        unlink($oldFilePath);
                     }
                 }
             }
+
+            // ชื่อไฟล์เก่าที่ยังเหลือ (ในฟอร์ม)
+            $remainingOldFiles = array_intersect($oldFileArray, $existingFiles);
+
+            // อัปโหลดไฟล์ใหม่ (ถ้ามี)
+            if (!empty($_FILES['file_attach']['name'][0])) {
+                foreach ($_FILES['file_attach']['tmp_name'] as $key => $tmp_name) {
+                    $originalName = basename($_FILES['file_attach']['name'][$key]);
+                    // sanitize ชื่อไฟล์ (ไม่บังคับแต่แนะนำ)
+                    $safeOriginalName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+                    $targetPath = $uploadDir . $safeOriginalName;
+
+                    // ถ้าไฟล์ชื่อเดียวกับไฟล์เก่าอยู่แล้ว ให้ลบไฟล์เก่าออกก่อน (แทนที่ด้วยไฟล์ใหม่)
+                    if (in_array($safeOriginalName, $remainingOldFiles) && file_exists($targetPath)) {
+                        unlink($targetPath);
+                        // เอาออกจากรายชื่อไฟล์เก่าที่เหลือ เพื่อเพิ่มไฟล์ใหม่แทน
+                        $remainingOldFiles = array_filter($remainingOldFiles, function ($f) use ($safeOriginalName) {
+                            return $f !== $safeOriginalName;
+                        });
+                    }
+
+                    // ถ้าไฟล์นี้ยังไม่ถูกเพิ่ม ให้เพิ่มและอัปโหลด
+                    if (!in_array($safeOriginalName, $file_names)) {
+                        if (move_uploaded_file($tmp_name, $targetPath)) {
+                            $file_names[] = $safeOriginalName;
+                        }
+                    }
+                }
+            }
+
+            // รวมไฟล์เก่าที่เหลือกับไฟล์ใหม่
+            $combinedFiles = array_merge($remainingOldFiles, $file_names);
+
+            // กรองชื่อซ้ำ
+            $combinedFiles = array_unique($combinedFiles);
+
+            $finalFileAttach = implode(',', $combinedFiles);
+
+            // --- บันทึกลง ims_income เพื่อทำ Auto Complete ---
+            $sql_income = "SELECT COUNT(*) FROM ims_income WHERE description = :description";
+            $query_income = $conn->prepare($sql_income);
+            $query_income->execute([':description' => $description]);
+            if ($query_income->fetchColumn() == 0) {
+                $sql_insert_income = "INSERT INTO ims_income (description) VALUES (:description)";
+                $query_insert_income = $conn->prepare($sql_insert_income);
+                $query_insert_income->execute([':description' => $description]);
+            }
+            // ----------------------------------------------
+
+            // อัพเดตข้อมูลใน DB
+            $sql_update = "UPDATE ims_reciepts 
+                SET reciept_date = :reciept_date,
+                    rec_month = :rec_month,
+                    rec_year = :rec_year,
+                    category_id = :category_id,
+                    description = :description,
+                    qty = :qty,
+                    unit_id = :unit_id,
+                    amount = :amount,
+                    remark = :remark,
+                    approve_status = :approve_status,
+                    inv = :inv,
+                    file_attach = :file_attach,
+                    supplier_name = :supplier_name,
+                    payment_method = :payment_method
+                WHERE id = :id";
+
+            $query = $conn->prepare($sql_update);
+            $query->bindParam(':reciept_date', $reciept_date);
+            $query->bindParam(':rec_month', $rec_month);
+            $query->bindParam(':rec_year', $rec_year);
+            $query->bindParam(':category_id', $category_id);
+            $query->bindParam(':description', $description);
+            $query->bindParam(':qty', $qty);
+            $query->bindParam(':unit_id', $unit_id);
+            $query->bindParam(':amount', $amount);
+            $query->bindParam(':remark', $remark);
+            $query->bindParam(':approve_status', $approve_status);
+            $query->bindParam(':inv', $inv);
+            $query->bindParam(':file_attach', $finalFileAttach);
+            $query->bindParam(':supplier_name', $supplier_name);
+            $query->bindParam(':payment_method', $payment_method);
+            $query->bindParam(':id', $id);
+            $query->execute();
+
+            // ลบรายการบัญชี (GL) เก่าและเขียนลงบัญชีใหม่หากอนุมัติแล้ว
+            if ($doc_id) {
+                RemoveGLByDocNo($conn, $doc_id);
+                if ($approve_status === 'Y' && (float)$amount > 0) {
+                    $gl_entries = [
+                        ['acc_code' => GetAccountCodeMapping($conn, $payment_method, 'payment'), 'dr' => (float)$amount, 'cr' => 0],
+                        ['acc_code' => '4103', 'dr' => 0, 'cr' => (float)$amount]
+                    ];
+                    $gl_desc = "รับเงินจาก " . $supplier_name . " (" . $description . ") ตามเอกสาร " . $doc_id;
+                    PostToGL($conn, $reciept_date, $doc_id, $gl_desc, $gl_entries, 'RV');
+                }
+            }
+
+            $conn->commit();
+            echo $save_success;
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo 'Error: ' . $e->getMessage();
         }
-
-        // รวมไฟล์เก่าที่เหลือกับไฟล์ใหม่
-        $combinedFiles = array_merge($remainingOldFiles, $file_names);
-
-        // กรองชื่อซ้ำ
-        $combinedFiles = array_unique($combinedFiles);
-
-        $finalFileAttach = implode(',', $combinedFiles);
-
-        // --- บันทึกลง ims_income เพื่อทำ Auto Complete ---
-        $sql_income = "SELECT COUNT(*) FROM ims_income WHERE description = :description";
-        $query_income = $conn->prepare($sql_income);
-        $query_income->execute([':description' => $description]);
-        if ($query_income->fetchColumn() == 0) {
-            $sql_insert_income = "INSERT INTO ims_income (description) VALUES (:description)";
-            $query_insert_income = $conn->prepare($sql_insert_income);
-            $query_insert_income->execute([':description' => $description]);
-        }
-        // ----------------------------------------------
-
-        // อัพเดตข้อมูลใน DB
-        $sql_update = "UPDATE ims_reciepts 
-            SET reciept_date = :reciept_date,
-                rec_month = :rec_month,
-                rec_year = :rec_year,
-                category_id = :category_id,
-                description = :description,
-                qty = :qty,
-                unit_id = :unit_id,
-                amount = :amount,
-                remark = :remark,
-                approve_status = :approve_status,
-                inv = :inv,
-                file_attach = :file_attach,
-                supplier_name = :supplier_name,
-                payment_method = :payment_method
-            WHERE id = :id";
-
-        $query = $conn->prepare($sql_update);
-        $query->bindParam(':reciept_date', $reciept_date);
-        $query->bindParam(':rec_month', $rec_month);
-        $query->bindParam(':rec_year', $rec_year);
-        $query->bindParam(':category_id', $category_id);
-        $query->bindParam(':description', $description);
-        $query->bindParam(':qty', $qty);
-        $query->bindParam(':unit_id', $unit_id);
-        $query->bindParam(':amount', $amount);
-        $query->bindParam(':remark', $remark);
-        $query->bindParam(':approve_status', $approve_status);
-        $query->bindParam(':inv', $inv);
-        $query->bindParam(':file_attach', $finalFileAttach);
-        $query->bindParam(':supplier_name', $supplier_name);
-        $query->bindParam(':payment_method', $payment_method);
-        $query->bindParam(':id', $id);
-        $query->execute();
-
-        echo $save_success;
     }
 }
 
@@ -295,13 +342,28 @@ if ($_POST["action"] === 'DELETE') {
     $nRows = $conn->query($sql_find)->fetchColumn();
     if ($nRows > 0) {
         try {
+            $conn->beginTransaction();
+
+            // ดึง doc_id จาก DB ก่อนลบ เพื่อนำไปลบรายการในสมุดรายวันทั่วไป (GL) ด้วย
+            $stmt_doc = $conn->prepare("SELECT doc_id FROM ims_reciepts WHERE id = :id");
+            $stmt_doc->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt_doc->execute();
+            $doc_id = $stmt_doc->fetchColumn();
+
+            if ($doc_id) {
+                RemoveGLByDocNo($conn, $doc_id);
+            }
+
             $sql = "DELETE FROM ims_reciepts WHERE id = " . $id;
             $query = $conn->prepare($sql);
             $query->execute();
             Reorder_Record($conn, "ims_reciepts");
+            
+            $conn->commit();
             echo $del_success;
         } catch (Exception $e) {
-            echo 'Message: ' . $e->getMessage();
+            $conn->rollBack();
+            echo 'Error: ' . $e->getMessage();
         }
     }
 }

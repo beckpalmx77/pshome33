@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานระบบ PSHOME33 (ระบบบริหารจัดการนิติบุคคลและบัญชี)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #16a085;
+            --accent-hover: #1abc9c;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 10px 24px 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.3rem;
+            margin: 0;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 5px 0 0 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 24px;
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-menu li a.active {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            border-left-color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px 50px;
+            min-height: 100vh;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Table Design */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Cards and Notes */
+        .note-card {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            color: #1e3a8a;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+
+        .danger-card {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--danger-color);
+            color: #7f1d1d;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+
+        .success-card {
+            background-color: #f0fdf4;
+            border-left: 4px solid var(--success-color);
+            color: #14532d;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 25px 0;
+            font-size: 0.95rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        /* Code/Doc References */
+        code {
+            font-family: Consolas, Monaco, monospace;
+            background-color: #f1f5f9;
+            color: #c0392b;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        /* Badge design */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-primary { background-color: #ebf5fb; color: #2980b9; }
+        .badge-success { background-color: #eafaf1; color: #27ae60; }
+        .badge-danger { background-color: #fdedec; color: #e74c3c; }
+
+        /* Step workflow */
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0 0 5px 0;
+            font-size: 1.05rem;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Responsive styling */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            body {
+                flex-direction: column;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Menu Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>PSHOME33 Manual</h2>
+            <p>คู่มือผู้ใช้และเจ้าหน้าที่นิติบุคคล</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#intro" class="active">1. บทนำระบบงาน</a></li>
+            <li><a href="#receipts-income">2. การจัดการรายรับ (Income)</a></li>
+            <li><a href="#payment-vouchers">3. การจัดการใบสำคัญจ่าย (PV)</a></li>
+            <li><a href="#expenses-details">4. การบันทึกค่าใช้จ่ายย่อย (EXP)</a></li>
+            <li><a href="#general-ledger">5. ระบบบัญชีแยกประเภท (GL)</a></li>
+            <li><a href="#daily-flow">6. ขั้นตอนปฏิบัติประจำวัน</a></li>
+            <li><a href="#system-sync">7. การซิงค์และล้างฐานข้อมูล</a></li>
+            <li><a href="#api-section">8. API และส่วนติดต่อภายนอก</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <header>
+            <h1>คู่มือการปฏิบัติงานระบบ PSHOME33</h1>
+            <p class="subtitle">ระบบบันทึกรายรับ-รายจ่ายนิติบุคคล และระบบบัญชีแยกประเภททั่วไป (General Ledger)</p>
+        </header>
+
+        <!-- 1. Introduction Section -->
+        <section id="intro">
+            <h2>1. บทนำระบบงาน</h2>
+            <p>
+                ระบบ <strong>PSHOME33</strong> เป็นระบบสารสนเทศเพื่อการบริหารจัดการนิติบุคคลหมู่บ้านจัดสรรพฤกษา 33 โดยครอบคลุมตั้งแต่การจัดเก็บค่าส่วนกลาง การลงบันทึกรายจ่ายต่าง ๆ ตลอดจนการประมวลผลข้อมูลเข้าสู่ระบบบัญชีแบบ <strong>ระบบบัญชีคู่ (Double-Entry Bookkeeping)</strong> เพื่ออำนวยความสะดวกในการจัดทำรายงานทางการเงิน เช่น สมุดรายวันทั่วไป (General Ledger) และรายงานกระแสเงินสด (Cash Flow)
+            </p>
+            <div class="note-card">
+                <strong>💡 คอนเซปต์หลักของระบบบัญชี PSHOME33:</strong>
+                <p style="margin: 5px 0 0 0;">
+                    ทุก ๆ รายการเงินเข้า (Revenue) หรือเงินออก (Expense) ที่ได้รับการอนุมัติยืนยันในฝั่งผู้ดูแลระบบ จะถูกแปลงเป็นรายการบัญชีเดบิต (Dr) และเครดิต (Cr) ลงในสมุดรายวันทั่วไปให้อัตโนมัติ เพื่อป้องกันความผิดพลาดของข้อมูลและการทำงานซ้ำซ้อน
+                </p>
+            </div>
+        </section>
+
+        <!-- 2. Receipts & Income Section -->
+        <section id="receipts-income">
+            <h2>2. การจัดการรายรับ (Income)</h2>
+            <p>รายรับของหมู่บ้านจัดสรรแบ่งออกเป็น 2 ประเภทหลัก คือ <strong>รายรับค่าส่วนกลาง</strong> และ <strong>รายรับอื่น ๆ (รายรับเบ็ดเตล็ด)</strong></p>
+
+            <h3>2.1 การรับชำระค่าส่วนกลาง (Common Fee Payment)</h3>
+            <p>ดำเนินการผ่านเมนู <strong>"จัดการข้อมูลชำระเงินค่าส่วนกลาง"</strong> (หน้า <code>manage_common_fee_payment</code>)</p>
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">ตรวจสอบการโอนเงิน/ชำระเงิน</div>
+                    <p>เจ้าหน้าที่นิติบุคคลตรวจสอบหลักฐานการชำระเงิน (สลิปโอนเงิน) ที่ลูกบ้านส่งมาผ่านทาง LINE OA หรือช่องทางติดต่ออื่น ๆ</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">กรอกข้อมูลและยืนยัน</div>
+                    <p>เลือกบ้านเลขที่ที่ต้องการชำระเงิน ระบุยอดเงินชำระ วิธีการชำระเงิน (เงินสด หรือโอนเงิน) วันที่ชำระเงินจริง และช่วงเดือนที่ชำระ (เริ่มต้น - สิ้นสุด)</p>
+                </div>
+            </div>
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">บันทึกบัญชีอัตโนมัติ</div>
+                    <p>เมื่อกดบันทึกและระบบเปลี่ยนสถานะเป็นยืนยัน (<code>payment_status = 'Y'</code>) ข้อมูลจะส่งเข้าสมุดรายวันแยกประเภท (GL) ทันทีเป็นรายการ <strong>RV (Receive Voucher)</strong>:
+                    <br><code>Dr. เงินสด / เงินฝากธนาคาร (1101/1102)</code>
+                    <br><code>Cr. รายได้ค่าส่วนกลาง (4101)</code></p>
+                </div>
+            </div>
+
+            <h3>2.2 การจัดการรายรับอื่นๆ / รายรับเบ็ดเตล็ด (Other Receipts)</h3>
+            <p>ดำเนินการผ่านหน้า <strong>"รายรับเบ็ดเตล็ด"</strong> (หน้า <code>manage_reciepts</code>)</p>
+            <div class="danger-card">
+                <strong>⚠️ กฎการบันทึกรายรับเบ็ดเตล็ด (เวอร์ชันใหม่):</strong>
+                <ul>
+                    <li><strong>ประเภทรายรับ/รายได้ (Category)</strong> จะต้องไม่ถูกปล่อยให้เป็นค่าว่างโดยเด็ดขาด หากกรอกไม่ครบถ้วน ระบบจะมีกล่องแจ้งเตือน Bootbox สีแดงเตือนเจ้าหน้าที่ทันที และจะไม่อนุญาตให้ทำการบันทึกข้อมูล</li>
+                    <li>เมื่อบันทึกรายการรายรับเบ็ดเตล็ดและทำการ **อนุมัติ (Approve)** รายการแล้ว ระบบหลังบ้านจะลงบัญชีในสมุดรายวันแยกประเภทให้ทันที โดยเดบิตช่องทางการรับเงิน (เงินสด/เงินฝาก) และเครดิต **รายได้อื่นๆ (4103)**</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. Payment Voucher Section -->
+        <section id="payment-vouchers">
+            <h2>3. การจัดการใบสำคัญจ่าย (Payment Voucher - PV)</h2>
+            <p>ใบสำคัญจ่าย (PV) ใช้สำหรับบันทึกรายการใช้จ่ายเงินของนิติบุคคลหมู่บ้านจัดสรร เช่น ค่าน้ำ-ไฟส่วนกลาง, ค่าจ้าง รปภ., ค่าจ้างทำความสะอาด หรือซื้ออุปกรณ์เบ็ดเตล็ด ดำเนินการผ่านเมนู <strong>"ใบสำคัญจ่าย"</strong> (หน้า <code>manage_voucher</code>)</p>
+            
+            <h3>3.1 การสร้างและแก้ไขใบสำคัญจ่าย</h3>
+            <ul>
+                <li><strong>ช่องข้อมูลที่บังคับกรอก (Required):</strong> นอกจาก วันที่เอกสาร และ ชื่อผู้รับเงินแล้ว ปัจจุบันฟิลด์ **"จ่ายเพื่อ" (purpose)** ถือเป็นฟิลด์ที่บังคับกรอก เพื่อให้นักบัญชีและผู้ตรวจสอบบัญชีทราบวัตถุประสงค์ของการจ่ายเงินอย่างชัดเจน</li>
+                <li><strong>การอนุมัติใบสำคัญจ่าย:</strong> เมื่อใบสำคัญจ่ายได้รับการอนุมัติ (<code>approve_status = 'Y'</code>) ระบบจะลงสมุดรายวันทั่วไป (GL) ด้วยประเภท <strong>PV</strong> ทันที โดยบันทึกยอดรวม:
+                    <br><code>Dr. ค่าใช้จ่ายทั่วไป (5101)</code>
+                    <br><code>Cr. เงินสด / เงินฝากธนาคาร (1101/1102)</code>
+                </li>
+            </ul>
+
+            <div class="note-card">
+                <strong>✨ ฟีเจอร์ใหม่ในตารางแสดงผลใบสำคัญจ่าย:</strong>
+                <p style="margin: 5px 0 0 0;">
+                    ในหน้าตารางข้อมูลรวม ได้มีการเพิ่มคอลัมน์ <strong>"รายละเอียดค่าใช้จ่าย"</strong> (ดึงข้อมูลวัตถุประสงค์มาแสดง) เพื่อช่วยให้เจ้าหน้าที่ค้นหาใบสำคัญจ่ายได้ง่ายขึ้นผ่านแถบค้นหา (Search Box) และยอดจำนวนเงินจ่ายจะแสดงผลเป็นตัวเลขจัดชิดขวา พร้อมจุดทศนิยม 2 ตำแหน่งเสมอตามหลักบัญชีสากล
+                </p>
+            </div>
+        </section>
+
+        <!-- 4. Expenses & Details Section -->
+        <section id="expenses-details">
+            <h2>4. การบันทึกค่าใช้จ่ายย่อย (EXP)</h2>
+            <p>ตาราง <code>ims_expenses</code> เป็นตารางสำหรับจัดเก็บ **"รายละเอียดรายการค่าใช้จ่ายย่อย"** ที่เกิดขึ้นจริงในระบบงาน</p>
+
+            <h3>4.1 ความเชื่อมโยงระหว่าง ค่าใช้จ่ายย่อย (EXP) กับ ใบสำคัญจ่าย (PV)</h3>
+            <p>เพื่อป้องกันไม่ให้ตัวเลขค่าใช้จ่ายเบิ้ลหรือลงบัญชีซ้ำซ้อน ระบบได้จัดรูปแบบโครงสร้างข้อมูลดังนี้:</p>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ประเภทรายการในตาราง EXP</th>
+                            <th>คำอธิบายโครงสร้างข้อมูล</th>
+                            <th>การประมวลผลระบบบัญชี (GL)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ผูกกับใบสำคัญจ่าย (PV-%)</strong></td>
+                            <td>เป็นรายการย่อยของ PV เช่น ใบสำคัญจ่ายมี 1 ใบ (ยอดรวม 5,000.-) แต่มีค่าใช้จ่ายย่อยแยกเป็น 3 รายการย่อยในตารางนี้</td>
+                            <td><span class="badge badge-success">ลงบัญชีจากตัวแม่ (PV) เท่านั้น</span><br>ระบบจะลงบัญชีจากยอดรวมของใบสำคัญจ่าย เพื่อป้องกันการลงซ้ำซ้อนสองเท่า</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ผูกกับระบบเงินเดือน (PAY%)</strong></td>
+                            <td>บันทึกข้อมูลเงินเดือนพนักงาน รปภ. แม่บ้าน และพนักงานสำนักงานนิติบุคคลแต่ละคน</td>
+                            <td><span class="badge badge-primary">เตรียมขยายผล</span><br>กำลังจัดเตรียมแนวทางการลงบัญชีแยกแผนกค้างจ่าย</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ไม่มีข้อมูลอ้างอิง (doc_ref = '-')</strong></td>
+                            <td>เป็นข้อมูลประวัติเก่าในช่วงเริ่มต้นระบบงานช่วงเดือน 06/2025</td>
+                            <td><span class="badge badge-danger">ไม่นำมาคำนวณซ้ำ</span><br>ระบบบันทึกแยกไว้สำหรับรายงานประวัติย้อนหลัง</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 5. General Ledger (GL) Section -->
+        <section id="general-ledger">
+            <h2>5. ระบบบัญชีแยกประเภท (General Ledger - GL)</h2>
+            <p>หน้าจอ <strong>"สมุดรายวันทั่วไป / บัญชีแยกประเภท"</strong> (หน้า <code>manage_gl</code> และ <code>report_gl</code>) ใช้แสดงผลบัญชีคู่ที่ถูกเชื่อมโยงมาจากหน้าจอรายรับและรายจ่าย</p>
+
+            <h3>5.1 ผังบัญชีเริ่มต้น (Chart of Accounts)</h3>
+            <p>ระบบได้ถูกตั้งค่าผังบัญชีหลักไว้ 5 หมวดหมู่ เพื่อความถูกต้องในการสรุปงบการเงิน:</p>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รหัสบัญชี</th>
+                            <th>ชื่อบัญชีแยกประเภท</th>
+                            <th>หมวดหมู่หลัก</th>
+                            <th>การนำไปใช้งานหลักในระบบ PSHOME33</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>1101</code></td>
+                            <td>เงินสด</td>
+                            <td>Asset (สินทรัพย์)</td>
+                            <td>บันทึกรายรับ/รายจ่ายที่ชำระด้วยเงินสด</td>
+                        </tr>
+                        <tr>
+                            <td><code>1102</code></td>
+                            <td>เงินฝากธนาคาร</td>
+                            <td>Asset (สินทรัพย์)</td>
+                            <td>บันทึกรายรับ/รายจ่ายที่ชำระด้วยการโอนผ่านธนาคาร</td>
+                        </tr>
+                        <tr>
+                            <td><code>1103</code></td>
+                            <td>ลูกหนี้ค่าส่วนกลาง</td>
+                            <td>Asset (สินทรัพย์)</td>
+                            <td>บันทึกยอดค้างชำระของลูกบ้าน (รอตัดรับชำระ)</td>
+                        </tr>
+                        <tr>
+                            <td><code>4101</code></td>
+                            <td>รายได้ค่าส่วนกลาง</td>
+                            <td>Revenue (รายได้)</td>
+                            <td>บันทึกรายรับที่ได้จากการจัดเก็บค่าส่วนกลางรายเดือน</td>
+                        </tr>
+                        <tr>
+                            <td><code>4103</code></td>
+                            <td>รายได้อื่นๆ</td>
+                            <td>Revenue (รายได้)</td>
+                            <td>บันทึกรายรับอื่น ๆ เช่น ดอกเบี้ยรับ, ค่าจำหน่ายสติกเกอร์ หรือค่าบริการอื่น</td>
+                        </tr>
+                        <tr>
+                            <td><code>5101</code></td>
+                            <td>ค่าใช้จ่ายทั่วไป</td>
+                            <td>Expense (ค่าใช้จ่าย)</td>
+                            <td>บันทึกการใช้จ่ายทั่วไปของนิติบุคคลผ่านใบสำคัญจ่าย</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 6. Daily Workflows -->
+        <section id="daily-flow">
+            <h2>6. ขั้นตอนการปฏิบัติงานประจำวันของเจ้าหน้าที่</h2>
+            <p>เพื่อให้ข้อมูลระบบบัญชีและยอดเงินตรงกันกับบัญชีธนาคารจริง เจ้าหน้าที่นิติบุคคลควรดำเนินงานตามขั้นตอนขั้นตอนดังต่อไปนี้:</p>
+
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">ลงบันทึกรายรับทันทีเมื่อได้รับเงิน</div>
+                    <p>ไม่ว่าจะรับเงินชำระค่าส่วนกลางหรือค่ารับเงินเบ็ดเตล็ด ให้คีย์ข้อมูลเข้าระบบในวันนั้น ๆ ทันที เลือกวิธีชำระเงินให้ตรงตามหลักฐานจริง (เงินสด หรือ โอนเงิน)</p>
+                </div>
+            </div>
+
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">สร้างใบสำคัญจ่าย (PV) เมื่อมีการใช้จ่าย</div>
+                    <p>กรอกข้อมูลรายละเอียดของค่าใช้จ่ายในช่อง "จ่ายเพื่อ" และระบุข้อมูลผู้รับเงินให้ละเอียด เมื่อได้รับการอนุมัติจากคณะกรรมการ ให้ตรวจสอบสถานะการลงบัญชีอัตโนมัติ</p>
+                </div>
+            </div>
+
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">ตรวจสอบรายงานทางการเงินทุกสิ้นวัน</div>
+                    <p>เปิดตรวจสอบหน้า <strong>งบกระแสเงินสด (Cash Flow Report)</strong> และ <strong>สมุดรายวันทั่วไป (GL)</strong> เพื่อกระทบยอด (Reconcile) ยอดเงินคงเหลือในระบบกับสมุดบัญชีธนาคารและกล่องเงินสดในสำนักงาน</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Database Cleanup & Sync -->
+        <section id="system-sync">
+            <h2>7. การซิงค์และล้างฐานข้อมูลระบบบัญชี</h2>
+            <p>ในกรณีที่ระบบบัญชีสมุดรายวันทั่วไป (GL) แสดงตัวเลขที่ไม่ตรง หรือมีข้อมูลค้างผ่านรายการจากธุรกรรมรายวัน ระบบจัดเตรียมเครื่องมือในการจัดการบัญชีแยกประเภทดังนี้:</p>
+            
+            <h3>7.1 การประมวลผลผ่านบัญชีแยกประเภทใหม่ทั้งหมด (GL Full Reprocess)</h3>
+            <p>ดำเนินการผ่านหน้าจอ <code>reprocess_all_to_gl.php</code> ซึ่งจัดทำหน้าจอแบบมี Progress Bar และทำงานผ่านระบบ Ajax แบ่งการประมวลผลเป็นชุดๆ เพื่อหลีกเลี่ยงระบบค้างหรือ Timeout:</p>
+            <ul>
+                <li><strong>ล้างบัญชีเดิม:</strong> ระบบจะทำการเคลียร์ข้อมูลแยกประเภททั่วไป (PV/RV) เก่าทั้งหมดโดยอัตโนมัติ</li>
+                <li><strong>ผ่านรายการใหม่:</strong> ดึงธุรกรรมการชำระเงินจริงจาก <code>ims_payment_voucher</code>, <code>ims_house_payment</code> และ <code>ims_reciepts</code> มาทำการประมวลผลบัญชี (เดบิต/เครดิต) ให้ถูกต้องสอดคล้องตรงกัน 100%</li>
+            </ul>
+
+            <h3>7.2 การผ่านรายการค้างโพสต์เข้า GL (GL Sync New Only)</h3>
+            <p>ดำเนินการผ่านหน้าจอ <code>sync_transactions_to_gl.php</code> สำหรับสแกนเฉพาะรายการรับเงินหรือจ่ายเงินที่อนุมัติเข้ามาใหม่แต่ยังไม่ได้ทำการบันทึกลงบัญชีแยกประเภททั่วไป (GL) เพื่ออัปเดตระบบบัญชีให้เป็นปัจจุบันโดยไม่ต้องประมวลผลรายการเก่าซ้ำ</p>
+        </section>
+
+        <!-- 8. API and External Integration -->
+        <section id="api-section">
+            <h2>8. API และส่วนติดต่อภายนอก (API & External Integration)</h2>
+            <p>ระบบ PSHOME33 ได้จัดทำช่องทางเชื่อมโยงสำหรับแอปพลิเคชันหรือระบบจัดการภายนอก เพื่อดึงข้อมูลยอดค้างชำระค่าส่วนกลางได้อย่างปลอดภัยและเป็นมาตรฐานสากล:</p>
+            
+            <h3>8.1 API ตรวจสอบยอดค้างชำระค่าส่วนกลาง</h3>
+            <p>เชื่อมต่อผ่านทาง Endpoint <code>api/get_outstanding_fee.php</code> ด้วยพารามิเตอร์แบบ HTTP GET:</p>
+            <ul>
+                <li><strong>house_number (จำเป็น):</strong> บ้านเลขที่ของลูกบ้านที่ต้องการสืบค้นยอดค้างชำระ เช่น <code>67/117</code></li>
+                <li><strong>year (ตัวเลือก):</strong> ปี ค.ศ. ที่ต้องการสืบค้นข้อมูลยอดค้าง (หากไม่ระบุจะใช้ปีปัจจุบัน)</li>
+                <li><strong>api_key (จำเป็น):</strong> รหัสคีย์ความปลอดภัย <code>PSHOME33_SECURE_API_KEY_2026</code> หรือระบุผ่าน HTTP Header <code>X-API-KEY</code> เพื่อยืนยันสิทธิ์</li>
+            </ul>
+            <p><strong>คู่มือสำหรับนักพัฒนา:</strong> สามารถเข้าไปศึกษารูปแบบตัวอย่างคำขอ, JSON Response ของผลลัพธ์ ตลอดจนทดสอบส่งคำขอผ่านโปรแกรมจำลองหน้าเว็บ (API Sandbox Interface) ได้ที่ไฟล์ <code>api_common_fee.html</code> ในระบบหลัก</p>
+        </section>
+    </div>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top" title="กลับสู่ด้านบน">▲</a>
+
+    <!-- Sidebar Active Selection JS Linkage -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuLinks = document.querySelectorAll('.sidebar-menu li a');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                menuLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
