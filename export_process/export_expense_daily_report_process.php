@@ -29,8 +29,16 @@ header('Expires: 0');
 // ใช้ STR_TO_DATE เพื่อแปลง expense_date จาก 'DD-MM-YYYY' ใน DB ให้เป็น DATE type สำหรับการเปรียบเทียบ
 // และแปลง :start_date, :end_date ที่ส่งมา (ในรูปแบบ 'DD-MM-YYYY') ให้เป็น DATE type เช่นกัน
 $sql = "SELECT * FROM v_ims_expenses 
-        WHERE STR_TO_DATE(expense_date, '%d-%m-%Y') BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
-        ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC"; // เรียงตามวันที่ที่ถูกต้อง
+        WHERE CASE 
+            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            ELSE NULL 
+        END BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
+        ORDER BY CASE 
+            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            ELSE NULL 
+        END ASC"; // เรียงตามวันที่ที่ถูกต้อง
 
 $params = [
     ':start_date' => $start_date_str, // ส่งวันที่ในรูปแบบ DD-MM-YYYY
@@ -48,6 +56,7 @@ $query->execute();
 $header = [
     "จ่ายให้ (ผู้ขาย-ผู้รับเหมา)",
     "วันที่ใช้จ่าย",
+    "เลขที่เอกสาร",
     "เดือน",
     "ปี",
     "เลขที่ใบแจ้งหนี้",
@@ -74,6 +83,7 @@ while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
     $line = [
         $row['receipt_name'],
         $row['expense_date'], // ยังคงแสดงค่า expense_date เดิมที่อยู่ในรูปแบบ DD-MM-YYYY
+        $row['doc_id'],
         $row['exp_month'],
         $row['exp_year'],
         $row['inv'],

@@ -36,7 +36,11 @@ $filename_prefix = "expenses-report-" . $year . "_" . implode('-', $months); // 
 $placeholders = implode(',', array_fill(0, count($months), '?')); // สร้าง ?,?,?,...
 $sql = "SELECT * FROM v_ims_expenses
         WHERE exp_year = ? AND exp_month IN ($placeholders)
-        ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC, id ASC";
+        ORDER BY CASE 
+            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            ELSE NULL 
+        END ASC, id ASC";
 
 try {
     $query = $conn->prepare($sql);

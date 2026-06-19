@@ -30,6 +30,7 @@ header('Expires: 0');
 
 // สร้าง SQL base query และเงื่อนไข
 $sql = "SELECT 
+            doc_id,
             payment_date,
             month_name_start,
             month_name_to,
@@ -106,6 +107,7 @@ if (!$execResult) {
 // กำหนดหัวข้อ CSV
 $header = [
     "วันที่ชำระ",
+    "เลขที่เอกสาร",
     "เดือนเริ่ม",
     "เดือนสิ้นสุด",
     "ปี",
@@ -129,6 +131,7 @@ fputcsv($output, array_map(function ($item) {
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
     $line = [
         $row['payment_date'],
+        $row['doc_id'],
         $row['month_name_start'],
         $row['month_name_to'],
         $row['period_year'],

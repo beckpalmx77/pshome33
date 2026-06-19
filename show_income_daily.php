@@ -77,7 +77,7 @@ function exportToCSV($data, $start_date, $end_date)
     $output = fopen('php://output', 'w');
 
     // Header
-    fputcsv($output, ['ลำดับ', 'วันที่', 'ปี', 'รายละเอียดรายรับ', 'ผู้ชำระ', 'วิธีชำระ', 'หมายเหตุ', 'จำนวนเงิน (บาท)', 'สถานะ']);
+    fputcsv($output, ['ลำดับ', 'วันที่', 'เลขที่เอกสาร', 'ปี', 'รายละเอียดรายรับ', 'ผู้ชำระ', 'วิธีชำระ', 'หมายเหตุ', 'จำนวนเงิน (บาท)', 'สถานะ']);
 
     $sum_amount = 0; // ตัวแปรเก็บยอดรวม
 
@@ -92,6 +92,7 @@ function exportToCSV($data, $start_date, $end_date)
         fputcsv($output, [
             $index + 1,
             $row->reciept_date,
+            $row->doc_id,
             $row->rec_year,
             $row->description,
             $row->supplier_name,
@@ -104,9 +105,9 @@ function exportToCSV($data, $start_date, $end_date)
 
     // แสดงแถวสุดท้ายเป็นยอดรวม
     fputcsv($output, [
-        '', '', '', '', '', '', 'รวมทั้งหมด',
+        '', '', '', '', '', '', '', 'รวมทั้งหมด',
         number_format($sum_amount, 2),
-        '', ''
+        ''
     ]);
 
     fclose($output);
@@ -208,6 +209,7 @@ function exportToCSV($data, $start_date, $end_date)
                 <tr>
                     <th>ลำดับ</th>
                     <th>วันที่</th>
+                    <th>เลขที่เอกสาร</th>
                     <th>ปี</th>
                     <th>รายละเอียดรายรับ</th>
                     <th>ผู้ชำระ</th>
@@ -235,6 +237,7 @@ function exportToCSV($data, $start_date, $end_date)
                     <tr>
                         <td><?php echo htmlentities($index + 1); ?></td>
                         <td><?php echo htmlentities($row_reciepts->reciept_date); ?></td>
+                        <td><?php echo htmlentities($row_reciepts->doc_id); ?></td>
                         <td><?php echo htmlentities($row_reciepts->rec_year); ?></td>
                         <td><?php echo htmlentities($row_reciepts->description); ?></td>
                         <td><?php echo htmlentities($row_reciepts->supplier_name); ?></td>
@@ -247,7 +250,7 @@ function exportToCSV($data, $start_date, $end_date)
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="7" class="text-end">รวมทั้งหมด:</th>
+                    <th colspan="8" class="text-end">รวมทั้งหมด:</th>
                     <th class="text-end" id="totalAmountFooter"></th>
                     <th colspan="1"></th>
                 </tr>
@@ -309,14 +312,14 @@ function exportToCSV($data, $start_date, $end_date)
 
                 // รวมคอลัมน์จำนวนเงินที่ index (คอลัมน์ "จำนวนเงินที่ชำระ")
                 let total = api
-                    .column(7, {page: 'all'}) // ใช้ข้อมูลทั้งตาราง
+                    .column(8, {page: 'all'}) // ใช้ข้อมูลทั้งตาราง
                     .data()
                     .reduce(function (a, b) {
                         return parseValue(a) + parseValue(b);
                     }, 0);
 
                 // แสดงผลรวมใน footer
-                $(api.column(7).footer()).html(
+                $(api.column(8).footer()).html(
                     total.toLocaleString('en-US', {minimumFractionDigits: 2})
                 );
             }

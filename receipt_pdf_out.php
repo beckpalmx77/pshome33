@@ -172,14 +172,15 @@ $html = '<table border="1" cellpadding="4" cellspacing="0" style="font-size:9pt;
     <thead>
         <tr style="background-color:#f2f2f2;">
             <th width="4%" align="center">ลำดับ</th>
-            <th width="10%" align="center">วันที่รับชำระ</th>
+            <th width="9%" align="center">วันที่รับชำระ</th>
+            <th width="11%" align="center">เลขที่เอกสาร</th>
             <th width="8%" align="center">บ้านเลขที่</th>
-            <th width="12%" align="center">เดือนเริ่ม</th>
-            <th width="12%" align="center">เดือนสิ้นสุด</th>
-            <th width="7%" align="center">ปี</th>
-            <th width="10%" align="center">จำนวนเงิน</th>
-            <th width="14%" align="center">สถานะ</th>
-            <th width="17%" align="center">ผู้สร้างรายการ</th>
+            <th width="10%" align="center">เดือนเริ่ม</th>
+            <th width="10%" align="center">เดือนสิ้นสุด</th>
+            <th width="5%" align="center">ปี</th>
+            <th width="9%" align="center">จำนวนเงิน</th>
+            <th width="11%" align="center">สถานะ</th>
+            <th width="15%" align="center">ผู้สร้างรายการ</th>
             <th width="8%" align="center">วิธีชำระ</th>
         </tr>
     </thead>
@@ -193,14 +194,15 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     $html .= '<tr>
         <td width="4%">' . $i++ . '</td>
-        <td width="10%">' . date('d/m/Y', strtotime($row['payment_date'])) . '</td>
+        <td width="9%">' . date('d/m/Y', strtotime($row['payment_date'])) . '</td>
+        <td width="11%">' . htmlspecialchars($row['doc_id'] ?? '') . '</td>
         <td width="8%">' . htmlspecialchars($row['house_number'] ?? '') . '</td>
-        <td width="12%">' . htmlspecialchars($row['month_name_start'] ?? '') . '</td>
-        <td width="12%">' . htmlspecialchars($row['month_name_to'] ?? '') . '</td>
-        <td width="7%" align="center">' . htmlspecialchars($row['period_year'] ?? '') . '</td>
-        <td width="10%" align="right">' . number_format($amount, 2) . '</td>
-        <td width="14%">' . htmlspecialchars($row['payment_status_desc'] ?? '') . '</td>
-        <td width="17%">' . htmlspecialchars($row['create_by'] ?? '') . '</td>
+        <td width="10%">' . htmlspecialchars($row['month_name_start'] ?? '') . '</td>
+        <td width="10%">' . htmlspecialchars($row['month_name_to'] ?? '') . '</td>
+        <td width="5%" align="center">' . htmlspecialchars($row['period_year'] ?? '') . '</td>
+        <td width="9%" align="right">' . number_format($amount, 2) . '</td>
+        <td width="11%">' . htmlspecialchars($row['payment_status_desc'] ?? '') . '</td>
+        <td width="15%">' . htmlspecialchars($row['create_by'] ?? '') . '</td>
         <td width="8%">' . htmlspecialchars($row['payment_method'] ?? '') . '</td>
     </tr>';
 }
@@ -209,14 +211,15 @@ $html .= '</tbody>
     <tfoot>
         <tr style="background-color:#d9edf7; font-weight:bold;">
             <td width="4%"></td>
-            <td width="10%"></td>
+            <td width="9%"></td>
+            <td width="11%"></td>
             <td width="8%"></td>
-            <td width="12%"></td>
-            <td width="12%"></td>
-            <td width="7%" align="center">รวม</td>
-            <td width="10%" align="right">' . number_format($total_amount, 2) . '</td>
-            <td width="14%"></td>
-            <td width="17%"></td>
+            <td width="10%"></td>
+            <td width="10%"></td>
+            <td width="5%" align="center">รวม</td>
+            <td width="9%" align="right">' . number_format($total_amount, 2) . '</td>
+            <td width="11%"></td>
+            <td width="15%"></td>
             <td width="8%"></td>
         </tr>
     </tfoot>

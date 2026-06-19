@@ -191,14 +191,15 @@ $html = '<table border="1" cellpadding="4" cellspacing="0" style="font-size:9pt;
     <thead>
         <tr style="background-color:#f2f2f2;">
             <th width="5%" align="center">ลำดับ</th>
-            <th width="10%" align="center">วันที่</th>
+            <th width="8%" align="center">วันที่</th>
+            <th width="12%" align="center">เลขที่เอกสาร</th>
             <th width="5%" align="center">ปี</th>
-            <th width="20%" align="center">รายละเอียดรายรับ</th>
-            <th width="15%" align="center">ผู้ชำระ</th>
-            <th width="10%" align="center">วิธีชำระ</th>
-            <th width="15%" align="center">หมายเหตุ</th>
-            <th width="10%" align="center">จำนวนเงิน (บาท)</th>
-            <th width="10%" align="center">สถานะ</th>            
+            <th width="18%" align="center">รายละเอียดรายรับ</th>
+            <th width="13%" align="center">ผู้ชำระ</th>
+            <th width="8%" align="center">วิธีชำระ</th>
+            <th width="13%" align="center">หมายเหตุ</th>
+            <th width="9%" align="center">จำนวนเงิน (บาท)</th>
+            <th width="9%" align="center">สถานะ</th>            
         </tr>
     </thead>
     <tbody>'; // เพิ่ม tbody tag
@@ -211,14 +212,15 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $approve_status_desc = $row['approve_status']==="Y"?"ยืนยันการชำระ":"ยังไม่ยืนยัน";
     $html .= '<tr>
         <td width="5%">' . $i++ . '</td>
-        <td width="10%">' . date('d/m/Y', strtotime($row['reciept_date'])) . '</td>
+        <td width="8%">' . date('d/m/Y', strtotime($row['reciept_date'])) . '</td>
+        <td width="12%">' . htmlspecialchars($row['doc_id'] ?? '') . '</td>
         <td width="5%">' . htmlspecialchars($row['rec_year'] ?? '') . '</td>        
-        <td width="20%">' . htmlspecialchars($row['description'] ?? '') . '</td>
-        <td width="15%">' . htmlspecialchars($row['supplier_name'] ?? '') . '</td>        
-        <td width="10%">' . htmlspecialchars($row['payment_method'] ?? '') . '</td>
-        <td width="15%">' . htmlspecialchars(formatRemark($row['remark'])) . '</td>
-        <td width="10%" align="right">' . number_format($amount, 2) . '</td>
-        <td width="10%">' . htmlspecialchars($approve_status_desc ?? '') . '</td>
+        <td width="18%">' . htmlspecialchars($row['description'] ?? '') . '</td>
+        <td width="13%">' . htmlspecialchars($row['supplier_name'] ?? '') . '</td>        
+        <td width="8%">' . htmlspecialchars($row['payment_method'] ?? '') . '</td>
+        <td width="13%">' . htmlspecialchars(formatRemark($row['remark'])) . '</td>
+        <td width="9%" align="right">' . number_format($amount, 2) . '</td>
+        <td width="9%">' . htmlspecialchars($approve_status_desc ?? '') . '</td>
     </tr>';
 }
 
@@ -226,14 +228,15 @@ $html .= '</tbody>
     <tfoot>
         <tr style="background-color:#d9edf7; font-weight:bold;">
             <td width="5%"></td>
-            <td width="10%"></td>            
+            <td width="8%"></td>            
+            <td width="12%"></td>            
             <td width="5%"></td>
-            <td width="20%"></td>
-            <td width="15%"></td>
-            <td width="10%"></td>
-            <td width="15%" align="center">รวม</td>
-            <td width="10%" align="right">' . number_format($total_amount, 2) . '</td>            
-            <td width="10%"></td>
+            <td width="18%"></td>
+            <td width="13%"></td>
+            <td width="8%"></td>
+            <td width="13%" align="center">รวม</td>
+            <td width="9%" align="right">' . number_format($total_amount, 2) . '</td>            
+            <td width="9%"></td>
         </tr>
     </tfoot>
 </table>';
