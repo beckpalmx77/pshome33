@@ -113,7 +113,7 @@ class MYPDF extends TCPDF {
         if (file_exists($this->logo_path)) {
             $this->Image($this->logo_path, $logo_x, $logo_y, $logo_width, $logo_height, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         } else {
-            $this->SetFont('THSarabunNew', 'B', 10);
+            $this->SetFont('THSarabunNew', 'B', 12);
             $this->SetXY($logo_x, $logo_y + ($logo_height / 4)); // ปรับให้ข้อความ No Logo อยู่กึ่งกลาง
             $this->Cell($logo_width, $logo_height/2, 'No Logo', 0, 0, 'C');
         }
@@ -121,7 +121,7 @@ class MYPDF extends TCPDF {
         // --- 2. Report Title & Period (อยู่กลางหน้ากระดาษ ในระดับเดียวกับโลโก้) ---
         $text_y_center_aligned_with_logo = $logo_y; // ตั้งให้ Y เท่ากับโลโก้เลย
 
-        $this->SetFont('THSarabunNew', 'B', 16);
+        $this->SetFont('THSarabunNew', 'B', 18);
         $title_text = 'รายงานค่าใช้จ่าย';
         // *** ปรับการแสดงผลเดือนและปี ***
         $period_text = 'เดือน ' . $this->report_display_months . ' ปี ' . $this->report_year;
@@ -142,7 +142,7 @@ class MYPDF extends TCPDF {
 
 
         // --- 3. Print Date/Time (มุมขวาบน) ---
-        $this->SetFont('THSarabunNew', '', 9);
+        $this->SetFont('THSarabunNew', '', 11);
         $print_date_text = 'วันที่พิมพ์: ' . date('d/m/Y H:i:s');
         $print_date_width = $this->GetStringWidth($print_date_text);
 
@@ -160,7 +160,7 @@ class MYPDF extends TCPDF {
     // Page footer
     public function Footer() {
         $this->SetY(-15);
-        $this->SetFont('THSarabunNew', '', 8);
+        $this->SetFont('THSarabunNew', '', 10);
         $this->Cell(0, 10, 'หน้า ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, 0, 'L');
     }
 }
@@ -190,14 +190,14 @@ $pdf->SetMargins(10, $top_margin_for_header, 10); // (Left, Top, Right)
 $pdf->SetAutoPageBreak(TRUE, 15);
 
 // Set main font for the document content
-$pdf->SetFont('THSarabunNew', '', 10);
+$pdf->SetFont('THSarabunNew', '', 12);
 
 // Add the first page. The Header() method will be called automatically here.
 $pdf->AddPage();
 
 // --- สร้าง HTML สำหรับทั้งตาราง (รวม <thead/> และ <tbody/>) ---
 // TCPDF จะเริ่มเขียน HTML content จาก Y position ที่กำหนดโดย Top Margin
-$html_table = '<table border="1" cellspacing="0" cellpadding="4" style="font-size:9pt; width: 100%;">
+$html_table = '<table border="1" cellspacing="0" cellpadding="4" style="font-size:11pt; width: 100%;">
     <thead>
         <tr style="background-color:#f2f2f2;">';
 
@@ -264,7 +264,7 @@ $pdf->writeHTML($html_table, true, false, true, false, '');
 
 if (function_exists('number_to_thai_text') && $grand_total_amount > 0) {
     $pdf->SetY($pdf->GetY() + 5);
-    $pdf->SetFont('THSarabunNew', '', 10);
+    $pdf->SetFont('THSarabunNew', '', 12);
     $pdf->writeHTMLCell(0, 0, '', '', '<p style="text-align: left;"><b>ตัวอักษร:</b> ' . number_to_thai_text($grand_total_amount) . '</p>', 0, 1, 0, true, '', true);
 }
 
