@@ -1,4 +1,33 @@
 -- --------------------------------------------------------
+-- Helper Procedure to Create Index Safely if it does not exist
+-- --------------------------------------------------------
+DROP PROCEDURE IF EXISTS CreateIndexIfNotExists;
+
+DELIMITER $$
+
+CREATE PROCEDURE CreateIndexIfNotExists(
+    IN p_table_name VARCHAR(100),
+    IN p_index_name VARCHAR(100),
+    IN p_column_name VARCHAR(100)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM INFORMATION_SCHEMA.STATISTICS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+          AND TABLE_NAME = p_table_name 
+          AND INDEX_NAME = p_index_name
+    ) THEN
+        SET @sql = CONCAT('CREATE INDEX ', p_index_name, ' ON ', p_table_name, ' (', p_column_name, ')');
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
 -- 1. Modify tables and add indexes
 -- --------------------------------------------------------
 
@@ -6,21 +35,24 @@
 ALTER TABLE ims_house_payment MODIFY COLUMN line_user_id VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 
 -- 1.2 Create Index on ims_house_payment
-CREATE INDEX idx_line_user_id ON ims_house_payment (line_user_id);
+CALL CreateIndexIfNotExists('ims_house_payment', 'idx_line_user_id', 'line_user_id');
 
 -- 1.3 Create Index on ims_house_master
-CREATE INDEX idx_house_number ON ims_house_master (house_number);
+CALL CreateIndexIfNotExists('ims_house_master', 'idx_house_number', 'house_number');
 
 -- 1.4 Create Indexes on ims_house_line_user
-CREATE INDEX idx_line_phone ON ims_house_line_user (line_phone);
-CREATE INDEX idx_line_user_id ON ims_house_line_user (line_user_id);
+CALL CreateIndexIfNotExists('ims_house_line_user', 'idx_line_phone', 'line_phone');
+CALL CreateIndexIfNotExists('ims_house_line_user', 'idx_line_user_id', 'line_user_id');
 
 -- 1.5 Create Index on ims_user
-CREATE INDEX idx_user_id ON ims_user (user_id);
+CALL CreateIndexIfNotExists('ims_user', 'idx_user_id', 'user_id');
+
+-- Clean up helper procedure
+DROP PROCEDURE IF EXISTS CreateIndexIfNotExists;
 
 
 -- --------------------------------------------------------
--- 2. Re-create View with Optimized Structure & Extra Fields
+-- 2. Re-create View v_ims_house_payment (Optimized Structure)
 -- --------------------------------------------------------
 CREATE OR REPLACE VIEW v_ims_house_payment AS 
 SELECT 
@@ -99,5 +131,5 @@ SELECT
     m_house_master.common_fee AS common_fee 
 FROM ims_house 
 LEFT JOIN ims_house_line_user ON ims_house_line_user.house_number = ims_house.house_number AND ims_house_line_user.line_phone = ims_house.phone_number
-LEFT JOIN ims_house_master ON m_house_master.house_number = ims_house.house_number
+LEFT JOIN ims_house_master m_house_master ON m_house_master.house_number = ims_house.house_number
 WHERE COALESCE(ims_house.status, '') != 'N';
