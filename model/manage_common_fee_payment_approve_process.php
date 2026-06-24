@@ -504,19 +504,21 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     ## Search Query
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number) ";
+        $searchQuery = " AND (h.house_number LIKE :house_number) ";
         $searchArray = array(
             'house_number' => "%$searchValue%"
         );
     }
 
     $where_house_number = " ";
+    $where_house_number_qualified = " ";
     if ($_SESSION['account_type'] === "user") {
         $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
     }
 
     ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . str_replace("house_number", "house_number", $where_house_number);
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
     $records = $stmt->fetch();
@@ -527,7 +529,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         $totalRecordwithFilter = $totalRecords;
     } else {
         $sql_getdata = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
-                        WHERE 1=1 " . str_replace("house_number", "h.house_number", $searchQuery) . str_replace("house_number", "h.house_number", $where_house_number);
+                        WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
         $stmt = $conn->prepare($sql_getdata);
         $stmt->execute($searchArray);
         $records = $stmt->fetch();
@@ -567,7 +569,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
      LEFT JOIN ims_house house ON h.house_number = house.house_number
      LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
      LEFT JOIN v_ims_user u ON u.line_user_id = h.line_user_id
-     WHERE 1=1 " . str_replace("house_number", "h.house_number", $searchQuery) . str_replace("house_number", "h.house_number", $where_house_number)
+     WHERE 1=1 " . $searchQuery . $where_house_number_qualified
      . " ORDER BY h.id DESC LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกการแก้ไขปัญหา DataTables Ajax Error (TN/7)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            margin-top: 30px;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            background-color: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e74c3c;
+            font-size: 0.95em;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+        .highlight {
+            background-color: #ffe6e6;
+            color: #c0392b;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .success-highlight {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .footer {
+            margin-top: 45px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #7f8c8d;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>บันทึกการแก้ไขปัญหา DataTables Ajax Error (TN/7)</h1>
+
+        <h2>1. รายละเอียดปัญหาที่พบ</h2>
+        <p>บนหน้าจอจัดการการชำระเงินค่าส่วนกลาง (<code>manage_common_fee_payment.php</code>) เมื่อผู้ใช้ป้อนข้อมูลบ้านเลขที่ลงในช่องค้นหา <code>search_house_number</code> และกดค้นหา (Search) ระบบจะแสดงข้อความเตือน:</p>
+        <pre>DataTables warning: table id=TableRecordList - Ajax error. For more information about this error, please see http://datatables.net/tn/7</pre>
+
+        <h2>2. สาเหตุของปัญหา (Root Cause)</h2>
+        <p>ปัญหาเกิดขึ้นที่ฝั่ง Backend ในส่วนประมวลผลฐานข้อมูลสำหรับ DataTable ของไฟล์ <code>model/manage_common_fee_payment_process.php</code> โดยมีขั้นตอนดังนี้:</p>
+        <ul>
+            <li>เมื่อมีการป้อนข้อมูลค้นหาเลขที่บ้าน ระบบจะสร้างเงื่อนไข SQL ของตัวแปร <code>$searchQuery</code> ดังนี้:
+                <pre><code>$searchQuery = " AND house_number = :house_number_exact ";</code></pre>
+            </li>
+            <li>ก่อนที่จะส่งคำสั่ง SQL ไปเตรียมการ (Prepare Statement) ระบบมีการใช้ฟังก์ชัน <code>str_replace</code> เพื่อเติม Table Alias (เช่น <code>h.</code> หรือ <code>house.</code>) ให้กับชื่อคอลัมน์โดยอัตโนมัติ:
+                <pre><code>str_replace(['doc_id', 'house_number', 'detail', 'alley', 'remark'], ['h.doc_id', 'h.house_number', 'h.detail', 'house.alley', 'h.remark'], $searchQuery)</code></pre>
+            </li>
+            <li>ผลลัพธ์จาก <code>str_replace</code> ส่งผลเสียคือ มันไปแทนที่ข้อความ <code>house_number</code> ที่อยู่ภายในชื่อของ PDO Placeholder <span class="highlight">:house_number_exact</span> ด้วย ทำให้กลายเป็นชื่อ <span class="highlight">:h.house_number_exact</span></li>
+            <li>ในขณะที่คำสั่งการผูกตัวแปร (PDO Bind Value) ด้านล่างยังระบุผูกกับชื่อตัวแปรเดิม:
+                <pre><code>$stmt->bindValue(':house_number_exact', $searchHouseNumber, PDO::PARAM_STR);</code></pre>
+            </li>
+            <li>การที่ใน SQL มีการเรียกใช้ <code>:h.house_number_exact</code> แต่ผูกตัวแปรจริงให้กับ <code>:house_number_exact</code> ส่งผลให้ PDO ทำงานไม่สำเร็จและโยน PDOException (SQLSTATE[HY093]: Invalid parameter number) ออกมา ซึ่งทำให้เกิด Ajax Error 500 ส่งกลับไปที่ฝั่งหน้าบ้าน</li>
+        </ul>
+        <p>นอกจากนี้ ยังพบปัญหาเดียวกันในการสืบค้นของหน้าอนุมัติการชำระเงินในไฟล์ <code>model/manage_common_fee_payment_approve_process.php</code> ซึ่งชื่อ Placeholder <code>:house_number</code> ถูก <code>str_replace</code> แปลงผิดรูปเป็น <code>:h.house_number</code> เช่นกัน</p>
+
+        <h2>3. วิธีการแก้ไข (The Fix)</h2>
+        <p>แก้ไขโดยหลีกเลี่ยงการใช้ <code>str_replace</code> ที่มีความเสี่ยงในการแทนที่แบบคาดไม่ถึง และเปลี่ยนมาเขียนคิวรี่ที่ระบุ Table Alias (<code>h.</code> หรือ <code>house.</code>) ลงไปตรงๆ ตั้งแต่เริ่มกำหนดค่า:</p>
+
+        <h3>การแก้ไขไฟล์ <code>model/manage_common_fee_payment_process.php</code></h3>
+        <p>เขียน SQL Query แยกตามเงื่อนไขที่ถูกต้องโดยไม่ต้องพึ่งพา <code>str_replace</code>:</p>
+        <pre><code>// ส่วนกำหนดตัวแปรสืบค้น
+$searchQuery = " ";
+if ($searchHouseNumber != '') {
+    $searchQuery = " AND h.house_number = :house_number_exact ";
+    $searchArray['house_number_exact'] = $searchHouseNumber;
+} elseif ($searchValue != '') {
+    $searchQuery = " AND (h.doc_id LIKE :search1 OR 
+                         h.house_number LIKE :search2 OR 
+                         h.detail LIKE :search3 OR 
+                         house.alley LIKE :search4 OR 
+                         h.remark LIKE :search5) ";
+    // กำหนดค่าค้นหาลงใน $searchArray...
+}
+
+$where_house_number = " ";
+$where_house_number_qualified = " ";
+if ($_SESSION['account_type'] === "user") {
+    $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+    $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
+}
+
+// ในส่วนประกอบคำสั่ง SQL คิวรี่
+$sql_getdata = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
+                LEFT JOIN ims_house house ON h.house_number = house.house_number
+                WHERE 1=1 " . $searchQuery . $where_house_number_qualified;</code></pre>
+
+        <h3>การแก้ไขไฟล์ <code>model/manage_common_fee_payment_approve_process.php</code></h3>
+        <p>ปรับใช้แนวทางเดียวกันโดยใช้คิวรี่แบบระบุ Table Alias โดยตรงและลบการใช้งาน <code>str_replace</code> ออกทั้งหมด:</p>
+        <pre><code>$searchQuery = " ";
+if ($searchValue != '') {
+    $searchQuery = " AND (h.house_number LIKE :house_number) ";
+    $searchArray = array(
+        'house_number' => "%$searchValue%"
+    );
+}
+// เรียกใช้ต่อท้าย WHERE 1=1 ด้วย $searchQuery และ $where_house_number_qualified ตรงๆ</code></pre>
+
+        <h2>4. ผลลัพธ์และการตรวจสอบ</h2>
+        <ul>
+            <li>ทำการทดสอบไวยากรณ์โค้ดด้วยคำสั่ง <code>php -l</code> พบว่าไม่มีข้อผิดพลาด (Syntax OK)</li>
+            <li>เมื่อฝั่งเซิร์ฟเวอร์ประมวลผลคำสั่ง SQL ได้อย่างถูกต้อง ระบบจะไม่เกิด Exception อีกต่อไป ส่งผลให้ตาราง DataTable ในหน้าต่าง <code>manage_common_fee_payment.php</code> และหน้าอนุมัติอื่นๆ สามารถแสดงผลข้อมูลสืบค้นตามที่ผู้ใช้กรอกได้อย่างปกติ</li>
+        </ul>
+
+        <div class="footer">
+            <p>ระบบบ้านจัดสรร PSHome 33 — แก้ไขเสร็จสิ้นเมื่อ มิถุนายน 2026</p>
+        </div>
+    </div>
+</body>
+</html>

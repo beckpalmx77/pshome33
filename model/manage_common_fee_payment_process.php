@@ -482,14 +482,14 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     ## Search Query
     $searchQuery = " ";
     if ($searchHouseNumber != '') {
-        $searchQuery = " AND house_number = :house_number_exact ";
+        $searchQuery = " AND h.house_number = :house_number_exact ";
         $searchArray['house_number_exact'] = $searchHouseNumber;
     } elseif ($searchValue != '') {
-        $searchQuery = " AND (doc_id LIKE :search1 OR 
-                             house_number LIKE :search2 OR 
-                             detail LIKE :search3 OR 
-                             alley LIKE :search4 OR 
-                             remark LIKE :search5) ";
+        $searchQuery = " AND (h.doc_id LIKE :search1 OR 
+                             h.house_number LIKE :search2 OR 
+                             h.detail LIKE :search3 OR 
+                             house.alley LIKE :search4 OR 
+                             h.remark LIKE :search5) ";
         $searchArray['search1'] = "%$searchValue%";
         $searchArray['search2'] = "%$searchValue%";
         $searchArray['search3'] = "%$searchValue%";
@@ -498,12 +498,14 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     }
 
     $where_house_number = " ";
+    $where_house_number_qualified = " ";
     if ($_SESSION['account_type'] === "user") {
         $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
     }
 
     ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . str_replace("house_number", "house_number", $where_house_number);
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
     $records = $stmt->fetch();
@@ -515,7 +517,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     } else {
         $sql_getdata = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
                         LEFT JOIN ims_house house ON h.house_number = house.house_number
-                        WHERE 1=1 " . str_replace(['doc_id', 'house_number', 'detail', 'alley', 'remark'], ['h.doc_id', 'h.house_number', 'h.detail', 'house.alley', 'h.remark'], $searchQuery) . str_replace("house_number", "h.house_number", $where_house_number);
+                        WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
         $stmt = $conn->prepare($sql_getdata);
         $stmt->execute($searchArray);
         $records = $stmt->fetch();
@@ -555,7 +557,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
      LEFT JOIN ims_house house ON h.house_number = house.house_number
      LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
      LEFT JOIN v_ims_user u ON u.line_user_id = h.line_user_id
-     WHERE 1=1 " . str_replace(['doc_id', 'house_number', 'detail', 'alley', 'remark'], ['h.doc_id', 'h.house_number', 'h.detail', 'house.alley', 'h.remark'], $searchQuery) . str_replace("house_number", "h.house_number", $where_house_number)
+     WHERE 1=1 " . $searchQuery . $where_house_number_qualified
      . " ORDER BY h.id DESC LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
