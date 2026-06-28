@@ -27,7 +27,7 @@ try {
     }
 
     // Fetch detail payroll data
-    $stmt_detail = $conn->prepare("SELECT * FROM ims_payroll_detail WHERE doc_no = ? ORDER BY icd_type_sign DESC, icd_type_id ASC");
+    $stmt_detail = $conn->prepare("SELECT * FROM ims_payroll_detail WHERE doc_no = ? ORDER BY CASE icd_type_sign WHEN '+' THEN 1 WHEN '-' THEN 2 ELSE 3 END ASC, icd_type_id ASC");
     $stmt_detail->execute([$doc_no]);
     $detail_data = $stmt_detail->fetchAll(PDO::FETCH_ASSOC);
 

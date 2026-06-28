@@ -40,7 +40,7 @@ if ($action === 'GET_DETAIL_DATA') {
             FROM ims_payroll_detail pd
             LEFT JOIN m_income_deduct_type icd ON pd.icd_type_id = icd.icd_type_id
             WHERE pd.doc_no = ? 
-            ORDER BY icd.icd_type_desc ASC 
+            ORDER BY CASE pd.icd_type_sign WHEN '+' THEN 1 WHEN '-' THEN 2 ELSE 3 END ASC, pd.icd_type_id ASC 
         ";
 
         $stmt_details = $conn->prepare($sql_get_detail);
