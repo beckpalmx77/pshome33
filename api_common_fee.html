@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานระบบ API ค่าส่วนกลาง - PSHOME33</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fc;
+            margin: 0;
+            padding: 30px;
+            color: #2e384d;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header-panel {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.08);
+            padding: 30px;
+            margin-bottom: 24px;
+            border-left: 5px solid #4e73df;
+        }
+        .header-title {
+            margin: 0 0 10px 0;
+            color: #4e73df;
+            font-size: 26px;
+            font-weight: 700;
+        }
+        .header-subtitle {
+            color: #858796;
+            margin: 0;
+            font-size: 14px;
+        }
+        .doc-section {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section-title {
+            margin-top: 0;
+            color: #2e384d;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 2px solid #e3e6f0;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            margin-right: 10px;
+            color: #4e73df;
+        }
+        .endpoint-badge {
+            background-color: #f1f3f9;
+            border: 1px solid #d1d3e2;
+            border-radius: 6px;
+            padding: 12px 15px;
+            font-family: monospace;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .method-get {
+            background-color: #1cc88a;
+            color: white;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e3e6f0;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fc;
+            color: #4e73df;
+            font-weight: 700;
+        }
+        code {
+            background-color: #f1f3f9;
+            color: #e74a3b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 90%;
+        }
+        pre {
+            background-color: #1e1e24;
+            color: #a9b7c6;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        /* Sandbox Elements */
+        .sandbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 120px;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .sandbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d3e2;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: #4e73df;
+        }
+        .btn {
+            padding: 10px 20px;
+            color: white;
+            background-color: #4e73df;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2e59d9;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e3e6f0;
+            padding-bottom: 5px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            color: #858796;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #4e73df;
+            color: #4e73df;
+            font-weight: 600;
+        }
+        .code-container {
+            display: none;
+        }
+        .code-container.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-panel">
+            <h1 class="header-title"><i class="fas fa-code"></i> คู่มือการใช้งานระบบ API ค่าส่วนกลาง (Common Fee API)</h1>
+            <p class="header-subtitle">เอกสารประกอบสำหรับแอปพลิเคชันภายนอกในการเชื่อมโยงข้อมูลยอดค้างชำระค่าส่วนกลางของโครงการ PSHOME33</p>
+        </div>
+
+        <!-- Section 1: Overview -->
+        <div class="doc-section">
+            <h2 class="section-title"><i class="fas fa-info-circle"></i> รายละเอียด Endpoint</h2>
+            <p>ระบบอนุญาตให้แอปพลิเคชันภายนอกสามารถเรียกตรวจสอบยอดค้างชำระค่าส่วนกลางของบ้านแต่ละหลังผ่านโปรโตคอล HTTP/HTTPS ด้วยพารามิเตอร์ของบ้านเลขที่และปีบัญชี</p>
+            
+            <div class="endpoint-badge">
+                <span class="method-get">GET</span>
+                <span>/api/get_outstanding_fee.php</span>
+            </div>
+            
+            <p><strong>การรักษาความปลอดภัย (Authentication):</strong> จำเป็นต้องแนบคีย์ความปลอดภัย (API Key) ผ่าน Query Parameter หรือ HTTP Header ด้านล่างนี้:</p>
+            <ul>
+                <li><strong>API Key:</strong> <code>PSHOME33_SECURE_API_KEY_2026</code></li>
+                <li><strong>ชื่อ HTTP Header:</strong> <code>X-API-KEY</code></li>
+            </ul>
+        </div>
+
+        <!-- Section 2: Parameters -->
+        <div class="doc-section">
+            <h2 class="section-title"><i class="fas fa-list-ul"></i> พารามิเตอร์ของการเรียกใช้ (Request Parameters)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="150">ชื่อ Parameter</th>
+                        <th width="100">ประเภท</th>
+                        <th width="120">ความจำเป็น</th>
+                        <th>รายละเอียด / ตัวอย่าง</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong><code>api_key</code></strong></td>
+                        <td><code>string</code></td>
+                        <td><span style="color: #1cc88a; font-weight: 600;">จำเป็น *</span></td>
+                        <td>รหัสคีย์ความปลอดภัย <code>PSHOME33_SECURE_API_KEY_2026</code> (สามารถส่งเป็น Header <code>X-API-KEY</code> แทนได้)</td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>house_number</code></strong></td>
+                        <td><code>string</code></td>
+                        <td><span style="color: #1cc88a; font-weight: 600;">จำเป็น *</span></td>
+                        <td>บ้านเลขที่ที่ต้องการตรวจสอบ เช่น <code>67/117</code> หรือ <code>68/157</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong><code>year</code></strong></td>
+                        <td><code>int</code></td>
+                        <td>เลือกระบุได้</td>
+                        <td>ปี ค.ศ. ที่ต้องการตรวจสอบยอด เช่น <code>2025</code> (หากไม่ระบุจะตรวจด้วยปีปัจจุบันโดยอัตโนมัติ)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 3: Response -->
+        <div class="doc-section">
+            <h2 class="section-title"><i class="fas fa-file-code"></i> รูปแบบการส่งกลับข้อมูล (Response Format)</h2>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchResponseTab(event, 'success-response')">กรณีสำเร็จ (200 OK)</button>
+                <button class="tab-btn" onclick="switchResponseTab(event, 'error-response')">กรณีผิดพลาด (404/400/401)</button>
+            </div>
+
+            <!-- Success Tab -->
+            <div id="success-response" class="code-container active">
+                <p>เมื่อค้นพบข้อมูลบ้าน เลขบัญชี และประวัติการจ่ายชำระ ระบบจะส่งคืนโครงสร้างข้อมูล JSON รายเดือนของปีที่ร้องขอดังนี้:</p>
+                <pre>{
+    "status": "success",
+    "data": {
+        "house_number": "67/117",
+        "owner_name": "วงศ์แก้ว ศิริบุญ",
+        "phone_number": "0863190031",
+        "monthly_rate": 410.00,
+        "query_year": 2025,
+        "current_date": "2026-06-18",
+        "outstanding_current": {
+            "unpaid_count": 4,
+            "unpaid_amount": 1640.00,
+            "unpaid_months": [
+                { "month_no": 1, "month_name": "มกราคม" },
+                { "month_no": 2, "month_name": "กุมภาพันธ์" },
+                { "month_no": 3, "month_name": "มีนาคม" },
+                { "month_no": 4, "month_name": "เมษายน" }
+            ]
+        },
+        "outstanding_full_year": {
+            "unpaid_count": 4,
+            "unpaid_amount": 1640.00,
+            "unpaid_months": [
+                { "month_no": 1, "month_name": "มกราคม" },
+                { "month_no": 2, "month_name": "กุมภาพันธ์" },
+                { "month_no": 3, "month_name": "มีนาคม" },
+                { "month_no": 4, "month_name": "เมษายน" }
+            ]
+        }
+    }
+}</pre>
+            </div>
+
+            <!-- Error Tab -->
+            <div id="error-response" class="code-container">
+                <p>กรณีระบุรหัสความปลอดภัยผิด หรือส่งบ้านเลขที่ที่ไม่มีอยู่ในระบบ ทะเบียนไม่ทำงาน จะส่งข้อมูลประเภทนี้กลับไป:</p>
+                <pre>{
+    "status": "error",
+    "message": "Not Found: House number not found or inactive."
+}</pre>
+            </div>
+        </div>
+
+        <!-- Section 4: Sample Integration Code -->
+        <div class="doc-section">
+            <h2 class="section-title"><i class="fas fa-laptop-code"></i> ตัวอย่างโค้ดสำหรับเชื่อมต่อ (Integration Codes)</h2>
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchCodeTab(event, 'code-curl')">cURL</button>
+                <button class="tab-btn" onclick="switchCodeTab(event, 'code-js')">JavaScript (Fetch)</button>
+                <button class="tab-btn" onclick="switchCodeTab(event, 'code-php')">PHP</button>
+            </div>
+
+            <!-- Tab cURL -->
+            <div id="code-curl" class="code-container active">
+                <pre>curl -X GET \
+  -H "X-API-KEY: PSHOME33_SECURE_API_KEY_2026" \
+  "http://your-domain/api/get_outstanding_fee.php?house_number=67/117&year=2025"</pre>
+            </div>
+
+            <!-- Tab JS -->
+            <div id="code-js" class="code-container">
+                <pre>const apiKey = 'PSHOME33_SECURE_API_KEY_2026';
+const houseNo = '67/117';
+const year = 2025;
+
+fetch(`api/get_outstanding_fee.php?house_number=${houseNo}&year=${year}`, {
+    method: 'GET',
+    headers: {
+        'X-API-KEY': apiKey
+    }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));</pre>
+            </div>
+
+            <!-- Tab PHP -->
+            <div id="code-php" class="code-container">
+                <pre>&lt;?php
+$apiKey = 'PSHOME33_SECURE_API_KEY_2026';
+$houseNo = '67/117';
+$year = 2025;
+
+$url = "http://your-domain/api/get_outstanding_fee.php?house_number=" . urlencode($houseNo) . "&year=" . $year;
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "X-API-KEY: $apiKey"
+]);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+$data = json_decode($response, true);
+print_r($data);
+?&gt;</pre>
+            </div>
+        </div>
+
+        <!-- Section 5: Sandbox Interactive Tester -->
+        <div class="doc-section" style="border-top: 4px solid #1cc88a;">
+            <h2 class="section-title" style="color: #1cc88a;"><i class="fas fa-flask"></i> พื้นที่ทดสอบระบบ API (Interactive API Sandbox)</h2>
+            <p>ทดลองส่งคำขอรับยอดค้างชำระจริงจากระบบโดยระบุค่าพารามิเตอร์ด้านล่างนี้ได้ทันที:</p>
+            
+            <div class="sandbox-group">
+                <div>
+                    <label style="font-size: 11px; font-weight: bold; color: #858796;">บ้านเลขที่ (เช่น 67/117)</label>
+                    <input type="text" id="sb_house_no" class="form-control" value="67/117">
+                </div>
+                <div>
+                    <label style="font-size: 11px; font-weight: bold; color: #858796;">ปีบัญชี (ค.ศ. เช่น 2025)</label>
+                    <input type="number" id="sb_year" class="form-control" value="2025">
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn" style="background-color: #1cc88a;" onclick="testSandboxApi()"><i class="fas fa-paper-plane"></i> ทดสอบส่ง</button>
+                </div>
+            </div>
+
+            <label style="font-size: 11px; font-weight: bold; color: #858796;">ผลการตอบกลับจากเซิร์ฟเวอร์ (API Response Log)</label>
+            <pre id="sandbox_output" style="background-color: #2b2b2b; color: #a9b7c6; min-height: 100px;">กรุณากดปุ่ม "ทดสอบส่ง" ด้านบนเพื่อเริ่มทดสอบเรียกใช้ API...</pre>
+        </div>
+    </div>
+
+    <!-- UI Interaction Scripts -->
+    <script>
+        function switchResponseTab(e, id) {
+            const container = e.target.parentElement.parentElement;
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            container.querySelectorAll('.code-container').forEach(c => c.classList.remove('active'));
+            
+            e.target.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function switchCodeTab(e, id) {
+            const container = e.target.parentElement.parentElement;
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            container.querySelectorAll('.code-container').forEach(c => c.classList.remove('active'));
+            
+            e.target.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function testSandboxApi() {
+            const houseNo = document.getElementById('sb_house_no').value;
+            const year = document.getElementById('sb_year').value;
+            const apiKey = 'PSHOME33_SECURE_API_KEY_2026';
+            const logBox = document.getElementById('sandbox_output');
+
+            logBox.textContent = 'กำลังส่งคำขอไปยัง API...';
+
+            fetch(`api/get_outstanding_fee.php?house_number=${encodeURIComponent(houseNo)}&year=${year}&api_key=${apiKey}`)
+            .then(async response => {
+                const text = await response.text();
+                try {
+                    const json = JSON.parse(text);
+                    logBox.textContent = `[HTTP Status: ${response.status}]\n` + JSON.stringify(json, null, 4);
+                } catch(e) {
+                    logBox.textContent = `[HTTP Status: ${response.status}] (Non-JSON response received)\n` + text;
+                }
+            })
+            .catch(error => {
+                logBox.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -20,8 +20,16 @@ $end_date_for_filename = DateTime::createFromFormat('d-m-Y', $end_date_str)->for
 $filename_prefix = "expenses-report-" . $start_date_for_filename . "_to_" . $end_date_for_filename;
 
 $sql = "SELECT * FROM v_ims_expenses
-        WHERE STR_TO_DATE(expense_date, '%d-%m-%Y') BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
-        ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC, id ASC";
+        WHERE CASE 
+            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            ELSE NULL 
+        END BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
+        ORDER BY CASE 
+            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            ELSE NULL 
+        END ASC, id ASC";
 
 $params = [':start_date' => $start_date_str, ':end_date' => $end_date_str];
 
@@ -44,11 +52,11 @@ if (empty($expenses_data)) {
 
 // กำหนดหัวตารางและคอลัมน์กว้าง (ใช้สำหรับสร้าง HTML table)
 $pdf_headers = [
-    "จ่ายให้", "วันที่ใช้จ่าย", "เดือน", "ปี", "เลขที่ INV.", "หมวดหมู่", "รายละเอียด",
+    "จ่ายให้", "วันที่ใช้จ่าย", "เลขที่เอกสาร", "เดือน", "ปี", "เลขที่ INV.", "หมวดหมู่", "รายละเอียด",
     "จำนวน", "หน่วย", "จำนวนเงิน", "หมายเหตุ", "สถานะอนุมัติ", "วันที่บันทึก", "วิธีชำระเงิน"
 ];
 $col_widths = [
-    '8%', '7%', '4%', '4%', '8%', '8%', '15%', '5%', '5%', '7%', '10%', '7%', '7%', '5%'
+    '7%', '6%', '10%', '3%', '3%', '7%', '7%', '13%', '5%', '4%', '7%', '10%', '6%', '7%', '5%'
 ];
 
 
@@ -203,22 +211,28 @@ foreach ($expenses_data as $row) {
 
     $expense_date_formatted = '';
     if (!empty($row['expense_date'])) {
-        $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        $date_obj = DateTime::createFromFormat('Y-m-d', $row['expense_date']);
+        if (!$date_obj) {
+            $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        }
         if ($date_obj) {
             $expense_date_formatted = $date_obj->format('d/m/Y');
+        } else {
+            $expense_date_formatted = $row['expense_date'];
         }
     }
     $html_table .= '<td width="' . $col_widths[1] . '" align="center">' . $expense_date_formatted . '</td>';
-    $html_table .= '<td width="' . $col_widths[2] . '" align="center">' . ($row['exp_month'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[3] . '" align="center">' . ($row['exp_year'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[4] . '">' . ($row['inv'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[5] . '">' . ($row['category_name'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[6] . '">' . ($row['description'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[7] . '" align="right">' . number_format($row['qty'] ?? 0, 2) . '</td>';
-    $html_table .= '<td width="' . $col_widths[8] . '" align="center">' . ($row['unit_name'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[9] . '" align="right">' . number_format($row['amount'] ?? 0, 2) . '</td>';
-    $html_table .= '<td width="' . $col_widths[10] . '">' . ($row['remark'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[11] . '" align="center">' . (($row['approve_status'] ?? 'N') === "Y" ? "อนุมัติแล้ว" : "รออนุมัติ") . '</td>';
+    $html_table .= '<td width="' . $col_widths[2] . '" align="center">' . ($row['doc_id'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[3] . '" align="center">' . ($row['exp_month'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[4] . '" align="center">' . ($row['exp_year'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[5] . '">' . ($row['inv'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[6] . '">' . ($row['category_name'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[7] . '">' . ($row['description'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[8] . '" align="right">' . number_format($row['qty'] ?? 0, 2) . '</td>';
+    $html_table .= '<td width="' . $col_widths[9] . '" align="center">' . ($row['unit_name'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[10] . '" align="right">' . number_format($row['amount'] ?? 0, 2) . '</td>';
+    $html_table .= '<td width="' . $col_widths[11] . '">' . ($row['remark'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[12] . '" align="center">' . (($row['approve_status'] ?? 'N') === "Y" ? "อนุมัติแล้ว" : "รออนุมัติ") . '</td>';
     $created_at_formatted = '';
     if (!empty($row['created_at'])) {
         $date_obj = DateTime::createFromFormat('Y-m-d H:i:s', $row['created_at']);
@@ -226,14 +240,14 @@ foreach ($expenses_data as $row) {
             $created_at_formatted = $date_obj->format('d/m/Y H:i');
         }
     }
-    $html_table .= '<td width="' . $col_widths[12] . '" align="center">' . $created_at_formatted . '</td>';
-    $html_table .= '<td width="' . $col_widths[13] . '">' . ($row['payment_method'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[13] . '" align="center">' . $created_at_formatted . '</td>';
+    $html_table .= '<td width="' . $col_widths[14] . '">' . ($row['payment_method'] ?? '') . '</td>';
     $html_table .= '</tr>';
 }
 
 $html_table .= '<tr>
-    <td colspan="9" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
-    <td width="' . $col_widths[9] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
+    <td colspan="10" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
+    <td width="' . $col_widths[10] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
     <td colspan="4"></td>
 </tr>';
 

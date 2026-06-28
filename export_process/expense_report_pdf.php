@@ -36,7 +36,11 @@ $filename_prefix = "expenses-report-" . $year . "_" . implode('-', $months); // 
 $placeholders = implode(',', array_fill(0, count($months), '?')); // สร้าง ?,?,?,...
 $sql = "SELECT * FROM v_ims_expenses
         WHERE exp_year = ? AND exp_month IN ($placeholders)
-        ORDER BY STR_TO_DATE(expense_date, '%d-%m-%Y') ASC, id ASC";
+        ORDER BY CASE 
+            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            ELSE NULL 
+        END ASC, id ASC";
 
 try {
     $query = $conn->prepare($sql);
@@ -62,11 +66,11 @@ if (empty($expenses_data)) {
 
 // กำหนดหัวตารางและคอลัมน์กว้าง (ใช้สำหรับสร้าง HTML table)
 $pdf_headers = [
-    "จ่ายให้", "วันที่ใช้จ่าย", "เดือน", "ปี", "เลขที่ INV.", "หมวดหมู่", "รายละเอียด",
+    "จ่ายให้", "วันที่ใช้จ่าย", "เลขที่เอกสาร", "เดือน", "ปี", "เลขที่ INV.", "หมวดหมู่", "รายละเอียด",
     "จำนวน", "หน่วย", "จำนวนเงิน", "หมายเหตุ", "สถานะอนุมัติ", "วันที่บันทึก", "วิธีชำระเงิน"
 ];
 $col_widths = [
-    '8%', '7%', '4%', '4%', '8%', '8%', '15%', '5%', '5%', '7%', '10%', '7%', '7%', '5%'
+    '7%', '6%', '10%', '3%', '3%', '7%', '7%', '13%', '5%', '4%', '7%', '10%', '6%', '7%', '5%'
 ];
 
 
@@ -109,7 +113,7 @@ class MYPDF extends TCPDF {
         if (file_exists($this->logo_path)) {
             $this->Image($this->logo_path, $logo_x, $logo_y, $logo_width, $logo_height, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         } else {
-            $this->SetFont('THSarabunNew', 'B', 10);
+            $this->SetFont('THSarabunNew', 'B', 12);
             $this->SetXY($logo_x, $logo_y + ($logo_height / 4)); // ปรับให้ข้อความ No Logo อยู่กึ่งกลาง
             $this->Cell($logo_width, $logo_height/2, 'No Logo', 0, 0, 'C');
         }
@@ -117,7 +121,7 @@ class MYPDF extends TCPDF {
         // --- 2. Report Title & Period (อยู่กลางหน้ากระดาษ ในระดับเดียวกับโลโก้) ---
         $text_y_center_aligned_with_logo = $logo_y; // ตั้งให้ Y เท่ากับโลโก้เลย
 
-        $this->SetFont('THSarabunNew', 'B', 16);
+        $this->SetFont('THSarabunNew', 'B', 18);
         $title_text = 'รายงานค่าใช้จ่าย';
         // *** ปรับการแสดงผลเดือนและปี ***
         $period_text = 'เดือน ' . $this->report_display_months . ' ปี ' . $this->report_year;
@@ -138,7 +142,7 @@ class MYPDF extends TCPDF {
 
 
         // --- 3. Print Date/Time (มุมขวาบน) ---
-        $this->SetFont('THSarabunNew', '', 9);
+        $this->SetFont('THSarabunNew', '', 11);
         $print_date_text = 'วันที่พิมพ์: ' . date('d/m/Y H:i:s');
         $print_date_width = $this->GetStringWidth($print_date_text);
 
@@ -156,7 +160,7 @@ class MYPDF extends TCPDF {
     // Page footer
     public function Footer() {
         $this->SetY(-15);
-        $this->SetFont('THSarabunNew', '', 8);
+        $this->SetFont('THSarabunNew', '', 10);
         $this->Cell(0, 10, 'หน้า ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, 0, 'L');
     }
 }
@@ -186,14 +190,14 @@ $pdf->SetMargins(10, $top_margin_for_header, 10); // (Left, Top, Right)
 $pdf->SetAutoPageBreak(TRUE, 15);
 
 // Set main font for the document content
-$pdf->SetFont('THSarabunNew', '', 10);
+$pdf->SetFont('THSarabunNew', '', 12);
 
 // Add the first page. The Header() method will be called automatically here.
 $pdf->AddPage();
 
 // --- สร้าง HTML สำหรับทั้งตาราง (รวม <thead/> และ <tbody/>) ---
 // TCPDF จะเริ่มเขียน HTML content จาก Y position ที่กำหนดโดย Top Margin
-$html_table = '<table border="1" cellspacing="0" cellpadding="4" style="font-size:9pt; width: 100%;">
+$html_table = '<table border="1" cellspacing="0" cellpadding="4" style="font-size:11pt; width: 100%;">
     <thead>
         <tr style="background-color:#f2f2f2;">';
 
@@ -214,22 +218,28 @@ foreach ($expenses_data as $row) {
 
     $expense_date_formatted = '';
     if (!empty($row['expense_date'])) {
-        $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        $date_obj = DateTime::createFromFormat('Y-m-d', $row['expense_date']);
+        if (!$date_obj) {
+            $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        }
         if ($date_obj) {
             $expense_date_formatted = $date_obj->format('d/m/Y');
+        } else {
+            $expense_date_formatted = $row['expense_date'];
         }
     }
     $html_table .= '<td width="' . $col_widths[1] . '" align="center">' . $expense_date_formatted . '</td>';
-    $html_table .= '<td width="' . $col_widths[2] . '" align="center">' . ($row['exp_month'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[3] . '" align="center">' . ($row['exp_year'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[4] . '">' . ($row['inv'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[5] . '">' . ($row['category_name'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[6] . '">' . ($row['description'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[7] . '" align="right">' . number_format($row['qty'] ?? 0, 2) . '</td>';
-    $html_table .= '<td width="' . $col_widths[8] . '" align="center">' . ($row['unit_name'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[9] . '" align="right">' . number_format($row['amount'] ?? 0, 2) . '</td>';
-    $html_table .= '<td width="' . $col_widths[10] . '">' . ($row['remark'] ?? '') . '</td>';
-    $html_table .= '<td width="' . $col_widths[11] . '" align="center">' . (($row['approve_status'] ?? 'N') === "Y" ? "อนุมัติแล้ว" : "รออนุมัติ") . '</td>';
+    $html_table .= '<td width="' . $col_widths[2] . '" align="center">' . ($row['doc_id'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[3] . '" align="center">' . ($row['exp_month'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[4] . '" align="center">' . ($row['exp_year'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[5] . '">' . ($row['inv'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[6] . '">' . ($row['category_name'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[7] . '">' . ($row['description'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[8] . '" align="right">' . number_format($row['qty'] ?? 0, 2) . '</td>';
+    $html_table .= '<td width="' . $col_widths[9] . '" align="center">' . ($row['unit_name'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[10] . '" align="right">' . number_format($row['amount'] ?? 0, 2) . '</td>';
+    $html_table .= '<td width="' . $col_widths[11] . '">' . ($row['remark'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[12] . '" align="center">' . (($row['approve_status'] ?? 'N') === "Y" ? "อนุมัติแล้ว" : "รออนุมัติ") . '</td>';
     $created_at_formatted = '';
     if (!empty($row['created_at'])) {
         $date_obj = DateTime::createFromFormat('Y-m-d H:i:s', $row['created_at']);
@@ -237,14 +247,14 @@ foreach ($expenses_data as $row) {
             $created_at_formatted = $date_obj->format('d/m/Y H:i');
         }
     }
-    $html_table .= '<td width="' . $col_widths[12] . '" align="center">' . $created_at_formatted . '</td>';
-    $html_table .= '<td width="' . $col_widths[13] . '">' . ($row['payment_method'] ?? '') . '</td>';
+    $html_table .= '<td width="' . $col_widths[13] . '" align="center">' . $created_at_formatted . '</td>';
+    $html_table .= '<td width="' . $col_widths[14] . '">' . ($row['payment_method'] ?? '') . '</td>';
     $html_table .= '</tr>';
 }
 
 $html_table .= '<tr>
-    <td colspan="9" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
-    <td width="' . $col_widths[9] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
+    <td colspan="10" align="right"><b>รวมยอดค่าใช้จ่ายทั้งสิ้น:</b></td>
+    <td width="' . $col_widths[10] . '" align="right"><b>' . number_format($grand_total_amount, 2) . '</b></td>
     <td colspan="4"></td>
 </tr>';
 
@@ -254,7 +264,7 @@ $pdf->writeHTML($html_table, true, false, true, false, '');
 
 if (function_exists('number_to_thai_text') && $grand_total_amount > 0) {
     $pdf->SetY($pdf->GetY() + 5);
-    $pdf->SetFont('THSarabunNew', '', 10);
+    $pdf->SetFont('THSarabunNew', '', 12);
     $pdf->writeHTMLCell(0, 0, '', '', '<p style="text-align: left;"><b>ตัวอักษร:</b> ' . number_to_thai_text($grand_total_amount) . '</p>', 0, 1, 0, true, '', true);
 }
 

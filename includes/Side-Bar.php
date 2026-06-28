@@ -118,6 +118,24 @@ $sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sid
     } ?>
     <hr class="sidebar-divider">
 
+    <div class="sidebar-heading text-xs font-weight-bold text-muted px-3 mb-1" style="text-transform: none; line-height: 1.5; font-size: 0.8rem; height: auto;">
+        คู่มือระบบงาน (Manual)
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link" href="ps3_user_manual.html" target="_blank">
+            <i class="fas fa-book-open"></i>
+            <span>คู่มือการใช้งานหน้าจอ</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="ps33_system_manual.html" target="_blank">
+            <i class="fas fa-file-invoice"></i>
+            <span>คู่มือระบบและบัญชี</span></a>
+    </li>
+
+    <hr class="sidebar-divider">
+
     <li class="nav-item">
         <a class="nav-link" href="javascript:void(0);" data-toggle="modal" data-target="#themeModal">
             <i class="fas fa-palette"></i>

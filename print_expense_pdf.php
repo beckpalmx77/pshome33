@@ -45,7 +45,7 @@ $pdf->printed_by = isset($_SESSION['user_name']) ? 'ผู้พิมพ์: ' 
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(true);
 $pdf->SetMargins(8, 5, 8);
-$pdf->SetFont('THSarabunNew', '', 12);
+$pdf->SetFont('THSarabunNew', '', 14);
 $pdf->AddPage();
 
 function generate_voucher_html($company, $receipt, $items, $total, $thai_text_total, $title_note = '') {
@@ -63,14 +63,14 @@ function generate_voucher_html($company, $receipt, $items, $total, $thai_text_to
         <img src="img/logo/niti_ps33_header.png" height="40">
       </td></tr>
     </table>
-    <table width="100%" cellpadding="4" style="font-size:12pt">
+    <table width="100%" cellpadding="4" style="font-size:14pt">
       <tr>
         <td><b>'.$company['company_name'].'</b><br><b>ที่อยู่:</b> '.
         $company['address_1'].' '.$company['address_2'].' '.$company['state'].' '.$company['zip_code'].'</td>
         <td align="right"><b>เลขที่ใบสำคัญจ่าย:</b> '.$receipt['doc_id'].'<br><b>วันที่:</b> '.date('d/m/Y', strtotime($receipt['expense_date'])).'</td>
       </tr>
     </table>
-    <table border="1" width="100%" cellpadding="5" style="table-layout:fixed; font-size:12pt">
+    <table border="1" width="100%" cellpadding="5" style="table-layout:fixed; font-size:14pt">
       <tr style="background:#f2f2f2">
         <th width="10%" align="center">#</th>
         <th width="50%" align="center">รายการ</th>
@@ -99,14 +99,14 @@ function generate_voucher_html($company, $receipt, $items, $total, $thai_text_to
     </tr>
     </table>
     <br><br>
-    <table width="100%" cellpadding="5" style="font-size:12pt">
+    <table width="100%" cellpadding="5" style="font-size:14pt">
       <tr>
         <td><b>ผู้รับเงิน</b> ___________ ('.$receipt['receipt_name'].')</td>
         <td align="center"><b>ผู้จ่าย</b><br>'.$sign_img.'<br>('.$full_name.') ตำแหน่ง: ผู้จัดการ/ฝ่ายการเงิน</td>
       </tr>
       <tr>
-        <td style="font-size:10pt">วันที่พิมพ์: '.date('d/m/Y H:i').'</td>
-        <td align="right" style="font-size:10pt">ผู้พิมพ์: '.
+        <td style="font-size:12pt">วันที่พิมพ์: '.date('d/m/Y H:i').'</td>
+        <td align="right" style="font-size:12pt">ผู้พิมพ์: '.
         (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'ฝ่ายการเงิน').'</td>
       </tr>
     </table>';

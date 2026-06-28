@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการเปลี่ยนเบอร์โทรศัพท์และบัญชี LINE - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-section {
+            background-color: #00B900;
+            color: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #00B900;
+            border-bottom: 2px solid #00B900;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #00B900;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #00B900;
+        }
+        .note-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffecb5;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+        .badge-role {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .badge-user {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .badge-admin {
+            background-color: #eceff1;
+            color: #37474f;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header-section">
+            <h2 class="mb-2"><i class="fab fa-line"></i> คู่มือการเปลี่ยนข้อมูลการติดต่อ</h2>
+            <p class="mb-0">ขั้นตอนการดำเนินการเมื่อเปลี่ยนเบอร์โทรศัพท์ หรือเปลี่ยนบัญชี LINE สำหรับระบบ PS33 Home System</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+
+            <!-- CASE 1: เปลี่ยนเบอร์โทรศัพท์ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-phone-alt"></i> กรณีที่ 1: เปลี่ยนหมายเลขโทรศัพท์</h4>
+                <p class="text-muted">เนื่องจากหมายเลขโทรศัพท์ถูกใช้เป็น Username ในการเข้าระบบหลักและเชื่อมโยงกับ LINE ID ลูกบ้านจึงไม่สามารถแก้ไขเองโดยตรงได้ ต้องดำเนินการร่วมกับนิติบุคคลดังนี้:</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 border rounded h-100 bg-white">
+                            <h5><span class="badge badge-role badge-user"><i class="fas fa-user"></i> สำหรับลูกบ้าน</span></h5>
+                            <div class="step-item mt-3">
+                                <h6>แจ้งนิติบุคคล</h6>
+                                <p class="text-muted small">ติดต่อเจ้าหน้าที่นิติบุคคลเพื่อขอแจ้งเปลี่ยนหมายเลขโทรศัพท์เดิมเป็นหมายเลขโทรศัพท์ใหม่</p>
+                            </div>
+                            <div class="step-item">
+                                <h6>ทดสอบเข้าระบบ</h6>
+                                <p class="text-muted small">หลังเจ้าหน้าที่ดำเนินการเรียบร้อย ให้ทดสอบเข้าสู่ระบบผ่าน LINE Mini App โดยใช้เบอร์โทรศัพท์ใหม่</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 border rounded h-100 bg-white">
+                            <h5><span class="badge badge-role badge-admin"><i class="fas fa-user-shield"></i> สำหรับนิติบุคคล (ผู้ดูแลระบบ)</span></h5>
+                            <div class="step-item mt-3">
+                                <h6>เข้าสู่ระบบหลังบ้าน</h6>
+                                <p class="text-muted small">ผู้ดูแลระบบเข้าสู่หน้าแดชบอร์ดหลักของระบบจัดการ</p>
+                            </div>
+                            <div class="step-item">
+                                <h6>แก้ไขผ่านเมนูจัดการผู้ใช้ LINE</h6>
+                                <p class="text-muted small">ไปที่เมนู <strong>"ข้อมูลผู้ใช้ LINE"</strong> ค้นหาบัญชีลูกบ้านที่ต้องการ กด <strong>"แก้ไข" (Edit)</strong> เปลี่ยนเบอร์โทรศัพท์เดิมเป็นเบอร์ใหม่แล้วกดบันทึก</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CASE 2: เปลี่ยนบัญชี LINE (เบอร์โทรศัพท์เดิม) -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fab fa-line"></i> กรณีที่ 2: เปลี่ยนบัญชี LINE (แต่ใช้เบอร์โทรศัพท์เดิม)</h4>
+                <p class="text-muted">กรณีเปลี่ยนเครื่องโทรศัพท์ใหม่ หรือสมัครบัญชี LINE ใหม่ แต่ยังคงใช้เบอร์มือถือเดิมที่เคยลงทะเบียนไว้ ลูกบ้านสามารถดำเนินการได้ด้วยตนเองทันที:</p>
+
+                <div class="step-item">
+                    <h5><span class="step-number">1</span>เข้าหน้าระบบลงทะเบียน</h5>
+                    <p class="text-muted">ใช้บัญชี LINE ใหม่ สแกนคิวอาร์โค้ดหรือกดลิงก์ลงทะเบียนเข้าสู่ระบบ PS33 เพื่อเข้าหน้าสมัครสมาชิก</p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span>กรอกข้อมูลเดิม</h5>
+                    <p class="text-muted">ระบุเลขที่บ้าน ชื่อ นามสกุล และช่องเบอร์โทรศัพท์ให้ใส่ <strong>"หมายเลขโทรศัพท์เดิม"</strong> ที่เคยลงทะเบียนไว้</p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span>ยืนยันรหัสผ่าน</h5>
+                    <p class="text-muted">กรอก <strong>"รหัสผ่านเดิม"</strong> ที่เคยตั้งไว้ตอนสมัครครั้งแรก เพื่อยืนยันความเป็นเจ้าของบัญชี</p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">4</span>ระบบทำการโอนย้ายบัญชี</h5>
+                    <p class="text-muted">เมื่อกดลงทะเบียน ระบบจะตรวจพบรหัสผ่านและเบอร์โทรเดิม จากนั้นจะทำการยกเลิกการเชื่อมโยงกับ LINE Account เดิม และผูกบัญชีเข้ากับ LINE Account ใหม่ให้ทันที โดยข้อมูลการเงินและประวัติการแจ้งซ่อมของท่านจะยังอยู่ครบถ้วน</p>
+                </div>
+            </div>
+
+            <!-- CASE 3: เปลี่ยนทั้งคู่ (LINE ใหม่ และ เบอร์โทรศัพท์ใหม่) -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-sync-alt"></i> กรณีที่ 3: เปลี่ยนทั้งบัญชี LINE และเบอร์โทรศัพท์ใหม่</h4>
+                <p class="text-muted">เพื่อความปลอดภัยของข้อมูลและป้องกันความซ้ำซ้อนในฐานข้อมูล ลูกบ้านและนิติบุคคลต้องร่วมกันดำเนินการดังนี้:</p>
+
+                <div class="step-item">
+                    <h5><span class="step-number">1</span>แจ้งนิติบุคคลลบบัญชีเดิม</h5>
+                    <p class="text-muted">ลูกบ้านแจ้งเจ้าหน้าที่นิติบุคคลเพื่อให้ทำรายการลบ (Delete) บัญชีผู้ใช้ LINE และบัญชีผู้ใช้เดิมออกผ่านเมนู <strong>"ข้อมูลผู้ใช้ LINE"</strong> หลังบ้าน เพื่อล้างการเชื่อมโยงระบบเดิม</p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span>ลงทะเบียนใหม่</h5>
+                    <p class="text-muted">หลังจากที่เจ้าหน้าที่ลบข้อมูลเดิมออกแล้ว ให้ลูกบ้านนำบัญชี LINE ใหม่ทำการลงทะเบียนใหม่ทั้งหมดผ่านหน้าระบบลงทะเบียน โดยใช้เบอร์โทรศัพท์ใหม่ได้ทันที</p>
+                </div>
+            </div>
+
+            <!-- NOTE BOX -->
+            <div class="note-box mt-4">
+                <h5><i class="fas fa-lightbulb text-warning"></i> คำแนะนำเพิ่มเติม</h5>
+                <ul class="mb-0 mt-2">
+                    <li>หากลูกบ้านลืมรหัสผ่านเดิมในการทำขั้นตอนย้าย LINE เจ้าหน้าที่นิติบุคคลสามารถช่วยรีเซ็ตรหัสผ่านใหม่ให้ผ่านหน้าจัดการหลังบ้านได้</li>
+                    <li>ข้อมูลสำคัญ เช่น ยอดค้างชำระ ประวัติการชำระเงิน และการแจ้งซ่อมย้อนหลังจะอิงตามเลขที่บ้าน ดังนั้นการเปลี่ยนเบอร์โทรศัพท์หรือ LINE จะไม่มีผลทำให้ข้อมูลเหล่านี้สูญหาย</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-footer text-center bg-white border-0 py-3">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

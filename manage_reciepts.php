@@ -145,7 +145,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                            id="category_name"
                                                                            name="category_name"
                                                                            required="required"
-                                                                           readonly="true" value="รายรับ"
+                                                                           readonly="true" value=""
                                                                            placeholder="">
                                                                 </div>
 
@@ -634,6 +634,22 @@ if (strlen($_SESSION['alogin']) == "") {
             // *** FOR SUBMIT FORM ***
             $("#recordModal").on('submit', '#recordForm', function (event) {
                 event.preventDefault();
+
+                // ตรวจสอบข้อมูลประเภทรายรับ/รายได้ ห้ามเป็นค่าว่าง
+                let categoryId = $('#category_id').val();
+                let categoryName = $('#category_name').val();
+                if (!categoryId || categoryId.trim() === "" || !categoryName || categoryName.trim() === "") {
+                    let box = bootbox.alert({
+                        title: "แจ้งเตือน",
+                        message: "กรุณาเลือกประเภทรายรับ/รายได้",
+                        centerVertical: true,
+                        backdrop: true
+                    });
+                    box.find('.modal-header').addClass('bg-danger text-white');
+                    box.find('.close').addClass('text-white');
+                    return false;
+                }
+
                 $('#save').attr('disabled', 'disabled');
 
                 // ใช้ FormData กับฟอร์มโดยตรง
@@ -731,7 +747,7 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#supplier_name').val("");
                 $('#description').val("");
                 $('#category_id').val("");
-                $('#category_name').val("รายรับ");
+                $('#category_name').val("");
                 $('#unit_id').val("U001");
                 $('#unit_name').val("รายการ");
                 $('#remark').val("");

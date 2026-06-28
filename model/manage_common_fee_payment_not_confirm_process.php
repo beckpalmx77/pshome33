@@ -40,7 +40,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     // ฟังก์ชันช่วยนับจำนวน record
     function countRecords($conn, $whereSQL, $params) {
-        $sql = "SELECT COUNT(*) AS cnt FROM v_ims_house_payment WHERE $whereSQL";
+        $sql = "SELECT COUNT(*) AS cnt FROM ims_house_payment WHERE $whereSQL";
         $stmt = $conn->prepare($sql);
         foreach ($params as $key => $val) {
             $stmt->bindValue(":$key", $val);
@@ -53,11 +53,41 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $totalRecordwithFilter = countRecords($conn, $whereSQL, $params);
 
     // ดึงข้อมูล
-    //$sql = "SELECT * FROM v_ims_house_payment WHERE $whereSQL ORDER BY $columnName $columnSortOrder LIMIT :start, :length";
-    $sql = "SELECT * FROM v_ims_house_payment 
-        WHERE $whereSQL 
-        ORDER BY id DESC 
-        LIMIT :start, :length";
+    $sql = "SELECT 
+        h.id, h.runno, h.doc_id, h.payment_date, h.house_number, h.detail, 
+        h.period_month_start, h.period_month_to, h.period_year, h.amount, 
+        h.picture_payment, h.remark, h.payment_type, h.payment_status,
+        CASE 
+            WHEN h.payment_status = 'Y' THEN 'ชำระเรียบร้อยแล้ว' 
+            WHEN h.payment_status = 'N' THEN 'ยังไม่ยืนยันการชำระ' 
+            ELSE 'ไม่ทราบสถานะ' 
+        END AS payment_status_desc,
+        h.created_at, h.updated_at, h.print_first_date, h.print_last_date, h.print_status,
+        m_start.month_name AS month_name_start,
+        m_to.month_name AS month_name_to,
+        house.alley,
+        house.contact_name,
+        house.phone_number,
+        h.line_user_id,
+        u.line_picture_profile,
+        h.line_picture_profile_show,
+        u.line_user_name,
+        hm.area_size,
+        hm.garbage_collection_fee,
+        hm.common_fee,
+        h.payment_method,
+        h.create_by,
+        h.approve_by,
+        h.update_count
+     FROM ims_house_payment h FORCE INDEX (PRIMARY)
+     LEFT JOIN ims_month m_start ON h.period_month_start = m_start.month
+     LEFT JOIN ims_month m_to ON h.period_month_to = m_to.month
+     LEFT JOIN ims_house house ON h.house_number = house.house_number
+     LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
+     LEFT JOIN v_ims_user u ON u.line_user_id = h.line_user_id
+     WHERE " . str_replace(['house_number', 'payment_status'], ['h.house_number', 'h.payment_status'], $whereSQL) . "
+     ORDER BY h.id DESC 
+     LIMIT :start, :length";
 
     $stmt = $conn->prepare($sql);
 

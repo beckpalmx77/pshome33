@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการลงทะเบียนเข้าใช้งานระบบ - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-section {
+            background-color: #00B900;
+            color: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #00B900;
+            border-bottom: 2px solid #00B900;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #00B900;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #00B900;
+        }
+        .note-box {
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #1b5e20;
+        }
+        .code-inline {
+            background-color: #f1f2f6;
+            color: #c0392b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header-section">
+            <h2 class="mb-2"><i class="fas fa-id-card"></i> คู่มือระบบลงทะเบียนผู้ใช้งาน</h2>
+            <p class="mb-0">สรุปแนวคิด โครงสร้างข้อมูล ขั้นตอน และความสัมพันธ์ในการลงทะเบียนเข้าใช้งานระบบ PS33 Home System</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+
+            <!-- SECTION 1: แนวคิด -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-lightbulb"></i> 1. แนวคิดการออกแบบระบบ (System Design Concept)</h4>
+                <p class="text-muted">
+                    ระบบลงทะเบียนผู้ใช้งานในโครงการ **PS33 Home System** ออกแบบมาเพื่อให้ลูกบ้านเข้าถึงนิติบุคคลและข้อมูลทรัพย์สินของตนเองได้สะดวกรวดเร็วที่สุด ผ่านเทคโนโลยี <strong>LINE LIFF (LINE Front-end Framework)</strong>
+                </p>
+                <div class="note-box my-3">
+                    <strong>จุดเด่น:</strong> ลูกบ้านไม่ต้องติดตั้งแอปพลิเคชันเพิ่มเติม เพียงกดผ่าน LINE OA ระบบจะดึงโปรไฟล์ LINE มาผูกและเชื่อมข้อมูลกับฐานข้อมูลบ้านของหมู่บ้านให้อัตโนมัติทันที
+                </div>
+                <p class="text-muted">
+                    ด้วยแนวคิดการผูกบัญชีครั้งเดียว (One-Time Linkage) นิติบุคคลจะสามารถส่งข้อความแจ้งยอดค้างชำระค่าส่วนกลาง ใบเสร็จรับเงินอิเล็กทรอนิกส์ (E-Receipt) หรือข่าวสารสำคัญผ่านระบบอัตโนมัติยิงตรงเข้าแชท LINE ของลูกบ้านได้อย่างแม่นยำรายบุคคล
+                </p>
+            </div>
+
+            <!-- SECTION 2: สิ่งที่เกี่ยวข้องและสถาปัตยกรรมข้อมูล -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-database"></i> 2. ข้อมูลและตารางที่เกี่ยวข้อง (Database Architecture)</h4>
+                <p class="text-muted">
+                    สถาปัตยกรรมฐานข้อมูลของระบบแบ่งการจัดเก็บออกเป็น 3 ตารางหลัก เพื่อรองรับการทำงานและการสลับเปลี่ยนบัญชีในอนาคต:
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%;">ชื่อตาราง</th>
+                                <th style="width: 30%;">ข้อมูลสำคัญที่บันทึก</th>
+                                <th style="width: 45%;">หน้าที่/บทบาทในระบบ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ims_house</strong></td>
+                                <td>เลขที่บ้าน (<span class="code-inline">house_number</span>), ชื่อผู้ติดต่อหลัก, เบอร์โทรศัพท์, หมายเลขซอย</td>
+                                <td>ข้อมูลมาสเตอร์ของทรัพย์สิน/บ้านแต่ละหลังในหมู่บ้าน (เป็นตารางกลางเชื่อมโยงประวัติบัญชีและการซ่อมแซม)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ims_house_line_user</strong></td>
+                                <td>LINE User ID (<span class="code-inline">line_user_id</span>), LINE Display Name, เบอร์โทรสำหรับผูกระบบ LINE (<span class="code-inline">line_phone</span>)</td>
+                                <td>เก็บความสัมพันธ์การผูกบัญชี LINE Account เข้ากับเลขที่บ้าน และเบอร์โทรศัพท์ของลูกบ้าน</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ims_user</strong></td>
+                                <td>Username (<span class="code-inline">user_id</span> ใช้เบอร์โทร), รหัสผ่าน (Hash), สิทธิ์การเข้าถึง (Role)</td>
+                                <td>ใช้ควบคุมสิทธิ์การล็อกอินเพื่อดูข้อมูลการเงิน ยอดค้างชำระ และการแจ้งซ่อมของตนเองในหน้า Dashboard</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted mt-3 small">
+                    <strong>แผนผังความสัมพันธ์ (Relationships):</strong><br>
+                    <i class="fas fa-link"></i> <span class="code-inline">ims_house_line_user.house_number</span> เชื่อมโยงกับ <span class="code-inline">ims_house.house_number</span> (ผูกตัวตนลูกบ้านเข้ากับที่อยู่หลัก)<br>
+                    <i class="fas fa-link"></i> <span class="code-inline">ims_house_line_user.line_phone</span> เชื่อมโยงกับ <span class="code-inline">ims_user.user_id</span> (ใช้เบอร์โทรเป็นกุญแจในการเข้าระบบหลัก)
+                </p>
+            </div>
+
+            <!-- SECTION 3: ขั้นตอนการลงทะเบียน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-tasks"></i> 3. ขั้นตอนการลงทะเบียนใช้งาน (Registration Workflow)</h4>
+                
+                <div class="step-item">
+                    <h5><span class="step-number">1</span>เข้าผ่าน LINE OA (LIFF Initialization)</h5>
+                    <p class="text-muted">
+                        ลูกบ้านเปิดเมนูลงทะเบียนจาก LINE OA ระบบจะทำการส่งผ่านโปรไฟล์จาก LINE SDK มายังหน้าฟอร์มสมัครสมาชิก <span class="code-inline">line_oa/house/register_house_user.php</span> โดยดึงรูปภาพ ชื่อ Display Name และ LINE User ID ขึ้นมารอโดยอัตโนมัติ
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span>กรอกข้อมูลส่วนบุคคล</h5>
+                    <p class="text-muted">
+                        ลูกบ้านกรอกเลขที่บ้าน (รูปแบบ เช่น 99/99), ซอย, ชื่อ-นามสกุลจริง, เบอร์โทรศัพท์เคลื่อนที่ (ที่จะใช้เป็น Username เข้าระบบ) และตั้งรหัสผ่านที่ต้องการ
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span>การบันทึกฝั่ง API หลังบ้าน</h5>
+                    <p class="text-muted">
+                        ข้อมูลทั้งหมดจะถูกส่งผ่าน AJAX ไปยัง API <span class="code-inline">line_oa/house/register_house_with_line_api.php</span>:
+                    </p>
+                    <ul class="text-muted small ps-3">
+                        <li><strong>ตรวจสอบความซ้ำซ้อน:</strong> เช็กว่า LINE ID หรือเบอร์โทรเคยสมัครแล้วหรือไม่ ป้องกันการลงทะเบียนขัดแย้ง</li>
+                        <li><strong>บันทึกตาราง LINE:</strong> เพิ่มประวัติการผูกบัญชีลงในตาราง <span class="code-inline">ims_house_line_user</span></li>
+                        <li><strong>สร้าง/อัปเดตสิทธิ์บัญชี:</strong> ตรวจเช็กตาราง <span class="code-inline">ims_user</span> หากนิติบุคคลยังไม่มีข้อมูลจะทำการสมัครสมาชิกให้ใหม่ แต่หากมีเบอร์โทรดังกล่าวในระบบนิติบุคคลอยู่แล้ว จะทำการอัปเดตรหัสผ่านใหม่และเปิดใช้งานบัญชี (Status = Active)</li>
+                        <li><strong>จัดระบบข้อมูลบ้าน:</strong> หากในตาราง <span class="code-inline">ims_house</span> ยังไม่มีข้อมูลที่อยู่ตามเลขที่บ้านนั้น ระบบจะจัดพิมพ์และสร้างข้อมูลมาสเตอร์บ้านหลังดังกล่าวเข้าไปรอโดยอัตโนมัติ</li>
+                    </ul>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">4</span>ส่งการต้อนรับใน LINE</h5>
+                    <p class="text-muted">
+                        เมื่อประมวลผลสำเร็จ หน้าจอจะแสดงป๊อปอัปยืนยันการลงทะเบียน พร้อมใช้ฟังก์ชัน LINE Bot SDK ส่งการ์ดหรือข้อความต้อนรับเข้าใช้งานระบบโดยตรงในหน้าต่างแชทของลูกบ้าน
+                    </p>
+                </div>
+            </div>
+
+            <!-- SECTION 4: การลงทะเบียนซ้ำ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-exclamation-triangle"></i> 4. การจัดการกรณีลงทะเบียนซ้ำ (Duplicate Registration Handling)</h4>
+                <p class="text-muted">
+                    ในกรณีที่ลูกบ้านที่เคยสมัครสมาชิกแล้วพยายามจะลงทะเบียนเข้าระบบซ้ำอีกครั้ง ระบบจะมีการบล็อกและจัดการใน 2 ระดับเพื่อป้องกันข้อผิดพลาด:
+                </p>
+                <div class="step-item">
+                    <h6>ระดับหน้าบ้าน (Frontend Check & Lock)</h6>
+                    <p class="text-muted small">
+                        ทันทีที่หน้าจอลงทะเบียนโหลดข้อมูล Profile LINE สำเร็จ ระบบจะยิงคำร้องไปยัง API เพื่อตรวจเช็กสถานะ หากพบว่า LINE ID ดังกล่าวผูกบัญชีแล้ว ระบบจะส่งหน้าจอแจ้งเตือนป๊อปอัป <strong>"⚠️ คุณลงทะเบียนแล้ว!"</strong> ขึ้นแสดงข้อมูล Name/House Number/Phone ของตนเองทันที และทำการล็อกทุกฟิลด์กรอกข้อมูลเป็น Read-only พร้อมปิดการทำงานปุ่มลงทะเบียน
+                    </p>
+                </div>
+                <div class="step-item">
+                    <h6>ระดับหลังบ้าน (Backend API Verification)</h6>
+                    <p class="text-muted small">
+                        หากข้อมูลพยายามยิงส่งตรงเข้าสู่ API <span class="code-inline">register_house_with_line_api.php</span> โดยไม่ผ่านขั้นตอนตรวจสอบหน้าบ้าน ฝั่ง API จะตรวจเช็กค่าของ <strong>LINE User ID</strong> และ <strong>เบอร์โทรศัพท์</strong> กับฐานข้อมูล:
+                    </p>
+                    <ul class="text-muted small">
+                        <li>หากพบค่าอย่างใดอย่างหนึ่งซ้ำซ้อนในตาราง <code>ims_house_line_user</code> ระบบจะปฏิเสธการบันทึก</li>
+                        <li>ย้อนคืนกระบวนการทำงานและตอบกลับข้อผิดพลาด <strong>"Line Account - มี User นี้ อยู่ในระบบแล้ว"</strong> ส่งผลให้ลูกบ้านสมัครไม่สำเร็จ ข้อมูลไม่ได้รับความเสียหาย</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SECTION 5: ความปลอดภัย -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-shield-alt"></i> 5. มาตรการรักษาความปลอดภัยของข้อมูล</h4>
+                <ul>
+                    <li class="mb-2 text-muted"><strong>Password Hashing:</strong> รหัสผ่านของผู้ใช้งานจะถูกเข้ารหัสผ่านฟังก์ชัน <span class="code-inline">password_hash()</span> แบบ bcrypt ก่อนนำลงไปเก็บในตาราง เพื่อความปลอดภัยสูงสุด</li>
+                    <li class="mb-2 text-muted"><strong>Input Validation:</strong> ฟิลด์กรอกบ้านเลขที่และเบอร์โทรศัพท์มือถือผ่านระบบควบคุมความถูกต้องผ่าน regex คัดกรองและสกัดอักขระพิเศษเพื่อความถูกต้องของฟอร์แมต</li>
+                    <li class="mb-2 text-muted"><strong>Log Tracking:</strong> ทุกกระบวนการลงทะเบียน ระบบบันทึก Log การสมัครสมาชิกสำเร็จและการทำงานผิดพลาดเข้าสู่ <span class="code-inline">line_house_user_register_log.txt</span> อัตโนมัติ</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-footer text-center bg-white border-0 py-3">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

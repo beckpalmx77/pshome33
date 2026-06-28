@@ -42,8 +42,6 @@ header('Content-Type: text/plain; charset=utf-8');
 echo "=== ACCOUNTING SYSTEM FULL SETUP & SYNC (V1.1) ===\n\n";
 
 try {
-    $conn->beginTransaction();
-
     // 1. สร้างตารางฐานข้อมูลหลัก
     echo "1. Creating Main Accounting Tables...\n";
     $sql_tables = "
@@ -86,6 +84,7 @@ try {
     echo AddColumnSafely($conn, 'ims_category', 'acc_code', "VARCHAR(20) DEFAULT NULL");
 
     // 3. เพิ่มข้อมูลผังบัญชีเริ่มต้น
+    $conn->beginTransaction();
     echo "3. Injecting Default Chart of Accounts...\n";
     $sql_coa = "INSERT IGNORE INTO `ims_chart_of_accounts` (`acc_code`, `acc_name`, `acc_group`) VALUES 
     ('1101', 'เงินสด', 'Asset'), ('1102', 'เงินฝากธนาคาร', 'Asset'), ('1103', 'ลูกหนี้ค่าส่วนกลาง', 'Asset'),
@@ -95,6 +94,12 @@ try {
     ('5103', 'ค่าน้ำประปา (ส่วนกลาง)', 'Expense'), ('5104', 'ค่าจ้าง รปภ.', 'Expense'), ('5105', 'ค่าจ้างรักษาความสะอาด', 'Expense')";
     $conn->exec($sql_coa);
     echo "   [OK] Default accounts injected.\n";
+
+    // Cleanup existing PV and RV GL entries to allow a complete clean re-sync
+    echo "Clearing existing PV and RV GL entries for a clean re-sync...\n";
+    $stmt_clean = $conn->prepare("DELETE FROM ims_gl_header WHERE source_type IN ('PV', 'RV')");
+    $stmt_clean->execute();
+    echo "   [OK] Cleared existing PV/RV GL entries.\n";
 
     // 4. Sync รายจ่าย (Expenses)
     echo "4. Synchronizing Expenses (Vouchers)...\n";
@@ -127,6 +132,23 @@ try {
         InternalPostToGL($conn, $p['payment_date'], $p['doc_id'], $desc, $entries, 'RV');
     }
     echo "   [OK] Processed " . count($rv_records) . " income entries.\n";
+
+    // 6. Sync รายรับเบ็ดเตล็ด (Other Receipts)
+    echo "6. Synchronizing Other Receipts (ims_reciepts)...\n";
+    $sql_other = "SELECT * FROM ims_reciepts 
+                  WHERE approve_status = 'Y' AND amount > 0 
+                  AND doc_id NOT IN (SELECT doc_no FROM ims_gl_header WHERE source_type = 'RV')";
+    $stmt_other = $conn->query($sql_other);
+    $other_records = $stmt_other->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($other_records as $r) {
+        $entries = [
+            ['acc_code' => InternalGetAccMapping($r['payment_method']), 'dr' => (float)$r['amount'], 'cr' => 0],
+            ['acc_code' => '4103', 'dr' => 0, 'cr' => (float)$r['amount']]
+        ];
+        $desc = "รับเงินจาก " . $r['supplier_name'] . " (" . $r['description'] . ") ตามเอกสาร " . $r['doc_id'];
+        InternalPostToGL($conn, $r['reciept_date'], $r['doc_id'], $desc, $entries, 'RV');
+    }
+    echo "   [OK] Processed " . count($other_records) . " other receipt entries.\n";
 
     $conn->commit();
     echo "\n=== ALL DONE! YOUR ACCOUNTING SYSTEM IS FULLY CONFIGURED ===\n";

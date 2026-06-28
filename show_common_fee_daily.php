@@ -66,7 +66,7 @@ function exportToCSV($data, $start_date, $end_date)
     header('Content-Disposition: attachment; filename=' . $filename);
 
     $output = fopen('php://output', 'w');
-    fputcsv($output, ['#', 'วันที่', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'จำนวนเงิน', 'สถานะ', 'ผู้สร้างรายการ', 'วิธีชำระ']);
+    fputcsv($output, ['#', 'วันที่', 'เลขที่เอกสาร', 'ผู้ชำระ', 'บ้านเลขที่', 'พื้นที่บ้าน ตรว', 'ชำระโดย', 'งวดเดือน', 'ปี', 'จำนวนงวด', 'ค่าส่วนกลาง', 'จำนวนเงิน', 'สถานะ', 'ผู้สร้างรายการ', 'วิธีชำระ']);
 
     $sum_amount = 0;
     foreach ($data as $index => $row) {
@@ -77,6 +77,7 @@ function exportToCSV($data, $start_date, $end_date)
         fputcsv($output, [
             $index + 1,
             $row->payment_date,
+            $row->doc_id,
             $row->detail,
             $row->house_number,
             $row->area_size,
@@ -92,7 +93,7 @@ function exportToCSV($data, $start_date, $end_date)
         ]);
     }
     // Summary Row
-    fputcsv($output, ['', '', '', '', '', '', '', '', '', 'รวมทั้งหมด', number_format($sum_amount, 2), '', '', '']);
+    fputcsv($output, ['', '', '', '', '', '', '', '', '', '', 'รวมทั้งหมด', number_format($sum_amount, 2), '', '', '']);
     fclose($output);
 }
 ?>
@@ -170,6 +171,7 @@ function exportToCSV($data, $start_date, $end_date)
                     <tr>
                         <th>#</th>
                         <th>วันที่</th>
+                        <th>เลขที่เอกสาร</th>
                         <th>ผู้ชำระ</th>
                         <th>บ้านเลขที่</th>
                         <th>พื้นที่ (ตรว.)</th>
@@ -188,6 +190,7 @@ function exportToCSV($data, $start_date, $end_date)
                         <tr>
                             <td class="text-center"><?php echo $index + 1; ?></td>
                             <td><?php echo htmlentities($row->payment_date); ?></td>
+                            <td><?php echo htmlentities($row->doc_id); ?></td>
                             <td><?php echo htmlentities($row->detail); ?></td>
                             <td class="text-center"><?php echo htmlentities($row->house_number); ?></td>
                             <td class="text-center"><?php echo htmlentities($row->area_size); ?></td>
@@ -213,7 +216,7 @@ function exportToCSV($data, $start_date, $end_date)
                     </tbody>
                     <tfoot>
                     <tr class="table-secondary">
-                        <th colspan="10" class="text-end fw-bold">รวมทั้งหมด:</th>
+                        <th colspan="11" class="text-end fw-bold">รวมทั้งหมด:</th>
                         <th id="totalAmountFooter" class="text-end fw-bold text-decoration-underline"></th>
                         <th colspan="3"></th>
                     </tr>
@@ -263,16 +266,16 @@ function exportToCSV($data, $start_date, $end_date)
                         typeof i === 'number' ? i : 0;
                 };
 
-                // คำนวณยอดรวมของคอลัมน์ Index 10 (ยอดชำระ)
+                // คำนวณยอดรวมของคอลัมน์ Index 11 (ยอดชำระ)
                 let total = api
-                    .column(10, { page: 'current' }) // ใช้ 'current' ถ้ายากให้รวมเฉพาะหน้า, ใช้ 'all' ถ้ารวมทั้งหมด
+                    .column(11, { page: 'current' }) // ใช้ 'current' ถ้ายากให้รวมเฉพาะหน้า, ใช้ 'all' ถ้ารวมทั้งหมด
                     .data()
                     .reduce(function (a, b) {
                         return parseValue(a) + parseValue(b);
                     }, 0);
 
                 // แสดงผลที่ Footer
-                $(api.column(10).footer()).html(
+                $(api.column(11).footer()).html(
                     total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                 );
             }

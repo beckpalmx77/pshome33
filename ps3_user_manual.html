@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานหน้าจอระบบ PSHOME33 (User Interface Manual)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #2980b9;
+            --accent-hover: #3498db;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #27ae60;
+            --danger-color: #c0392b;
+            --warning-color: #f39c12;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 10px 24px 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.3rem;
+            margin: 0;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 5px 0 0 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 24px;
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-menu li a.active {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            border-left-color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 40px 50px;
+            min-height: 100vh;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Cards and Visual Layouts */
+        .ui-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .ui-card-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .screen-badge {
+            font-size: 0.8rem;
+            background-color: #e2e8f0;
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .note-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid var(--success-color);
+            color: #14532d;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        .warning-box {
+            background-color: #fffbeb;
+            border-left: 4px solid var(--warning-color);
+            color: #78350f;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        /* Step List */
+        .step-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .step-list li {
+            margin-bottom: 10px;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 24px;
+            margin-bottom: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        /* Code/Doc References */
+        code {
+            font-family: Consolas, Monaco, monospace;
+            background-color: #f1f5f9;
+            color: #2980b9;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            body {
+                flex-direction: column;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>PSHOME33 Screens</h2>
+            <p>คู่มือหน้าจอระบบเบื้องต้น</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#dashboard" class="active">1. หน้าจอหลัก (Dashboard)</a></li>
+            <li><a href="#house-info">2. จัดการข้อมูลบ้าน (House)</a></li>
+            <li><a href="#payment">3. บันทึกชำระค่าส่วนกลาง</a></li>
+            <li><a href="#receipts">4. บันทึกรายรับเบ็ดเตล็ด</a></li>
+            <li><a href="#voucher">5. บันทึกใบสำคัญจ่าย (PV)</a></li>
+            <li><a href="#payroll">6. บันทึกเงินเดือน (Payroll)</a></li>
+            <li><a href="#accounting">7. ตรวจสอบสมุดรายวัน (GL)</a></li>
+            <li><a href="#reports">8. รายงานกระแสเงินสด</a></li>
+            <li><a href="#gl-processing">9. ผ่านรายการบัญชีแยกประเภท</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>คู่มือการใช้งานหน้าจอระบบ PSHOME33</h1>
+            <p class="subtitle">คู่มือการปฏิบัติตามหน้าจอ (UI Guide) สำหรับเจ้าหน้าที่และผู้ใช้งานนิติบุคคล</p>
+        </header>
+
+        <!-- 1. Dashboard Admin -->
+        <section id="dashboard">
+            <h2>1. หน้าจอหลัก (Dashboard_admin)</h2>
+            <p>หน้าจอแรกหลังจากเข้าสู่ระบบ ใช้แสดงข้อมูลสถิติที่สำคัญและการสรุปข้อมูลภาพรวมของหมู่บ้านพฤกษา 33</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>ข้อมูลและสถิติสำคัญที่แสดงผล</span>
+                    <span class="screen-badge">Dashboard_admin</span>
+                </div>
+                <ul>
+                    <li><strong>สรุปข้อมูลจำนวนบ้าน:</strong> แสดงจำนวนหลังคาเรือนทั้งหมดในโครงการ และแบ่งสถานะตามประเภทต่าง ๆ เช่น บ้านที่มีคนอยู่จริง บ้านว่าง</li>
+                    <li><strong>ยอดค้างชำระค่าส่วนกลาง:</strong> ยอดรวมเงินค้างชำระของลูกบ้านทุกหลังคาเรือน เพื่อประกอบการเร่งรัดติดตามหนี้สิน</li>
+                    <li><strong>ยอดจัดเก็บรายรับปัจจุบัน:</strong> แสดงยอดจัดเก็บค่าส่วนกลางของเดือนปัจจุบันที่ตรวจรับเงินและอนุมัติแล้ว</li>
+                    <li><strong>สถิติติดสติกเกอร์เข้า-ออก:</strong> แสดงข้อมูลบ้านที่ชำระเงินและได้รับสติกเกอร์ติดรถยนต์เพื่อคัดกรองรถบุคคลภายนอก</li>
+                </ul>
+                <div class="note-box">
+                    <strong>💡 คำแนะนำเพิ่มเติม:</strong> ข้อมูลบนการ์ดสถิติสามารถคลิกเข้าไปเพื่อดูรายละเอียดเชิงลึกของรายการนั้น ๆ ได้โดยตรง เพื่อความสะดวกในการตรวจสอบ
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. House Information Management -->
+        <section id="house-info">
+            <h2>2. หน้าจอจัดการข้อมูลบ้าน (manage_house)</h2>
+            <p>หน้าจอควบคุมและจัดการรายละเอียดบ้านเลขที่ รายชื่อเจ้าของบ้าน และสถานะสิทธิ์ในหมู่บ้าน</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>ฟังก์ชันและการจัดการข้อมูลหลัก</span>
+                    <span class="screen-badge">manage_house</span>
+                </div>
+                <ol class="step-list">
+                    <li><strong>การค้นหาข้อมูลบ้าน:</strong> ใช้แถบค้นหาด้านบนขวา โดยกรอกเลขที่บ้าน (เช่น <code>67/123</code>) หรือพิมพ์ค้นหาจากชื่อเจ้าของบ้าน</li>
+                    <li><strong>การแก้ไขรายละเอียดบ้าน:</strong> คลิกปุ่ม <code>Update</code> หลังรายชื่อบ้านที่ต้องการ เพื่อทำการแก้ไขข้อมูลต่าง ๆ:
+                        <ul>
+                            <li>ชื่อเจ้าของบ้าน, เบอร์โทรศัพท์ และข้อมูลการติดต่อ</li>
+                            <li>สถานะการอยู่อาศัย (มีผู้พักอาศัย / ว่างเปล่า)</li>
+                            <li>ยอดค้างชำระค่าส่วนกลางเริ่มต้น (สำหรับการเปิดรอบบัญชีครั้งแรก)</li>
+                        </ul>
+                    </li>
+                    <li><strong>การระงับหรือเปิดใช้งานสิทธิ์:</strong> จัดการสถานะสิทธิ์การผ่านเข้า-ออกหมู่บ้าน และการตรวจสอบสถานะสติกเกอร์ของบ้านแต่ละหลัง</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 3. Common Fee Payment Screen -->
+        <section id="payment">
+            <h2>3. หน้าจอบันทึกชำระค่าส่วนกลาง (manage_common_fee_payment)</h2>
+            <p>หน้าจอสำหรับเจ้าหน้าที่ในการคีย์ยอดและตรวจรับสลิปเงินโอนค่าส่วนกลางประจำเดือนของลูกบ้าน</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>ขั้นตอนการลงบันทึกรับชำระเงิน</span>
+                    <span class="screen-badge">manage_common_fee_payment</span>
+                </div>
+                <ol class="step-list">
+                    <li>คลิกปุ่ม <code>Add Record</code> เพื่อเปิดหน้าต่างบันทึกรับเงิน</li>
+                    <li><strong>ระบุรายละเอียดที่สำคัญ:</strong>
+                        <ul>
+                            <li>ระบุเลขที่บ้านที่มาชำระเงินจริง</li>
+                            <li>ตรวจสอบช่องยอดเงิน และเลือกวิธีการชำระเงิน (เงินสด หรือ โอนเงินผ่านธนาคาร)</li>
+                            <li>ระบุช่วงเดือนที่ชำระให้ชัดเจน (เดือนเริ่มต้น - เดือนสิ้นสุด) เพื่อให้ระบบนำไปคำนวณสิทธิ์การค้างชำระย้อนหลัง</li>
+                            <li>แนบไฟล์ภาพสลิปการโอนเงินเพื่อใช้เป็นหลักฐานและป้องกันปัญหาในอนาคต</li>
+                        </ul>
+                    </li>
+                    <li>กดปุ่ม <code>Save</code> เพื่อส่งข้อมูลไปรอการอนุมัติ</li>
+                    <li><strong>การอนุมัติการรับเงิน:</strong> เจ้าหน้าที่การเงินหรือผู้มีสิทธิ์จะทำการตรวจสอบหลักฐานสลิปโอนเงิน เมื่อพบว่าถูกต้อง ให้คลิก <code>Confirm/Approve</code> รายการจะส่งข้อมูลเข้าสมุดรายวันทั่วไป (GL) และพิมพ์ใบเสร็จรับเงินให้ลูกบ้านได้ทันที</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 4. Miscellaneous Receipts Screen -->
+        <section id="receipts">
+            <h2>4. หน้าจอบันทึกรายรับเบ็ดเตล็ด (manage_reciepts)</h2>
+            <p>หน้าจอสำหรับออกใบเสร็จรับเงินสำหรับกรณีที่ไม่ใช่ค่าส่วนกลาง เช่น การจำหน่ายสติกเกอร์รถยนต์ ดอกเบี้ยรับ หรือค่ารับเงินอเนกประสงค์อื่นๆ</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>ข้อควรระวังในการป้อนข้อมูล</span>
+                    <span class="screen-badge">manage_reciepts</span>
+                </div>
+                <div class="warning-box">
+                    <strong>⚠️ ฟิลด์บังคับกรอกเพิ่มเติม (Required field):</strong>
+                    <p style="margin: 5px 0 0 0;">
+                        ช่อง <strong>"ประเภทรายรับ/รายได้"</strong> ห้ามปล่อยว่างเป็นเด็ดขาด เพราะระบบต้องการหมวดหมู่บัญชีที่ชัดเจนไปทำเรื่องลงสมุดรายวัน (GL) หากว่างไว้ ระบบจะบล็อกการบันทึกด้วยแจ้งเตือนสีแดงกึ่งกลางหน้าจอ
+                    </p>
+                </div>
+                <ol class="step-list">
+                    <li>เลือกประเภทรายรับ (เช่น รายได้สติกเกอร์รถยนต์, รายได้ค่าปรับ, รายได้อื่น ๆ)</li>
+                    <li>ระบุชื่อผู้จ่ายเงิน และยอดเงินชำระจริง</li>
+                    <li>เลือกวิธีการรับชำระเงิน และกดปุ่มบันทึก</li>
+                    <li>เมื่อผ่านการยืนยันรายการ ข้อมูลจะถูกบันทึกเข้ารายงานสมุดรายวัน (GL) ในหมวดรายได้อื่น ๆ ทันที</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 5. Payment Voucher Screen -->
+        <section id="voucher">
+            <h2>5. หน้าจอบันทึกใบสำคัญจ่าย (manage_voucher)</h2>
+            <p>หน้าจอสำหรับบันทึกรายการใช้จ่ายเงินสดหรือเงินฝากของนิติบุคคลโครงการ เพื่อทำเรื่องขออนุมัติจ่ายจริง</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>การจัดทำเอกสารและฟังก์ชันแสดงผล</span>
+                    <span class="screen-badge">manage_voucher / manage_voucher_data</span>
+                </div>
+                <ol class="step-list">
+                    <li>กดสร้างใบสำคัญจ่ายใหม่ ระบุเลขที่และวันที่เอกสาร</li>
+                    <li><strong>ระบุวัตถุประสงค์ (จ่ายเพื่อ):</strong> บังคับระบุรายละเอียดให้ชัดเจนในช่อง <code>จ่ายเพื่อ</code> ห้ามละเว้น เพื่อผลประโยชน์ในการตรวจสอบบัญชีปลายปี</li>
+                    <li><strong>รายละเอียดรายการ:</strong> เพิ่มรายการและระบุราคาสินค้าหรือบริการแต่ละตัว ยอดเงินจะสะสมและแสดงรวมโดยชิดขวาเสมอ</li>
+                    <li>แนบเอกสารใบเสร็จ ใบกำกับภาษี หรือใบเสนอราคาจากคู่ค้าเข้าระบบ</li>
+                    <li>เมื่อได้รับการอนุมัติและเปลี่ยนสถานะเป็นอนุมัติจ่ายจริง ระบบจะผูกยอดบัญชีและบันทึกลงสู่รายงาน GL และปรับปรุงยอดค่าใช้จ่ายย่อย (EXP) ให้อัตโนมัติ</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 6. Payroll Screen -->
+        <section id="payroll">
+            <h2>6. หน้าจอบันทึกเงินเดือน (manage_payroll)</h2>
+            <p>หน้าจอจัดการคำนวณและออกใบแจ้งยอดจ่ายเงินเดือน (Payslip) ประจำเดือนของพนักงานและเจ้าหน้าที่นิติบุคคลโครงการ</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>กระบวนการจัดทำสลิปเงินเดือน</span>
+                    <span class="screen-badge">manage_payroll</span>
+                </div>
+                <ol class="step-list">
+                    <li>เลือกพนักงานทีละคน ระบุอัตราเงินเดือนพื้นฐานของพนักงาน</li>
+                    <li>กรอกค่าล่วงเวลา (OT), ค่าตอบแทนพิเศษ, หรือเงินหักต่าง ๆ เช่น เงินหักลางาน หรือเงินประกันค้างจ่าย</li>
+                    <li>ระบบจะคำนวณยอดเงินจ่ายสุทธิ และสร้างรหัสอ้างอิงของแต่ละรายการเป็น <code>PAY2025060001</code> (ตามปีและเดือนที่จ่าย)</li>
+                    <li><strong>การพิมพ์เอกสาร:</strong> พิมพ์ใบ Payslip หรือสลิปเงินเดือนให้พนักงานเป็นหลักฐานได้ทันที และส่งข้อมูลรายจ่ายสุทธิสะสมไปยังส่วนค่าใช้จ่ายย่อยของนิติบุคคล</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 7. Accounting Journal Screen -->
+        <section id="accounting">
+            <h2>7. หน้าจอตรวจสอบสมุดรายวัน (manage_gl / report_gl)</h2>
+            <p>หน้าจอตรวจสอบรายการบัญชีเดบิต (Dr) และเครดิต (Cr) เพื่อวัตถุประสงค์ในการทำสมุดรายวันและปิดงบดุล</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>การใช้หน้าจอตรวจสอบสำหรับฝ่ายบัญชี</span>
+                    <span class="screen-badge">manage_gl / report_gl</span>
+                </div>
+                <ul>
+                    <li><strong>การตรวจสอบแบบแยกประเภท:</strong> ค้นหารายการแยกประเภทตามรหัสผังบัญชี เช่น ดึงเฉพาะบัญชีเงินสด (<code>1101</code>) หรือเงินฝากธนาคาร (<code>1102</code>)</li>
+                    <li><strong>ยอดดุลสะสม:</strong> ตรวจสอบยอดผลต่างระหว่างฝั่งเดบิตและเครดิตของทุกรายการ ซึ่งระบบคุมยอดให้ยอดดุลต้องเท่ากันเสมอ (สมดุล Dr = Cr)</li>
+                    <li><strong>ตรวจสอบย้อนกลับ:</strong> ดึงเอกสารต้นทาง (เช่น คลิกตรวจสอบว่ารายการนี้มาจากใบสำคัญรับเงิน RV เลขอะไร หรือใบสำคัญจ่าย PV เลขอะไร)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 8. Cash Flow Report Screen -->
+        <section id="reports">
+            <h2>8. หน้าจอรายงานกระแสเงินสด (cash_flow_report)</h2>
+            <p>หน้าสรุปเปรียบเทียบความสัมพันธ์ของสภาพคล่องทางการเงินสดไหลเข้าและเงินไหลออกรายเดือน</p>
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>การวิเคราะห์ข้อมูลและเรียกรายงาน</span>
+                    <span class="screen-badge">cash_flow_report</span>
+                </div>
+                <ol class="step-list">
+                    <li><strong>เลือกตัวกรองช่วงเวลา:</strong> เลือกเดือนที่ต้องการวิเคราะห์ หรือทำเครื่องหมายถูกที่ช่อง <code>ทั้งหมด</code> เพื่อสรุปภาพรวมรายปี</li>
+                    <li><strong>เลือกปีปฏิทิน:</strong> เลือกปีที่ต้องการดูผลการดำเนินงาน</li>
+                    <li><strong>ผลลัพธ์การแสดงผล:</strong>
+                        <ul>
+                            <li>ยอดไหลเข้า (Inflows): เงินชำระค่าส่วนกลางและรายรับเบ็ดเตล็ดสะสมจริง</li>
+                            <li>ยอดไหลออก (Outflows): เงินจ่ายจากใบสำคัญจ่าย และยอดเงินทดรองจ่ายอื่น ๆ</li>
+                            <li>ยอดดุลกระแสเงินสดคงเหลือสุทธิ เพื่อวิเคราะห์เงินสำรองคงเหลือโครงการ</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 9. GL Processing Screens -->
+        <section id="gl-processing">
+            <h2>9. หน้าจอประมวลผลผ่านรายการแยกประเภทบัญชี</h2>
+            <p>หน้าจอควบคุมสำหรับผู้ดูแลระบบหรือเจ้าหน้าที่บัญชีในการประมวลผลข้อมูลรายรับ-รายจ่ายที่บันทึกไว้เข้าสู่สมุดรายวันทั่วไป (GL) ด้วยระบบแถบความคืบหน้า (Progress Bar)</p>
+            
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>9.1 หน้าจอประมวลผลบัญชีใหม่ทั้งหมด (GL Full Reprocess)</span>
+                    <span class="screen-badge">reprocess_all_to_gl</span>
+                </div>
+                <p>หน้าจอนี้ใช้สำหรับล้างและบันทึกบัญชีแยกประเภทใหม่ทั้งหมดตั้งแต่เริ่มต้นเพื่อปรับปรุงความถูกต้อง 100%</p>
+                <ol class="step-list">
+                    <li><strong>ตรวจสอบยอดรวมรายการสะสม:</strong> ตรวจสอบสถิติจำนวนใบสำคัญจ่าย (PV) และรายการรับเงิน (RV) ที่รอประมวลผลก่อนเริ่มทำรายการ</li>
+                    <li><strong>ปุ่มเริ่มประมวลผล:</strong> คลิกปุ่ม <code>เริ่มล้างและประมวลผลใหม่ทั้งหมด</code> เพื่อเริ่มทำงานระบบจะแสดงหน้าต่างแจ้งเตือนยืนยัน</li>
+                    <li><strong>ระหว่างประมวลผล:</strong> หน้าจอจะล็อกเมนูชั่วคราว แถบ Progress Bar สีแดงจะขยับตามกลุ่มงานจริงและเขียนข้อความลงกล่องแสดงผลประมวลผลทีละขั้นตอน</li>
+                    <li><strong>เมื่อเสร็จสิ้น:</strong> ระบบจะปลดล็อกหน้าจอ และแสดงปุ่มดาวน์โหลดรายงาน เพื่อให้ดาวน์โหลดเก็บเป็นรายงานบันทึกประวัติ หรือกด Reset เพื่อดูค่าใหม่</li>
+                </ol>
+            </div>
+
+            <div class="ui-card" style="border-left-color: var(--accent-color);">
+                <div class="ui-card-title">
+                    <span>9.2 หน้าจอผ่านรายการค้างโพสต์เข้า GL (GL Sync New Only)</span>
+                    <span class="screen-badge">sync_transactions_to_gl</span>
+                </div>
+                <p>หน้าจอนี้ใช้สำหรับสแกนหาเฉพาะรายรับหรือรายจ่ายที่บันทึกเข้ามาใหม่ แต่ยังค้างสะสมไม่ได้ลงบัญชีแยกประเภททั่วไป (GL)</p>
+                <ol class="step-list">
+                    <li><strong>ตรวจสอบรายการค้างโพสต์:</strong> ตรวจสอบว่ามีรายการค้างโพสต์กี่รายการในการ์ดข้อมูลสีแดง</li>
+                    <li><strong>กรณีไม่มีค้าง:</strong> หากข้อมูลอัปเดตหมดแล้ว ปุ่มกดจะเปลี่ยนเป็น <code>ข้อมูลแยกประเภทเป็นปัจจุบันแล้ว</code> สีเขียวและไม่สามารถกดส่งซ้ำได้</li>
+                    <li><strong>การทำรายการ:</strong> คลิกปุ่ม <code>เริ่มดึงข้อมูลผ่านบัญชี</code> เพื่อดึงข้อมูลค้างลงบัญชีผ่านระบบแถบสีเขียวแสดงผลความก้าวหน้าอย่างราบรื่น</li>
+                </ol>
+            </div>
+        </section>
+    </div>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top" title="กลับสู่ด้านบน">▲</a>
+
+    <!-- Sidebar Scroll Link Active Highlight -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuLinks = document.querySelectorAll('.sidebar-menu li a');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', function() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                menuLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

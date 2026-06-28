@@ -3,6 +3,7 @@ session_start();
 error_reporting(0); // It's recommended to turn this off in a production environment.
 
 include('../config/connect_db.php'); // Database connection file
+include('../util/gl_util.php'); // Utility for GL
 include('../config/lang.php'); // Language file
 include('../util/record_util.php'); // Utility for records
 include('../util/reorder_record.php'); // Utility for reordering records
@@ -111,46 +112,93 @@ if ($_POST["action"] === 'UPDATE') {
         $nRows = $current_data ? 1 : 0;
 
         if ($nRows > 0) {
-            // Get the current update_count
-            $current_update_count = $current_data['update_count'];
-            $month_name_start = $current_data['month_name_start'];
-            $month_name_to = $current_data['month_name_to'];
+            try {
+                $conn->beginTransaction();
 
-            // Set the new update_count, starting with the current value
-            $new_update_count = $current_update_count;
+                // Get the current update_count
+                $current_update_count = $current_data['update_count'];
+                $month_name_start = $current_data['month_name_start'];
+                $month_name_to = $current_data['month_name_to'];
 
-            // Increment update_count only if the payment status is being updated to 'Y'
-            if ($payment_status === 'Y') {
-                $new_update_count++;
+                // Set the new update_count, starting with the current value
+                $new_update_count = $current_update_count;
+
+                // Increment update_count only if the payment status is being updated to 'Y'
+                if ($payment_status === 'Y') {
+                    $new_update_count++;
+                }
+
+                // --- Step 2: Update the data in the database ---
+                $sql_update = "UPDATE ims_house_payment SET 
+                    payment_status = :payment_status, 
+                    approve_by = :approve_by, 
+                    period_month_start = :period_month_start, 
+                    period_month_to = :period_month_to,
+                    period_year = :period_year,
+                    payment_type = :payment_type,  
+                    amount = :amount, 
+                    update_count = :new_update_count,
+                    payment_method = :payment_method   
+                WHERE id = :id";
+
+                $query = $conn->prepare($sql_update);
+                $query->bindParam(':payment_status', $payment_status, PDO::PARAM_STR);
+                $query->bindParam(':approve_by', $approve_by, PDO::PARAM_STR);
+                $query->bindParam(':period_month_start', $period_month_start, PDO::PARAM_STR);
+                $query->bindParam(':period_month_to', $period_month_to, PDO::PARAM_STR);
+                $query->bindParam(':period_year', $period_year, PDO::PARAM_STR);
+                $query->bindParam(':payment_type', $payment_type, PDO::PARAM_STR);
+                $query->bindParam(':amount', $amount, PDO::PARAM_STR);
+                $query->bindParam(':new_update_count', $new_update_count, PDO::PARAM_INT);
+                $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
+                $query->bindParam(':id', $id, PDO::PARAM_INT);
+                $query->execute();
+
+                // --- Step 2.1: Accounting Posting (GL) ---
+                $sql_fetch_doc = "SELECT doc_id, payment_date, house_number FROM ims_house_payment WHERE id = :id";
+                $stmt_doc = $conn->prepare($sql_fetch_doc);
+                $stmt_doc->bindParam(':id', $id);
+                $stmt_doc->execute();
+                $doc_info = $stmt_doc->fetch(PDO::FETCH_ASSOC);
+                $doc_id = $doc_info['doc_id'] ?? '';
+                $payment_date = $doc_info['payment_date'] ?? '';
+                $house_no = $doc_info['house_number'] ?? '';
+
+                if ($doc_id) {
+                    // ลบรายการเดิมออกก่อนเสมอ (ถ้ามี)
+                    RemoveGLByDocNo($conn, $doc_id);
+
+                    // ถ้าสถานะเป็น 'Y' ให้ลงบัญชีใหม่
+                    if ($payment_status === 'Y') {
+                        $gl_entries = [];
+                        
+                        // Debit: Cash or Bank (1101/1102)
+                        $payment_acc = GetAccountCodeMapping($conn, $payment_method, 'payment');
+                        $gl_entries[] = [
+                            'acc_code' => $payment_acc,
+                            'dr' => $amount,
+                            'cr' => 0
+                        ];
+
+                        // Credit: Common Fee Revenue (4101)
+                        $gl_entries[] = [
+                            'acc_code' => '4101', 
+                            'dr' => 0,
+                            'cr' => $amount
+                        ];
+
+                        $gl_desc = "รับชำระค่าส่วนกลาง บ้านเลขที่ $house_no (งวด $month_name_start - $month_name_to ปี $period_year) ตามเอกสาร $doc_id";
+                        PostToGL($conn, $payment_date, $doc_id, $gl_desc, $gl_entries, 'RV');
+                    }
+                }
+
+                $conn->commit();
+                echo $save_success;
+            } catch (Exception $e) {
+                $conn->rollBack();
+                echo "Error: " . $e->getMessage();
+                exit;
             }
-
-            // --- Step 2: Update the data in the database ---
-            $sql_update = "UPDATE ims_house_payment SET 
-                payment_status = :payment_status, 
-                approve_by = :approve_by, 
-                period_month_start = :period_month_start, 
-                period_month_to = :period_month_to,
-                period_year = :period_year,
-                payment_type = :payment_type,  
-                amount = :amount, 
-                update_count = :new_update_count,
-                payment_method = :payment_method   
-            WHERE id = :id";
-
-            $query = $conn->prepare($sql_update);
-            $query->bindParam(':payment_status', $payment_status, PDO::PARAM_STR);
-            $query->bindParam(':approve_by', $approve_by, PDO::PARAM_STR);
-            $query->bindParam(':period_month_start', $period_month_start, PDO::PARAM_STR);
-            $query->bindParam(':period_month_to', $period_month_to, PDO::PARAM_STR);
-            $query->bindParam(':period_year', $period_year, PDO::PARAM_STR);
-            $query->bindParam(':payment_type', $payment_type, PDO::PARAM_STR);
-            $query->bindParam(':amount', $amount, PDO::PARAM_STR);
-            $query->bindParam(':new_update_count', $new_update_count, PDO::PARAM_INT);
-            $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
-            $query->bindParam(':id', $id, PDO::PARAM_INT);
-            $query->execute();
-
-            echo $save_success;
 
             // --- Step 3: Send LINE Notification if conditions are met ---
             // Condition: payment_status is 'Y' and it's the first update (update_count = 1)
@@ -411,12 +459,27 @@ if ($_POST["action"] === 'DELETE') {
 
     if ($nRows > 0) {
         try {
+            $conn->beginTransaction();
+
+            // ดึง doc_id จาก DB ก่อนลบ เพื่อนำไปลบรายการในสมุดรายวันทั่วไป (GL) ด้วย
+            $stmt_doc = $conn->prepare("SELECT doc_id FROM ims_house_payment WHERE id = :id");
+            $stmt_doc->bindParam(":id", $id, PDO::PARAM_INT);
+            $stmt_doc->execute();
+            $doc_id = $stmt_doc->fetchColumn();
+
+            if ($doc_id) {
+                RemoveGLByDocNo($conn, $doc_id);
+            }
+
             $sql = "DELETE FROM ims_house_payment WHERE id = :id";
             $query = $conn->prepare($sql);
             $query->bindParam(':id', $id, PDO::PARAM_INT);
             $query->execute();
+
+            $conn->commit();
             echo $del_success;
         } catch (Exception $e) {
+            $conn->rollBack();
             echo 'Message: ' . $e->getMessage();
         }
     }
@@ -441,34 +504,73 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     ## Search Query
     $searchQuery = " ";
     if ($searchValue != '') {
-        $searchQuery = " AND (house_number LIKE :house_number) ";
+        $searchQuery = " AND (h.house_number LIKE :house_number) ";
         $searchArray = array(
             'house_number' => "%$searchValue%"
         );
     }
 
     $where_house_number = " ";
+    $where_house_number_qualified = " ";
     if ($_SESSION['account_type'] === "user") {
         $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
     }
 
     ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $where_house_number;
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
     $stmt = $conn->prepare($sql_getdata);
     $stmt->execute();
     $records = $stmt->fetch();
     $totalRecords = $records['allcount'];
 
     ## Total number of records with filtering
-    $sql_getdata = "SELECT COUNT(*) AS allcount FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number;
-    $stmt = $conn->prepare($sql_getdata);
-    $stmt->execute($searchArray);
-    $records = $stmt->fetch();
-    $totalRecordwithFilter = $records['allcount'];
+    if ($searchQuery === " " || trim($searchQuery) === "") {
+        $totalRecordwithFilter = $totalRecords;
+    } else {
+        $sql_getdata = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
+                        WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
+        $stmt = $conn->prepare($sql_getdata);
+        $stmt->execute($searchArray);
+        $records = $stmt->fetch();
+        $totalRecordwithFilter = $records['allcount'];
+    }
 
     ## Fetch records
-    $sql_getdata = "SELECT * FROM v_ims_house_payment WHERE 1=1 " . $searchQuery . $where_house_number
-        . " ORDER BY id DESC " . " LIMIT :limit,:offset"; // Sort by ID descending
+    $sql_getdata = "SELECT 
+        h.id, h.runno, h.doc_id, h.payment_date, h.house_number, h.detail, 
+        h.period_month_start, h.period_month_to, h.period_year, h.amount, 
+        h.picture_payment, h.remark, h.payment_type, h.payment_status,
+        CASE 
+            WHEN h.payment_status = 'Y' THEN 'ชำระเรียบร้อยแล้ว' 
+            WHEN h.payment_status = 'N' THEN 'ยังไม่ยืนยันการชำระ' 
+            ELSE 'ไม่ทราบสถานะ' 
+        END AS payment_status_desc,
+        h.created_at, h.updated_at, h.print_first_date, h.print_last_date, h.print_status,
+        m_start.month_name AS month_name_start,
+        m_to.month_name AS month_name_to,
+        house.alley,
+        house.contact_name,
+        house.phone_number,
+        h.line_user_id,
+        u.line_picture_profile,
+        h.line_picture_profile_show,
+        u.line_user_name,
+        hm.area_size,
+        hm.garbage_collection_fee,
+        hm.common_fee,
+        h.payment_method,
+        h.create_by,
+        h.approve_by,
+        h.update_count
+     FROM ims_house_payment h FORCE INDEX (PRIMARY)
+     LEFT JOIN ims_month m_start ON h.period_month_start = m_start.month
+     LEFT JOIN ims_month m_to ON h.period_month_to = m_to.month
+     LEFT JOIN ims_house house ON h.house_number = house.house_number
+     LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
+     LEFT JOIN v_ims_user u ON u.line_user_id = h.line_user_id
+     WHERE 1=1 " . $searchQuery . $where_house_number_qualified
+     . " ORDER BY h.id DESC LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
 

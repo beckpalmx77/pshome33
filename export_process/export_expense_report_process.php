@@ -57,6 +57,7 @@ $query->execute();
 $header = [
     "จ่ายให้ (ผู้ขาย-ผู้รับเหมา)",
     "วันที่ใช้จ่าย",
+    "เลขที่เอกสาร",
     "เดือน",
     "ปี",
     "เลขที่ใบแจ้งหนี้",
@@ -80,9 +81,23 @@ fputcsv($output, array_map(
 
 // เขียนข้อมูลแต่ละแถว
 while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+    $expense_date_formatted = '';
+    if (!empty($row['expense_date'])) {
+        $date_obj = DateTime::createFromFormat('Y-m-d', $row['expense_date']);
+        if (!$date_obj) {
+            $date_obj = DateTime::createFromFormat('d-m-Y', $row['expense_date']);
+        }
+        if ($date_obj) {
+            $expense_date_formatted = $date_obj->format('d/m/Y');
+        } else {
+            $expense_date_formatted = $row['expense_date'];
+        }
+    }
+
     $line = [
         $row['receipt_name'],
-        $row['expense_date'],
+        $expense_date_formatted,
+        $row['doc_id'],
         $row['exp_month'],
         $row['exp_year'],
         $row['inv'],
