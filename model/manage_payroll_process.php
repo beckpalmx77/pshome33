@@ -68,6 +68,7 @@ if ($_GET["action"] === 'GET_DATA_DETAIL') {
             SELECT *
             FROM ims_payroll_detail
             WHERE doc_no = ?
+            ORDER BY CASE icd_type_sign WHEN '+' THEN 1 WHEN '-' THEN 2 ELSE 3 END ASC, icd_type_id ASC
         ");
         $stmt->execute([$doc_no]);
 

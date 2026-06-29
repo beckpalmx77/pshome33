@@ -77,7 +77,7 @@ foreach ($all_payroll_masters as $payroll_master) {
                                     FROM ims_payroll_detail ipd
                                     LEFT JOIN m_income_deduct_type icd ON ipd.icd_type_id = icd.icd_type_id
                                     WHERE ipd.doc_no = :doc_no
-                                    ORDER BY ipd.id ASC");
+                                    ORDER BY CASE ipd.icd_type_sign WHEN '+' THEN 1 WHEN '-' THEN 2 ELSE 3 END ASC, ipd.icd_type_id ASC");
     $stmt_details->bindParam(':doc_no', $current_doc_no, PDO::PARAM_STR);
     $stmt_details->execute();
     $payroll_details = $stmt_details->fetchAll(PDO::FETCH_ASSOC);
