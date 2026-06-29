@@ -136,6 +136,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
 
                                             <input type="text" class="form-control ms-2 me-2" name="payment_method"
                                                    id="payment_method"
+                                                   value="เงินสด"
                                                    placeholder="" style="width: 200px;">
                                         </div>
                                     </div>

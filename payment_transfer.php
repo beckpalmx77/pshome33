@@ -279,9 +279,10 @@ if (strlen($_SESSION['alogin']) === "") {
                                                             </div>
                                                         </div>
                                                         <div class="flex-grow-1">
-                                                            <input type="text" class="form-control"
-                                                                   name="payment_method" id="payment_method"
-                                                                   placeholder="ระบุวิธีการชำระเงิน" readonly>
+                                                             <input type="text" class="form-control"
+                                                                    name="payment_method" id="payment_method"
+                                                                    value="เงินสด"
+                                                                    placeholder="ระบุวิธีการชำระเงิน" readonly>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -19,11 +19,12 @@ $end_date_for_filename = DateTime::createFromFormat('d-m-Y', $end_date_str)->for
 $filename_prefix = "expenses-report-" . $start_date_for_filename . "_to_" . $end_date_for_filename;
 
 $sql = "SELECT * FROM v_ims_expenses
-        WHERE CASE 
+        WHERE (CASE 
             WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
             WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
             ELSE NULL 
-        END BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
+        END BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y'))
+        AND payment_method = 'เงินสด'
         ORDER BY CASE 
             WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
             WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')

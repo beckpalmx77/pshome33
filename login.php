@@ -94,14 +94,20 @@ $device_class = (isset($_SESSION['deviceType']) && $_SESSION['deviceType'] == 'c
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <button type="button" name="login-submit" id="login-submit" tabindex="4"
-                                            class="form-control btn btn-primary">
-                                            <span class="spinner">
-                                                <i class="icon-spin icon-refresh" id="spinner"></i></span> Log In
-                                    </button>
-                                </div>
-                            </div>
+                                 <div class="form-group">
+                                     <button type="button" name="login-submit" id="login-submit" tabindex="4"
+                                             class="form-control btn btn-primary">
+                                             <span class="spinner">
+                                                 <i class="icon-spin icon-refresh" id="spinner"></i></span> Log In
+                                     </button>
+                                 </div>
+                                 <hr>
+                                 <div class="text-center mt-3" style="font-size: 0.85rem;">
+                                     <a href="privacy-policy.php" target="_blank" class="text-secondary">นโยบายความเป็นส่วนตัว (Privacy Policy)</a>
+                                     <span class="text-muted mx-2">|</span>
+                                     <a href="refund-policy.php" target="_blank" class="text-secondary">นโยบายการคืนเงิน (Refund Policy)</a>
+                                 </div>
+                             </div>
                         </div>
                     </div>
                 </div>

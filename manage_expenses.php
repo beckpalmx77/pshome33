@@ -240,6 +240,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                         <input type="text"
                                                                                class="form-control flex-grow-1"
                                                                                name="payment_method" id="payment_method"
+                                                                               value="เงินสด"
                                                                                placeholder="ระบุวิธีการชำระเงิน"
                                                                                readonly>
                                                                     </div>
@@ -716,7 +717,9 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#inv').val("");
                 $('#qty').val("");
                 $('#amount').val("");
-                $('#payment_method').val("");
+                $('#payment_method').val("เงินสด");
+                $('input[name="payment_method_radio"]').prop('checked', false);
+                $('input[name="payment_method_radio"][value="เงินสด"]').prop('checked', true);
                 $('#price_per_unit').val("");
                 $('#total_amount').val("");
 
@@ -1093,17 +1096,14 @@ if (strlen($_SESSION['alogin']) == "") {
     </script>
 
     <script>
-        // สมมุติว่า payment_method ถูกเซ็ตมาจาก Ajax success แล้ว
-        // เช่น: var payment_method = response.payment_method;
-
-        // ตั้งค่าลงใน hidden input
-        $('#payment_method').val(payment_method);
-
-        // เคลียร์ radio ทั้งหมดก่อน
-        $('input[name="payment_method_radio"]').prop('checked', false);
-
-        // ตั้งค่าตามค่า payment_method
-        $('input[name="payment_method_radio"][value="' + payment_method + '"]').prop('checked', true);
+        $(document).ready(function() {
+            // ตั้งค่าเริ่มต้นสำหรับวิธีการชำระเงินเมื่อโหลดหน้าจอ
+            if ($('#payment_method').val() === "" || $('#payment_method').val() === null) {
+                $('#payment_method').val("เงินสด");
+                $('input[name="payment_method_radio"]').prop('checked', false);
+                $('input[name="payment_method_radio"][value="เงินสด"]').prop('checked', true);
+            }
+        });
     </script>
 
     </body>
