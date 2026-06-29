@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorMatch AI - Portal & LIFF Simulator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(226, 232, 240, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --primary: #7c3aed; /* Violet */
+            --primary-light: #f5f3ff;
+            --secondary: #059669; /* Emerald */
+            --secondary-light: #ecfdf5;
+            --accent: #2563eb; /* Blue */
+            --warning: #d97706;
+            --danger: #dc2626;
+            --line-green: #06c755;
+            
+            --gradient-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+            --shadow-lg: 0 20px 50px -12px rgba(15, 23, 42, 0.1);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* Navbar */
+        nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            background: rgba(15, 23, 42, 0.05);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            transition: all 0.3s;
+        }
+
+        .status-badge.active-user {
+            background: var(--primary-light);
+            border-color: rgba(124, 58, 237, 0.2);
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.92rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-line {
+            background-color: var(--line-green);
+            color: white;
+            box-shadow: 0 4px 12px rgba(6, 199, 85, 0.2);
+        }
+        .btn-line:hover {
+            background-color: #05b04b;
+        }
+
+        /* Main Layout Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        @media (min-width: 800px) {
+            .dashboard-grid {
+                grid-template-columns: 1.20fr 1.80fr;
+            }
+            .full-width-column {
+                grid-column: span 2;
+            }
+        }
+
+        /* Premium Card */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .select-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .radio-box {
+            flex: 1;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            background: #fff;
+            transition: all 0.3s;
+        }
+
+        .radio-box input {
+            cursor: pointer;
+        }
+
+        .radio-box:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .radio-box.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Webcam Interface */
+        .webcam-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #0f172a;
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        #webcam-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        /* Biometric Scanning Overlay */
+        .scanner-overlay {
+            position: absolute;
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            width: 60%;
+            aspect-ratio: 1/1;
+            pointer-events: none;
+            box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scanner-overlay::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: var(--primary);
+            box-shadow: 0 0 10px 2px var(--primary);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .webcam-placeholder {
+            position: absolute;
+            color: #94a3b8;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Alerts & Info Boxes */
+        .alert {
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid transparent;
+        }
+
+        .alert-info { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+        .alert-success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+        .alert-warning { background: #fffbeb; border-color: #fef3c7; color: #92400e; }
+        .alert-danger { background: #fef2f2; border-color: #fee2e2; color: #991b1b; }
+
+        /* Tutor Profile Lists & Results */
+        .tutor-card {
+            background: #fff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            margin-bottom: 18px;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(124, 58, 237, 0.25);
+        }
+
+        .tutor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .tutor-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .tutor-match-badge {
+            background: var(--primary-light);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .tutor-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .tutor-detail-item {
+            color: var(--text-secondary);
+        }
+
+        .tutor-detail-item strong {
+            color: var(--text-primary);
+        }
+
+        .tutor-desc {
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Contact Details Badge Box */
+        .contact-box {
+            background: rgba(37, 99, 235, 0.03);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .contact-title {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-item {
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+
+        .contact-item strong {
+            color: var(--text-primary);
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .tab-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .tab-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Modal Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            padding: 25px;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* Appointment Cards list */
+        .appt-card {
+            background: #fff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--warning);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .appt-card.status-approved { border-left-color: var(--secondary); }
+        .appt-card.status-declined { border-left-color: var(--danger); }
+
+        .appt-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .appt-details {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .appt-status-badge {
+            font-size: 0.78rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .status-pending-badge { background: #fef3c7; color: #d97706; }
+        .status-approved-badge { background: #d1fae5; color: #059669; }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        
+        .badge-subject {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--accent);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav>
+        <div class="logo-area">
+            <span>✨ TutorMatch AI Portal</span>
+        </div>
+        <div class="nav-status">
+            <span id="user-status-text" class="status-badge">ไม่ได้ลงชื่อเข้าใช้งาน</span>
+            <button id="logout-btn" class="btn btn-secondary btn-danger hidden" onclick="logout()">ออกจากระบบ</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- Welcome Setup Guide -->
+        <div class="card full-width-column" style="margin-top: 20px;">
+            <div class="card-header-gradient"></div>
+            <div class="card-title">👋 ยินดีต้อนรับสู่ระบบจำลอง LIFF Portal</div>
+            <p>ระบบนี้จำลองหน้าต่างการทำงานของ LINE LIFF เพื่อให้คุณสามารถทดสอบ **การสแกนใบหน้าตรวจสอบตัวตน**, **การค้นหาติวเตอร์ด้วย AI** และ **การติดต่อนัดหมายเรียน**</p>
+            <div class="alert alert-info" style="margin-top: 15px;">
+                💡 <b>เคล็ดลับการทดสอบ:</b> คลิกปุ่ม "จำลองบัญชีติวเตอร์ตัวอย่าง" เพื่อเพิ่มติวเตอร์ 5 สาขาวิชาที่มีความถนัด ราคา และข้อมูลช่องทางการติดต่อครบถ้วนลงฐานข้อมูลได้ทันที!
+            </div>
+            <button class="btn btn-primary" onclick="seedMockTutors()">🌱 จำลองบัญชีติวเตอร์ตัวอย่าง (5 ราย)</button>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- LEFT COLUMN: Account Management & Biometrics (Face Verification) -->
+            <div>
+                <div class="card" style="margin-bottom: 25px;">
+                    <div class="card-header-gradient"></div>
+                    
+                    <div class="tabs-header">
+                        <div class="tab-item active" id="tab-login-btn" onclick="toggleAuthTab('login')">1. ยืนยันตัวตน (สแกนใบหน้า)</div>
+                        <div class="tab-item" id="tab-reg-btn" onclick="toggleAuthTab('register')">2. สมัครสมาชิก</div>
+                    </div>
+
+                    <!-- VIEW A: LOGIN WITH FACE -->
+                    <div id="auth-login-view">
+                        <p style="margin-bottom: 15px; font-size: 0.92rem; color: var(--text-secondary);">
+                            ป้อนชื่อผู้ใช้งานของคุณ และสแกนใบหน้าเพื่อเข้าระบบ
+                        </p>
+                        
+                        <div class="form-group">
+                            <label for="login-username">ชื่อผู้ใช้งาน (Username)</label>
+                            <input type="text" id="login-username" class="form-control" placeholder="ระบุ username เช่น student01, tutor01">
+                        </div>
+
+                        <!-- Webcam UI Box -->
+                        <div class="webcam-container">
+                            <video id="webcam-feed" autoplay playsinline muted></video>
+                            <div class="scanner-overlay" id="scanner-line"></div>
+                            <div class="webcam-placeholder" id="webcam-placeholder">
+                                <span>📷 กล้องยังไม่เปิด</span>
+                                <button class="btn btn-secondary" onclick="startWebcam()" style="font-size: 0.8rem; padding: 6px 12px;">เปิดกล้อง</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn btn-primary" onclick="verifyFaceIdentity()">
+                                🔍 สแกนและยืนยันตัวตน
+                            </button>
+                            <button class="btn btn-secondary" onclick="captureFaceAndRegisterBiometrics()" id="register-bio-btn" class="hidden">
+                                💾 บันทึกรูปเพื่อลงทะเบียนใบหน้า
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VIEW B: REGISTER NEW ACCOUNT -->
+                    <div id="auth-register-view" class="hidden">
+                        <p style="margin-bottom: 15px; font-size: 0.92rem; color: var(--text-secondary);">
+                            สร้างบัญชีผู้ใช้งานใหม่ลงระบบ
+                        </p>
+                        
+                        <div class="form-group">
+                            <label for="reg-username">ชื่อผู้ใช้งาน (Username / ภาษาอังกฤษ)</label>
+                            <input type="text" id="reg-username" class="form-control" placeholder="เช่น tutor_somchai">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-name">ชื่อ-นามสกุลจริง</label>
+                            <input type="text" id="reg-name" class="form-control" placeholder="เช่น สมชาย ใจดี">
+                        </div>
+
+                        <div class="form-group">
+                            <label>ประเภทบัญชีผู้ใช้</label>
+                            <div class="select-group">
+                                <div class="radio-box active" id="role-student-box" onclick="selectRole('student')">
+                                    <input type="radio" name="reg-role" value="student" checked style="display:none;">
+                                    🎓 ผู้เรียน (Student)
+                                </div>
+                                <div class="radio-box" id="role-tutor-box" onclick="selectRole('tutor')">
+                                    <input type="radio" name="reg-role" value="tutor" style="display:none;">
+                                    👨‍🏫 ติวเตอร์ (Tutor)
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" onclick="registerUser()">
+                            ✅ สมัครสมาชิกใหม่
+                        </button>
+                    </div>
+
+                    <div id="auth-feedback" style="margin-top: 15px;"></div>
+                </div>
+
+                <!-- NEW SECTION: MY APPOINTMENTS LISTING (Shows when logged in) -->
+                <div class="card hidden" id="my-appointments-card">
+                    <div class="card-header-gradient"></div>
+                    <div class="card-title">📅 ตารางนัดหมายเรียนของฉัน</div>
+                    <div id="appointments-list-container">
+                        <p style="color: var(--text-secondary); font-style: italic; font-size: 0.85rem;">ไม่มีข้อมูลการนัดหมาย</p>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- RIGHT COLUMN: Dynamic Panels (Tutor Setup Form or Student AI Search Panel) -->
+            <div class="card" id="main-portal-view">
+                <div class="card-header-gradient"></div>
+                
+                <!-- DEFAULT VIEW: NOT LOGGED IN -->
+                <div id="portal-default-msg" class="text-center" style="padding: 40px 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
+                    <h3>กรุณายืนยันตัวตนก่อนเข้าใช้งานระบบ</h3>
+                    <p style="margin-top: 10px;">ใช้เมนูด้านซ้ายเพื่อสมัครสมาชิกหรือสแกนใบหน้าเพื่อเข้าสู่ระบบ เพื่อทำกิจกรรมจับคู่หรือกรอกข้อมูลติวเตอร์</p>
+                </div>
+
+                <!-- TUTOR PROFILE VIEW -->
+                <div id="portal-tutor-view" class="hidden">
+                    <div class="card-title">👨‍🏫 ข้อมูลประวัติความถนัด และช่องทางติดต่อ (สำหรับ Tutor)</div>
+                    <p style="margin-bottom: 20px; color: var(--text-secondary);">โปรดป้อนประวัติ และระบุช่องทางการติดต่อสำหรับผู้เรียนเพื่อใช้นัดหมายเรียน</p>
+                    
+                    <div class="form-group">
+                        <label for="tutor-edu">ประวัติการศึกษา</label>
+                        <input type="text" id="tutor-edu" class="form-control" placeholder="เช่น ปริญญาตรี อักษรศาสตร์ จุฬาฯ">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tutor-subjects">วิชาหลักที่สอน (ระบุคั่นด้วยเครื่องหมายจุลภาค ,)</label>
+                        <input type="text" id="tutor-subjects" class="form-control" placeholder="เช่น ภาษาไทย, ภาษาอังกฤษ, O-NET">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tutor-expertise">ประวัติความรู้ ประสบการณ์ และความถนัดเฉพาะตัว</label>
+                        <textarea id="tutor-expertise" class="form-control" placeholder="เช่น มีประสบการณ์ติวภาษาไทยมา 5 ปี เน้นสอนกลุ่มเตรียมสอบเข้า ม.4 และเตรียมตัวสอบเรียนต่อต่างประเทศ"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tutor-style">สไตล์การสอน / จุดขายส่วนตัว</label>
+                        <input type="text" id="tutor-style" class="form-control" placeholder="เช่น เน้นตลก สนุกสนาน, เน้นลุยโจทย์เข้มข้น, เน้นเข้าใจแก่นไม่จำสูตร">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tutor-price">อัตราค่าสอนต่อชั่วโมง (บาท / ชม.)</label>
+                        <input type="number" id="tutor-price" class="form-control" value="250">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tutor-avail">ช่วงเวลาที่สะดวกสอน</label>
+                        <input type="text" id="tutor-avail" class="form-control" placeholder="เช่น เสาร์-อาทิตย์ เต็มวัน, วันธรรมดาเย็น">
+                    </div>
+
+                    <!-- New Contact Info Fields -->
+                    <h4 style="margin: 20px 0 10px 0; font-size: 1.05rem; font-weight: 600; color: var(--accent);">📞 ข้อมูลช่องทางติดต่อ & นัดหมายเรียน</h4>
+                    
+                    <div class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 10px;">
+                        <div class="form-group">
+                            <label for="tutor-contact-line">LINE ID</label>
+                            <input type="text" id="tutor-contact-line" class="form-control" placeholder="เช่น tutor_line_id">
+                        </div>
+                        <div class="form-group">
+                            <label for="tutor-contact-phone">เบอร์โทรศัพท์ติดต่อ</label>
+                            <input type="text" id="tutor-contact-phone" class="form-control" placeholder="เช่น 089-xxxxxxx">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tutor-contact-email">อีเมล</label>
+                        <input type="email" id="tutor-contact-email" class="form-control" placeholder="เช่น tutor@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tutor-appointment-instruction">คำแนะนำการนัดหมายเรียนหรือการจองเวลา</label>
+                        <textarea id="tutor-appointment-instruction" class="form-control" placeholder="เช่น สามารถระบุเวลาจองคลาสเรียนทดลองฟรี 30 นาทีก่อนล่วงหน้าได้ 3 วัน หรือทักมาผ่าน LINE ได้เลยครับ"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; height: 48px;" onclick="saveTutorProfile()">
+                        💾 บันทึกข้อมูลและสร้าง Vector Matching Index
+                    </button>
+                    <div id="tutor-feedback" style="margin-top: 15px;"></div>
+                </div>
+
+                <!-- STUDENT MATCHING VIEW -->
+                <div id="portal-student-view" class="hidden">
+                    <div class="card-title">🔍 ค้นหาและเปรียบเทียบติวเตอร์ (สำหรับ Student)</div>
+                    <p style="margin-bottom: 20px; color: var(--text-secondary);">ป้อนข้อมูลความต้องการเรียนของคุณ ระบบ AI จะทำการวิเคราะห์และแสดงโปรไฟล์ความรู้ ความถนัด พร้อมช่องทางติดต่อและการนัดหมาย</p>
+                    
+                    <div class="form-group">
+                        <label for="student-req">ระบุความต้องการในการเรียนพิเศษ (เขียนบรรยายภาษาไทยได้อิสระ)</label>
+                        <textarea id="student-req" class="form-control" style="min-height: 100px;" placeholder="เช่น ต้องการหาคนสอนคณิตศาสตร์ระดับประถมปลาย เน้นติวสอบเข้า ม.1 โรงเรียนชื่อดัง อยากได้ครูสอนสนุกสนาน ไม่น่าเบื่อ"></textarea>
+                    </div>
+
+                    <div class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="student-subject-filter">ระบุวิชาหลัก (เจาะจงวิชา)</label>
+                            <input type="text" id="student-subject-filter" class="form-control" placeholder="เช่น คณิตศาสตร์ (ระบุหรือไม่ก็ได้)">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="student-budget">งบประมาณสูงสุดต่อชั่วโมง (บาท)</label>
+                            <input type="number" id="student-budget" class="form-control" placeholder="เช่น 300 (ระบุหรือไม่ก็ได้)">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; height: 50px; font-size: 1.05rem;" onclick="matchTutorsByAI()">
+                        🤖 วิเคราะห์และจับคู่ติวเตอร์อัจฉริยะ
+                    </button>
+
+                    <!-- Match Results Container -->
+                    <div style="margin-top: 25px;">
+                        <h4 style="margin-bottom: 15px; font-weight: 600;" id="results-count">ผลการจับคู่ติวเตอร์:</h4>
+                        <div id="match-results-container">
+                            <p style="color: var(--text-secondary); font-size: 0.95rem; font-style: italic;">ยังไม่ได้ทำการค้นหา... ป้อนความต้องการของคุณและกดวิเคราะห์เพื่อค้นหาติวเตอร์ที่เหมาะสมที่สุด</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- APPOINTMENT MODAL -->
+    <div class="modal-overlay" id="appointment-modal">
+        <div class="modal-content">
+            <button class="close-modal-btn" onclick="closeAppointmentModal()">×</button>
+            <div class="modal-title" id="appt-modal-title">📅 นัดหมายทดลองเรียนพิเศษ</div>
+            
+            <input type="hidden" id="appt-tutor-id">
+            
+            <div class="form-group">
+                <label for="appt-date">เลือกวันที่เรียน</label>
+                <input type="date" id="appt-date" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="appt-time">เลือกช่วงเวลาเรียน</label>
+                <select id="appt-time" class="form-control">
+                    <option value="09:00 - 11:00 น.">09:00 - 11:00 น.</option>
+                    <option value="13:00 - 15:00 น.">13:00 - 15:00 น.</option>
+                    <option value="16:00 - 18:00 น.">16:00 - 18:00 น.</option>
+                    <option value="18:30 - 20:30 น.">18:30 - 20:30 น.</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="appt-notes">ระบุหัวข้อที่อยากเน้น หรือรายละเอียดเพิ่มเติม</label>
+                <textarea id="appt-notes" class="form-control" placeholder="เช่น ขอปูพื้นฐานเศษส่วนและทศนิยมเพื่อเตรียมตัวสอบย่อยสัปดาห์หน้าครับ"></textarea>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitAppointment()">
+                ✅ ส่งคำขอนัดหมายเรียน
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden canvas for capturing webcam screenshots -->
+    <canvas id="capture-canvas" style="display:none;"></canvas>
+
+    <!-- App Logic Script -->
+    <script>
+        let currentRole = 'student';
+        let currentUser = null;
+        let webcamStream = null;
+
+        // Auto initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check if user is already in session
+            const cachedUser = localStorage.getItem('currentUser');
+            if (cachedUser) {
+                currentUser = JSON.parse(cachedUser);
+                updateNavbarStatus();
+                showRolePanel();
+                loadUserAppointments();
+            }
+        });
+
+        // Tabs Toggle (Login vs Register)
+        function toggleAuthTab(tab) {
+            const loginBtn = document.getElementById('tab-login-btn');
+            const regBtn = document.getElementById('tab-reg-btn');
+            const loginView = document.getElementById('auth-login-view');
+            const regView = document.getElementById('auth-register-view');
+            const feedback = document.getElementById('auth-feedback');
+            
+            feedback.innerHTML = '';
+
+            if (tab === 'login') {
+                loginBtn.classList.add('active');
+                regBtn.classList.remove('active');
+                loginView.classList.remove('hidden');
+                regView.classList.add('hidden');
+                document.getElementById('register-bio-btn').classList.add('hidden');
+            } else {
+                loginBtn.classList.remove('active');
+                regBtn.classList.add('active');
+                loginView.classList.add('hidden');
+                regView.classList.remove('hidden');
+            }
+        }
+
+        // Select Role in Register form
+        function selectRole(role) {
+            currentRole = role;
+            const studentBox = document.getElementById('role-student-box');
+            const tutorBox = document.getElementById('role-tutor-box');
+            
+            if (role === 'student') {
+                studentBox.classList.add('active');
+                tutorBox.classList.remove('active');
+            } else {
+                studentBox.classList.remove('active');
+                tutorBox.classList.add('active');
+            }
+        }
+
+        // --- WEBCAM FUNCTIONALITY ---
+        async function startWebcam() {
+            const video = document.getElementById('webcam-feed');
+            const placeholder = document.getElementById('webcam-placeholder');
+            
+            try {
+                webcamStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480, facingMode: 'user' } 
+                });
+                video.srcObject = webcamStream;
+                video.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } catch (err) {
+                console.error("Camera access error:", err);
+                alert("ไม่สามารถเข้าถึงกล้องหน้าได้ กรุณาตรวจสอบสิทธิ์การแชร์กล้องในเว็บบราวเซอร์ของคุณ");
+            }
+        }
+
+        function captureImage() {
+            if (!webcamStream) return null;
+            
+            const video = document.getElementById('webcam-feed');
+            const canvas = document.getElementById('capture-canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/jpeg', 0.85);
+        }
+
+        // --- API CALLS ---
+        
+        // 1. Seed Mock Tutors (with mock contacts and instructions)
+        async function seedMockTutors() {
+            const mockTutors = [
+                {
+                    user: { username: "tutor_kora", name: "ครูโก้ คณิตศาสตร์", role: "tutor" },
+                    profile: { education: "วิศวกรรมศาสตร์ บัญฑิต จุฬาฯ", subjects: "คณิตศาสตร์, ฟิสิกส์, PAT1", expertise: "อดีตตัวแทนโอลิมปิกวิชาการ มีประสบการณ์สอนมากกว่า 6 ปี สอนสนุก ไม่เครียด ปูทฤษฎีแน่นลุยโจทย์สอบตรง", teaching_style: "เน้นเข้าใจแก่นไม่จำสูตร ลุยโจทย์ยากเป็นหลัก", price_per_hour: 300, availability: "เสาร์-อาทิตย์ เต็มวัน", contact_line: "koko.math", contact_phone: "089-111-2222", contact_email: "koko.math@gmail.com", appointment_instruction: "โปรดจองเวลาก่อนสอนจริง 3 วัน ทักมาสอบถามตารางเวลาผ่าน Line ก่อนได้ครับ ยินดีให้บริการทดลองเรียนฟรี 30 นาทีแรก" }
+                },
+                {
+                    user: { username: "tutor_natty", name: "พี่แนตตี้ อิงลิช", role: "tutor" },
+                    profile: { education: "ศศศาสตรบัณฑิต เอกภาษาอังกฤษ มธ.", subjects: "ภาษาอังกฤษ, IELTS, GAT", expertise: "เชี่ยวชาญการเตรียมสอบสัมภาษณ์ ปรับพิกัดสำเนียง และทริคพิชิตพาร์ท Grammar แกรมม่าลุยไว", teaching_style: "เน้นตลก สนุกสนาน คุยภาษาอังกฤษชิลๆ เป็นกันเองเหมือนพี่สาว", price_per_hour: 250, availability: "วันธรรมดาช่วงเย็น 18.00-21.00 น.", contact_line: "natty.english", contact_phone: "081-333-4444", contact_email: "natty.eng@gmail.com", appointment_instruction: "ทักไลน์เพื่อขอใบเอกสารคำศัพท์เบื้องต้นก่อนนัดจองเรียน สามารถเลือกเรียนผ่าน Zoom หรือตัวต่อตัวได้ค่ะ" }
+                },
+                {
+                    user: { username: "tutor_somkiat", name: "ดร.สมเกียรติ วิทยาศาสตร์", role: "tutor" },
+                    profile: { education: "ปริญญาเอก ฟิสิกส์ มหาวิทยาลัยมิชิแกน", subjects: "ฟิสิกส์, เคมี, วิทยาศาสตร์ทั่วไป", expertise: "อาจารย์มหาวิทยาลัย อธิบายเนื้อหาลึกซึ้ง เหมาะสำหรับเด็กเตรียมสอบแข่งขันหรือสอบสอวน. คลี่คลายโจทย์ซับซ้อน", teaching_style: "เน้นวิชาการเข้มข้น ลุยโจทย์ซับซ้อน สอบเข้า ม.4 โรงเรียนดัง", price_per_hour: 450, availability: "วันอาทิตย์ บ่ายโมงเป็นต้นไป", contact_line: "somkiat.physics", contact_phone: "088-777-8888", contact_email: "somkiat.dr@academy.com", appointment_instruction: "สำหรับเด็กที่ต้องการเน้นติวเข้มเพื่อเตรียมตัวสอบ สอวน. ฟิสิกส์/เคมี รบกวนส่งแนวข้อสอบเดิมมาให้ประเมินในอีเมลก่อน 1 สัปดาห์" }
+                },
+                {
+                    user: { username: "tutor_pim", name: "ครูพิม ภาษาไทย", role: "tutor" },
+                    profile: { education: "ครุศาสตร์ เกียรตินิยมอันดับ 1 จุฬาฯ", subjects: "ภาษาไทย, สังคมศึกษา, ONET", expertise: "ครูมัธยมวิชาภาษาไทย เน้นสอนวิเคราะห์หลักภาษา วรรณคดีไทย วิจารณ์งานเขียน ปูพื้นฐานไวยากรณ์สำหรับผู้เริ่มต้น", teaching_style: "ใจเย็น สอนช้าๆ ละเอียด ละเมียดละไม มีชีทสรุปให้ฟรี", price_per_hour: 200, availability: "วันเสาร์ ช่วงเช้า 9.00-12.00 น.", contact_line: "pim_thai", contact_phone: "086-999-0000", contact_email: "pim.thai@gmail.com", appointment_instruction: "นัดหมายเรียนผ่านระบบพอร์ทัลนี้ได้โดยตรง ยินดีสอนออนไลน์ผ่าน Google Meet มีเอกสารประกอบเป็นไฟล์ PDF จัดส่งให้ฟรี" }
+                },
+                {
+                    user: { username: "tutor_lin", name: "เหล่าซือหลิน ภาษาจีน", role: "tutor" },
+                    profile: { education: "ปริญญาตรี ภาษาจีนธุรกิจ ปักกิ่งยูนิเวอร์ซิตี้", subjects: "ภาษาจีน, HSK3, HSK4, สนทนา", expertise: "ติวเตอร์ภาษาจีนที่โตที่ประเทศจีน ประสบการณ์สอน 3 ปี เน้นทักษะการฟัง-พูดนำไปใช้จริงในชีวิตประจำวัน", teaching_style: "สไตล์โมเดิร์น ชวนคุยเล่น เกมเพลย์ภาษา สนุกไม่น่าเบื่อ", price_per_hour: 280, availability: "ยืดหยุ่น ตามตกลง", contact_line: "lin_chinese", contact_phone: "083-222-3333", contact_email: "lin.laoshi@gmail.com", appointment_instruction: "สามารถนัดหมายเวลาที่สะดวกนอกเหนือตารางเรียนทั่วไปได้ตามตกลงค่ะ ติดต่อคุยรายละเอียดทางไลน์ได้ตลอด 24 ชม." }
+                }
+            ];
+
+            let count = 0;
+            for (const t of mockTutors) {
+                try {
+                    // Create user
+                    await fetch('/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(t.user)
+                    });
+                    
+                    // Create profile
+                    await fetch(`/api/tutor/profile?username=${t.user.username}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(t.profile)
+                    });
+                    count++;
+                } catch (e) {
+                    console.log(`Mock user already exists or failed.`);
+                }
+            }
+            alert(`สร้างติวเตอร์ตัวอย่างเรียบร้อยแล้วจำนวน ${count} ราย!`);
+        }
+
+        // 2. Register Account
+        async function registerUser() {
+            const usernameInput = document.getElementById('reg-username').value.trim();
+            const nameInput = document.getElementById('reg-name').value.trim();
+            const feedback = document.getElementById('auth-feedback');
+            
+            if (!usernameInput || !nameInput) {
+                showFeedback(feedback, '❌ กรุณากรอกข้อมูลให้ครบถ้วน', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: usernameInput,
+                        name: nameInput,
+                        role: currentRole
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showFeedback(feedback, `🎉 สมัครสมาชิกสำเร็จ! ชื่อผู้ใช้: <b>${data.username}</b>. กรุณาสแกนรูปถ่ายใบหน้าเพื่อลงทะเบียนความปลอดภัยเข้าระบบ`, 'success');
+                    
+                    document.getElementById('login-username').value = data.username;
+                    toggleAuthTab('login');
+                    document.getElementById('register-bio-btn').classList.remove('hidden');
+                    if (!webcamStream) startWebcam();
+                } else {
+                    showFeedback(feedback, `❌ ${data.detail || 'เกิดข้อผิดพลาด'}`, 'danger');
+                }
+            } catch (err) {
+                showFeedback(feedback, '❌ ไม่สามารถเชื่อมต่อหลังบ้านได้', 'danger');
+            }
+        }
+
+        // 3. Register Face Biometrics
+        async function captureFaceAndRegisterBiometrics() {
+            const username = document.getElementById('login-username').value.trim();
+            const feedback = document.getElementById('auth-feedback');
+
+            if (!username) {
+                showFeedback(feedback, '❌ กรุณากรอก Username ที่ต้องการผูกข้อมูลใบหน้า', 'danger');
+                return;
+            }
+
+            const imgBase64 = captureImage();
+            if (!imgBase64) {
+                showFeedback(feedback, '❌ กล้องยังไม่ได้เปิดใช้งาน หรือไม่สามารถจับรูปได้', 'danger');
+                return;
+            }
+
+            showFeedback(feedback, '⏳ กำลังประมวลลักษณะใบหน้าและเข้ารหัสพิกัด...', 'warning');
+
+            try {
+                const response = await fetch('/api/biometrics/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: username,
+                        image_base64: imgBase64
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showFeedback(feedback, `✅ ${data.message}`, 'success');
+                    document.getElementById('register-bio-btn').classList.add('hidden');
+                } else {
+                    showFeedback(feedback, `❌ ${data.detail || 'เกิดข้อผิดพลาดในการตรวจสอบใบหน้า'}`, 'danger');
+                }
+            } catch (err) {
+                showFeedback(feedback, '❌ ข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์', 'danger');
+            }
+        }
+
+        // 4. Face verification login
+        async function verifyFaceIdentity() {
+            const username = document.getElementById('login-username').value.trim();
+            const feedback = document.getElementById('auth-feedback');
+
+            if (!username) {
+                showFeedback(feedback, '❌ กรุณาระบุ Username เพื่อค้นหาใบหน้าก่อนสแกน', 'danger');
+                return;
+            }
+
+            const imgBase64 = captureImage();
+            if (!imgBase64) {
+                showFeedback(feedback, '❌ ไม่พบข้อมูลรูปถ่ายกล้อง กรุณาคลิกเปิดกล้องก่อนสแกน', 'danger');
+                return;
+            }
+
+            showFeedback(feedback, '🔍 กำลังแสกนใบหน้าและตรวจสอบความปลอดภัย...', 'warning');
+
+            try {
+                const response = await fetch('/api/biometrics/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: username,
+                        image_base64: imgBase64
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showFeedback(feedback, `🎉 ${data.message}! ยินดีต้อนรับคุณ ${data.user.name}`, 'success');
+                    currentUser = data.user;
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    stopWebcam();
+                    updateNavbarStatus();
+                    showRolePanel();
+                    loadUserAppointments();
+                } else {
+                    showFeedback(feedback, `❌ ${data.detail || 'การยืนยันใบหน้าล้มเหลว'}`, 'danger');
+                }
+            } catch (err) {
+                showFeedback(feedback, '❌ ไม่สามารถยืนยันตัวตนได้เนื่องจากระบบเซิร์ฟเวอร์ขัดข้อง', 'danger');
+            }
+        }
+
+        // 5. Save Tutor Profile details
+        async function saveTutorProfile() {
+            const feedback = document.getElementById('tutor-feedback');
+            
+            const profileData = {
+                education: document.getElementById('tutor-edu').value.trim(),
+                subjects: document.getElementById('tutor-subjects').value.trim(),
+                expertise: document.getElementById('tutor-expertise').value.trim(),
+                teaching_style: document.getElementById('tutor-style').value.trim(),
+                price_per_hour: parseInt(document.getElementById('tutor-price').value.trim()) || 0,
+                availability: document.getElementById('tutor-avail').value.trim(),
+                // Contact Details
+                contact_line: document.getElementById('tutor-contact-line').value.trim() || null,
+                contact_phone: document.getElementById('tutor-contact-phone').value.trim() || null,
+                contact_email: document.getElementById('tutor-contact-email').value.trim() || null,
+                appointment_instruction: document.getElementById('tutor-appointment-instruction').value.trim() || null,
+            };
+
+            if (!profileData.education || !profileData.subjects || !profileData.expertise) {
+                showFeedback(feedback, '❌ กรุณากรอกวิชา ประวัติ และความชำนาญการสอนให้ครบถ้วน', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/tutor/profile?username=${currentUser.username}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profileData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showFeedback(feedback, '✅ บันทึกข้อมูลประวัติความถนัด ช่องทางติดต่อ และนัดหมายเรียน เรียบร้อยแล้ว!', 'success');
+                } else {
+                    showFeedback(feedback, `❌ ${data.detail || 'ไม่สามารถบันทึกได้'}`, 'danger');
+                }
+            } catch (err) {
+                showFeedback(feedback, '❌ ข้อผิดพลาดในการเชื่อมต่อ', 'danger');
+            }
+        }
+
+        // 6. AI Match tutors for Student
+        async function matchTutorsByAI() {
+            const reqText = document.getElementById('student-req').value.trim();
+            const subject = document.getElementById('student-subject-filter').value.trim();
+            const budgetVal = document.getElementById('student-budget').value.trim();
+            const resultsContainer = document.getElementById('match-results-container');
+            const countLabel = document.getElementById('results-count');
+
+            if (!reqText) {
+                alert('กรุณากรอกบรรยายความต้องการเรียน เพื่อส่งวิเคราะห์ให้ระบบ AI matching');
+                return;
+            }
+
+            resultsContainer.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">กำลังจับคู่ติวเตอร์ด้วยปัญญาประดิษฐ์...</p>';
+
+            const requestBody = {
+                username: currentUser.username,
+                requirements_text: reqText,
+                budget: budgetVal ? parseInt(budgetVal) : null,
+                subject_filter: subject ? subject : null
+            };
+
+            try {
+                const response = await fetch('/api/student/match', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    renderTutorResults(data, resultsContainer, countLabel);
+                } else {
+                    resultsContainer.innerHTML = `<div class="alert alert-danger">❌ เกิดข้อผิดพลาด: ${data.detail || 'ค้นหาล้มเหลว'}</div>`;
+                }
+            } catch (err) {
+                resultsContainer.innerHTML = '<div class="alert alert-danger">❌ ไม่สามารถเชื่อมต่อกับบริการ AI matching หลังบ้านได้</div>';
+            }
+        }
+
+        // Render matched tutor list
+        function renderTutorResults(tutors, container, countLabel) {
+            container.innerHTML = '';
+            
+            if (tutors.length === 0) {
+                countLabel.innerText = "ผลการจับคู่ติวเตอร์ (0 ราย):";
+                container.innerHTML = '<p style="color: var(--danger); font-style: italic; text-align: center; padding: 20px;">ไม่พบติวเตอร์ที่เหมาะสมตามเงื่อนไขที่กรอง กรุณาเพิ่มขอบเขตงบประมาณหรือปรับความต้องการ</p>';
+                return;
+            }
+
+            countLabel.innerText = `ผลการจับคู่ติวเตอร์ที่เหมาะสมที่สุด (${tutors.length} ราย):`;
+
+            tutors.forEach(t => {
+                const subjectsHtml = t.subjects.split(',').map(s => `<span class="badge-subject">${s.trim()}</span>`).join('');
+                const scoreColor = t.match_score >= 85 ? 'var(--secondary)' : t.match_score >= 65 ? 'var(--accent)' : 'var(--text-secondary)';
+                
+                const html = `
+                    <div class="tutor-card">
+                        <div class="tutor-header">
+                            <div>
+                                <span class="tutor-title">👩‍🏫 ${t.name}</span>
+                                <div style="margin-top: 5px;">${subjectsHtml}</div>
+                            </div>
+                            <span class="tutor-match-badge" style="background: var(--primary-light); color: ${scoreColor};">
+                                AI Match: ${t.match_score}%
+                            </span>
+                        </div>
+                        <div class="tutor-detail-grid">
+                            <div class="tutor-detail-item">🎓 <b>การศึกษา:</b> ${t.education}</div>
+                            <div class="tutor-detail-item">💰 <b>ค่าเรียน:</b> ${t.price_per_hour} บาท/ชม.</div>
+                            <div class="tutor-detail-item">⚡ <b>สไตล์สอน:</b> ${t.teaching_style}</div>
+                            <div class="tutor-detail-item">📅 <b>เวลาสะดวก:</b> ${t.availability}</div>
+                        </div>
+                        
+                        <div class="tutor-desc">
+                            <b>ประวัติความถนัด:</b> ${t.expertise}
+                        </div>
+                        
+                        <!-- Contact Details Box (New) -->
+                        <div class="contact-box">
+                            <div class="contact-title">📞 ข้อมูลติดต่อติวเตอร์</div>
+                            <div class="contact-item">💬 <b>LINE ID:</b> <code>${t.contact_line}</code></div>
+                            <div class="contact-item">📞 <b>เบอร์ติดต่อ:</b> ${t.contact_phone}</div>
+                            <div class="contact-item">📧 <b>อีเมล:</b> ${t.contact_email}</div>
+                            <div class="contact-item" style="margin-top:8px;">📌 <b>คำแนะนำนัดหมาย:</b> <i>${t.appointment_instruction}</i></div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-line" style="flex: 1;" onclick="openLINEContact('${t.contact_line}', '${t.name}')">
+                                💬 ทักทาง LINE OA
+                            </button>
+                            <button class="btn btn-primary" style="flex: 1;" onclick="openAppointmentModal(${t.user_id}, '${t.name}')">
+                                📅 นัดหมายเวลาเรียน
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function openLINEContact(lineId, name) {
+            alert(`กำลังนำคุณไปยัง LINE Chat เพื่อพูดคุยกับติวเตอร์ [${name}] (LINE ID: ${lineId}) ผ่าน LINE URL Scheme...`);
+        }
+
+        // --- APPOINTMENT ACTIONS ---
+        
+        function openAppointmentModal(tutorId, tutorName) {
+            document.getElementById('appt-tutor-id').value = tutorId;
+            document.getElementById('appt-modal-title').innerText = `📅 นัดเวลาเรียนกับ: ${tutorName}`;
+            
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('appt-date').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('appt-notes').value = '';
+            
+            document.getElementById('appointment-modal').classList.add('active');
+        }
+
+        function closeAppointmentModal() {
+            document.getElementById('appointment-modal').classList.remove('active');
+        }
+
+        async function submitAppointment() {
+            const tutorId = parseInt(document.getElementById('appt-tutor-id').value);
+            const date = document.getElementById('appt-date').value;
+            const time = document.getElementById('appt-time').value;
+            const notes = document.getElementById('appt-notes').value.trim();
+
+            if (!date) {
+                alert("กรุณาเลือกวันที่เรียน");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        student_username: currentUser.username,
+                        tutor_id: tutorId,
+                        appointment_date: date,
+                        appointment_time: time,
+                        notes: notes
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(`✅ ยื่นข้อเสนอนัดเรียนพิเศษส่งตรงไปหาติวเตอร์แล้วสำเร็จ! สถานะกำลังรอการอนุมัติ`);
+                    closeAppointmentModal();
+                    loadUserAppointments(); // Reload list
+                } else {
+                    alert(`❌ ไม่สามารถนัดหมายได้: ${data.detail || 'เกิดข้อผิดพลาด'}`);
+                }
+            } catch (err) {
+                alert("❌ เกิดข้อผิดพลาดทางเทคนิคในการส่งการนัดหมาย");
+            }
+        }
+
+        // Fetch User appointments
+        async function loadUserAppointments() {
+            const container = document.getElementById('appointments-list-container');
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`/api/appointments?username=${currentUser.username}`);
+                const data = await response.json();
+                
+                if (response.ok && data.length > 0) {
+                    container.innerHTML = '';
+                    data.forEach(appt => {
+                        const statusClass = appt.status === 'approved' ? 'status-approved' : appt.status === 'declined' ? 'status-declined' : '';
+                        const statusText = appt.status === 'pending' ? 'รออนุมัติ' : appt.status === 'approved' ? 'อนุมัติแล้ว' : 'ปฏิเสธ';
+                        const statusBadgeClass = appt.status === 'pending' ? 'status-pending-badge' : 'status-approved-badge';
+                        
+                        const oppRole = currentUser.role === 'student' ? 'ติวเตอร์' : 'นักเรียน';
+                        const oppName = currentUser.role === 'student' ? appt.tutor_name : appt.student_name;
+                        
+                        container.innerHTML += `
+                            <div class="appt-card ${statusClass}">
+                                <div class="appt-header">
+                                    <span>👤 ${oppRole}: ${oppName}</span>
+                                    <span class="appt-status-badge ${statusBadgeClass}">${statusText}</span>
+                                </div>
+                                <div class="appt-details">📅 <b>วันที่:</b> ${appt.appointment_date}</div>
+                                <div class="appt-details">⏰ <b>เวลา:</b> ${appt.appointment_time}</div>
+                                ${appt.notes ? `<div class="appt-details" style="margin-top:5px; font-style:italic;">💬 ${appt.notes}</div>` : ''}
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<p style="color: var(--text-secondary); font-style: italic; font-size: 0.85rem;">ยังไม่มีรายการนัดหมายจองเรียน</p>';
+                }
+            } catch (e) {
+                console.error("Error loading appointments", e);
+            }
+        }
+
+        // --- SESSION MANAGEMENT ---
+        function updateNavbarStatus() {
+            const statusText = document.getElementById('user-status-text');
+            const logoutBtn = document.getElementById('logout-btn');
+            const apptsCard = document.getElementById('my-appointments-card');
+            
+            if (currentUser) {
+                statusText.innerText = `🟢 ลงชื่อเข้าใช้: ${currentUser.name} (${currentUser.role === 'tutor' ? 'ติวเตอร์' : 'ผู้เรียน'})`;
+                statusText.classList.add('active-user');
+                logoutBtn.classList.remove('hidden');
+                apptsCard.classList.remove('hidden');
+            } else {
+                statusText.innerText = 'ไม่ได้ลงชื่อเข้าใช้งาน';
+                statusText.classList.remove('active-user');
+                logoutBtn.classList.add('hidden');
+                apptsCard.classList.add('hidden');
+            }
+        }
+
+        function showRolePanel() {
+            const defaultMsg = document.getElementById('portal-default-msg');
+            const tutorView = document.getElementById('portal-tutor-view');
+            const studentView = document.getElementById('portal-student-view');
+
+            defaultMsg.classList.add('hidden');
+            
+            if (currentUser.role === 'tutor') {
+                tutorView.classList.remove('hidden');
+                studentView.classList.add('hidden');
+                loadTutorProfile();
+            } else {
+                studentView.classList.remove('hidden');
+                tutorView.classList.add('hidden');
+            }
+        }
+
+        async function loadTutorProfile() {
+            try {
+                const response = await fetch('/api/tutors');
+                const tutors = await response.json();
+                const profile = tutors.find(t => t.user_id === currentUser.id);
+                if (profile) {
+                    document.getElementById('tutor-edu').value = profile.education;
+                    document.getElementById('tutor-subjects').value = profile.subjects;
+                    document.getElementById('tutor-expertise').value = profile.expertise;
+                    document.getElementById('tutor-style').value = profile.teaching_style;
+                    document.getElementById('tutor-price').value = profile.price_per_hour;
+                    document.getElementById('tutor-avail').value = profile.availability;
+                    document.getElementById('tutor-contact-line').value = profile.contact_line !== '-' ? profile.contact_line : '';
+                    document.getElementById('tutor-contact-phone').value = profile.contact_phone !== '-' ? profile.contact_phone : '';
+                    document.getElementById('tutor-contact-email').value = profile.contact_email !== '-' ? profile.contact_email : '';
+                    document.getElementById('tutor-appointment-instruction').value = profile.appointment_instruction !== 'ติดต่อผู้สอนโดยตรง' ? profile.appointment_instruction : '';
+                }
+            } catch (e) {
+                console.error("Error loading tutor profile", e);
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateNavbarStatus();
+            
+            document.getElementById('portal-default-msg').classList.remove('hidden');
+            document.getElementById('portal-tutor-view').classList.add('hidden');
+            document.getElementById('portal-student-view').classList.add('hidden');
+            
+            document.getElementById('auth-feedback').innerHTML = '';
+            document.getElementById('login-username').value = '';
+            
+            stopWebcam();
+            toggleAuthTab('login');
+        }
+
+        function stopWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+                
+                const video = document.getElementById('webcam-feed');
+                video.srcObject = null;
+                video.classList.add('hidden');
+                document.getElementById('webcam-placeholder').classList.remove('hidden');
+            }
+        }
+
+        function showFeedback(element, message, type) {
+            element.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        }
+    </script>
+</body>
+</html>

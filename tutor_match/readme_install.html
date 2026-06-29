@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการติดตั้ง - TutorMatch AI Installation Guide</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(226, 232, 240, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --primary: #7c3aed; /* Violet */
+            --secondary: #059669; /* Emerald */
+            --accent: #2563eb; /* Blue */
+            --warning: #d97706;
+            --line-green: #06c755;
+            --gradient-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            --font-main: 'Inter', 'Noto Sans Thai', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow-md: 0 10px 25px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .badge {
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            border: 1px solid rgba(219, 39, 119, 0.3);
+            color: #db2777;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards Layout */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .card-icon {
+            font-size: 1.6rem;
+        }
+
+        /* Step Lists */
+        .setup-step {
+            margin-bottom: 25px;
+        }
+
+        .setup-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 0.98rem;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: #0f172a;
+            color: #f8fafc;
+            border: 1px solid #1e293b;
+            border-radius: var(--radius-md);
+            padding: 18px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        code {
+            font-family: var(--font-code);
+            color: #38bdf8; /* Light blue */
+        }
+
+        .code-comment {
+            color: #64748b;
+        }
+
+        /* File List Table */
+        .file-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .file-list th, .file-list td {
+            border: 1px solid var(--card-border);
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 0.92rem;
+        }
+
+        .file-list th {
+            background: #f1f5f9;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .file-list td code {
+            color: var(--primary);
+        }
+
+        /* Alerts */
+        .alert {
+            background: rgba(6, 199, 85, 0.05);
+            border: 1px solid rgba(6, 199, 85, 0.15);
+            color: #15803d;
+            padding: 15px 20px;
+            border-radius: var(--radius-md);
+            margin-top: 25px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-warning {
+            background: rgba(217, 119, 6, 0.05);
+            border: 1px solid rgba(217, 119, 6, 0.15);
+            color: #b45309;
+        }
+
+        .alert-icon {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="badge">Deployment Guide</div>
+            <h1>คู่มือการติดตั้งระบบ TutorMatch AI</h1>
+            <p class="subtitle">ขั้นตอนการจัดเตรียมเครื่องคอมพิวเตอร์เพื่อเปิดรันระบบ FastAPI หลังบ้านและระบบวิเคราะห์ AI ออฟไลน์</p>
+        </header>
+
+        <!-- CARD 1: SYSTEM PREREQUISITES -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">📋</span>
+                <h2>1. สิ่งที่ต้องเตรียมความพร้อม (System Requirements)</h2>
+            </div>
+            <ul style="list-style-type: none; padding-left: 10px;">
+                <li style="margin-bottom: 10px; color: var(--text-secondary);">
+                    ✔️ **Python:** เวอร์ชัน 3.10 ขึ้นไป (ผ่านการทดสอบและทำงานได้สมบูรณ์บน Python 3.14.3)
+                </li>
+                <li style="margin-bottom: 10px; color: var(--text-secondary);">
+                    ✔️ **ความสามารถของอุปกรณ์:** เว็บแคม (Webcam) ที่สามารถสตรีมภาพและบันทึกภาพถ่ายบนเว็บบราวเซอร์ได้
+                </li>
+                <li style="margin-bottom: 10px; color: var(--text-secondary);">
+                    ✔️ **ฐานข้อมูล:** ระบบใช้ SQLite ในการพัฒนา ทำให้ไม่ต้องลงโปรแกรมฐานข้อมูลแยก
+                </li>
+                <li style="margin-bottom: 10px; color: var(--text-secondary);">
+                    ✔️ **อินเทอร์เน็ต:** จำเป็นในการดาวน์โหลดชุดไลบรารีและดาวน์โหลดฟอนต์ภาษาไทยในการรันครั้งแรก
+                </li>
+            </ul>
+        </div>
+
+        <!-- CARD 2: INSTALLATION STEPS -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">🔧</span>
+                <h2>2. ขั้นตอนการติดตั้งโปรแกรม (Installation Steps)</h2>
+            </div>
+            
+            <!-- Step 1 -->
+            <div class="setup-step">
+                <div class="step-label">📍 ขั้นตอนที่ 1: สร้างและเปิดใช้งาน Virtual Environment (แนะนำ)</div>
+                <div class="step-desc">สร้างสภาพแวดล้อมจำลองของ Python เพื่อป้องกันไม่ให้เวอร์ชันไลบรารีปะปนกับโครงการอื่น</div>
+                <pre><code><span class="code-comment"># เปิด PowerShell หรือ Terminal ในโฟลเดอร์โครงการ (D:\wk_ai\tutor_match)</span>
+python -m venv venv
+
+<span class="code-comment"># สำหรับ Windows (PowerShell) เพื่อเปิดรันใช้งาน</span>
+.\venv\Scripts\activate</code></pre>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="setup-step">
+                <div class="step-label">📍 ขั้นตอนที่ 2: ติดตั้งไลบรารีที่จำเป็นผ่าน PIP</div>
+                <div class="step-desc">รันคำสั่งติดตั้งแพ็กเกจระบบเว็บ FastAPI และฟังก์ชันด้านปัญญาประดิษฐ์ (AI / Image / NLP)</div>
+                <pre><code>pip install fastapi uvicorn opencv-python opencv-contrib-python sqlalchemy jinja2 pythainlp requests reportlab pydantic</code></pre>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="setup-step">
+                <div class="step-label">📍 ขั้นตอนที่ 3: ตรวจสอบความสมบูรณ์ของโครงสร้างโฟลเดอร์</div>
+                <div class="step-desc">ตรวจสอบไฟล์โปรแกรมทั้งหมดให้อยู่ในตรรกะโฟลเดอร์ดังต่อไปนี้:</div>
+                
+                <table class="file-list">
+                    <thead>
+                        <tr>
+                            <th>ชื่อไฟล์ / โฟลเดอร์</th>
+                            <th>หน้าที่การทำงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>main.py</code></td>
+                            <td>ตัวเชื่อม Gateway API ของ FastAPI และ Endpoint หลัก</td>
+                        </tr>
+                        <tr>
+                            <td><code>models.py</code></td>
+                            <td>SQLAlchemy Database Schema ตารางข้อมูลสแกนหน้าและติวเตอร์</td>
+                        </tr>
+                        <tr>
+                            <td><code>database.py</code></td>
+                            <td>การเชื่อมต่อและการกำหนด session ของ SQLite</td>
+                        </tr>
+                        <tr>
+                            <td><code>schemas.py</code></td>
+                            <td>Pydantic Data validation schemas</td>
+                        </tr>
+                        <tr>
+                            <td><code>ai_engine.py</code></td>
+                            <td>อัลกอริทึมวิเคราะห์สแกนหน้า (LBPH) และจับคู่ (Thai NLP TF-IDF)</td>
+                        </tr>
+                        <tr>
+                            <td><code>static/index.html</code></td>
+                            <td>หน้าจอหลัก LIFF Portal Simulator (หน้าบ้านดึงข้อมูล)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CARD 3: RUNNING THE SERVER -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">⚡</span>
+                <h2>3. การเปิดสั่งรันระบบเซิร์ฟเวอร์ (Running Backend)</h2>
+            </div>
+            <p style="margin-bottom: 15px; color: var(--text-secondary);">
+                รันคำสั่งด้านล่างเพื่อเปิดการทำงานเว็บแอปพลิเคชันหลังบ้าน ซึ่งจะทำหน้าที่สร้างฐานข้อมูล `tutor_match.db` ขึ้นมาอัตโนมัติในการรันครั้งแรก:
+            </p>
+            <pre><code>python -m uvicorn main:app --host 127.0.0.1 --port 8000</code></pre>
+            
+            <p style="margin-top: 15px; color: var(--text-secondary);">
+                เมื่อระบบเริ่มเปิดตัวและแสดงข้อความ <i>"Uvicorn running on http://127.0.0.1:8000"</i> ให้เข้าไปหน้าบราวเซอร์แล้วเปิด:
+            </p>
+            <pre><code>http://127.0.0.1:8000</code></pre>
+
+            <div class="alert">
+                <span class="alert-icon">💡</span>
+                <div>
+                    <strong>คำเตือนเรื่อง Windows Path Warning:</strong><br/>
+                    หากเรียกใช้คำสั่ง `uvicorn main:app` ตรงๆ แล้วแจ้งว่าไม่รู้จักโปรแกรม (Command Not Found) ให้เรียกใช้งานผ่านตัวรันโมดูลของไพทอน `python -m uvicorn` เสมอ เพื่อข้ามข้อจำกัดของ Windows environment variable PATH
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 4: LINE OA INTEGRATION -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">💬</span>
+                <h2>4. การนำไปประยุกต์ใช้งานและเชื่อมต่อ LINE OA & LIFF</h2>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                เมื่อทดสอบการทำงานจนพอใจแล้ว หากต้องการเชื่อมต่อเข้าสู่บัญชี LINE OA เพื่อเปิดใช้งานจริง ให้ทำตามแนวทางปฏิบัติตามคู่มือ LINE Developers ด้านล่างนี้:
+            </p>
+
+            <div class="setup-step">
+                <div class="step-label">🔗 1. แปลงโปรเจกต์ให้เป็น HTTPS</div>
+                <div class="step-desc">
+                    เนื่องจากระบบ Webhook และ LIFF ของ LINE บังคับการส่งข้อมูลผ่าน **HTTPS (SSL)** ที่มีความปลอดภัยสูงสุดเท่านั้น สำหรับการเชื่อมต่อทดลองรันจากเครื่องบ้าน สามารถใช้เครื่องมือ **ngrok** เพื่ออุโมงค์พอร์ต 8000 ของ FastAPI ให้ออกมาเป็นที่อยู่สาธารณะ HTTPS:
+                </div>
+                <pre><code>ngrok http 8000</code></pre>
+            </div>
+
+            <div class="setup-step">
+                <div class="step-label">💬 2. ตั้งค่า LINE Webhook</div>
+                <div class="step-desc">
+                    - เข้าไปที่ [LINE Developers Console](https://developers.line.biz)<br/>
+                    - สร้าง Messaging API Channel และนำ URL HTTPS จาก ngrok ไปกรอกในเมนู **Webhook URL** (เช่น `https://xxxx.ngrok-free.app/webhook`)
+                </div>
+            </div>
+
+            <div class="setup-step">
+                <div class="step-label">📱 3. สร้างแอปพลิเคชัน LINE LIFF</div>
+                <div class="step-desc">
+                    - ภายใต้ Provider เดียวกัน กดสร้างแอปย่อยประเภท **LIFF**<br/>
+                    - ในช่อง **Endpoint URL** ให้กรอกที่อยู่เว็บหลังบ้านไปยังหน้า static (เช่น `https://xxxx.ngrok-free.app/static/index.html`)
+                </div>
+                
+                <div class="alert alert-warning" style="margin-top: 15px;">
+                    <span class="alert-icon">⚠️</span>
+                    <div>
+                        <strong>ข้อสำคัญด้านสิทธิ์การใช้กล้อง (Camera Access):</strong><br/>
+                        ต้องไปที่แท็บ LIFF App settings ใน LINE Developers แล้วกดยื่นคำขอเปิดสิทธิ์ใช้งาน **Camera / Microphone Access** เสมอ เพื่อให้เบราว์เซอร์ของห้องแชทไลน์อนุญาตให้ผู้ใช้ถ่ายรูปสแกนหน้าได้
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
