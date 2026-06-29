@@ -109,66 +109,59 @@ if (strlen($_SESSION['alogin']) == "") {
                                     <form id="form_data" method="post">
                                         <input type="hidden" name="action" value="GENERATE_PAYROLL">
                                         <input type="hidden" name="selected_employees" id="selected_employees">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="col-sm-3">
-                                                    <label for="doc_date">📅 วันที่จ่ายเงินเดือน (Doc Date) :</label>
-                                                    <div class="input-group date" id="date_doc_date">
-                                                        <input type="text" class="form-control" name="doc_date"
-                                                               id="doc_date"
-                                                               value="<?php echo $default_doc_date; ?>" required>
-                                                        <div class="input-group-append">
-                                                            <span class="input-group-text"><i
-                                                                        class="fas fa-calendar"></i></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <br>
+                                         <div class="row align-items-end">
+                                             <!-- 1. วันที่จ่ายเงินเดือน -->
+                                             <div class="col-md-4 mb-3">
+                                                 <label for="doc_date" class="form-label font-weight-bold">📅 วันที่จ่ายเงินเดือน (Doc Date) :</label>
+                                                 <div class="input-group date" id="date_doc_date">
+                                                     <input type="text" class="form-control" name="doc_date" id="doc_date" value="<?php echo $default_doc_date; ?>" required>
+                                                     <div class="input-group-append">
+                                                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                             
+                                             <!-- 2. เลือกปี -->
+                                             <div class="col-md-3 mb-3">
+                                                 <label for="payroll_year" class="form-label font-weight-bold">เลือกปี (Payroll Year) :</label>
+                                                 <select name="payroll_year" id="payroll_year" class="form-control" required>
+                                                     <?php foreach ($YearRecords as $row) {
+                                                         $selected = ($row["period_year"] == $current_year) ? 'selected' : '';
+                                                         ?>
+                                                         <option value="<?php echo $row["period_year"]; ?>" <?php echo $selected; ?>>
+                                                             <?php echo $row["period_year"]; ?>
+                                                         </option>
+                                                     <?php } ?>
+                                                 </select>
+                                             </div>
+                                             
+                                             <!-- 3. ปุ่มประมวลผล -->
+                                             <div class="col-md-5 mb-3">
+                                                 <button type="button" class="btn btn-primary btn-block w-100" id="btnGenerate" style="height: calc(1.5em + .75rem + 2px);">
+                                                     สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i class="fas fa-magic"></i>
+                                                 </button>
+                                             </div>
+                                         </div>
 
-                                                <label>เลือกเดือน (Payroll Month) :</label><br>
-                                                <div>
-                                                    <?php foreach ($MonthRecords as $row) {
-                                                        $checked = ($row["month"] == $month_num) ? 'checked' : '';
-                                                        ?>
-                                                        <label class="month-radio">
-                                                            <input type="radio" name="payroll_month"
-                                                                   value="<?php echo $row["month"]; ?>"
-                                                                   class="month-radio-item" <?php echo $checked; ?>
-                                                                   required>
-                                                            <?php echo $row["month_name"]; ?>
-                                                        </label>
-                                                    <?php } ?>
-                                                </div>
-
-                                                <br>
-                                                <div class="col-sm-3">
-                                                    <label for="payroll_year">เลือกปี (Payroll Year) :</label>
-                                                    <select name="payroll_year" id="payroll_year" class="form-control"
-                                                            required>
-                                                        <?php foreach ($YearRecords as $row) {
-                                                            $selected = ($row["period_year"] == $current_year) ? 'selected' : '';
-                                                            ?>
-                                                            <option value="<?php echo $row["period_year"]; ?>" <?php echo $selected; ?>>
-                                                                <?php echo $row["period_year"]; ?>
-                                                            </option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <div>
-                                                        <br>
-
-                                                        <div class="row">
-                                                            <div class="col-sm-12">
-                                                                <button type="button" class="btn btn-primary"
-                                                                        id="btnGenerate">
-                                                                    สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate) <i
-                                                                            class="fas fa-magic"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                    </form>
+                                         <div class="row mt-2">
+                                             <!-- 4. เลือกเดือน -->
+                                             <div class="col-md-12 mb-3">
+                                                 <label class="form-label font-weight-bold d-block">เลือกเดือน (Payroll Month) :</label>
+                                                 <div class="d-flex flex-wrap">
+                                                     <?php foreach ($MonthRecords as $row) {
+                                                         $checked = ($row["month"] == $month_num) ? 'checked' : '';
+                                                         ?>
+                                                         <div class="form-check form-check-inline month-radio bg-light p-2 rounded border mr-2 mb-2" style="cursor: pointer;">
+                                                             <input class="form-check-input month-radio-item" type="radio" name="payroll_month" id="month_<?php echo $row["month"]; ?>" value="<?php echo $row["month"]; ?>" <?php echo $checked; ?> required style="margin-top: 0.3rem;">
+                                                             <label class="form-check-label" for="month_<?php echo $row["month"]; ?>" style="cursor: pointer; margin-left: 5px;">
+                                                                 <?php echo $row["month_name"]; ?>
+                                                             </label>
+                                                         </div>
+                                                     <?php } ?>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </form>
                                 </div>
                             </div>
                         </div>

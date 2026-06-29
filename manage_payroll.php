@@ -56,7 +56,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                      class='btn btn-info btn-xs'>Summary
                                                  <i class="fa fa-list"></i>
                                              </button>
-                                             <a href="manage_payroall_manual.html" target="_blank" class="btn btn-outline-info btn-xs">Manual
+                                             <a href="manage_payroall_manual.html" target="_blank" class="btn btn-outline-info btn-xs">คู่มือการใช้งาน
                                                  <i class="fa fa-question-circle"></i>
                                              </a>
                                             <!--button type='button' name='btnExp' id='btnExp'
