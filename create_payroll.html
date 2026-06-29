@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการสร้างเงินเดือนอัตโนมัติ - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-section {
+            background-color: #007bff;
+            color: white;
+            padding: 35px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #007bff;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #007bff;
+        }
+        .note-box {
+            background-color: #e3f2fd;
+            border-left: 5px solid #0d6efd;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #084298;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #664d03;
+        }
+        .btn-back {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .btn-back:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header-section">
+            <h2 class="mb-2"><i class="fas fa-wallet"></i> คู่มือระบบสร้างเงินเดือนอัตโนมัติ</h2>
+            <p class="mb-0">สรุปแนวคิด โครงสร้างข้อมูล เงื่อนไข และขั้นตอนการคำนวณเงินเดือนอัตโนมัติ (Payroll)</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+
+            <!-- SECTION 1: วัตถุประสงค์ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-lightbulb"></i> 1. วัตถุประสงค์ (System Purpose)</h4>
+                <p class="text-muted">
+                    ระบบสร้างเงินเดือนอัตโนมัติในโครงการ **PS33 Home System** (หน้าจอ <a href="payroll_generate_data" class="text-decoration-none">payroll_generate_data</a>) ถูกพัฒนาขึ้นเพื่อใช้สำหรับประมวลผลฐานเงินเดือนพนักงานในแต่ละรอบเดือน เพื่อสร้างรายการเตรียมจ่ายเงินเดือน (Payroll Records) เพื่อใช้เป็นฐานข้อมูลในการพิมพ์ใบแจ้งยอดเงินเดือน (Pay Slip) และทำจ่ายในลำดับถัดไป
+                </p>
+                <div class="note-box my-3">
+                    <strong>คุณสมบัติเด่น:</strong> ดึงพนักงานที่มีสิทธิ์พร้อมใช้งานแบบ Server-side และรองรับการเลือกสร้างข้อมูลแบบเป็นรายบุคคล หรือแบบพร้อมกันทั้งหมด รวมถึงกำหนดวันที่ออกเอกสารและรอบเดือนได้อย่างอิสระ
+                </div>
+            </div>
+
+            <!-- SECTION 2: ส่วนประกอบบนหน้าจอ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-th-large"></i> 2. ส่วนประกอบสำคัญบนหน้าจอ</h4>
+                
+                <div class="step-item">
+                    <h5><i class="fas fa-sliders-h me-1"></i> ส่วนการตั้งค่าเงื่อนไข (Payroll Configuration)</h5>
+                    <p class="text-muted">เป็นส่วนบนสุดของจอภาพเพื่อระบุความประสงค์ของรอบเดือนนั้นๆ:</p>
+                    <ul>
+                        <li><strong>วันที่จ่ายเงินเดือน (Doc Date):</strong> วันที่ทำการลงบันทึกบัญชีหรือวันชำระเงินเดือน (มีระบบปฏิทินไทยป๊อปอัปให้เลือก)</li>
+                        <li><strong>เลือกเดือน (Payroll Month):</strong> ปุ่มตัวเลือกวิทยุ (Radio buttons) 12 เดือน (เลือกค่าเริ่มต้นเป็นเดือนปัจจุบันไว้ให้อัตโนมัติ)</li>
+                        <li><strong>เลือกปี (Payroll Year):</strong> ดรอปดาวน์เลือกปีงบประมาณ ค.ศ. คริสต์ศักราช (ย้อนหลัง 5 ปี ล่วงหน้า 1 ปี)</li>
+                        <li><strong>ปุ่ม Generate:</strong> ปุ่มสีน้ำเงินสำหรับประมวลผลทันทีเมื่อตั้งเงื่อนไขครบถ้วน</li>
+                    </ul>
+                </div>
+
+                <div class="step-item">
+                    <h5><i class="fas fa-list me-1"></i> ส่วนตารางพนักงานที่พร้อมทำงาน (Employee Table)</h5>
+                    <p class="text-muted">แสดงข้อมูลพนักงานทั้งหมดที่ดึงขึ้นมาผ่าน Ajax Datatable:</p>
+                    <ul>
+                        <li><strong>ช่องติ๊กเลือก (Checkbox):</strong> หน้าสุดของตาราง สามารถติ๊กเลือกคนใดคนหนึ่ง หรือเลือกทั้งหมด (Check All) ที่หัวตาราง</li>
+                        <li><strong>ข้อมูลทั่วไป:</strong> รหัสพนักงาน, ชื่อ-สกุล, ตำแหน่ง, ประเภทพนักงาน, ฐานเงินเดือน, วันที่เริ่มงาน และสถานะการทำงาน</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SECTION 3: ขั้นตอนการทำงาน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-tasks"></i> 3. ขั้นตอนการใช้งานระบบ (Step-by-step)</h4>
+                
+                <div class="step-item">
+                    <span class="step-number">1</span>
+                    <strong>กำหนดเงื่อนไขรอบบัญชี</strong>
+                    <p class="text-muted mb-0">เลือกวันที่ออกสลิป วันจ่ายเงินเดือน รอบเดือนและปี ค.ศ. ที่ต้องการทำรายการที่กรอบสี่เหลี่ยมด้านบน</p>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">2</span>
+                    <strong>เลือกพนักงานที่ประสงค์จะจ่ายเงิน</strong>
+                    <p class="text-muted mb-0">ค้นหาพนักงานในช่องค้นหา แล้วติ๊กเลือกหน้าช่องชื่อ หากต้องการเลือกทั้งหมดให้ติ๊กที่ช่อง Check All ที่หัวตารางด้านบนสุด</p>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">3</span>
+                    <strong>กดสั่งประมวลผล</strong>
+                    <p class="text-muted mb-0">คลิกที่ปุ่ม <strong>"สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate)"</strong> เพื่อเตรียมยืนยันข้อมูล</p>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">4</span>
+                    <strong>ยืนยันการทำรายการ</strong>
+                    <p class="text-muted mb-0">เมื่อมีหน้าต่างแจ้งเตือน (Alertify Confirm) ถามการยืนยัน ให้ทำการตรวจสอบจำนวนพนักงานที่แสดงในป๊อปอัพ หากถูกต้องให้คลิก <strong>"ตกลง"</strong></p>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">5</span>
+                    <strong>ตรวจสอบการประมวลผลสำเร็จ</strong>
+                    <p class="text-muted mb-0">รอระบบบันทึกสักครู่ (ปุ่มจะเปลี่ยนสถานะเป็น "กำลังสร้าง...") เมื่อบันทึกสำเร็จจะแสดงแถบป๊อปอัพสีเขียวแจ้งเตือนความสำเร็จที่มุมบนขวา</p>
+                </div>
+            </div>
+
+            <!-- SECTION 4: ข้อควรระวัง -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-exclamation-triangle"></i> 4. ข้อควรระวัง (Warnings)</h4>
+                <div class="warning-box mb-3">
+                    <strong>การกดซ้ำซ้อน:</strong> ห้ามเปลี่ยนหน้าจอหรือคลิกปุ่มซ้ำขณะที่ระบบกำลังขึ้นสถานะ "กำลังสร้าง..." เพื่อป้องกันการผิดพลาดของข้อมูลและการบันทึกทับในฐานข้อมูล
+                </div>
+                <div class="warning-box">
+                    <strong>การอัปเดตข้อมูลพนักงาน:</strong> กรณีมีพนักงานเข้ามาใหม่หรือมีข้อมูลฐานเงินเดือนเปลี่ยนแปลง จะต้องปรับปรุงประวัติของพนักงานในระบบพนักงานก่อนเสมอ ก่อนที่จะเข้าใช้หน้าจอนี้
+                </div>
+            </div>
+
+            <!-- BUTTON BACK -->
+            <div class="text-center pt-3">
+                <a href="payroll_generate_data" class="btn-back"><i class="fas fa-arrow-left"></i> กลับไปหน้าสร้างเงินเดือน</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

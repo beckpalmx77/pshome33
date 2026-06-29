@@ -52,10 +52,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                             <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
                                                 <i class="fa fa-refresh"></i> Reload
                                             </button>
-                                            <button type='button' name='btnSummary' id='btnSummary'
-                                                    class='btn btn-info btn-xs'>Summary
-                                                <i class="fa fa-list"></i>
-                                            </button>
+                                             <button type='button' name='btnSummary' id='btnSummary'
+                                                     class='btn btn-info btn-xs'>Summary
+                                                 <i class="fa fa-list"></i>
+                                             </button>
+                                             <a href="manage_payroall_manual.html" target="_blank" class="btn btn-outline-info btn-xs">Manual
+                                                 <i class="fa fa-question-circle"></i>
+                                             </a>
                                             <!--button type='button' name='btnExp' id='btnExp'
                                                     class='btn btn-success btn-xs'>Export Excel
                                                 <i class="fa fa-file-excel-o"></i>

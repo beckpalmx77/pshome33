@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการจัดการข้อมูลเงินเดือน - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-section {
+            background-color: #17a2b8;
+            color: white;
+            padding: 35px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #17a2b8;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #17a2b8;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #17a2b8;
+        }
+        .note-box {
+            background-color: #e2f0d9;
+            border-left: 5px solid #70ad47;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #385723;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #664d03;
+        }
+        .btn-back {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .btn-back:hover {
+            background-color: #117a8b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header-section">
+            <h2 class="mb-2"><i class="fas fa-file-invoice-dollar"></i> คู่มือระบบจัดการข้อมูลเงินเดือน</h2>
+            <p class="mb-0">การบริหารจัดการ ตรวจสอบ แก้ไข และสรุปยอดรายการจ่ายเงินเดือนพนักงาน (Payroll Management)</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+
+            <!-- SECTION 1: วัตถุประสงค์ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-lightbulb"></i> 1. วัตถุประสงค์ (System Purpose)</h4>
+                <p class="text-muted">
+                    ระบบจัดการข้อมูลเงินเดือนในโครงการ **PS33 Home System** (หน้าจอ <a href="manage_payroll" class="text-decoration-none">manage_payroll</a>) ทำหน้าที่เป็นแผงควบคุมกลางสำหรับแสดงเอกสารการจ่ายเงินเดือนทั้งหมดที่เคยสร้างขึ้นในอดีตและปัจจุบัน ช่วยให้ Admin สามารถเพิ่มรายการแบบแมนนวล ค้นหา ค้นดูรายงานสรุปยอด หรือเข้าจัดการแก้ไขและลบข้อมูลที่ผิดพลาดได้สะดวก
+                </p>
+                <div class="note-box my-3">
+                    <strong>คุณสมบัติเด่น:</strong> ใช้ระบบ Datatable รองรับการค้นหารวดเร็วและแบ่งหน้าอัตโนมัติ พร้อมปุ่มสืบค้นข้อมูลสรุปย้อนหลังในแบบรายเดือนและรายปี
+                </div>
+            </div>
+
+            <!-- SECTION 2: ส่วนประกอบและการควบคุมหลัก -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-toggle-on"></i> 2. ส่วนประกอบและการควบคุมหลัก</h4>
+                
+                <div class="step-item">
+                    <h5><i class="fas fa-plus me-1 text-primary"></i> ปุ่ม Add (สีน้ำเงิน)</h5>
+                    <p class="text-muted mb-0">ใช้สำหรับเพิ่มประวัติการจ่ายเงินเดือนใหม่ให้แก่พนักงานแบบแมนนวลทีละคน โดยระบบจะเปิดหน้าจอ <a href="manage_payroll_data" class="text-decoration-none">manage_payroll_data</a> ในหน้าต่างแท็บใหม่เพื่อใส่ข้อมูล</p>
+                </div>
+
+                <div class="step-item">
+                    <h5><i class="fas fa-sync me-1 text-success"></i> ปุ่ม Reload (สีเขียว)</h5>
+                    <p class="text-muted mb-0">ใช้สั่งการดึงข้อมูลจากหลังบ้านมาอัปเดตบนหน้าตารางใหม่อีกครั้งทันทีโดยไม่ต้องทำการรีเฟรชหน้าเว็บทั้งหน้า</p>
+                </div>
+
+                <div class="step-item">
+                    <h5><i class="fas fa-chart-bar me-1 text-info"></i> ปุ่ม Summary (สีฟ้า)</h5>
+                    <p class="text-muted mb-0">แสดงหน้าต่างป๊อปอัปรายงานผลสรุปสรุปยอดรวมเงินเดือนรายเดือน (เดือน, ปี ค.ศ., และยอดเงินจ่ายพนักงานรวมทั้งโครงการ) เพื่อใช้วิเคราะห์ค่าใช้จ่ายประจำเดือนได้อย่างมีประสิทธิภาพ</p>
+                </div>
+            </div>
+
+            <!-- SECTION 3: ตารางรายการข้อมูลพนักงาน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-table"></i> 3. ข้อมูลในตารางและสัญลักษณ์ Action</h4>
+                <p class="text-muted">ตารางจะเรียงข้อมูลตามลำดับเลขที่เอกสาร โดยในแถวรายการจะมีข้อมูลดังนี้:</p>
+                <ul>
+                    <li><strong>เลขที่เอกสาร:</strong> รหัสเอกสาร เช่น P-xxxx</li>
+                    <li><strong>วันที่:</strong> วันที่ออกเอกสารหรือชำระเงิน</li>
+                    <li><strong>ชื่อพนักงาน:</strong> ชื่อเต็มพนักงานผู้ได้รับเงินเดือน</li>
+                    <li><strong>เดือน/ปี:</strong> รอบปีและเดือนบัญชีที่จ่าย</li>
+                    <li><strong>จำนวนเงิน (บาท):</strong> ยอดสุทธิประจำเอกสาร</li>
+                    <li><strong>ปุ่มดินสอแก้ไข (Update):</strong> คลิกเพื่อดึงข้อมูลทั้งหมดของแถวนั้นเพื่อนำไปแก้ไขในหน้าแบบฟอร์มละเอียด</li>
+                    <li><strong>ปุ่มถังขยะสีแดง (Delete):</strong> คลิกเพื่อลบข้อมูลการจ่ายเงินเดือนพนักงานคนนั้นออกถาวร</li>
+                </ul>
+            </div>
+
+            <!-- SECTION 4: ขั้นตอนการทำงานสำคัญ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-cogs"></i> 4. ขั้นตอนการทำงานที่สำคัญ (Workflow)</h4>
+                
+                <div class="step-item">
+                    <span class="step-number">1</span>
+                    <strong>การแก้ไขข้อมูล (Update Payroll)</strong>
+                    <p class="text-muted mb-0">เมื่อคลิกปุ่มแก้ไข ระบบจะใช้ AJAX ดึงข้อมูลเชิงลึกของแถวนั้นขึ้นมาและเปิดแถบการตั้งค่าบนแท็บหน้าใหม่โดยอัตโนมัติ เพื่อให้ท่านตรวจสอบและปรับเปลี่ยนตัวเลขหรือวิธีการรับเงินได้</p>
+                </div>
+
+                <div class="step-item">
+                    <span class="step-number">2</span>
+                    <strong>การลบข้อมูล (Delete Payroll)</strong>
+                    <p class="text-muted mb-0">เมื่อคลิกที่ปุ่มลบ จะมีป๊อปอัปแจ้งเตือนให้กดตกลงเพื่อความปลอดภัย หากยืนยันระบบจะลบข้อมูลออกถาวรผ่านไฟล์ลบประวัติของระบบ</p>
+                </div>
+            </div>
+
+            <!-- SECTION 5: ข้อควรระวัง -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-exclamation-triangle"></i> 5. ข้อควรระวัง (Warnings)</h4>
+                <div class="warning-box mb-3">
+                    <strong>การส่งข้อมูลข้ามหน้าแก้ไข:</strong> การคลิกปุ่มแก้ไขจะนำพาข้อมูลของพนักงานไปเปิดหน้าใหม่ หากมีป็อปอัปบล็อกเกอร์ (Pop-up Blocker) ในเบราว์เซอร์ของท่านทำงานอยู่ อาจทำให้ไม่สามารถเปิดหน้าแก้ไขได้ กรุณาตั้งค่าเบราว์เซอร์ให้อนุญาตป๊อปอัปสำหรับเว็บไซต์ระบบนี้
+                </div>
+                <div class="warning-box">
+                    <strong>การยืนยันการลบ:</strong> การลบข้อมูลประวัติในเมนูนี้ไม่สามารถย้อนกลับได้ กรุณาตรวจสอบเลขเอกสารและชื่อพนักงานให้ถี่ถ้วนก่อนกดยืนยันลบในหน้าต่างป๊อปอัป
+                </div>
+            </div>
+
+            <!-- BUTTON BACK -->
+            <div class="text-center pt-3">
+                <a href="manage_payroll" class="btn-back"><i class="fas fa-arrow-left"></i> กลับไปหน้าจัดการเงินเดือน</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

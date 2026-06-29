@@ -101,6 +101,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">
                                         กำหนดเงื่อนไขการสร้างข้อมูลเงินเดือน</h6>
+                                    <a href="create_payroll.html" target="_blank" class="btn btn-outline-info btn-sm">
+                                        <i class="fas fa-question-circle"></i> คู่มือการใช้งาน
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <form id="form_data" method="post">
