@@ -45,7 +45,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                                    class="control-label"><b>เพิ่ม <?php echo urldecode($_GET['s']) ?></b></label>
 
                                             <button type='button' name='btnAdd' id='btnAdd'
-                                                    class='btn btn-primary btn-xs'>Add
+                                                    class='btn btn-primary btn-xs' disabled>Add
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                             <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">

@@ -41,6 +41,7 @@ if ($_POST["action"] === 'GET_DATA') {
             "approve_name" => $result['approve_name'],
             "receipt_name" => $result['receipt_name'],
             "approve_status" => $result['approve_status'],
+            "petty_cash_status" => $result['petty_cash_status'],
             "status" => $result['status']
         );
     }

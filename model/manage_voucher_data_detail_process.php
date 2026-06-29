@@ -28,6 +28,7 @@ $create_name = $data['create_name'] ?? '';
 $checker_name = $data['checker_name'] ?? '';
 $approve_name = $data['approve_name'] ?? '';
 $approve_status = $data['approve_status'] ?? 'N';
+$petty_cash_status = $data['petty_cash_status'] ?? 'N';
 $bank_account = $data['bank_account'] ?? '';
 
 // Default values
@@ -85,15 +86,15 @@ try {
     // 3. Prepare Header Insert/Update Statements
     // แก้ไข: ย้ายการ Insert Header ของ ADD มาทำก่อน เพื่อป้องกัน FK Error
     if ($action === 'ADD') {
-        $stmtInsertHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status, address)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtInsertHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status, address, petty_cash_status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         // Insert Header ก่อนด้วยยอดเงิน 0 (จะ Update ทีหลัง)
         $stmtInsertHeader->execute([
             $doc_no, $doc_date, date('m', strtotime($doc_date)), date('Y', strtotime($doc_date)),
             $next_pv_runno, $requester, $supplier_id, $supplier_name, $purpose,
             $payment_method, $bank_account, 0, $picture_doc, $create_name,
-            $checker_name, $receipt_name, $approve_name, 'N', 'Active', $address
+            $checker_name, $receipt_name, $approve_name, 'N', 'Active', $address, $petty_cash_status
         ]);
 
     } else { // UPDATE
@@ -119,8 +120,8 @@ try {
     $stmtInsertCategory = $conn->prepare("INSERT INTO ims_category (category_id, category_name, status) VALUES (?, ?, 'Active')");
 
     // Expense Statements
-    $stmtInsertExpense = $conn->prepare("INSERT INTO ims_expenses (runno, doc_id, doc_ref, receipt_name, expense_date, exp_month, exp_year, inv, category_id, description, qty, unit_id, amount, remark, approve_status, file_attach, payment_method, price_per_unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmtUpdateExpense = $conn->prepare("UPDATE ims_expenses SET doc_id=?, receipt_name=?, expense_date=?, exp_month=?, exp_year=?, inv=?, category_id=?, description=?, qty=?, unit_id=?, amount=?, remark=?, approve_status=?, file_attach=?, payment_method=?, price_per_unit=? WHERE id=?");
+    $stmtInsertExpense = $conn->prepare("INSERT INTO ims_expenses (runno, doc_id, doc_ref, receipt_name, expense_date, exp_month, exp_year, inv, category_id, description, qty, unit_id, amount, remark, approve_status, file_attach, payment_method, price_per_unit, petty_cash_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmtUpdateExpense = $conn->prepare("UPDATE ims_expenses SET doc_id=?, receipt_name=?, expense_date=?, exp_month=?, exp_year=?, inv=?, category_id=?, description=?, qty=?, unit_id=?, amount=?, remark=?, approve_status=?, file_attach=?, payment_method=?, price_per_unit=?, petty_cash_status=? WHERE id=?");
 
     // 5. Setup Variables for Loop
     $total_amount_header = 0;
@@ -229,6 +230,7 @@ try {
                 $target_expense_doc_id, $receipt_name, $exp_date, $exp_m, $exp_y,
                 $current_inv, $pgroup_id, $current_product_name, $qty, $current_unit_id,
                 $item_total, $item['remark'] ?? '', 'Y', $picture_doc, $payment_method, $price,
+                $petty_cash_status,
                 $target_expense_id
             ]);
             $expense_ids_to_keep[] = $target_expense_id;
@@ -241,7 +243,8 @@ try {
             $stmtInsertExpense->execute([
                 $next_expense_global_runno, $target_expense_doc_id, $doc_no, $receipt_name,
                 $exp_date, $exp_m, $exp_y, $current_inv, $pgroup_id, $current_product_name,
-                $qty, $current_unit_id, $item_total, $item['remark'] ?? '', 'Y', $picture_doc, $payment_method, $price
+                $qty, $current_unit_id, $item_total, $item['remark'] ?? '', 'Y', $picture_doc, $payment_method, $price,
+                $petty_cash_status
             ]);
             $expense_ids_to_keep[] = $conn->lastInsertId();
         }
@@ -270,14 +273,14 @@ try {
         doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?,
         payment_method = ?, bank_no = ?, total_amount = ?, picture_doc = ?, 
         create_name = ?, checker_name = ?, receipt_name = ?, approve_name = ?, 
-        approve_status = ?, address = ?
+        approve_status = ?, address = ?, petty_cash_status = ?
         WHERE doc_no = ?");
 
     $stmtUpdateHeaderFinal->execute([
         $doc_date, $requester, $supplier_id, $supplier_name, $purpose,
         $payment_method, $bank_account, $total_amount_header, $picture_doc,
         $create_name, $checker_name, $receipt_name, $approve_name,
-        $approve_status, $address, $doc_no
+        $approve_status, $address, $petty_cash_status, $doc_no
     ]);
 
     // 9. Accounting Posting (GL)

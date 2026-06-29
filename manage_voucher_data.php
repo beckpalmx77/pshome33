@@ -109,7 +109,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                     </div>
                                 </div>
 
-                                <div class="col-md-8">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="payment_method" class="form-label fw-semibold mb-2">
                                             วิธีการชำระเงิน
@@ -135,12 +135,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                             </div>
 
                                             <input type="text" class="form-control ms-2 me-2" name="payment_method"
-                                                   id="payment_method"
-                                                   value="เงินสด"
-                                                   placeholder="" style="width: 200px;">
-                                        </div>
-                                    </div>
-                                </div>
+                                                    id="payment_method"
+                                                    value="เงินสด"
+                                                    placeholder="" style="width: 200px;">
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-2">
+                                     <div class="form-group" style="padding-top: 35px;">
+                                         <div class="custom-control custom-checkbox">
+                                             <input type="checkbox" class="custom-control-input" id="petty_cash_status" name="petty_cash_status" value="Y">
+                                             <label class="custom-control-label" for="petty_cash_status" style="cursor: pointer;">ใช้เงินสดย่อย</label>
+                                         </div>
+                                     </div>
+                                 </div>
 
                             </div>
 
@@ -242,6 +250,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                         </select>
                                     </div>
                                 </div>
+
                             </div>
 
                             <input type="file" id="pictures" multiple accept="image/*,application/pdf">
@@ -408,6 +417,11 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#receipt_name').val(queryString["receipt_name"]);
 
                 $('#approve_status').val(queryString["approve_status"]);
+                if (queryString["petty_cash_status"] === 'Y') {
+                    $('#petty_cash_status').prop('checked', true);
+                } else {
+                    $('#petty_cash_status').prop('checked', false);
+                }
 
                 loadDetailData(queryString["doc_no"]);
 
@@ -832,6 +846,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                         purpose: $('#purpose').val(),
                         picture_doc: finalPictureDoc,
                         approve_status: $('#approve_status').val(),
+                        petty_cash_status: $('#petty_cash_status').is(':checked') ? 'Y' : 'N',
                         details: details
                     };
 

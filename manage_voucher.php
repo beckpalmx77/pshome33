@@ -343,6 +343,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
 
                             let bank_no = response[i].bank_no;
                             let approve_status = response[i].approve_status;
+                            let petty_cash_status = response[i].petty_cash_status;
                             let status = response[i].status;
 
                             let main_menu = document.getElementById("main_menu").value;
@@ -367,6 +368,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                 + '&payment_method=' + encodeURIComponent(payment_method)
                                 + '&bank_no=' + encodeURIComponent(bank_no)
                                 + '&approve_status=' + encodeURIComponent(approve_status)
+                                + '&petty_cash_status=' + encodeURIComponent(petty_cash_status)
                                 + '&status=' + encodeURIComponent(status)
                                 + '&action=UPDATE';
 
