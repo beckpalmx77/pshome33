@@ -289,8 +289,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     {data: 'transaction_type'},
                     {data: 'amount'},
                     {data: 'status'},
-                    {data: 'update'},
-                    {data: 'delete'}
+                    {data: 'update', orderable: false},
+                    {data: 'delete', orderable: false}
                 ]
             });
 
@@ -353,12 +353,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let id = response[i].id;
                         let doc_no = response[i].doc_no;
                         let doc_date = response[i].doc_date;
+                        let description = response[i].description;
+                        let amount = response[i].amount;
+                        let transaction_type = response[i].transaction_type;
+                        let received_from = response[i].received_from;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#doc_no').val(doc_no);
                         $('#doc_date').val(doc_date);
+                        $('#description').val(description);
+                        $('#amount').val(amount);
+                        $('#transaction_type').val(transaction_type);
+                        $('#received_from').val(received_from);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -389,12 +397,20 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let id = response[i].id;
                         let doc_no = response[i].doc_no;
                         let doc_date = response[i].doc_date;
+                        let description = response[i].description;
+                        let amount = response[i].amount;
+                        let transaction_type = response[i].transaction_type;
+                        let received_from = response[i].received_from;
                         let status = response[i].status;
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
                         $('#doc_no').val(doc_no);
                         $('#doc_date').val(doc_date);
+                        $('#description').val(description);
+                        $('#amount').val(amount);
+                        $('#transaction_type').val(transaction_type);
+                        $('#received_from').val(received_from);
                         $('#status').val(status);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');

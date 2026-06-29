@@ -179,6 +179,10 @@ if ($_POST["action"] === 'GET_CASH') {
     $rowperpage = $_POST['length']; // Rows display per page
     $columnIndex = $_POST['order'][0]['column']; // Column index
     $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+    $validColumns = array('id', 'doc_no', 'doc_date', 'description', 'transaction_type', 'amount', 'status');
+    if (!in_array($columnName, $validColumns)) {
+        $columnName = 'id';
+    }
     $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
     $searchValue = $_POST['search']['value']; // Search value
     $searchArray = array();
