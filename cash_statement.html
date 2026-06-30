@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แนวคิดการออกแบบและจำลองหน้าจอ: รายงานเคลื่อนไหวเงินสดย่อย (Petty Cash Statement)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fc;
+            color: #333333;
+            font-size: 0.95rem;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            padding: 2.5rem 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 4px solid #1d3c96;
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 2rem;
+            border: 1px solid #e3e6f0;
+        }
+        .section-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.5rem;
+            font-weight: bold;
+            color: #4e73df;
+            display: flex;
+            align-items: center;
+        }
+        .section-header i {
+            margin-right: 0.75rem;
+        }
+        .section-body {
+            padding: 1.5rem;
+        }
+        code, pre {
+            background-color: #f1f3f9;
+            color: #d63384;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        pre {
+            padding: 1rem;
+            color: #212529;
+            overflow-x: auto;
+            border-left: 4px solid #4e73df;
+        }
+        .table-mockup thead th {
+            background-color: #4e73df;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table-mockup tbody tr:hover {
+            background-color: #f1f3f9;
+        }
+        .inflow-text {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        .outflow-text {
+            color: #c62828;
+            font-weight: 600;
+        }
+        .balance-text {
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .badge-receipt {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+        .badge-expense {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        .step-num {
+            background-color: #4e73df;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-banner text-center">
+    <div class="container">
+        <h1 class="display-6 fw-bold"><i class="fa-solid fa-file-invoice-dollar me-2"></i>รายงานสรุปความเคลื่อนไหวเงินสดย่อย (Petty Cash Statement)</h1>
+        <p class="lead mb-0">การรับเงินสดย่อย (ims_petty_cash) และจ่ายเงินสดย่อย (ims_expenses) เรียงตามลำดับวันที่และแสดงยอดคงเหลือ</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <!-- 1. แนวคิดและหลักการ -->
+        <div class="col-lg-12">
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fa-solid fa-lightbulb"></i>1. แนวคิดและวิธีการประมวลผลข้อมูล (Core Concept & Data Flow)
+                </div>
+                <div class="section-body">
+                    <p>รายงานชิ้นนี้ทำหน้าที่เสมือน <strong>"บัญชีกระแสรายวันเงินสดย่อย" (Bank Statement)</strong> ที่จะรวมกิจกรรมการรับเข้าและจ่ายออกให้อยู่ในตารางเดียวกัน โดยใช้เทคนิค <strong>SQL UNION ALL</strong> และจัดเรียงข้อมูลตามวันที่เพื่อหา "ยอดสะสมคงเหลือ" (Running Balance) ดังนี้:</p>
+                    
+                    <div class="row g-4 mt-2 mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-start border-success border-4">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success fw-bold"><i class="fa-solid fa-arrow-down-long me-2"></i>เงินสดย่อยรับเข้า (Inflow)</h5>
+                                    <p class="card-text">
+                                        ดึงข้อมูลจากตาราง <code>ims_petty_cash</code> โดยมีเงื่อนไขดังนี้:
+                                        <ul>
+                                            <li><code>status = 'Y'</code> (ผ่านการอนุมัติ/ยืนยันแล้ว)</li>
+                                            <li><code>transaction_type = '+'</code> (รายการรับเงินสดย่อยเข้าคลัง)</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-start border-danger border-4">
+                                <div class="card-body">
+                                    <h5 class="card-title text-danger fw-bold"><i class="fa-solid fa-arrow-up-long me-2"></i>เงินสดย่อยจ่ายออก (Outflow)</h5>
+                                    <p class="card-text">
+                                        ดึงข้อมูลจากตาราง <code>ims_expenses</code> โดยมีเงื่อนไขดังนี้:
+                                        <ul>
+                                            <li><code>approve_status = 'Y'</code> (รายการค่าใช้จ่ายที่อนุมัติแล้ว)</li>
+                                            <li><code>petty_cash_status = 'Y'</code> (ระบุเป็นเงินสดย่อย)</li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mb-3 text-secondary">สูตรการคำนวณยอดคงเหลือสะสม (Running Balance Calculation)</h5>
+                    <div class="alert alert-info">
+                        <i class="fa-solid fa-calculator me-2"></i>
+                        <code>ยอดคงเหลือรอบปัจจุบัน = ยอดคงเหลือยกมา + ยอดรับเข้า (Inflow) - ยอดจ่ายออก (Outflow)</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. SQL Query Design -->
+        <div class="col-lg-12">
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fa-solid fa-database"></i>2. การออกแบบชุดคำสั่ง SQL (SQL Query Design)
+                </div>
+                <div class="section-body">
+                    <p>เนื่องจากฟิลด์วันที่ในตาราง <code>ims_expenses</code> เป็น <code>varchar(10)</code> (เก็บเป็น string เช่น 'dd-mm-yyyy' หรือ 'yyyy-mm-dd') ในขณะที่ <code>ims_petty_cash</code> เก็บเป็น <code>date</code> จึงจำเป็นต้องใช้ฟังก์ชัน <code>CASE</code> และ <code>STR_TO_DATE</code> เพื่อแปลงประเภทข้อมูลให้อยู่ในรูปของ <code>Date</code> ที่ถูกต้องสำหรับการเรียงลำดับ (ORDER BY) ดังนี้:</p>
+
+                    <pre><code>SELECT 
+    'receipt' AS source_type,
+    id AS source_id,
+    doc_date AS txn_date,
+    doc_no AS doc_id,
+    description AS description,
+    received_from AS contact_person,
+    amount AS inflow,
+    0.00 AS outflow
+FROM ims_petty_cash
+WHERE status = 'Y' AND transaction_type = '+'
+  AND doc_date BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y')
+
+UNION ALL
+
+SELECT 
+    'expense' AS source_type,
+    id AS source_id,
+    CASE 
+        WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+        WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+        ELSE NULL 
+    END AS txn_date,
+    doc_id AS doc_id,
+    description AS description,
+    receipt_name AS contact_person,
+    0.00 AS inflow,
+    amount AS outflow
+FROM ims_expenses
+WHERE petty_cash_status = 'Y' AND approve_status = 'Y'
+  AND (CASE 
+        WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
+        WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+        ELSE NULL 
+  END BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y'))
+
+ORDER BY txn_date ASC, doc_id ASC;</code></pre>
+
+                    <div class="mt-3">
+                        <span class="badge bg-warning text-dark"><i class="fa-solid fa-triangle-exclamation me-1"></i>ข้อควรพิจารณาเรื่อง "ยอดยกมา" (Opening Balance)</span>
+                        <p class="mt-2 mb-0 text-muted">หากมีการกรองข้อมูลตามช่วงวันที่ (เช่น 01-06-2026 ถึง 30-06-2026) เพื่อให้ยอดคงเหลือ (Running Balance) ถูกต้องในระบบ จำเป็นต้องคำนวณ <strong>ยอดยกมาก่อนวันที่เริ่มต้น (Opening Balance)</strong> โดยดึงผลรวมของ Inflow ลบ Outflow ก่อนหน้า <code>:start_date</code> มาตั้งเป็นแถวแรกของตารางก่อน</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. UI Mockup / Interactive Wireframe -->
+        <div class="col-lg-12">
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fa-solid fa-display"></i>3. ตัวอย่างการออกแบบส่วนติดต่อผู้ใช้งาน (UI Wireframe Mockup)
+                </div>
+                <div class="section-body">
+                    <!-- ค้นหา -->
+                    <div class="card p-3 mb-4 bg-light border-light-subtle">
+                        <h6 class="fw-bold text-secondary"><i class="fa-solid fa-filter me-2"></i>ส่วนกรองข้อมูล (Filter Area)</h6>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label font-weight-bold">เริ่มต้นวันที่ :</label>
+                                <input type="date" class="form-control form-control-sm" value="2026-06-01">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label font-weight-bold">ถึงวันที่ :</label>
+                                <input type="date" class="form-control form-control-sm" value="2026-06-30">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end gap-2">
+                                <button class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass me-1"></i> แสดงข้อมูล (Show)</button>
+                                <button class="btn btn-danger btn-sm"><i class="fa-solid fa-file-pdf me-1"></i> Print PDF</button>
+                                <button class="btn btn-success btn-sm"><i class="fa-solid fa-file-excel me-1"></i> Export Excel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ตารางแสดงข้อมูลจำลอง -->
+                    <h6 class="fw-bold text-secondary mb-3"><i class="fa-solid fa-list me-2"></i>ตารางการเคลื่อนไหวเงินสดย่อย (Statement Data Table)</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-mockup align-middle">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">ลำดับ</th>
+                                    <th style="width: 12%;">วันที่</th>
+                                    <th style="width: 15%;">เลขที่เอกสาร</th>
+                                    <th style="width: 8%;">ประเภท</th>
+                                    <th style="width: 25%;">รายละเอียด</th>
+                                    <th style="width: 15%;">รับจาก / จ่ายให้</th>
+                                    <th style="width: 10%;">รับเข้า (บาท)</th>
+                                    <th style="width: 10%;">จ่ายออก (บาท)</th>
+                                    <th style="width: 10%;">ยอดคงเหลือ (บาท)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- ยอดยกมา -->
+                                <tr class="table-info">
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">ก่อนวันที่ 01/06/2026</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center"><span class="badge bg-secondary">ยอดยกมา</span></td>
+                                    <td>ยอดสะสมยกมาก่อนหน้าช่วงวันที่กรอง</td>
+                                    <td>-</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end balance-text">10,000.00</td>
+                                </tr>
+                                <!-- รายการที่ 1 -->
+                                <tr>
+                                    <td class="text-center">1</td>
+                                    <td class="text-center">05/06/2026</td>
+                                    <td class="text-center">CASH-06-2026-0001</td>
+                                    <td class="text-center"><span class="badge badge-receipt">รับเข้า</span></td>
+                                    <td>รับเติมเงินสดย่อยประจำสัปดาห์</td>
+                                    <td>บัญชีธนาคาร (นิติ)</td>
+                                    <td class="text-end inflow-text">5,000.00</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end balance-text">15,000.00</td>
+                                </tr>
+                                <!-- รายการที่ 2 -->
+                                <tr>
+                                    <td class="text-center">2</td>
+                                    <td class="text-center">08/06/2026</td>
+                                    <td class="text-center">EXP-2026-06-0001</td>
+                                    <td class="text-center"><span class="badge badge-expense">จ่ายออก</span></td>
+                                    <td>ซื้อกระดาษ A4 และแฟ้มเอกสารสำนักงาน</td>
+                                    <td>ร้านเครื่องเขียนหน้าหมู่บ้าน</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end outflow-text">350.00</td>
+                                    <td class="text-end balance-text">14,650.00</td>
+                                </tr>
+                                <!-- รายการที่ 3 -->
+                                <tr>
+                                    <td class="text-center">3</td>
+                                    <td class="text-center">12/06/2026</td>
+                                    <td class="text-center">EXP-2026-06-0002</td>
+                                    <td class="text-center"><span class="badge badge-expense">จ่ายออก</span></td>
+                                    <td>ค่าล้างแอร์ห้องประชุมนิติบุคคล</td>
+                                    <td>ร้านโกวิทแอร์</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end outflow-text">1,200.00</td>
+                                    <td class="text-end balance-text">13,450.00</td>
+                                </tr>
+                                <!-- รายการที่ 4 -->
+                                <tr>
+                                    <td class="text-center">4</td>
+                                    <td class="text-center">20/06/2026</td>
+                                    <td class="text-center">CASH-06-2026-0002</td>
+                                    <td class="text-center"><span class="badge badge-receipt">รับเข้า</span></td>
+                                    <td>รับเติมเงินสดย่อยเพิ่มเติม</td>
+                                    <td>บัญชีธนาคาร (นิติ)</td>
+                                    <td class="text-end inflow-text">3,000.00</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end balance-text">16,450.00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold table-light">
+                                    <td colspan="6" class="text-end">รวมประจำงวด (01/06/2026 - 30/06/2026):</td>
+                                    <td class="text-end inflow-text">8,000.00</td>
+                                    <td class="text-end outflow-text">1,550.00</td>
+                                    <td class="text-end balance-text">16,450.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ขั้นตอนการสร้างรายงาน -->
+        <div class="col-lg-12">
+            <div class="section-card">
+                <div class="section-header">
+                    <i class="fa-solid fa-list-check"></i>4. ขั้นตอนและแผนการพัฒนาพัฒนาจริง (Implementation Plan Steps)
+                </div>
+                <div class="section-body">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-start">
+                            <span class="step-num">1</span>
+                            <div>
+                                <strong>สร้างหน้าจอหลักสำหรับการกรองเงื่อนไขวันที่ (<code>petty_cash_statement_report.php</code>)</strong>
+                                <p class="text-muted mb-0">สร้าง UI คล้ายกับรายงานค่าใช้จ่าย มีกล่องปฏิทินเลือกวันที่เริ่มต้นและวันที่สิ้นสุด พร้อมปุ่มเรียกดูข้อมูล (Show Data), ปุ่มออกรายงาน PDF และปุ่มออก Excel</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <span class="step-num">2</span>
+                            <div>
+                                <strong>พัฒนาระบบคำนวณและดึงข้อมูลด้วย PHP/PDO (<code>model/manage_petty_cash_statement.php</code>)</strong>
+                                <p class="text-muted mb-0">สร้างฟังก์ชันส่ง Parameter วันที่และประมวลผลคำสั่ง UNION SQL เพื่อดึงรายการทั้งหมด และวนซ้ำ (Loop) ในการคำนวณยอดเงินสะสมคงเหลือ (Running Balance) รวมถึงการคำนวณยอดยกมาก่อนวันเริ่มต้น</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <span class="step-num">3</span>
+                            <div>
+                                <strong>สร้างหน้าจอแสดงผลข้อมูลบนหน้าเว็บบราวเซอร์ (HTML / Datatable)</strong>
+                                <p class="text-muted mb-0">ใช้ Bootstrap Table และ DataTables JS เพื่อให้สามารถค้นหารายการ, จัดลำดับ, และจัดกลุ่มข้อมูลได้อย่างสะดวกรวดเร็วบนบราวเซอร์ก่อนกดพิมพ์</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <span class="step-num">4</span>
+                            <div>
+                                <strong>สร้างระบบพิมพ์รายงานเป็นไฟล์ PDF ด้วย TCPDF (<code>export_process/petty_cash_statement_pdf.php</code>)</strong>
+                                <p class="text-muted mb-0">จัดตารางรายงานสรุปความเคลื่อนไหวทางบัญชีในรูปแบบกระดาษแนวนอน (Landscape) เพื่อการนำเสนอผู้บริหารหรือแนบใบสำคัญบัญชี</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start">
+                            <span class="step-num">5</span>
+                            <div>
+                                <strong>ลงทะเบียนเมนูในระบบ (<code>menu_sub</code>)</strong>
+                                <p class="text-muted mb-0">เพิ่มรายการเมนูย่อยภายใต้เมนูรายงานการเงิน (Financial Report) เพื่อให้ผู้ใช้สามารถคลิกใช้งานหน้าจอได้อย่างสะดวก</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

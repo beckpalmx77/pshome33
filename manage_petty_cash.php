@@ -282,6 +282,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                     'url': 'model/manage_petty_cash_process.php',
                     'data': formData
                 },
+                'order': [[1, 'desc']],
                 'columns': [
                     {data: 'doc_no'},
                     {data: 'doc_date'},
