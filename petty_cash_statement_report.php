@@ -73,6 +73,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <button type="button" class="btn btn-primary" id="btnShowData">
                                                             แสดงข้อมูล <i class="fa fa-eye"></i>
                                                         </button>
+                                                        <button type="button" class="btn btn-success" id="btnExportExcel">
+                                                            Export Excel <i class="fa fa-file-excel"></i>
+                                                        </button>
                                                         <button type="button" class="btn btn-danger" id="btnPrintPdf">
                                                             Print PDF <i class="fa fa-file-pdf"></i>
                                                         </button>
@@ -120,6 +123,7 @@ if (strlen($_SESSION['alogin']) == "") {
             const form = document.getElementById('form_data');
             const btnShowData = document.getElementById('btnShowData');
             const btnPrintPdf = document.getElementById('btnPrintPdf');
+            const btnExportExcel = document.getElementById('btnExportExcel');
             const startDateInput = document.getElementById('start_date'); // ยังคงใช้อ้างอิงสำหรับ validation
             const endDateInput = document.getElementById('end_date');     // ยังคงใช้อ้างอิงสำหรับ validation
 
@@ -157,6 +161,16 @@ if (strlen($_SESSION['alogin']) == "") {
                 e.preventDefault();
                 if (validateDatesSelected()) {
                     form.action = 'show_petty_cash_statement'; // ลิงก์ไปยังหน้าแสดงข้อมูล
+                    form.target = "_blank";
+                    form.submit();
+                }
+            });
+
+            // Event listener สำหรับปุ่ม Export Excel
+            btnExportExcel.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (validateDatesSelected()) {
+                    form.action = 'export_process/petty_cash_statement_excel.php'; // ลิงก์ไปยังหน้า Excel
                     form.target = "_blank";
                     form.submit();
                 }

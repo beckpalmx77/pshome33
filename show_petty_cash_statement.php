@@ -162,6 +162,13 @@ try {
                         <i class="fa fa-file-pdf-o"></i> Print PDF
                     </button>
                 </form>
+                <form method="post" action="export_process/petty_cash_statement_excel.php" target="_blank" style="display: inline-block;">
+                    <input type="hidden" name="start_date" value="<?php echo htmlentities($start_date); ?>">
+                    <input type="hidden" name="end_date" value="<?php echo htmlentities($end_date); ?>">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-file-excel-o"></i> Export Excel
+                    </button>
+                </form>
                 <button class="btn btn-secondary" onclick="window.close()"><i class="fa fa-times"></i> ปิดหน้าจอนี้</button>
             </div>
 
