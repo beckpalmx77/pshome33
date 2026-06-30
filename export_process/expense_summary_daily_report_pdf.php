@@ -18,18 +18,20 @@ $start_date_for_filename = DateTime::createFromFormat('d-m-Y', $start_date_str)-
 $end_date_for_filename = DateTime::createFromFormat('d-m-Y', $end_date_str)->format('Y-m-d');
 $filename_prefix = "expenses-report-" . $start_date_for_filename . "_to_" . $end_date_for_filename;
 
-$sql = "SELECT * FROM v_ims_expenses
+$sql = "SELECT v.* FROM v_ims_expenses v
+        LEFT JOIN ims_expenses e ON v.id = e.id
         WHERE (CASE 
-            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
-            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            WHEN v.expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(v.expense_date, '%Y-%m-%d')
+            WHEN v.expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(v.expense_date, '%d-%m-%Y')
             ELSE NULL 
         END BETWEEN STR_TO_DATE(:start_date, '%d-%m-%Y') AND STR_TO_DATE(:end_date, '%d-%m-%Y'))
-        AND payment_method = 'เงินสด'
+        AND v.payment_method = 'เงินสด'
+        AND e.petty_cash_status = 'Y'
         ORDER BY CASE 
-            WHEN expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(expense_date, '%Y-%m-%d')
-            WHEN expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(expense_date, '%d-%m-%Y')
+            WHEN v.expense_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(v.expense_date, '%Y-%m-%d')
+            WHEN v.expense_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(v.expense_date, '%d-%m-%Y')
             ELSE NULL 
-        END ASC, id ASC";
+        END ASC, v.id ASC";
 
 $params = [':start_date' => $start_date_str, ':end_date' => $end_date_str];
 
