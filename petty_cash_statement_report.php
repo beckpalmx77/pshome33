@@ -79,6 +79,9 @@ if (strlen($_SESSION['alogin']) == "") {
                                                         <button type="button" class="btn btn-danger" id="btnPrintPdf">
                                                             Print PDF <i class="fa fa-file-pdf"></i>
                                                         </button>
+                                                        <a href="how_to_cash_flow.html" target="_blank" class="btn btn-info">
+                                                            คู่มือเงินสดย่อย <i class="fa fa-book"></i>
+                                                        </a>
                                                     </div>
                                                 </div>
 

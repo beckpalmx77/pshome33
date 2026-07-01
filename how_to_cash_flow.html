@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือขั้นตอนการทำงาน: รายงานสรุปความเคลื่อนไหวเงินสดย่อย (Petty Cash Statement)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            color: #2d3748;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 960px;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            padding: 2.5rem 1.5rem;
+            border-bottom: 4px solid #1d3c96;
+            margin-bottom: 2rem;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .card-step {
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+        .card-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .step-badge {
+            background-color: #4e73df;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+        .inflow-banner {
+            border-left: 4px solid #2e7d32;
+        }
+        .outflow-banner {
+            border-left: 4px solid #c62828;
+        }
+        .report-banner {
+            border-left: 4px solid #0d6efd;
+        }
+        .alert-custom {
+            border-left: 4px solid #3182ce;
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+        }
+        .alert-warning-custom {
+            border-left: 4px solid #dd6b20;
+            background-color: #fffaf0;
+            color: #dd6b20;
+        }
+        code {
+            background-color: #edf2f7;
+            color: #e53e3e;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 0.9em;
+        }
+        .diagram-container {
+            background-color: #f7fafc;
+            border: 1px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Banner -->
+    <div class="header-section text-center">
+        <h1 class="h2 fw-bold mb-2"><i class="fa-solid fa-book-open me-2"></i>คู่มือขั้นตอนการทำงานก่อนเรียกใช้รายงาน</h1>
+        <p class="lead mb-0">สรุปความเคลื่อนไหวเงินสดย่อย (Petty Cash Statement)</p>
+    </div>
+
+    <!-- Introduction -->
+    <div class="alert alert-custom mb-4" role="alert">
+        <h5 class="alert-heading fw-bold"><i class="fa-solid fa-circle-info me-2"></i>เกี่ยวกับการคำนวณและข้อมูล</h5>
+        รายงานความเคลื่อนไหวเงินสดย่อย จะทำหน้าที่รวบรวมข้อมูล **การรับเงินสำรองเข้าคลัง** และ **รายการใช้เงินออกไปจริง** มาจัดเรียงตามลำดับวันที่และเวลา เพื่อแสดง **ยอดสะสมคงเหลือ (Running Balance)** ทั้งนี้ข้อมูลที่จะมาแสดง ต้องทำตามขั้นตอนดังต่อไปนี้:
+    </div>
+
+    <!-- Step 1 -->
+    <div class="card card-step inflow-banner">
+        <div class="card-header bg-light py-3 fw-bold d-flex align-items-center">
+            <span class="step-badge" style="background-color: #2e7d32;"><i class="fa-solid fa-arrow-down-long"></i></span>
+            ขั้นตอนที่ 1: การบันทึก "เงินสดย่อยรับเข้า" (Inflow)
+        </div>
+        <div class="card-body">
+            <p>เมื่อมีการนำเงินสดเข้ามาสำรองไว้เป็นกองกลางเงินสดย่อย (เช่น บัญชีเบิกเช็คถอนเงินสดจากธนาคารมาเก็บที่นิติบุคคล) ให้ทำการบันทึกตามขั้นตอนนี้:</p>
+            <ol class="ps-3 mb-3">
+                <li>ไปที่หน้าจอ **"การเงิน/ธนาคาร"** > **"รับเงินสดย่อย"** (<code>manage_petty_cash</code>)</li>
+                <li>คลิกปุ่ม **"Add"** ด้านบนตารางข้อมูล เพื่อเปิดฟอร์มเพิ่มข้อมูล</li>
+                <li>กรอกรายละเอียดหลัก:
+                    <ul>
+                        <li><strong>เลขที่เอกสาร:</strong> รหัสเอกสาร เช่น <code>CASH-06-2026-0001</code></li>
+                        <li><strong>วันที่เอกสาร:</strong> วันที่ที่เงินเข้ากระเป๋าเงินสดย่อยจริง</li>
+                        <li><strong>จำนวนเงิน:</strong> ระบุจำนวนเงินที่จะนำเข้าสำรอง</li>
+                        <li><strong>Status (สถานะ):</strong> ต้องระบุเป็น <span class="badge bg-success">อนุมัติ (Y)</span> เท่านั้น</li>
+                    </ul>
+                </li>
+                <li>กดปุ่ม **"Save"**</li>
+            </ol>
+            <div class="alert alert-warning-custom py-2 px-3 mb-0">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> <strong>ข้อสำคัญ:</strong> รายการใดๆ ที่มีสถานะเป็น <code>รออนุมัติ (N)</code> จะไม่นำมาแสดงเป็นเงินรับเข้าในรายงาน Statement
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="card card-step outflow-banner">
+        <div class="card-header bg-light py-3 fw-bold d-flex align-items-center">
+            <span class="step-badge" style="background-color: #c62828;"><i class="fa-solid fa-arrow-up-long"></i></span>
+            ขั้นตอนที่ 2: การบันทึก "เงินสดย่อยจ่ายออก" (Outflow)
+        </div>
+        <div class="card-body">
+            <p>เมื่อมีการเบิกจ่ายเงินสดย่อยออกไปเพื่อซื้อของหรือจ่ายบริการต่างๆ สามารถบันทึกเข้าระบบได้ 2 หน้าจอ ซึ่งเงื่อนไขคือต้องเลือกให้ตัดเงินสดย่อย:</p>
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100 border-light-subtle">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-danger"><i class="fa-solid fa-file-invoice-dollar me-2"></i>หน้าจอ "บันทึกค่าใช้จ่าย"</h6>
+                            <p class="small text-muted mb-2">(<code>manage_expenses</code>)</p>
+                            <ol class="small ps-3 mb-0">
+                                <li>บันทึกรายละเอียดค่าใช้จ่ายตามปกติ</li>
+                                <li><strong>วิธีชำระเงิน:</strong> เลือกเป็น <code>เงินสด</code></li>
+                                <li><strong>ตัวเลือกเสริม:</strong> ติ๊กถูกที่ช่อง <code>ใช้เงินสดย่อย</code></li>
+                                <li><strong>อนุมัติรายการ:</strong> ตรวจสอบให้แน่ใจว่าสถานะอนุมัติเป็น <code>Y</code></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-light-subtle">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-danger"><i class="fa-solid fa-receipt me-2"></i>หน้าจอ "บันทึกใบสำคัญจ่าย"</h6>
+                            <p class="small text-muted mb-2">(<code>manage_voucher</code>)</p>
+                            <ol class="small ps-3 mb-0">
+                                <li>บันทึกขออนุมัติจ่าย (Payment Voucher)</li>
+                                <li><strong>วิธีชำระเงิน:</strong> เลือกรูปแบบชำระเงินเป็น <code>เงินสด</code></li>
+                                <li><strong>ตัวเลือกเสริม:</strong> ติ๊กเลือก <code>ใช้เงินสดย่อย</code></li>
+                                <li>ระบบจะสร้างรายการไปยังตารางค่าใช้จ่ายพร้อมสถานะเงินสดย่อยให้โดยอัตโนมัติ</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="card card-step report-banner">
+        <div class="card-header bg-light py-3 fw-bold d-flex align-items-center">
+            <span class="step-badge"><i class="fa-solid fa-chart-line"></i></span>
+            ขั้นตอนที่ 3: การเรียกดูและออกรายงาน (Generate Report)
+        </div>
+        <div class="card-body">
+            <p>หลังจากบันทึกข้อมูลเรียบร้อยแล้ว ให้เข้าสู่เมนูเพื่อตรวจสอบความถูกต้องหรือสั่งพิมพ์เอกสารรายงาน:</p>
+            <ol class="ps-3 mb-3">
+                <li>ไปที่หน้าจอหลัก **"รายงานการเงิน"** > **"เคลื่อนไหวเงินสดย่อย"** (<code>petty_cash_statement_report</code>)</li>
+                <li>ระบบจะเลือก **"วันที่เริ่มต้น"** เป็นวันแรกของเดือนปัจจุบัน และ **"ถึงวันที่"** เป็นวันปัจจุบันให้โดยอัตโนมัติ</li>
+                <li>คุณสามารถเลือกดำเนินการได้ 3 รูปแบบตามต้องการ:
+                    <ul class="mt-2">
+                        <li><i class="fa-solid fa-eye text-primary me-2"></i><strong>แสดงข้อมูล (Preview):</strong> แสดงประวัติข้อมูลแบบแสดงยอดคงเหลือเคลื่อนไหวในแต่ละแถวสะสมไปเรื่อยๆ ทันทีบนเบราว์เซอร์</li>
+                        <li><i class="fa-solid fa-file-pdf text-danger me-2"></i><strong>Print PDF:</strong> ดาวน์โหลดรายงานทางการเพื่อสั่งพิมพ์ในรูปแบบกระดาษแนวนอน (Landscape) เพื่อนำไปแนบเอกสารใบปะหน้าทางการ</li>
+                        <li><i class="fa-solid fa-file-excel text-success me-2"></i><strong>Export Excel:</strong> ดาวน์โหลดไฟล์รูปแบบ CSV ที่รองรับการแปลงรหัสฟอนต์ภาษาไทย (TIS-620) สำหรับนำไปจัดการต่อในโปรแกรม Excel ได้ทันที</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Data Flow Diagram -->
+    <div class="section-card bg-white p-4 rounded border border-light-subtle shadow-sm mb-5 text-center">
+        <h5 class="fw-bold mb-3 text-secondary text-start"><i class="fa-solid fa-network-wired me-2"></i>ผังการไหลของข้อมูล (Data Flow)</h5>
+        <div class="diagram-container mx-auto" style="max-width: 600px;">
+            <div class="d-flex justify-content-around align-items-center mb-3">
+                <div class="p-3 bg-success text-white rounded shadow-sm" style="width: 200px;">
+                    <i class="fa-solid fa-cash-register d-block mb-1 fs-4"></i>
+                    <strong>รับเงินสดย่อย</strong><br>
+                    <small>status = 'Y'</small>
+                </div>
+                <div class="fs-3 text-secondary"><i class="fa-solid fa-plus"></i></div>
+                <div class="p-3 bg-danger text-white rounded shadow-sm" style="width: 200px;">
+                    <i class="fa-solid fa-hand-holding-dollar d-block mb-1 fs-4"></i>
+                    <strong>จ่ายใช้เงินสดย่อย</strong><br>
+                    <small>petty_cash_status = 'Y'</small>
+                </div>
+            </div>
+            <div class="fs-3 text-secondary mb-2"><i class="fa-solid fa-arrow-down-long"></i></div>
+            <div class="p-3 bg-primary text-white rounded shadow-sm mx-auto" style="width: 280px;">
+                <i class="fa-solid fa-file-invoice-dollar d-block mb-1 fs-4"></i>
+                <strong>รายงานสรุปความเคลื่อนไหวเงินสดย่อย</strong>
+                <div class="small mt-1">(คำนวณยอดยกมา + วิ่งหายอดคงเหลือสะสม)</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

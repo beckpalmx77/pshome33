@@ -541,9 +541,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         house.contact_name,
         house.phone_number,
         h.line_user_id,
-        u.line_picture_profile,
         h.line_picture_profile_show,
-        u.line_user_name,
         hm.area_size,
         hm.garbage_collection_fee,
         hm.common_fee,
@@ -551,12 +549,11 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         h.create_by,
         h.approve_by,
         h.update_count
-     FROM ims_house_payment h FORCE INDEX (PRIMARY)
+     FROM ims_house_payment h
      LEFT JOIN ims_month m_start ON h.period_month_start = m_start.month
      LEFT JOIN ims_month m_to ON h.period_month_to = m_to.month
      LEFT JOIN ims_house house ON h.house_number = house.house_number
      LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
-     LEFT JOIN v_ims_user u ON u.line_user_id = h.line_user_id
      WHERE 1=1 " . $searchQuery . $where_house_number_qualified
      . " ORDER BY h.id DESC LIMIT :limit,:offset";
 
