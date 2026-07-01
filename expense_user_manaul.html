@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งาน: บันทึกใบสำคัญจ่าย / บันทึกค่าใช้จ่าย</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fc;
+            color: #2d3748;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 960px;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #36b9cc 0%, #1a8a99 100%);
+            color: white;
+            padding: 2.5rem 1.5rem;
+            border-bottom: 4px solid #136a75;
+            margin-bottom: 2rem;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .card-step {
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+        .card-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .step-badge {
+            background-color: #36b9cc;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+        .highlight-text {
+            color: #1a8a99;
+            font-weight: bold;
+        }
+        .alert-custom {
+            border-left: 4px solid #36b9cc;
+            background-color: #f0fdfa;
+            color: #115e59;
+        }
+        .alert-warning-custom {
+            border-left: 4px solid #d97706;
+            background-color: #fffbeb;
+            color: #92400e;
+        }
+        code {
+            background-color: #edf2f7;
+            color: #e53e3e;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 0.9em;
+        }
+        .icon-bullet {
+            color: #36b9cc;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Banner -->
+    <div class="header-section text-center">
+        <h1 class="h2 fw-bold mb-2"><i class="fa-solid fa-file-invoice-dollar me-2"></i>คู่มือการใช้งานระบบ</h1>
+        <p class="lead mb-0">บันทึกใบสำคัญจ่าย / บันทึกค่าใช้จ่าย (Payment Voucher & Expenses)</p>
+    </div>
+
+    <!-- Introduction -->
+    <div class="alert alert-custom mb-4" role="alert">
+        <h5 class="alert-heading fw-bold"><i class="fa-solid fa-circle-info me-2"></i>รายละเอียดหน้าจอ</h5>
+        หน้าจอ **"บันทึกใบสำคัญจ่าย"** ใช้สำหรับทำเอกสารขออนุมัติการจ่ายเงินของนิติบุคคลหมู่บ้านจัดสรร เพื่อควบคุมการจัดซื้อจัดจ้าง การเบิกจ่ายงบประมาณ และค่าใช้จ่ายทั่วไป โดยเชื่อมโยงกับการชำระเงินประเภทต่างๆ
+    </div>
+
+    <!-- Step 1: Add Voucher -->
+    <div class="card card-step">
+        <div class="card-header bg-light py-3 fw-bold d-flex align-items-center">
+            <span class="step-badge">1</span>
+            การสร้างเอกสารใบสำคัญจ่ายใหม่ (Add Voucher)
+        </div>
+        <div class="card-body">
+            <p>เมื่อฝ่ายบริหารโครงการหรือเจ้าหน้าที่ต้องการเบิกจ่ายเงิน ให้ดำเนินงานดังนี้:</p>
+            <ol class="ps-3 mb-0">
+                <li class="mb-2">คลิกปุ่ม <span class="badge bg-primary"><i class="fa fa-plus"></i> Add</span> บริเวณมุมบนของตารางรายการข้อมูล</li>
+                <li class="mb-2">ระบบจะเปิดหน้าต่างฟอร์มกรอกเอกสารใบสำคัญจ่าย</li>
+                <li class="mb-2">กรอกข้อมูลหลักในเอกสารให้ครบถ้วน:
+                    <ul>
+                        <li><strong>เลขที่เอกสาร:</strong> ระบบจะรันนิ่งเอกสารให้อัตโนมัติ</li>
+                        <li><strong>วันที่เอกสาร:</strong> ระบุวันที่ยื่นขอเบิกจ่ายจริง</li>
+                        <li><strong>จ่ายให้ (ผู้ขาย / ผู้รับเหมา):</strong> ค้นหาหรือพิมพ์ชื่อบุคคล/บริษัทที่เป็นผู้รับเงิน</li>
+                        <li><strong>รายละเอียด:</strong> พิมพ์คำอธิบายจุดประสงค์ในการเบิกจ่ายให้ชัดเจน</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Step 2: Financial Details -->
+    <div class="card card-step">
+        <div class="card-header bg-light py-3 fw-bold d-flex align-items-center">
+            <span class="step-badge">2</span>
+            ระบุรายละเอียดทางการเงินและการชำระเงิน
+        </div>
+        <div class="card-body">
+            <p>กรอกข้อมูลตัวเลขค่าใช้จ่ายและเลือกวิธีตัดบัญชีการชำระเงิน:</p>
+            <ul class="list-unstyled ps-2 mb-0">
+                <li class="mb-2"><i class="fa-solid fa-check icon-bullet"></i><strong>จำนวนเงินทั้งหมด (บาท):</strong> ระบุยอดเงินรวมตามหน้าบิลภาษีหรือบิลเงินสด</li>
+                <li class="mb-2"><i class="fa-solid fa-check icon-bullet"></i><strong>วิธีชำระเงิน:</strong> เลือกช่องทางการจ่ายเงินจริง
+                    <ul>
+                        <li><span class="highlight-text">โอนเงิน:</span> กรณีจ่ายด้วยการโอนผ่านบัญชีธนาคารส่วนกลาง</li>
+                        <li><span class="highlight-text">เงินสด:</span> กรณีจ่ายเงินสด (หน้างาน)</li>
+                    </ul>
+                </li>
+                <li class="mb-2"><i class="fa-solid fa-check icon-bullet"></i><strong>ตัวเลือกกรณีใช้เงินสดย่อย:</strong> 
+                    หากระบุวิธีจ่ายเงินเป็น <code>เงินสด</code> และต้องการให้ไปหักยอดออกจาก <span class="highlight-text">วงเงินสดย่อย (Petty Cash)</span> ของนิติบุคคล ให้คลิกติ๊กถูกที่ช่อง <strong>"ใช้เงินสดย่อย"</strong>
+                </li>
+                <li class="mb-2"><i class="fa-solid fa-check icon-bullet"></i><strong>แนบหลักฐาน (Upload Attachment):</strong> ถ่ายรูปภาพใบเสร็จรับเงิน ใบกำกับภาษี หรือสลิปการโอนเงินแนบเข้าระบบเพื่อใช้ในการตรวจสอบประกอบการบัญชี</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Step 3: Approve -->
+    <div class="card card-step">
+        <div class="card-header bg-light py-3 fw-bold d-flex align-items-center">
+            <span class="step-badge">3</span>
+            การตรวจสอบและอนุมัติจ่าย (Approval Process)
+        </div>
+        <div class="card-body">
+            <p>รายการที่บันทึกเข้ามาใหม่จะมีสถานะเริ่มต้นเป็น <span class="badge bg-secondary">รออนุมัติ</span> ฝ่ายบัญชีหรือผู้จัดการมีหน้าที่เข้ามาดำเนินการดังนี้:</p>
+            <ol class="ps-3 mb-3">
+                <li>เปิดรายการขึ้นมาตรวจสอบความถูกต้องของยอดเงินและเอกสารแนบ</li>
+                <li>เลือกสถานะการอนุมัติเป็น **"อนุมัติแล้ว"** เพื่อยืนยันรายการจ่ายจริง</li>
+                <li>เมื่อรายการเปลี่ยนเป็นสถานะ **"อนุมัติแล้ว"** ระบบจะ:
+                    <ul>
+                        <li>บันทึกเป็นรายจ่ายนิติบุคคลลงในรายงานสรุปรายวัน-รายเดือนทันที</li>
+                        <li>ทำการลบยอดเงินออกจากคลังเงินสดย่อย (กรณีติ๊กถูกเลือกใช้เงินสดย่อยไว้)</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <div class="alert alert-warning-custom py-2 px-3 mb-0">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> <strong>ข้อสำคัญ:</strong> ตราบใดที่เอกสารยังอยู่ในสถานะ <code>รออนุมัติ</code> ยอดเงินจ่ายออกดังกล่าวจะไม่ถูกนำไปหักลบในงบการเงินและรายงานความเคลื่อนไหวเงินสดย่อยเด็ดขาด
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

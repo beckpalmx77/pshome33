@@ -136,36 +136,17 @@
             ขั้นตอนที่ 2: การบันทึก "เงินสดย่อยจ่ายออก" (Outflow)
         </div>
         <div class="card-body">
-            <p>เมื่อมีการเบิกจ่ายเงินสดย่อยออกไปเพื่อซื้อของหรือจ่ายบริการต่างๆ สามารถบันทึกเข้าระบบได้ 2 หน้าจอ ซึ่งเงื่อนไขคือต้องเลือกให้ตัดเงินสดย่อย:</p>
+            <p>เมื่อมีการเบิกจ่ายเงินสดย่อยออกไปเพื่อซื้อของหรือจ่ายบริการต่างๆ จะทำการบันทึกผ่านหน้าจอดังนี้:</p>
             
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="card h-100 border-light-subtle">
-                        <div class="card-body">
-                            <h6 class="fw-bold text-danger"><i class="fa-solid fa-file-invoice-dollar me-2"></i>หน้าจอ "บันทึกค่าใช้จ่าย"</h6>
-                            <p class="small text-muted mb-2">(<code>manage_expenses</code>)</p>
-                            <ol class="small ps-3 mb-0">
-                                <li>บันทึกรายละเอียดค่าใช้จ่ายตามปกติ</li>
-                                <li><strong>วิธีชำระเงิน:</strong> เลือกเป็น <code>เงินสด</code></li>
-                                <li><strong>ตัวเลือกเสริม:</strong> ติ๊กถูกที่ช่อง <code>ใช้เงินสดย่อย</code></li>
-                                <li><strong>อนุมัติรายการ:</strong> ตรวจสอบให้แน่ใจว่าสถานะอนุมัติเป็น <code>Y</code></li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card h-100 border-light-subtle">
-                        <div class="card-body">
-                            <h6 class="fw-bold text-danger"><i class="fa-solid fa-receipt me-2"></i>หน้าจอ "บันทึกใบสำคัญจ่าย"</h6>
-                            <p class="small text-muted mb-2">(<code>manage_voucher</code>)</p>
-                            <ol class="small ps-3 mb-0">
-                                <li>บันทึกขออนุมัติจ่าย (Payment Voucher)</li>
-                                <li><strong>วิธีชำระเงิน:</strong> เลือกรูปแบบชำระเงินเป็น <code>เงินสด</code></li>
-                                <li><strong>ตัวเลือกเสริม:</strong> ติ๊กเลือก <code>ใช้เงินสดย่อย</code></li>
-                                <li>ระบบจะสร้างรายการไปยังตารางค่าใช้จ่ายพร้อมสถานะเงินสดย่อยให้โดยอัตโนมัติ</li>
-                            </ol>
-                        </div>
-                    </div>
+            <div class="card border-light-subtle">
+                <div class="card-body">
+                    <h6 class="fw-bold text-danger"><i class="fa-solid fa-receipt me-2"></i>หน้าจอ "บันทึกใบสำคัญจ่าย" (<code>manage_voucher</code>)</h6>
+                    <ol class="ps-3 mb-0">
+                        <li>บันทึกขออนุมัติจ่าย (Payment Voucher)</li>
+                        <li><strong>วิธีชำระเงิน:</strong> เลือกรูปแบบชำระเงินเป็น <code>เงินสด</code></li>
+                        <li><strong>ตัวเลือกเสริม:</strong> ติ๊กเลือก <code>ใช้เงินสดย่อย</code></li>
+                        <li>ระบบจะสร้างรายการค่าใช้จ่ายพร้อมปรับสถานะเงินสดย่อยให้โดยอัตโนมัติเมื่อรายการได้รับการอนุมัติ</li>
+                    </ol>
                 </div>
             </div>
         </div>

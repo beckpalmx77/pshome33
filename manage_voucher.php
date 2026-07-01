@@ -52,8 +52,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                             <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
                                                 <i class="fa fa-refresh"></i> Reload
                                             </button>
-                                            <a href="how_to_cash_flow.html" target="_blank" class="btn btn-info btn-xs" data-toggle="tooltip" title="คู่มือเงินสดย่อย">
-                                                <i class="fa fa-book"></i> คู่มือเงินสดย่อย
+                                            <a href="expense_user_manaul.html" target="_blank" class="btn btn-info btn-xs" data-toggle="tooltip" title="คู่มือการใช้งาน บันทึกใบสำคัญจ่าย / บันทึกค่าใช้จ่าย">
+                                                <i class="fa fa-book"></i> คู่มือการใช้งาน บันทึกใบสำคัญจ่าย / บันทึกค่าใช้จ่าย
                                             </a>
                                             <!--button type='button' name='btnSummary' id='btnSummary'
                                                     class='btn btn-info btn-xs'>Summary
