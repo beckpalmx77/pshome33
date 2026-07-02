@@ -290,10 +290,11 @@
             <li><a href="#payment">3. บันทึกชำระค่าส่วนกลาง</a></li>
             <li><a href="#receipts">4. บันทึกรายรับเบ็ดเตล็ด</a></li>
             <li><a href="#voucher">5. บันทึกใบสำคัญจ่าย (PV)</a></li>
-            <li><a href="#payroll">6. บันทึกเงินเดือน (Payroll)</a></li>
-            <li><a href="#accounting">7. ตรวจสอบสมุดรายวัน (GL)</a></li>
-            <li><a href="#reports">8. รายงานกระแสเงินสด</a></li>
-            <li><a href="#gl-processing">9. ผ่านรายการบัญชีแยกประเภท</a></li>
+            <li><a href="#pettycash">6. จัดการและรายงานเงินสดย่อย</a></li>
+            <li><a href="#payroll">7. บันทึกเงินเดือน (Payroll)</a></li>
+            <li><a href="#accounting">8. ตรวจสอบสมุดรายวัน (GL)</a></li>
+            <li><a href="#reports">9. รายงานกระแสเงินสด</a></li>
+            <li><a href="#gl-processing">10. ผ่านรายการบัญชีแยกประเภท</a></li>
         </ul>
     </div>
 
@@ -411,14 +412,66 @@
                     <li><strong>ระบุวัตถุประสงค์ (จ่ายเพื่อ):</strong> บังคับระบุรายละเอียดให้ชัดเจนในช่อง <code>จ่ายเพื่อ</code> ห้ามละเว้น เพื่อผลประโยชน์ในการตรวจสอบบัญชีปลายปี</li>
                     <li><strong>รายละเอียดรายการ:</strong> เพิ่มรายการและระบุราคาสินค้าหรือบริการแต่ละตัว ยอดเงินจะสะสมและแสดงรวมโดยชิดขวาเสมอ</li>
                     <li>แนบเอกสารใบเสร็จ ใบกำกับภาษี หรือใบเสนอราคาจากคู่ค้าเข้าระบบ</li>
-                    <li>เมื่อได้รับการอนุมัติและเปลี่ยนสถานะเป็นอนุมัติจ่ายจริง ระบบจะผูกยอดบัญชีและบันทึกลงสู่รายงาน GL และปรับปรุงยอดค่าใช้จ่ายย่อย (EXP) ให้อัตโนมัติ</li>
+                    <li><strong>วิธีชำระเงินและการเชื่อมโยงเงินสดย่อย (Petty Cash):</strong> 
+                        <ul>
+                            <li>หากจ่ายด้วยการโอนผ่านบัญชีธนาคารส่วนกลาง ให้เลือกวิธีชำระเงินเป็น <code>โอนเงิน</code></li>
+                            <li>หากจ่ายหน้างานด้วยเงินสด ให้เลือกวิธีชำระเงินเป็น <code>เงินสด</code></li>
+                            <li>หากระบุวิธีจ่ายเป็น <code>เงินสด</code> และต้องการให้ไปหักยอดออกจาก <strong>"วงเงินสดย่อย"</strong> ของนิติบุคคล ให้คลิกติ๊กถูกที่ช่อง <strong>"ใช้เงินสดย่อย"</strong></li>
+                        </ul>
+                    </li>
+                    <li>เมื่อได้รับการอนุมัติและเปลี่ยนสถานะเป็นอนุมัติจ่ายจริง ระบบจะผูกยอดบัญชีและบันทึกลงสู่รายงาน GL และปรับปรุงยอดค่าใช้จ่ายย่อย (EXP) ให้อัตโนมัติ พร้อมหักยอดคงเหลือของวงเงินสดย่อยทันที (หากระบุใช้เงินสดย่อยไว้)</li>
                 </ol>
+                <div class="note-box">
+                    <strong>💡 คู่มือเพิ่มเติม:</strong> สามารถคลิกปุ่ม <code>คู่มือการใช้งาน บันทึกใบสำคัญจ่าย / บันทึกค่าใช้จ่าย</code> ในหน้าจอระบบ หรือเปิดไฟล์ <a href="expense_user_manaul.html" target="_blank">expense_user_manaul.html</a> เพื่อดูรายละเอียดขั้นตอนอย่างสมบูรณ์
+                </div>
             </div>
         </section>
 
-        <!-- 6. Payroll Screen -->
+        <!-- 6. Petty Cash and Statement Screen -->
+        <section id="pettycash">
+            <h2>6. จัดการเงินสดย่อยและรายงานความเคลื่อนไหว (Petty Cash & Statement)</h2>
+            <p>หน้าสำหรับบริหารเงินสำรองกองกลางเงินสดย่อยของนิติบุคคล และการเรียกดูรายงานความเคลื่อนไหวเงินสดย่อย (Petty Cash Statement)</p>
+            
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>6.1 บันทึกรับเงินสดย่อยเข้าคลัง (Inflow)</span>
+                    <span class="screen-badge">manage_petty_cash</span>
+                </div>
+                <p>ใช้สำหรับบันทึกการเติมเงินสดสำรองเข้ากองกลางนิติบุคคล (เช่น การถอนเงินสดจากธนาคารมาเก็บไว้)</p>
+                <ol class="step-list">
+                    <li>ไปที่เมนู **"รับเงินสดย่อย"** (<code>manage_petty_cash</code>) และคลิกปุ่ม <code>Add</code></li>
+                    <li>ระบุเลขที่เอกสาร วันที่เติมเงิน และระบุจำนวนเงินที่นำเข้าสะสม</li>
+                    <li><strong>กำหนดสถานะ (Status):</strong> ต้องเลือกสถานะเป็น <span class="badge bg-success" style="background-color: var(--success-color);">อนุมัติ (Y)</span> เท่านั้น ระบบจึงจะนับเป็นยอดเงินรับเข้าในรายงาน</li>
+                    <li>กดปุ่ม <code>Save</code> เพื่อบันทึกข้อมูล</li>
+                </ol>
+            </div>
+
+            <div class="ui-card">
+                <div class="ui-card-title">
+                    <span>6.2 รายงานความเคลื่อนไหวเงินสดย่อย (Petty Cash Statement)</span>
+                    <span class="screen-badge">petty_cash_statement_report</span>
+                </div>
+                <p>หน้าจอสรุปความเคลื่อนไหวรายวันและคำนวณยอดสะสมคงเหลือ (Running Balance) คล้ายใบแสดงรายการบัญชีธนาคาร</p>
+                <ol class="step-list">
+                    <li>ไปที่เมนู **"เคลื่อนไหวเงินสดย่อย"** (<code>petty_cash_statement_report</code>)</li>
+                    <li><strong>กำหนดช่วงเวลา:</strong> เลือกวันที่เริ่มต้นและวันที่สิ้นสุดการวิเคราะห์ (ระบบจะตั้งค่าเริ่มต้นเป็นเดือนปัจจุบันให้)</li>
+                    <li><strong>รูปแบบการส่งออกรายงาน:</strong>
+                        <ul>
+                            <li>คลิกปุ่ม <code>แสดงข้อมูล (Show)</code> เพื่อแสดงผลรายการตารางพร้อมยอดยกมาบนหน้าจอ</li>
+                            <li>คลิกปุ่ม <code>Print PDF</code> เพื่อดาวน์โหลดหรือพิมพ์รายงานรูปแบบแนวนอน (Landscape) สวยงามเป็นทางการ</li>
+                            <li>คลิกปุ่ม <code>Export Excel</code> เพื่อส่งออกข้อมูลดิบในรูปแบบ CSV สำหรับนำไปจัดการต่อบน Microsoft Excel</li>
+                        </ul>
+                    </li>
+                </ol>
+                <div class="note-box">
+                    <strong>💡 คู่มือเพิ่มเติม:</strong> สามารถคลิกปุ่ม <code>คู่มือเงินสดย่อย</code> ในหน้าจอระบบ หรือเปิดไฟล์ <a href="how_to_cash_flow.html" target="_blank">how_to_cash_flow.html</a> เพื่อดูวิธีวิเคราะห์และคำนวณยอดยกมา-ยอดคงเหลือในรายงานสรุปเงินสดย่อยอย่างละเอียด
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Payroll Screen -->
         <section id="payroll">
-            <h2>6. หน้าจอบันทึกเงินเดือน (manage_payroll)</h2>
+            <h2>7. หน้าจอบันทึกเงินเดือน (manage_payroll)</h2>
             <p>หน้าจอจัดการคำนวณและออกใบแจ้งยอดจ่ายเงินเดือน (Payslip) ประจำเดือนของพนักงานและเจ้าหน้าที่นิติบุคคลโครงการ</p>
             <div class="ui-card">
                 <div class="ui-card-title">
@@ -434,9 +487,9 @@
             </div>
         </section>
 
-        <!-- 7. Accounting Journal Screen -->
+        <!-- 8. Accounting Journal Screen -->
         <section id="accounting">
-            <h2>7. หน้าจอตรวจสอบสมุดรายวัน (manage_gl / report_gl)</h2>
+            <h2>8. หน้าจอตรวจสอบสมุดรายวัน (manage_gl / report_gl)</h2>
             <p>หน้าจอตรวจสอบรายการบัญชีเดบิต (Dr) และเครดิต (Cr) เพื่อวัตถุประสงค์ในการทำสมุดรายวันและปิดงบดุล</p>
             <div class="ui-card">
                 <div class="ui-card-title">
@@ -451,9 +504,9 @@
             </div>
         </section>
 
-        <!-- 8. Cash Flow Report Screen -->
+        <!-- 9. Cash Flow Report Screen -->
         <section id="reports">
-            <h2>8. หน้าจอรายงานกระแสเงินสด (cash_flow_report)</h2>
+            <h2>9. หน้าจอรายงานกระแสเงินสด (cash_flow_report)</h2>
             <p>หน้าสรุปเปรียบเทียบความสัมพันธ์ของสภาพคล่องทางการเงินสดไหลเข้าและเงินไหลออกรายเดือน</p>
             <div class="ui-card">
                 <div class="ui-card-title">
@@ -474,14 +527,14 @@
             </div>
         </section>
 
-        <!-- 9. GL Processing Screens -->
+        <!-- 10. GL Processing Screens -->
         <section id="gl-processing">
-            <h2>9. หน้าจอประมวลผลผ่านรายการแยกประเภทบัญชี</h2>
+            <h2>10. หน้าจอประมวลผลผ่านรายการแยกประเภทบัญชี</h2>
             <p>หน้าจอควบคุมสำหรับผู้ดูแลระบบหรือเจ้าหน้าที่บัญชีในการประมวลผลข้อมูลรายรับ-รายจ่ายที่บันทึกไว้เข้าสู่สมุดรายวันทั่วไป (GL) ด้วยระบบแถบความคืบหน้า (Progress Bar)</p>
             
             <div class="ui-card">
                 <div class="ui-card-title">
-                    <span>9.1 หน้าจอประมวลผลบัญชีใหม่ทั้งหมด (GL Full Reprocess)</span>
+                    <span>10.1 หน้าจอประมวลผลบัญชีใหม่ทั้งหมด (GL Full Reprocess)</span>
                     <span class="screen-badge">reprocess_all_to_gl</span>
                 </div>
                 <p>หน้าจอนี้ใช้สำหรับล้างและบันทึกบัญชีแยกประเภทใหม่ทั้งหมดตั้งแต่เริ่มต้นเพื่อปรับปรุงความถูกต้อง 100%</p>
@@ -495,7 +548,7 @@
 
             <div class="ui-card" style="border-left-color: var(--accent-color);">
                 <div class="ui-card-title">
-                    <span>9.2 หน้าจอผ่านรายการค้างโพสต์เข้า GL (GL Sync New Only)</span>
+                    <span>10.2 หน้าจอผ่านรายการค้างโพสต์เข้า GL (GL Sync New Only)</span>
                     <span class="screen-badge">sync_transactions_to_gl</span>
                 </div>
                 <p>หน้าจอนี้ใช้สำหรับสแกนหาเฉพาะรายรับหรือรายจ่ายที่บันทึกเข้ามาใหม่ แต่ยังค้างสะสมไม่ได้ลงบัญชีแยกประเภททั่วไป (GL)</p>
