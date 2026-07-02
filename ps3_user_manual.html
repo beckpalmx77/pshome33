@@ -465,7 +465,7 @@
                             <span class="mock-dot yellow"></span>
                             <span class="mock-dot green"></span>
                         </div>
-                        <div class="mock-window-title">https://pshome33.com/Dashboard_admin.php</div>
+                        <div class="mock-window-title">https://pshome33.com/Dashboard_admin</div>
                     </div>
                     <div class="mock-window-body">
                         <div class="mock-dashboard-grid">
@@ -553,7 +553,7 @@
                             <span class="mock-dot yellow"></span>
                             <span class="mock-dot green"></span>
                         </div>
-                        <div class="mock-window-title">https://pshome33.com/manage_common_fee_payment.php</div>
+                        <div class="mock-window-title">https://pshome33.com/manage_common_fee_payment</div>
                     </div>
                     <div class="mock-window-body">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -703,7 +703,7 @@
                             <span class="mock-dot yellow"></span>
                             <span class="mock-dot green"></span>
                         </div>
-                        <div class="mock-window-title">https://pshome33.com/petty_cash_statement_report.php</div>
+                        <div class="mock-window-title">https://pshome33.com/petty_cash_statement_report</div>
                     </div>
                     <div class="mock-window-body">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.8rem;">
@@ -775,18 +775,73 @@
 
         <!-- 7. Payroll Screen -->
         <section id="payroll">
-            <h2>7. หน้าจอบันทึกเงินเดือน (manage_payroll)</h2>
-            <p>หน้าจอจัดการคำนวณและออกใบแจ้งยอดจ่ายเงินเดือน (Payslip) ประจำเดือนของพนักงานและเจ้าหน้าที่นิติบุคคลโครงการ</p>
+            <h2>7. หน้าจอสร้างและบันทึกเงินเดือน (payroll_generate_data / manage_payroll)</h2>
+            <p>กระบวนการประมวลผลสร้างข้อมูลเงินเดือนรายเดือนของพนักงานทั้งหมดโดยอัตโนมัติ และการปรับปรุงสลิปเงินเดือน (Payslip)</p>
             <div class="ui-card">
                 <div class="ui-card-title">
-                    <span>กระบวนการจัดทำสลิปเงินเดือน</span>
-                    <span class="screen-badge">manage_payroll</span>
+                    <span>ขั้นตอนการทำรายการสร้างและแก้ไขเงินเดือน</span>
+                    <span class="screen-badge">payroll_generate_data / manage_payroll</span>
                 </div>
                 <ol class="step-list">
-                    <li>เลือกพนักงานทีละคน ระบุอัตราเงินเดือนพื้นฐานของพนักงาน</li>
-                    <li>กรอกค่าล่วงเวลา (OT), ค่าตอบแทนพิเศษ, หรือเงินหักต่าง ๆ เช่น เงินหักลางาน หรือเงินประกันค้างจ่าย</li>
-                    <li>ระบบจะคำนวณยอดเงินจ่ายสุทธิ และสร้างรหัสอ้างอิงของแต่ละรายการเป็น <code>PAY2025060001</code> (ตามปีและเดือนที่จ่าย)</li>
-                    <li><strong>การพิมพ์เอกสาร:</strong> พิมพ์ใบ Payslip หรือสลิปเงินเดือนให้พนักงานเป็นหลักฐานได้ทันที และส่งข้อมูลรายจ่ายสุทธิสะสมไปยังส่วนค่าใช้จ่ายย่อยของนิติบุคคล</li>
+                    <li>
+                        <strong>สร้างข้อมูลเงินเดือนอัตโนมัติ (หน้าจอ payroll_generate_data):</strong> 
+                        ระบุวันที่จ่ายเงินเดือน เลือกงวดปีและเดือนที่ต้องการประมวลผล ทำการเลือกติ๊กถูกพนักงานที่ต้องการสร้างรายการจ่ายเงินเดือน จากนั้นคลิกปุ่ม <strong>"สร้างข้อมูลเงินเดือนอัตโนมัติ (Generate)"</strong> เพื่อบันทึกข้อมูลตั้งต้นของทุกคนในรอบเดือนนั้น
+                        
+                        <!-- ภาพประกอบหน้าจอสร้างข้อมูลเงินเดือน -->
+                        <div class="mock-window" style="margin-top: 15px;">
+                            <div class="mock-window-header">
+                                <div class="mock-dots">
+                                    <span class="mock-dot red"></span>
+                                    <span class="mock-dot yellow"></span>
+                                    <span class="mock-dot green"></span>
+                                </div>
+                                <div class="mock-window-title">https://pshome33.com/payroll_generate_data</div>
+                            </div>
+                            <div class="mock-window-body" style="padding: 0;">
+                                <img src="create_payroll.png" alt="หน้าจอสร้างข้อมูลเงินเดือนอัตโนมัติ" style="width: 100%; display: block; height: auto;">
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <strong>ปรับปรุงรายละเอียดรายบุคคล (หน้าจอ manage_payroll):</strong> 
+                        ค้นหารายชื่อพนักงานในรอบเดือนที่สร้างขึ้น กดปุ่มแก้ไขเพื่อเพิ่มเติมค่าล่วงเวลา (OT), ค่าตอบแทนพิเศษ หรือหักเงินประเภทต่าง ๆ (เช่น เงินหักลางาน, เงินประกันค้างจ่าย)
+                        
+                        <!-- ภาพประกอบหน้าจอปรับปรุงสลิปเงินเดือน -->
+                        <div class="mock-window" style="margin-top: 15px;">
+                            <div class="mock-window-header">
+                                <div class="mock-dots">
+                                    <span class="mock-dot red"></span>
+                                    <span class="mock-dot yellow"></span>
+                                    <span class="mock-dot green"></span>
+                                </div>
+                                <div class="mock-window-title">https://pshome33.com/manage_payroll</div>
+                            </div>
+                            <div class="mock-window-body" style="padding: 0;">
+                                <img src="manage_payroll.png" alt="หน้าจอปรับปรุงสลิปเงินเดือนรายบุคคล" style="width: 100%; display: block; height: auto;">
+                            </div>
+                        </div>
+                    </li>
+                    <li><strong>ระบบคำนวณและออกรหัสเอกสาร:</strong> 
+                        ระบบคำนวณยอดจ่ายสุทธิและออกรหัสรันนิ่งนัมเบอร์ของเอกสารแต่ละใบ เช่น <code>PAY2026070001</code>
+                    </li>
+                    <li><strong>การพิมพ์เอกสาร:</strong> 
+                        พิมพ์ใบสลิปเงินเดือน (Payslip) ออกเป็นเอกสาร PDF สำหรับให้พนักงานเซ็นรับ และระบบจะนำยอดรายจ่ายดังกล่าวไปลงบันทึกในสมุดบัญชีรายจ่ายของโครงการอัตโนมัติ
+                        
+                        <!-- ภาพประกอบการพิมพ์สลิปเงินเดือน -->
+                        <div class="mock-window" style="margin-top: 15px;">
+                            <div class="mock-window-header">
+                                <div class="mock-dots">
+                                    <span class="mock-dot red"></span>
+                                    <span class="mock-dot yellow"></span>
+                                    <span class="mock-dot green"></span>
+                                </div>
+                                <div class="mock-window-title">https://pshome33.com/print_payroll_slip_pdf</div>
+                            </div>
+                            <div class="mock-window-body" style="padding: 0;">
+                                <img src="print_slip.png" alt="หน้าจอรันการพิมพ์สลิปเงินเดือน PDF" style="width: 100%; display: block; height: auto;">
+                            </div>
+                        </div>
+                    </li>
                 </ol>
             </div>
         </section>

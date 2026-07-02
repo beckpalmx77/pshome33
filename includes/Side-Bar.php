@@ -134,6 +134,24 @@ $sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sid
             <span>คู่มือระบบและบัญชี</span></a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link" href="line_oa/house/register_user.html" target="_blank">
+            <i class="fab fa-line"></i>
+            <span>คู่มือระบบ LINE OA (House)</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="line_oa/house/change_phone_line.html" target="_blank">
+            <i class="fas fa-sync-alt"></i>
+            <span>คู่มือเปลี่ยนเบอร์/LINE</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="line_oa/house/payment_transfer_smart.html" target="_blank">
+            <i class="fas fa-money-check-alt"></i>
+            <span>คู่มือชำระค่าส่วนกลาง</span></a>
+    </li>
+
     <hr class="sidebar-divider">
 
     <li class="nav-item">

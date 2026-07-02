@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการลงทะเบียนผู้ใช้งาน LINE OA และส่งข้อความ - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .header-section {
+            background: linear-gradient(135deg, #00B900 0%, #008f00 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+            position: relative;
+        }
+        .header-section img {
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            margin-bottom: 15px;
+        }
+        .section-title {
+            color: #00B900;
+            border-bottom: 2px solid #00B900;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .step-number {
+            background-color: #00B900;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .step-item {
+            margin-bottom: 25px;
+            padding-left: 20px;
+            border-left: 3px solid #00B900;
+        }
+        .note-box {
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #1b5e20;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #856404;
+            margin: 20px 0;
+        }
+        .code-inline {
+            background-color: #eaeaea;
+            color: #d63031;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .file-badge {
+            background-color: #e1f5fe;
+            color: #0288d1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table-light th {
+            font-weight: 600;
+            background-color: #eceff1;
+        }
+        .back-link {
+            text-decoration: none;
+            color: #00B900;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .back-link:hover {
+            color: #008f00;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+
+    <div class="card">
+        <!-- ส่วนหัวข้อ -->
+        <div class="header-section">
+            <img src="ps33_logo.png" width="80" alt="PS33 Logo">
+            <h1 class="h2 mb-2 font-weight-bold">คู่มือการใช้งานและโครงสร้างระบบ LINE OA (House)</h1>
+            <p class="mb-0 opacity-75">รายละเอียดการทำงาน ขั้นตอนการสมัครสมาชิก และฟังก์ชันติดต่อประสานงานนิติบุคคล</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <!-- ส่วนนำ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-info-circle"></i> 1. ภาพรวมระบบ (System Overview)</h4>
+                <p>
+                    ระบบ pshome33 บริหารงานหมู่บ้าน ได้รับการพัฒนาขึ้นเพื่อเชื่อมต่อบัญชีผู้ใช้ LINE ของลูกบ้านหมู่บ้านพฤกษา 33 เข้ากับระบบนิติบุคคล (PS33 Home System) 
+                    ผ่านเทคโนโลยี <strong>LINE LIFF (LINE Front-end Framework)</strong> ช่วยลดขั้นตอนยุ่งยากในการดาวน์โหลดแอปพลิเคชัน 
+                    และเอื้อให้นิติบุคคลสามารถส่งข้อความแจ้งเตือนต่างๆ (เช่น ยอดค้างชำระค่าส่วนกลาง ใบรับเงินอิเล็กทรอนิกส์) เข้าสู่ LINE ส่วนตัวของลูกบ้านได้โดยตรง
+                </p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 bg-light p-3 border">
+                            <h6 class="font-weight-bold text-success"><i class="fas fa-user-plus"></i> ระบบลงทะเบียน (LIFF Registration)</h6>
+                            <p class="small text-muted mb-0">ดึงข้อมูล Profile จาก LINE อัตโนมัติ เพื่อให้ลูกบ้านยืนยันตัวตน ผูกเบอร์โทรศัพท์ เลขที่บ้าน และตั้งรหัสผ่านในการล็อกอินเข้าระบบหลัก</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 bg-light p-3 border">
+                            <h6 class="font-weight-bold text-success"><i class="fas fa-paper-plane"></i> ระบบส่งข้อความติดต่อ (LIFF Messaging)</h6>
+                            <p class="small text-muted mb-0">ให้ลูกบ้านแจ้งเรื่อง ร้องเรียน หรือสอบถามนิติบุคคล พร้อมแนบภาพถ่ายหลายรูปพร้อมกัน อัปโหลดตรงเข้าฐานข้อมูลเพื่อรอตรวจสอบ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ส่วนตารางที่เกี่ยวข้อง -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-database"></i> 2. โครงสร้างฐานข้อมูลที่เกี่ยวข้อง (Database Schema)</h4>
+                <p>ในการทำงานของระบบลงทะเบียนและส่งข้อความ LINE OA มีความสัมพันธ์กับตารางหลัก 4 ตารางดังนี้:</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%;">ชื่อตาราง</th>
+                                <th style="width: 30%;">ฟิลด์สำคัญ</th>
+                                <th style="width: 45%;">บทบาทหน้าที่ในระบบ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ims_house_line_user</strong></td>
+                                <td><span class="code-inline">line_user_id</span>, <span class="code-inline">line_user_name</span>, <span class="code-inline">line_phone</span>, <span class="code-inline">house_number</span></td>
+                                <td>จัดเก็บความสัมพันธ์ระหว่าง LINE Account กับเลขที่บ้าน และเบอร์โทรศัพท์มือถือที่ลูกบ้านสมัคร</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ims_user</strong></td>
+                                <td><span class="code-inline">user_id</span> (เบอร์โทร), <span class="code-inline">password</span> (bcrypt hash), <span class="code-inline">status</span></td>
+                                <td>บัญชีผู้ใช้ระบบหลักสำหรับใช้ล็อกอินเข้าตรวจสอบยอดเงินและการแจ้งซ่อมผ่านหน้า Dashboard</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ims_house</strong></td>
+                                <td><span class="code-inline">house_number</span>, <span class="code-inline">contact_name</span>, <span class="code-inline">phone_number</span>, <span class="code-inline">alley</span></td>
+                                <td>ข้อมูลมาสเตอร์บ้านเลขที่ในโครงการ (หากสมัครใหม่แต่ยังไม่มีทะเบียนบ้านนี้ ระบบจะสร้างแถวข้อมูลให้อัตโนมัติ)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>afront_contact</strong></td>
+                                <td><span class="code-inline">user_id</span>, <span class="code-inline">remark</span>, <span class="code-inline">photo_path</span>, <span class="code-inline">house_number</span></td>
+                                <td>บันทึกข้อมูลการส่งข้อความสอบถาม/เรื่องร้องเรียนของลูกบ้านพร้อมรูปภาพอัปโหลด</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ขั้นตอนการทำงานของระบบลงทะเบียน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-stream"></i> 3. ขั้นตอนการลงทะเบียน (Registration Workflow)</h4>
+                <p>กระบวนการลงทะเบียนผ่านไฟล์หลักของระบบ:</p>
+                
+                <div class="step-item">
+                    <h5><span class="step-number">1</span>โหลดโปรไฟล์ด้วย LIFF SDK</h5>
+                    <p class="text-muted small">
+                        เมื่อเปิดผ่าน LINE OA หน้า <span class="file-badge">register_house_user</span> จะเรียกใช้ LINE LIFF SDK ในการโหลดข้อมูลของลูกบ้านประกอบด้วย User ID, Display Name, และ URL รูปโปรไฟล์ นำมาแสดงผลบนฟอร์ม
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span>ตรวจสอบการลงทะเบียนซ้ำ (Client-Side Check)</h5>
+                    <p class="text-muted small">
+                        ระบบจะทำการส่งค่า User ID ไปเช็กที่ <span class="file-badge">register_house_with_line_api</span> ด้วยคำสั่งเช็กสถานะ <span class="code-inline">action: 'check'</span> ทันที
+                        หากตรวจพบว่าลงทะเบียนไปแล้ว หน้าฟอร์มจะแสดงกล่องแจ้งเตือนป๊อปอัป <strong>"⚠️ คุณลงทะเบียนแล้ว!"</strong> พร้อมแสดงชื่อและบ้านเลขที่เดิม และจะปิดปุ่มลงทะเบียนพร้อมล็อกทุกฟิลด์เป็น Read-only
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span>การกรอกข้อมูลและส่งฟอร์ม (Form Submission)</h5>
+                    <p class="text-muted small">
+                        ลูกบ้านกรอกข้อมูลประกอบด้วย เลขที่บ้าน (ระบบจัดเก็บเฉพาะตัวเลขและเครื่องหมายทับ เช่น <span class="code-inline">99/99</span> เท่านั้น), ซอย, ชื่อ-นามสกุลจริง, เบอร์โทรศัพท์ และตั้งรหัสผ่าน ระบบจะส่งข้อมูลผ่าน AJAX แบบ POST ไปประมวลผลที่หลังบ้าน
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">4</span>ประมวลผล API หลังบ้าน (Server-Side Verification & Storage)</h5>
+                    <p class="text-muted small">
+                        ไฟล์ <span class="file-badge">register_house_with_line_api</span> จะทำงานตามลำดับดังนี้:
+                    </p>
+                    <ul class="small text-muted ps-4">
+                        <li class="mb-1">ตรวจสอบความซ้ำซ้อนของเบอร์โทรศัพท์และ LINE User ID ในฐานข้อมูล หากซ้ำจะปฏิเสธการทำรายการทันที</li>
+                        <li class="mb-1">บันทึกความเชื่อมโยง LINE ลงตาราง <code>ims_house_line_user</code></li>
+                        <li class="mb-1">ตรวจสอบตารางผู้ใช้หลัก <code>ims_user</code> หากมีเบอร์โทรนี้แล้วจะทำการอัปเดตรหัสผ่านใหม่และตั้งค่าสถานะเป็น Active หากไม่มีจะลงทะเบียนผู้ใช้ใหม่ให้ทันที</li>
+                        <li class="mb-1">ตรวจสอบตารางบ้าน <code>ims_house</code> หากยังไม่เคยมีบ้านเลขที่นี้ในระบบ จะบันทึกเลขที่บ้านและที่อยู่ลงฐานข้อมูลกลางให้ทันที</li>
+                    </ul>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">5</span>การแจ้งเตือนกลับในแชท LINE (LINE Message Push)</h5>
+                    <p class="text-muted small">
+                        หลังจากเซิร์ฟเวอร์บันทึกสำเร็จ หน้าจอจะแสดงแจ้งเตือนความสำเร็จ และระบบจะส่งข้อความสรุปการลงทะเบียน <code>✅ ลงทะเบียนสำเร็จ! [ชื่อ] [เลขที่บ้าน] [เบอร์โทร]</code> เข้าไปยังห้องแชทของลูกบ้านโดยอัตโนมัติเพื่อให้รับทราบ
+                    </p>
+                </div>
+            </div>
+
+            <!-- ระบบส่งข้อความสอบถาม/เรื่องร้องเรียน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-paper-plane"></i> 4. ขั้นตอนการส่งข้อความสอบถาม/ร้องเรียน (Messaging Workflow)</h4>
+                <p>นอกจากระบบลงทะเบียนแล้ว ยังมีส่วนให้ลูกบ้านส่งข้อความแจ้งเรื่องเข้ามายังนิติบุคคลได้โดยง่าย:</p>
+                
+                <div class="step-item">
+                    <h5><span class="step-number">1</span>กรอกข้อความและอัปโหลดภาพ</h5>
+                    <p class="text-muted small">
+                        ผู้ใช้เข้าหน้า <span class="file-badge">send_message.html</span> (หรือ <span class="file-badge">send_message_line_oa.html</span>) กรอกรายละเอียดเรื่องที่ต้องการแจ้ง และเลือกไฟล์ภาพถ่ายที่เกี่ยวข้อง (ระบบรองรับการอัปโหลดพร้อมกันหลายไฟล์)
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span>ประมวลผลผ่าน API บันทึกข้อมูล</h5>
+                    <p class="text-muted small">
+                        ส่งข้อมูลภาพและข้อความผ่าน AJAX ไปที่ <span class="file-badge">send_message_api</span> ระบบจะดึงชื่อ นามสกุล และเลขที่บ้านของผู้ใช้จาก LINE User ID ในตาราง <code>ims_house_line_user</code> มาใช้ประกอบเป็นข้อมูลผู้แจ้งโดยอัตโนมัติ
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span>การจัดการไฟล์และการบันทึกฐานข้อมูล</h5>
+                    <p class="text-muted small">
+                        ภาพที่ส่งขึ้นมาจะถูกบีบอัดและแปลงนามสกุลเป็นไฟล์ <span class="code-inline">.jpg</span> เซฟลงโฟลเดอร์ <span class="code-inline">uploads/</span> พร้อมระบบตั้งชื่อไฟล์ไม่ซ้ำกันเพื่อความปลอดภัย จากนั้นจึงบันทึกข้อมูลและที่อยู่รูปภาพทั้งหมด (แยกด้วยเครื่องหมายจุลภาค) ลงในตาราง <code>afront_contact</code> เพื่อรอให้นิติบุคคลตรวจสอบผ่านระบบหลังบ้าน
+                    </p>
+                </div>
+            </div>
+
+            <!-- ระบบล็อกและการติดตาม -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-file-alt"></i> 5. บันทึกประวัติและการตรวจสอบระบบ (Logs & Debugging)</h4>
+                <p>ผู้ดูแลระบบสามารถตรวจสอบการทำงาน ข้อผิดพลาด และสถานะของระบบ LINE OA ได้ผ่านไฟล์บันทึก (Log Files) ในโฟลเดอร์นี้:</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle small">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 30%;">ชื่อไฟล์ Log</th>
+                                <th style="width: 70%;">รายละเอียดการจัดเก็บข้อมูล</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="file-badge">line_house_user_register_log.txt</span></td>
+                                <td>บันทึกข้อมูลการลงทะเบียน (สมัครสำเร็จ / ข้อมูลซ้ำซ้อน / เกิดข้อผิดพลาดของ SQL DB)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-badge">line_log.txt</span></td>
+                                <td>บันทึก Raw Request JSON payload ที่ถูกส่งมาจาก LINE Webhook (ใช้ดีบักข้อมูล Webhook)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-badge">line_reply_log.txt</span></td>
+                                <td>บันทึกผลการส่งข้อความตอบกลับของบอต (LINE Reply API Response)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="file-badge">line_message_all_log.txt</span></td>
+                                <td>บันทึก Log ข้อความทั้งหมดที่มีการรับส่งกับ LINE OA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ ข้อควรระวังความปลอดภัย:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>ไฟล์ Log เหล่านี้มีการเก็บข้อมูลของลูกบ้าน (เช่น User ID, ชื่อ) ควรจำกัดสิทธิ์การเข้าถึงภายนอกผ่านไฟล์ <span class="file-badge">.htaccess</span> ที่ตั้งไว้เพื่อความปลอดภัยของข้อมูลส่วนบุคคล</li>
+                        <li>Token ของ LINE Access Token (เช่นในไฟล์ <span class="file-badge">hello_lineoa</span> และ <span class="file-badge">send_message_api</span>) ควรเก็บรักษาเป็นความลับอย่างยิ่ง</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- รายชื่อไฟล์สำคัญ -->
+            <div class="mb-4">
+                <h4 class="section-title"><i class="fas fa-folder-open"></i> 6. โครงสร้างไฟล์ทั้งหมดในระบบ (File Structure)</h4>
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-code text-primary me-2"></i><strong>register_house_user</strong> - หน้าฟอร์มลงทะเบียนลูกบ้านฝั่งหน้าจอ LINE LIFF</span>
+                        <span class="badge bg-secondary">Frontend UI</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-code text-primary me-2"></i><strong>register_house_with_line_api</strong> - API ตรวจเช็กและบันทึกข้อมูลการลงทะเบียน</span>
+                        <span class="badge bg-danger">Backend API</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-code text-primary me-2"></i><strong>send_message.html / send_message_line_oa.html</strong> - หน้าฟอร์มส่งข้อความ/ร้องเรียนของลูกบ้าน</span>
+                        <span class="badge bg-secondary">Frontend UI</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-code text-primary me-2"></i><strong>send_message_api</strong> - API อัปโหลดไฟล์ภาพและบันทึกข้อความร้องเรียนลง DB</span>
+                        <span class="badge bg-danger">Backend API</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-code text-primary me-2"></i><strong>hello_lineoa</strong> - สคริปต์ Webhook สำหรับทดสอบรับ/ส่งข้อความกับระบบ LINE Platform</span>
+                        <span class="badge bg-warning text-dark">Webhook Test</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="far fa-file-code text-primary me-2"></i><strong>howto_change_line.html</strong> - คู่มือสั้นแสดงขั้นตอนสำหรับลูกบ้านที่ต้องการเปลี่ยน LINE บัญชีใหม่</span>
+                        <span class="badge bg-info text-dark">User Manual</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- ส่วนท้าย -->
+        <div class="card-footer text-center bg-white border-0 py-4 border-top">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

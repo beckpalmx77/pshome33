@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือระบบชำระค่าส่วนกลาง (LINE OA) - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .header-section {
+            background: linear-gradient(135deg, #00B900 0%, #008f00 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+        }
+        .header-section img {
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+            margin-bottom: 15px;
+        }
+        .section-title {
+            color: #00B900;
+            border-bottom: 2px solid #00B900;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .step-number {
+            background-color: #00B900;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .step-item {
+            margin-bottom: 25px;
+            padding-left: 20px;
+            border-left: 3px solid #00B900;
+        }
+        .note-box {
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #1b5e20;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #856404;
+            margin: 20px 0;
+        }
+        .code-inline {
+            background-color: #eaeaea;
+            color: #d63031;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .file-badge {
+            background-color: #e1f5fe;
+            color: #0288d1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table-light th {
+            font-weight: 600;
+            background-color: #eceff1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <!-- ส่วนหัวข้อ -->
+        <div class="header-section">
+            <img src="ps33_logo.png" width="80" alt="PS33 Logo">
+            <h1 class="h2 mb-2 font-weight-bold">คู่มือระบบชำระค่าส่วนกลางผ่าน LINE OA</h1>
+            <p class="mb-0 opacity-75">รายละเอียดระบบ หน้าจอการกรอกข้อมูลชำระเงิน และการอนุมัติหลังบ้าน</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <!-- ส่วนนำ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-info-circle"></i> 1. ภาพรวมระบบ (System Overview)</h4>
+                <p>
+                    ระบบชำระค่าส่วนกลางผ่าน LINE OA ได้รับการออกแบบขึ้นเพื่ออำนวยความสะดวกให้แก่ลูกบ้านในการส่งหลักฐานการโอนเงิน (Slip) 
+                    เพื่อชำระค่าส่วนกลาง โดยระบบจะเชื่อมต่อข้อมูลสิทธิ์ลูกบ้าน ดึงบ้านเลขที่ อัตราค่าส่วนกลางรายเดือน และช่องทางการโอนเงินปลายทางมาแสดงผลให้อัตโนมัติ 
+                    ช่วยลดขั้นตอนการกรอกข้อมูลและลดข้อผิดพลาดในการตรวจสอบของเจ้าหน้าที่นิติบุคคล
+                </p>
+            </div>
+
+            <!-- ส่วนหน้าจอสำหรับลูกบ้าน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-mobile-alt"></i> 2. การทำงานฝั่งหน้าจอระบบ (payment_transfer_smart)</h4>
+                <p class="text-muted">เมื่อลูกบ้านกดเข้าเมนู "ชำระค่าส่วนกลาง" ระบบจะเปิดผ่าน LINE LIFF และประมวลผลข้อมูลหน้าฟอร์มดังนี้:</p>
+                
+                <div class="step-item">
+                    <h5>การดึงและเตรียมข้อมูลอัตโนมัติ (LIFF Loading)</h5>
+                    <p class="text-muted small">
+                        ระบบจะเรียกใช้ LINE LIFF SDK เพื่อขอรับโปรไฟล์ของลูกบ้าน และดึงเบอร์โทร/บ้านเลขที่จากตาราง <code>ims_house_line_user</code> 
+                        และข้อมูลอัตราค่าส่วนกลางมาแสดงในช่องกรอกข้อมูลอัตโนมัติ หากไม่มีประวัติลงทะเบียนในระบบ จะแจ้งเตือนให้ไปลงทะเบียนก่อน
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5>รายละเอียดฟิลด์และการเลือกการชำระเงิน</h5>
+                    <p class="text-muted small">ลูกบ้านระบุข้อมูลการชำระเงินในฟอร์มประกอบด้วย:</p>
+                    <ul class="text-muted small">
+                        <li class="mb-1"><strong>ตัวเลือกการชำระ:</strong> เลือกชำระแบบ <strong>"รายเดือน"</strong> หรือ <strong>"รายปี"</strong></li>
+                        <li class="mb-1"><strong>จำนวนเดือนที่ชำระ:</strong> กำหนดจำนวนงวดเดือนที่ต้องการชำระ (1 - 12 งวด) โดยระบบจะนำไปคำนวณร่วมกับค่าส่วนกลางต่อเดือนเพื่อป้อนยอดเงินให้เบื้องต้น</li>
+                        <li class="mb-1"><strong>งวดเดือน/งวดปี:</strong> ระบุช่วงงวดเดือนที่ประสงค์ชำระเงิน (เริ่มงวดเดือน - ถึงงวดเดือน) และปีของงวด</li>
+                        <li class="mb-1"><strong>ชื่อผู้ชำระ:</strong> ระบบดึงชื่อจากฐานข้อมูลขึ้นมาแสดงให้อัตโนมัติ (สามารถแก้ไขได้)</li>
+                        <li class="mb-1"><strong>จำนวนเงินที่ชำระ (บาท):</strong> ยอดเงินรวมที่โอนชำระ</li>
+                        <li class="mb-1"><strong>แนบ Slip/ใบโอนเงิน:</strong> ลูกบ้านอัปโหลดไฟล์สลิปโอนเงิน (ระบบมีไลบรารีพิเศษ <code>heic2any</code> รองรับการแปลงไฟล์สกุล HEIC จากกล้อง iPhone เป็น JPEG อัตโนมัติเพื่อความเข้ากันได้ของระบบ)</li>
+                    </ul>
+                </div>
+
+                <div class="step-item">
+                    <h5>แสดงบัญชีธนาคารปลายทาง</h5>
+                    <p class="text-muted small">
+                        ข้อมูลบัญชีปลายทาง (ธนาคาร, ชื่อบัญชี, เลขที่บัญชี) จะถูกดึงมาจากข้อมูลมาสเตอร์ของนิติบุคคลโครงการ (ตาราง <code>ims_company</code>) มาแสดงเพื่อป้องกันความสับสน
+                    </p>
+                </div>
+            </div>
+
+            <!-- ส่วนการประมวลผลทางเซิร์ฟเวอร์ -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-server"></i> 3. กระบวนการหลังบ้านและตารางข้อมูล (Backend Processing)</h4>
+                <p class="text-muted">เมื่อกดปุ่มส่งข้อมูล ระบบจะส่งข้อมูลแบบ AJAX ไปยังปลายทาง <span class="file-badge">model/manage_payment_transfer_smart</span>:</p>
+                
+                <div class="step-item">
+                    <h5>การตรวจสอบการส่งซ้ำ (Duplicate Submission Check)</h5>
+                    <p class="text-muted small">
+                        ระบบจะตรวจเช็กตาราง <code>ims_house_payment</code> ด้วย <strong>"บ้านเลขที่, งวดเดือนเริ่มต้น, งวดปี"</strong> หากพบว่ามีรายการส่งสลิปรอตรวจสอบอยู่งวดดังกล่าวแล้ว ระบบจะตอบกลับรหัสความผิดพลาดเพื่อบล็อกรายการและเตือนลูกบ้านทันทีเพื่อป้องกันการส่งซ้ำซ้อน
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5>การจัดเก็บไฟล์สลิปโอนเงิน</h5>
+                    <p class="text-muted small">
+                        สลิปจะถูกเก็บเข้าสู่เซิร์ฟเวอร์ในโฟลเดอร์ <span class="code-inline">uploads/slips/</span> และระบบจะทำการเชื่อมต่อไปยัง <strong>Google Drive API</strong> 
+                        เพื่ออัปโหลดไฟล์สำรองขึ้นไปยังคลาวด์ตามโฟลเดอร์ที่ตั้งค่าไว้ใน <span class="file-badge">config/google_drive_config</span>
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5>การบันทึกฐานข้อมูล</h5>
+                    <p class="text-muted small">
+                        ข้อมูลจะบันทึกลงในตาราง <code>ims_house_payment</code> โดยมีการกำหนดเลขที่เอกสารในรูปแบบ <span class="code-inline">P-[บ้านเลขที่]-[งวดปี]-[รันนิ่งนัมเบอร์]</span> (เช่น P-99/99-2026-001) และตั้งค่าสถานะเริ่มต้นเป็น <strong>"รอตรวจสอบ" (N)</strong>
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5>การตอบกลับแชท LINE (LINE Flex Message Notification)</h5>
+                    <p class="text-muted small">
+                        เมื่อบันทึกข้อมูลเรียบร้อยแล้ว API จะส่งการ์ด Flex Message สรุปข้อมูลการโอนเงิน (เลขที่เอกสาร, บ้านเลขที่, งวดที่ชำระ, ยอดเงิน) ยิงตรงกลับเข้าไปยังหน้าต่างแชท LINE OA ของลูกบ้านโดยตรง เพื่อเป็นหลักฐานยืนยันความสำเร็จ
+                    </p>
+                </div>
+            </div>
+
+            <!-- ส่วนตรวจสอบและอนุมัติโดยนิติบุคคล -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-check-double"></i> 4. ขั้นตอนการตรวจสอบและอนุมัติ (Juristic Verification Flow)</h4>
+                <p class="text-muted">ข้อมูลสลิปที่ลูกบ้านส่งมาจะเข้าสู่ระบบหลังบ้านเพื่อให้เจ้าหน้าที่นิติบุคคลตรวจสอบความถูกต้อง:</p>
+                
+                <div class="step-item">
+                    <h5>หน้าจอแสดงรายการตรวจสอบ (Pending Payments)</h5>
+                    <p class="text-muted small">
+                        เจ้าหน้าที่เข้าเมนู <strong>"อนุมัติชำระเงินค่าส่วนกลาง"</strong> (หน้าจอ <span class="file-badge">manage_common_fee_payment_approve</span>) รายการที่ลูกบ้านส่งผ่าน LINE OA จะปรากฏขึ้นในสถานะรออนุมัติ พร้อมแสดงภาพสลิปที่ส่งมาเปรียบเทียบ
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5>การอนุมัติและออกใบเสร็จ (Approval & E-Receipt)</h5>
+                    <p class="text-muted small">
+                        เมื่อเจ้าหน้าที่ตรวจสอบสลิปแล้วว่ายอดเงินโอนและงวดเดือนถูกต้อง จะทำการกด <strong>"อนุมัติ" (Approve)</strong> 
+                        ระบบจะทำการเปลี่ยนสถานะการชำระเงินในตาราง <code>ims_house_payment</code> เป็นชำระแล้ว (Y) และพิมพ์เลขที่ใบเสร็จรับเงินลงตาราง 
+                        รวมถึงยิง Flex Message ใบรับเงินอิเล็กทรอนิกส์ส่งกลับเข้าสู่แชท LINE ของลูกบ้านโดยตรงเพื่อแจ้งให้ทราบทันที
+                    </p>
+                </div>
+            </div>
+
+            <!-- ข้อควรทราบเพิ่มเติม -->
+            <div class="note-box">
+                <h5 class="font-weight-bold mb-2"><i class="fas fa-lightbulb text-warning"></i> หมายเหตุสำหรับผู้ดูแลระบบ</h5>
+                <ul class="mb-0 ps-3 small text-muted">
+                    <li class="mb-1">ไฟล์สคริปต์หลักที่ควบคุมหน้าจอลูกบ้านคือ <span class="file-badge">payment_transfer_smart</span> ในโฟลเดอร์หลัก</li>
+                    <li class="mb-1">กระบวนการบันทึกข้อมูลและส่ง Flex Message ทำงานผ่าน API <span class="file-badge">model/manage_payment_transfer_smart</span></li>
+                    <li class="mb-1">ในหน้าจอชำระเงินนี้ มีการใช้ฟังก์ชันตรวจสอบโปรโมชั่นและการคำนวณส่วนลดตามนโยบายของนิติบุคคลซึ่งรันผ่านสคริปต์หลังบ้านอัตโนมัติ</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="card-footer text-center bg-white border-0 py-4 border-top">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
