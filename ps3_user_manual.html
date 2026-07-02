@@ -247,14 +247,150 @@
         }
 
         /* Code/Doc References */
-        code {
-            font-family: Consolas, Monaco, monospace;
-            background-color: #f1f5f9;
-            color: #2980b9;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-size: 0.9em;
+        /* Mock UI Window Wrapper */
+        .mock-window {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin: 20px 0 30px 0;
+            font-size: 0.9rem;
         }
+
+        .mock-window-header {
+            background: #f1f5f9;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .mock-dots {
+            display: flex;
+            gap: 6px;
+            margin-right: 16px;
+        }
+
+        .mock-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mock-dot.red { background: #ff5f56; }
+        .mock-dot.yellow { background: #ffbd2e; }
+        .mock-dot.green { background: #27c93f; }
+
+        .mock-window-title {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-family: monospace;
+            background: #ffffff;
+            padding: 2px 20px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            flex-grow: 0;
+            width: 350px;
+            text-align: center;
+            margin: 0 auto;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mock-window-body {
+            padding: 20px;
+            background: #f8fafc;
+            min-height: 100px;
+        }
+
+        /* Mock Dashboard Styles */
+        .mock-dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .mock-stat-card {
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .mock-stat-card.success { border-left-color: var(--success-color); }
+        .mock-stat-card.warning { border-left-color: var(--warning-color); }
+        .mock-stat-card.danger { border-left-color: var(--danger-color); }
+
+        .mock-stat-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .mock-stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .mock-stat-desc {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Mock Tables & Badges */
+        .mock-table-container {
+            overflow-x: auto;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .mock-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .mock-table th, .mock-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        .mock-table th {
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .mock-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .mock-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .mock-badge.success { background: #dcfce7; color: #15803d; }
+        .mock-badge.danger { background: #fee2e2; color: #b91c1c; }
+        .mock-badge.warning { background: #fef3c7; color: #b45309; }
+        .mock-badge.info { background: #e0f2fe; color: #0369a1; }
+        .mock-badge.secondary { background: #f1f5f9; color: #475569; }
 
         /* Responsive styling */
         @media (max-width: 992px) {
@@ -320,6 +456,43 @@
                     <li><strong>ยอดจัดเก็บรายรับปัจจุบัน:</strong> แสดงยอดจัดเก็บค่าส่วนกลางของเดือนปัจจุบันที่ตรวจรับเงินและอนุมัติแล้ว</li>
                     <li><strong>สถิติติดสติกเกอร์เข้า-ออก:</strong> แสดงข้อมูลบ้านที่ชำระเงินและได้รับสติกเกอร์ติดรถยนต์เพื่อคัดกรองรถบุคคลภายนอก</li>
                 </ul>
+                
+                <!-- Mock Dashboard UI Simulator -->
+                <div class="mock-window">
+                    <div class="mock-window-header">
+                        <div class="mock-dots">
+                            <span class="mock-dot red"></span>
+                            <span class="mock-dot yellow"></span>
+                            <span class="mock-dot green"></span>
+                        </div>
+                        <div class="mock-window-title">https://pshome33.com/Dashboard_admin.php</div>
+                    </div>
+                    <div class="mock-window-body">
+                        <div class="mock-dashboard-grid">
+                            <div class="mock-stat-card">
+                                <div class="mock-stat-title">จำนวนบ้านทั้งหมด</div>
+                                <div class="mock-stat-value">845 หลัง</div>
+                                <div class="mock-stat-desc">คนอยู่จริง 712 | บ้านว่าง 133</div>
+                            </div>
+                            <div class="mock-stat-card danger">
+                                <div class="mock-stat-title">ค้างชำระส่วนกลาง</div>
+                                <div class="mock-stat-value">124,500.00 ฿</div>
+                                <div class="mock-stat-desc">จำนวน 42 หลังคาเรือน</div>
+                            </div>
+                            <div class="mock-stat-card success">
+                                <div class="mock-stat-title">จัดเก็บประจำเดือน</div>
+                                <div class="mock-stat-value">289,200.00 ฿</div>
+                                <div class="mock-stat-desc">คิดเป็น 82% ของเป้าหมาย</div>
+                            </div>
+                            <div class="mock-stat-card warning">
+                                <div class="mock-stat-title">สติกเกอร์เข้า-ออก</div>
+                                <div class="mock-stat-value">530 คัน</div>
+                                <div class="mock-stat-desc">ลงทะเบียนใช้งานแล้ว</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="note-box">
                     <strong>💡 คำแนะนำเพิ่มเติม:</strong> ข้อมูลบนการ์ดสถิติสามารถคลิกเข้าไปเพื่อดูรายละเอียดเชิงลึกของรายการนั้น ๆ ได้โดยตรง เพื่อความสะดวกในการตรวจสอบ
                 </div>
@@ -371,6 +544,64 @@
                     <li>กดปุ่ม <code>Save</code> เพื่อส่งข้อมูลไปรอการอนุมัติ</li>
                     <li><strong>การอนุมัติการรับเงิน:</strong> เจ้าหน้าที่การเงินหรือผู้มีสิทธิ์จะทำการตรวจสอบหลักฐานสลิปโอนเงิน เมื่อพบว่าถูกต้อง ให้คลิก <code>Confirm/Approve</code> รายการจะส่งข้อมูลเข้าสมุดรายวันทั่วไป (GL) และพิมพ์ใบเสร็จรับเงินให้ลูกบ้านได้ทันที</li>
                 </ol>
+
+                <!-- Mock Common Fee Payment Screen Simulator -->
+                <div class="mock-window">
+                    <div class="mock-window-header">
+                        <div class="mock-dots">
+                            <span class="mock-dot red"></span>
+                            <span class="mock-dot yellow"></span>
+                            <span class="mock-dot green"></span>
+                        </div>
+                        <div class="mock-window-title">https://pshome33.com/manage_common_fee_payment.php</div>
+                    </div>
+                    <div class="mock-window-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="color: #334155;">รายการชำระค่าส่วนกลาง</strong>
+                            <span style="background: var(--accent-color); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: default;">+ Add Record</span>
+                        </div>
+                        <div class="mock-table-container">
+                            <table class="mock-table">
+                                <thead>
+                                    <tr>
+                                        <th>บ้านเลขที่</th>
+                                        <th>ชื่อลูกบ้าน</th>
+                                        <th>จำนวนเงิน</th>
+                                        <th>งวดเดือน</th>
+                                        <th>ช่องทาง</th>
+                                        <th>สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>67/12</strong></td>
+                                        <td>นายสมศักดิ์ รักดี</td>
+                                        <td>1,200.00 ฿</td>
+                                        <td>ม.ค. 69 - มี.ค. 69</td>
+                                        <td><span class="mock-badge info">โอนเงิน</span></td>
+                                        <td><span class="mock-badge success">อนุมัติแล้ว (Y)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>67/88</strong></td>
+                                        <td>นางวิภา ใจงาม</td>
+                                        <td>800.00 ฿</td>
+                                        <td>ม.ค. 69 - ก.พ. 69</td>
+                                        <td><span class="mock-badge info">โอนเงิน</span></td>
+                                        <td><span class="mock-badge warning">รอตรวจสอบ (N)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>67/145</strong></td>
+                                        <td>นายธนพล มั่งมี</td>
+                                        <td>400.00 ฿</td>
+                                        <td>ม.ค. 69</td>
+                                        <td><span class="mock-badge secondary">เงินสด</span></td>
+                                        <td><span class="mock-badge success">อนุมัติแล้ว (Y)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -463,6 +694,79 @@
                         </ul>
                     </li>
                 </ol>
+
+                <!-- Mock Petty Cash Statement Screen Simulator -->
+                <div class="mock-window">
+                    <div class="mock-window-header">
+                        <div class="mock-dots">
+                            <span class="mock-dot red"></span>
+                            <span class="mock-dot yellow"></span>
+                            <span class="mock-dot green"></span>
+                        </div>
+                        <div class="mock-window-title">https://pshome33.com/petty_cash_statement_report.php</div>
+                    </div>
+                    <div class="mock-window-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.8rem;">
+                            <div>
+                                <span style="margin-right: 8px;"><strong>เริ่มต้น:</strong> <span style="background: #fff; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px;">01-06-2026</span></span>
+                                <span><strong>สิ้นสุด:</strong> <span style="background: #fff; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px;">30-06-2026</span></span>
+                            </div>
+                            <div>
+                                <span style="background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 4px; cursor: default;">แสดงข้อมูล</span>
+                                <span style="background: #ef4444; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; cursor: default;">Print PDF</span>
+                            </div>
+                        </div>
+                        <div class="mock-table-container">
+                            <table class="mock-table" style="font-size: 0.8rem;">
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>เลขที่เอกสาร</th>
+                                        <th>รายละเอียด</th>
+                                        <th style="text-align: right;">รับเข้า</th>
+                                        <th style="text-align: right;">จ่ายออก</th>
+                                        <th style="text-align: right;">คงเหลือ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="background: #f0fdf4;">
+                                        <td style="color: #64748b;">ก่อน 01-06-2026</td>
+                                        <td>-</td>
+                                        <td><span class="mock-badge secondary">ยอดยกมา</span> ยอดสะสมยกมาเริ่มต้นรอบบัญชี</td>
+                                        <td style="text-align: right;">-</td>
+                                        <td style="text-align: right;">-</td>
+                                        <td style="text-align: right; font-weight: bold; color: var(--accent-color);">10,000.00 ฿</td>
+                                    </tr>
+                                    <tr>
+                                        <td>05-06-2026</td>
+                                        <td>CASH-06-2026-0001</td>
+                                        <td>รับเติมเงินสดย่อยสำรองสัปดาห์แรก</td>
+                                        <td style="text-align: right; color: var(--success-color); font-weight: 600;">+5,000.00 ฿</td>
+                                        <td style="text-align: right;">-</td>
+                                        <td style="text-align: right; font-weight: bold; color: var(--accent-color);">15,000.00 ฿</td>
+                                    </tr>
+                                    <tr>
+                                        <td>08-06-2026</td>
+                                        <td>EXP-2026-06-0001</td>
+                                        <td>ซื้อกระดาษสำนักงานและแฟ้มใส่บิล</td>
+                                        <td style="text-align: right;">-</td>
+                                        <td style="text-align: right; color: var(--danger-color); font-weight: 600;">-350.00 ฿</td>
+                                        <td style="text-align: right; font-weight: bold; color: var(--accent-color);">14,650.00 ฿</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12-06-2026</td>
+                                        <td>EXP-2026-06-0002</td>
+                                        <td>จ่ายค่าจ้างล้างเครื่องปรับอากาศส่วนกลาง</td>
+                                        <td style="text-align: right;">-</td>
+                                        <td style="text-align: right; color: var(--danger-color); font-weight: 600;">-1,200.00 ฿</td>
+                                        <td style="text-align: right; font-weight: bold; color: var(--accent-color);">13,450.00 ฿</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="note-box">
                     <strong>💡 คู่มือเพิ่มเติม:</strong> สามารถคลิกปุ่ม <code>คู่มือเงินสดย่อย</code> ในหน้าจอระบบ หรือเปิดไฟล์ <a href="how_to_cash_flow.html" target="_blank">how_to_cash_flow.html</a> เพื่อดูวิธีวิเคราะห์และคำนวณยอดยกมา-ยอดคงเหลือในรายงานสรุปเงินสดย่อยอย่างละเอียด
                 </div>
