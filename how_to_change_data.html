@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการเปลี่ยนข้อมูลบ้านเลขที่และสิทธิ์ผู้อยู่อาศัย - PS33 Home System</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f5f7fb;
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #1e3d59 0%, #17b978 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            border-bottom: 4px solid #17b978;
+            margin-bottom: 2rem;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .nav-pills .nav-link {
+            color: #1e3d59;
+            font-weight: 500;
+            border: 1px solid #dee2e6;
+            margin-right: 0.5rem;
+            background-color: white;
+            transition: all 0.2s;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #1e3d59;
+            color: white;
+            border-color: #1e3d59;
+        }
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: #f1f3f9;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            background-color: #ffffff;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border-left: 5px solid #1e3d59;
+        }
+        .card-custom.owner-change {
+            border-left-color: #dc3545;
+        }
+        .card-custom.owner-to-tenant {
+            border-left-color: #fd7e14;
+        }
+        .card-custom.tenant-change {
+            border-left-color: #ffc107;
+        }
+        .card-custom.move-between {
+            border-left-color: #0d6efd;
+        }
+        .card-header-custom {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .badge-type {
+            font-size: 0.85rem;
+            padding: 0.4em 0.8em;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .step-badge {
+            background-color: #1e3d59;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+        }
+        .info-box {
+            background-color: #eef2f7;
+            border-left: 4px solid #1e3d59;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .warning-box {
+            background-color: #fff8eb;
+            border-left: 4px solid #fd7e14;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .danger-box {
+            background-color: #fdf2f2;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .checklist-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .checklist-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.6rem;
+        }
+        .checklist-list li input[type="checkbox"] {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
+        }
+        .checklist-list li.checked {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            border: 1px solid #3e3f3a;
+        }
+        .sql-comment { color: #75715e; }
+        .sql-keyword { color: #f92672; font-weight: bold; }
+        .sql-table { color: #a6e22e; }
+        .sql-field { color: #66d9ef; }
+        .sql-value { color: #e6db74; }
+        
+        .matrix-table th {
+            background-color: #1e3d59;
+            color: white;
+            text-align: center;
+        }
+        .matrix-table td {
+            font-size: 0.9rem;
+        }
+        .font-code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            background-color: #f1f3f9;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-banner text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2"><i class="fa-solid fa-house-chimney-user me-2"></i>คู่มือการจัดการระบบ: กรณีเปลี่ยนข้อมูลบ้านเลขที่</h1>
+        <p class="lead mb-0">ขั้นตอนการตรวจสอบ จัดการข้อมูลผู้อยู่อาศัย บัญชีระบบเว็บ LINE OA ยานพาหนะ และสัตว์เลี้ยง</p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 1150px;">
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-summary-link" data-bs-toggle="pill" data-bs-target="#tab-summary" type="button" role="tab"><i class="fa-solid fa-table me-1"></i> ตารางเปรียบเทียบ 4 กรณี</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-case1-link" data-bs-toggle="pill" data-bs-target="#tab-case1" type="button" role="tab"><i class="fa-solid fa-file-signature me-1"></i> กรณี 1: เจ้าของเดิม ขายและเปลี่ยนเจ้าของใหม่</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-case2-link" data-bs-toggle="pill" data-bs-target="#tab-case2" type="button" role="tab"><i class="fa-solid fa-key me-1"></i> กรณี 2: เจ้าของปล่อยเช่า / มีผู้เช่าย้ายเข้า</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-case3-link" data-bs-toggle="pill" data-bs-target="#tab-case3" type="button" role="tab"><i class="fa-solid fa-people-arrows me-1"></i> กรณี 3: ผู้เช่าเดิมย้ายออก และเปลี่ยนผู้เช่าใหม่</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-case4-link" data-bs-toggle="pill" data-bs-target="#tab-case4" type="button" role="tab"><i class="fa-solid fa-truck-ramp-box me-1"></i> กรณี 4: ย้ายบ้านข้ามบ้านเลขที่</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-dev-link" data-bs-toggle="pill" data-bs-target="#tab-dev" type="button" role="tab"><i class="fa-solid fa-code me-1"></i> ข้อมูลเทคนิค & Database</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="pills-tabContent">
+        
+        <!-- Tab: Summary -->
+        <div class="tab-pane fade show active" id="tab-summary" role="tabpanel">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-chart-simple me-2"></i>ตารางเปรียบเทียบผลกระทบของทั้ง 4 กรณีในการจัดการระบบ</h4>
+                    <p class="text-muted">ตารางด้านล่างแสดงผลลัพธ์และความแตกต่างของการเลือกประเภทรายการเปลี่ยนสิทธิ์ในหน้าจอระบบ (<a href="manage_change_house_holder.php" class="text-decoration-none">เปลี่ยนสิทธิ์ผู้อยู่อาศัย</a>)</p>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle matrix-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 14%;">หัวข้อ</th>
+                                    <th style="width: 21%;">กรณี 1: เจ้าของเดิม ขายและเปลี่ยนเจ้าของใหม่</th>
+                                    <th style="width: 21%;">กรณี 2: เจ้าของปล่อยให้เช่า มีผู้เช่าย้ายเข้า</th>
+                                    <th style="width: 22%;">กรณี 3: เปลี่ยนตัวผู้เช่าใหม่ (ผู้เช่าเดิมย้ายออก)</th>
+                                    <th style="width: 22%;">กรณี 4: ย้ายบ้านข้ามบ้านเลขที่ (เช่น 67/1 ไป 67/8)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">ประเภทรายการในระบบ<br><small class="text-muted">(change_type)</small></td>
+                                    <td><span class="badge bg-danger">เปลี่ยนเจ้าของบ้าน (CHANGE_OWNER)</span></td>
+                                    <td><span class="badge bg-warning text-dark">เปลี่ยนผู้เช่า (CHANGE_TENANT)</span> / ย้ายเข้า</td>
+                                    <td><span class="badge bg-warning text-dark">เปลี่ยนผู้เช่า (CHANGE_TENANT)</span></td>
+                                    <td><span class="badge bg-primary">ย้ายออก/เข้า (MOVE_OUT_IN)</span><br><small class="small text-muted font-code">(action: MOVE_HOUSE_MEMBER_SIMPLIFIED)</small></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">สถานะผู้อยู่อาศัยใหม่<br><small class="text-muted">(house_status)</small></td>
+                                    <td><span class="badge bg-primary">เจ้าของอยู่เอง (O)</span> หรือ ให้เช่า (R)</td>
+                                    <td><span class="badge bg-info text-dark">ผู้เช่า (R)</span></td>
+                                    <td><span class="badge bg-info text-dark">ผู้เช่า (R)</span></td>
+                                    <td><span class="badge bg-secondary">คงเดิมตามพิกัดบ้านเก่า</span><br>หรือระบุใหม่ (O/R)</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">บัญชีผู้ใช้ระบบเว็บเดิม<br><small class="text-muted">(ims_user)</small></td>
+                                    <td><span class="badge bg-danger">ระงับ (Inactive)</span><br>บัญชีเจ้าของเดิมทั้งหมดที่ผูกกับเบอร์เก่า</td>
+                                    <td><span class="badge bg-danger">ระงับ (Inactive)</span><br>บัญชีผู้อยู่อาศัยเดิมที่ย้ายออก</td>
+                                    <td><span class="badge bg-danger">ระงับ (Inactive)</span><br>บัญชีผู้เช่าเดิมทั้งหมดที่ผูกกับเบอร์เก่า</td>
+                                    <td><strong class="text-success">โอนสิทธิ์ล็อกอิน</strong><br>สลับพิกัดเบอร์โทรศัพท์ลูกบ้านย้ายตามไปบ้านหลังใหม่ทันที</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">สิทธิ์ LINE OA<br><small class="text-muted">(ims_house_line_user)</small></td>
+                                    <td><strong class="text-danger">ยกเลิกทั้งหมด (Status = 'N')</strong><br>ตัดการเชื่อมโยง LINE ของทุกคนที่ผูกกับบ้านนี้</td>
+                                    <td><strong class="text-warning">ยกเลิกบางส่วน</strong><br>ยกเลิก LINE ของผู้อยู่อาศัยเดิมที่ย้ายออกไป</td>
+                                    <td><strong class="text-warning">ยกเลิกเฉพาะผู้เช่าเดิม</strong><br>ตัดสิทธิ์ LINE ของเบอร์ผู้เช่าเดิม แต่คงสิทธิ์ของเจ้าของร่วมไว้</td>
+                                    <td><strong class="text-success">โอนสิทธิ์ LINE อัตโนมัติ</strong><br>สลับเลขที่บ้านของ LINE User ที่ผูกอยู่ ไปผูกกับบ้านใหม่ทันที</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">ข้อมูลยานพาหนะ<br><small class="text-muted">(Vehicle & Stickers)</small></td>
+                                    <td><strong class="text-danger">ล้างสิทธิ์รถยนต์ทั้งหมด</strong><br>ยกเลิกสติกเกอร์และล้างทะเบียนเก่าทั้งหมดออก</td>
+                                    <td><strong class="text-danger">ล้างสิทธิ์รถยนต์เดิม</strong><br>ล้างทะเบียนและยกเลิกสติกเกอร์ของผู้อยู่เก่าออก</td>
+                                    <td><strong class="text-danger">ล้างสิทธิ์รถยนต์ผู้เช่าเดิม</strong><br>ล้างทะเบียนและยกเลิกสติกเกอร์ผู้เช่าเดิมทั้งหมด</td>
+                                    <td><strong class="text-success">โอนสิทธิ์รถยนต์ทั้งหมด</strong><br>ย้ายทะเบียนและสติกเกอร์รถเดิมของลูกบ้านข้ามไปบ้านใหม่</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">ข้อมูลสัตว์เลี้ยง<br><small class="text-muted">(ims_house_pet)</small></td>
+                                    <td><strong class="text-danger">บันทึกเป็น 'ย้ายออก'</strong><br>ยกเลิกประวัติสัตว์เลี้ยงเดิมทั้งหมดไม่ให้ปนกับคนใหม่</td>
+                                    <td><strong class="text-primary">อัปเดตสิทธิ์ผู้ดูแล</strong><br>สลับชื่อ/เบอร์โทรผู้ดูแลสัตว์เลี้ยงเดิมเป็นข้อมูลผู้เช่า</td>
+                                    <td><strong class="text-primary">อัปเดตสิทธิ์ผู้ดูแล</strong><br>สลับข้อมูลผู้ดูแลสัตว์เลี้ยงเดิมเป็นข้อมูลผู้เช่าใหม่</td>
+                                    <td><strong class="text-success">โอนสิทธิ์สัตว์เลี้ยงทั้งหมด</strong><br>ย้ายประวัติรูปและทะเบียนสัตว์เลี้ยงเก่าตามไปบ้านเลขที่ใหม่</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">การเงินค้างชำระ<br><small class="text-muted">(Financial check)</small></td>
+                                    <td><strong class="text-danger">หนี้ต้องเป็น 0.00 บาท</strong><br>แอดมินเคลียร์ยอดเก่าให้เป็นศูนย์ก่อนทำสิทธิ์</td>
+                                    <td><strong class="text-primary">ติดตามที่เจ้าของบ้าน</strong><br>ยอดหนี้ยังคงผูกกับทะเบียนบ้านเดิมของเจ้าของ</td>
+                                    <td><strong class="text-primary">ตรวจสอบความเสียหาย</strong><br>เจ้าหน้าที่หักเงินค้ำประกันผู้เช่าเดิมหากค้างชำระ</td>
+                                    <td><strong class="text-danger">ตรวจสอบหนี้บ้านเดิม</strong><br>นิติบุคคลต้องตรวจและเคลียร์หนี้ของบ้านเดิมก่อนกดย้ายสิทธิ์</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Case 1 -->
+        <div class="tab-pane fade" id="tab-case1" role="tabpanel">
+            <div class="card card-custom owner-change">
+                <div class="card-header-custom">
+                    <div>
+                        <span class="step-badge bg-danger">1</span>
+                        <span class="text-danger fw-bold">กรณีที่ 1: เจ้าของบ้าน ขายบ้าน และเปลี่ยนเจ้าของใหม่ (CHANGE_OWNER)</span>
+                    </div>
+                    <span class="badge-type bg-danger text-white">เปลี่ยนเจ้าของบ้าน</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">ใช้ในกรณีที่มีการโอนกรรมสิทธิ์เปลี่ยนมือเจ้าของบ้าน ณ กรมที่ดิน และมีเจ้าของบ้านคนใหม่เข้ามาแทนที่เจ้าของรายเดิมโดยสิ้นเชิง</p>
+                    
+                    <div class="warning-box">
+                        <h6 class="fw-bold"><i class="fa-solid fa-circle-exclamation me-1"></i> สิ่งที่เจ้าหน้าที่ต้องระวังที่สุด:</h6>
+                        <ul class="mb-0">
+                            <li><strong>ใบปลอดหนี้:</strong> ห้ามเซ็นใบปลอดหนี้หรือบันทึกข้อมูลในระบบหากบ้านเลขที่นี้มียอดค้างชำระค้างส่ง ยอดเงินค้างในตารางหนี้ต้องเป็น <strong>0.00 บาท</strong> ก่อนทำการบันทึกเปลี่ยนสิทธิ์</li>
+                            <li><strong>สิทธิ์ข้อมูลส่วนบุคคล (PDPA):</strong> เนื่องจากเป็นการเปลี่ยนเจ้าของ 100% ระบบจะ <strong>ล้างการเชื่อมต่อ LINE OA ทั้งหมดของบ้านหลังนี้ทันที</strong> เพื่อความปลอดภัย ไม่ให้เจ้าของเดิมรับรู้ข้อมูลหรือแชทคุยกับนิติบุคคลแทนเจ้าของใหม่</li>
+                        </ul>
+                    </div>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-list-check me-2"></i>รายการตรวจสอบก่อนเริ่มดำเนินงาน (Checklist)</h5>
+                    <ul class="checklist-list mb-3">
+                        <li><input type="checkbox" id="k1_1"> <label for="k1_1">ตรวจสอบเอกสารสำเนาหนังสือสัญญาซื้อขาย (ทด. 13) หรือโฉนดที่ดินหน้า-หลัง</label></li>
+                        <li><input type="checkbox" id="k1_2"> <label for="k1_2">ตรวจสอบว่าไม่มีหนี้สินค้างชำระค่าส่วนกลางหรือค่าจัดการโครงการอื่นๆ</label></li>
+                        <li><input type="checkbox" id="k1_3"> <label for="k1_3">เรียกคืนคีย์การ์ดผ่านเข้า-ออกหมู่บ้าน และยกเลิกสิทธิ์คีย์การ์ดเดิม</label></li>
+                        <li><input type="checkbox" id="k1_4"> <label for="k1_4">ขอข้อมูลบัตรประชาชน เบอร์โทรศัพท์ และข้อมูลยานพาหนะของเจ้าของใหม่</label></li>
+                    </ul>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-arrow-pointer me-2"></i>ขั้นตอนการดำเนินงานในหน้าจอระบบ</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เปิดหน้าระบบไปที่หน้าจอ <a href="manage_change_house_holder.php" class="fw-bold text-decoration-none">เปลี่ยนสิทธิ์ผู้อยู่อาศัย</a></li>
+                        <li class="mb-2">เลือกประเภทการดำเนินการเป็น <strong>"กรณี 1: เจ้าของเดิม ขายและเปลี่ยนเจ้าของใหม่ (CHANGE_OWNER)"</strong></li>
+                        <li class="mb-2">ในช่อง <strong>"ค้นหาบ้านเลขที่ที่ต้องการดำเนินการ"</strong> ให้พิมพ์เลขที่บ้านที่ถูกขาย แล้วกดเลือกจากรายการ Autocomplete</li>
+                        <li class="mb-2">ระบบจะดึงข้อมูลลูกบ้านเดิม ยอดค้างชำระ และข้อมูลสิทธิ์ที่เชื่อมโยงอยู่ขึ้นมาแสดงที่ฝั่งขวา</li>
+                        <li class="mb-2">ระบุ <strong>"สถานะผู้อยู่อาศัยใหม่"</strong> เป็น <span class="badge bg-primary">บ้านตนเอง / เจ้าของร่วม (Owner)</span></li>
+                        <li class="mb-2">กรอกข้อมูล <strong>ชื่อผู้อยู่อาศัยใหม่ / ผู้ติดต่อใหม่</strong> และ <strong>เบอร์โทรศัพท์ติดต่อใหม่</strong> ของเจ้าของคนใหม่</li>
+                        <li class="mb-2">ที่กล่องตัวเลือกความปลอดภัย ตรวจสอบให้แน่ใจว่าได้เลือก:
+                            <ul>
+                                <li>ระงับสิทธิ์บัญชีผู้ใช้ระบบเว็บ (ims_user) ของผู้อยู่อาศัยรายเดิม</li>
+                                <li>ยกเลิกสิทธิ์ผูก LINE OA ของผู้อยู่อาศัยเดิม</li>
+                                <li>ระงับสิทธิ์ยานพาหนะและล้างทะเบียนรถยนต์เดิมทั้งหมด</li>
+                            </ul>
+                        </li>
+                        <li class="mb-2">ระบุหมายเหตุการเปลี่ยนแปลง เช่น <code>โอนกรรมสิทธิ์เปลี่ยนเจ้าของใหม่ อ้างอิงเอกสาร ทด.13 วันที่ 06/07/2026</code></li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูลและสิทธิ์"</strong></li>
+                        <li class="mb-2">เมื่อระบบบันทึกสำเร็จ ให้แอดมินส่งลิงก์/QR Code ลงทะเบียนของโครงการให้เจ้าของใหม่ เพื่อสแกนลงทะเบียนผูก LINE OA ต่อไป</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Case 2 -->
+        <div class="tab-pane fade" id="tab-case2" role="tabpanel">
+            <div class="card card-custom owner-to-tenant">
+                <div class="card-header-custom">
+                    <div>
+                        <span class="step-badge bg-warning text-dark">2</span>
+                        <span class="text-warning fw-bold">กรณีที่ 2: เจ้าของบ้านปล่อยให้เช่า มีผู้เช่าเข้ามาอาศัย (Owner to Tenant)</span>
+                    </div>
+                    <span class="badge-type bg-warning text-dark">เจ้าของปล่อยเช่า</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">ใช้ในกรณีที่เดิมเจ้าของอาศัยอยู่เอง แต่ต้องการเปลี่ยนมาปล่อยเช่าบ้าน โดยมีผู้เช่ารายใหม่เซ็นสัญญาเช่าย้ายเข้ามาอยู่อาศัยแทน</p>
+                    
+                    <div class="info-box">
+                        <h6 class="fw-bold"><i class="fa-solid fa-lightbulb me-1"></i> โครงสร้างการส่งข้อมูล LINE OA:</h6>
+                        <p class="mb-0">ระบบพึ่งพาฐานข้อมูลแยก เพื่อให้ **ผู้เช่า** สามารถใช้ LINE OA รับแจ้งพัสดุและรับข่าวสารของโครงการได้ ในขณะที่ **เจ้าของร่วม** ยังคงผูกสิทธิ์ LINE (หากสมัครไว้ต่างเบอร์) เพื่อรับใบแจ้งหนี้หรือบิลค่าส่วนกลางได้เช่นกัน ดังนั้นการปรับปรุงข้อมูลตรงนี้จะไม่ตัดสิทธิ์ LINE ของเจ้าของร่วมจริงออก</p>
+                    </div>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-list-check me-2"></i>รายการตรวจสอบก่อนเริ่มดำเนินงาน (Checklist)</h5>
+                    <ul class="checklist-list mb-3">
+                        <li><input type="checkbox" id="k2_1"> <label for="k2_1">สำเนาสัญญาเช่าบ้าน หรือหนังสือมอบอำนาจ/ยินยอมให้เข้าพักอาศัยจากเจ้าของร่วม</label></li>
+                        <li><input type="checkbox" id="k2_2"> <label for="k2_2">ข้อมูลผู้ติดต่อหลักที่เป็นผู้เช่า ได้แก่ ชื่อ-นามสกุล และหมายเลขโทรศัพท์หลัก</label></li>
+                        <li><input type="checkbox" id="k2_3"> <label for="k2_3">ขอข้อมูลทะเบียนรถยนต์คันใหม่ของผู้เช่าเพื่อใช้อนุมัติสิทธิ์เข้า-ออกหมู่บ้าน</label></li>
+                    </ul>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-arrow-pointer me-2"></i>ขั้นตอนการดำเนินงานในหน้าจอระบบ</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เข้าหน้าจอ <a href="manage_change_house_holder.php" class="fw-bold text-decoration-none">เปลี่ยนสิทธิ์ผู้อยู่อาศัย</a></li>
+                        <li class="mb-2">เลือกประเภทการดำเนินการเป็น <strong>"กรณี 2: เจ้าของปล่อยให้เช่า / มีผู้เช่าย้ายเข้า (MOVE_OUT_IN)"</strong></li>
+                        <li class="mb-2">ค้นหาบ้านเลขที่ที่ต้องการทำรายการ ระบบจะโหลดประวัติฝั่งขวา</li>
+                        <li class="mb-2">ในช่อง <strong>"สถานะผู้อยู่อาศัยใหม่"</strong> ปรับให้เป็น <span class="badge bg-info text-dark">บ้านเช่า / ผู้เช่า (Tenant)</span></li>
+                        <li class="mb-2">ป้อนข้อมูล <strong>ชื่อผู้อยู่อาศัยใหม่</strong> เป็นชื่อของผู้เช่ารายใหม่ และกรอก <strong>เบอร์โทรศัพท์ติดต่อใหม่</strong></li>
+                        <li class="mb-2">ที่กล่องความปลอดภัย ตรวจสอบให้แน่ใจว่าได้เลือก:
+                            <ul>
+                                <li>ระงับบัญชีผู้ใช้ระบบเว็บเดิมของผู้พักอาศัยเก่า (ในที่นี้คือเจ้าของที่ย้ายออก)</li>
+                                <li>ระงับสิทธิ์ยานพาหนะและล้างทะเบียนรถยนต์เดิมทั้งหมด</li>
+                            </ul>
+                        </li>
+                        <li class="mb-2">ระบุหมายเหตุ เช่น <code>เจ้าของร่วมปล่อยบ้านให้เช่า ผู้เช่าย้ายเข้า สัญญาเช่าเริ่ม 06/07/2026</code></li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูลและสิทธิ์"</strong></li>
+                        <li class="mb-2">แนะนำผู้เช่าใหม่ให้ลงทะเบียนสิทธิ์ LINE OA พฤกษา 33 เพื่อให้ระบบดึงเบอร์โทรศัพท์นี้ไปผูกและเริ่มใช้งานรับพัสดุ</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Case 3 -->
+        <div class="tab-pane fade" id="tab-case3" role="tabpanel">
+            <div class="card card-custom tenant-change">
+                <div class="card-header-custom">
+                    <div>
+                        <span class="step-badge bg-warning text-dark">3</span>
+                        <span class="text-warning fw-bold">กรณีที่ 3: ผู้เช่าเดิมย้ายออก และมีผู้เช่าใหม่เข้ามาอาศัย (Tenant to Tenant)</span>
+                    </div>
+                    <span class="badge-type bg-warning text-dark">เปลี่ยนผู้เช่าใหม่</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">ใช้ในกรณีที่บ้านเลขที่ดังกล่าวเป็นบ้านเช่าอยู่แล้ว ผู้เช่าคนเดิมหมดสัญญาเช่าและย้ายของออก และมีผู้เช่าใหม่ทำสัญญาย้ายเข้ามาอาศัยแทน</p>
+                    
+                    <div class="danger-box">
+                        <h6 class="fw-bold"><i class="fa-solid fa-user-shield me-1"></i> ความปลอดภัยและสิทธิ์ข้อมูลส่วนบุคคล (GDPR / PDPA):</h6>
+                        <p class="mb-0">การบันทึกรายการนี้จำเป็นต้องเลือก <strong>"ระงับสิทธิ์บัญชีผู้ใช้หน้าเว็บเดิม"</strong> และ <strong>"ยกเลิกผูกสิทธิ์ LINE"</strong> ของผู้เช่าเดิมออกทันที มิเช่นนั้นผู้เช่ารายเดิมจะยังคงสามารถเข้าดูบันทึกประวัติพัสดุ ข้อมูลแจ้งเตือน หรือเปิดบิลของบ้านเลขที่นี้ได้ ซึ่งเป็นการละเมิดความปลอดภัยของข้อมูล</p>
+                    </div>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-list-check me-2"></i>รายการตรวจสอบก่อนเริ่มดำเนินงาน (Checklist)</h5>
+                    <ul class="checklist-list mb-3">
+                        <li><input type="checkbox" id="k3_1"> <label for="k3_1">สัญญาเช่าชุดใหม่ของผู้เช่าคนใหม่ หรือหนังสือยืนยันการเปลี่ยนสัญญาเช่าจากเจ้าของบ้าน</label></li>
+                        <li><input type="checkbox" id="k3_2"> <label for="k3_2">ตรวจสอบว่าไม่มีทรัพย์สินของโครงการเสียหาย และเคลียร์ค่าส่วนกลางค้างชำระที่ผู้เช่าเดิมค้างอยู่ (ถ้ามี) จากเงินค้ำประกัน</label></li>
+                        <li><input type="checkbox" id="k3_3"> <label for="k3_3">เรียกคืนคีย์การ์ดผ่านเข้า-ออกและของใช้อื่นๆ จากผู้เช่าเดิม</label></li>
+                        <li><input type="checkbox" id="k3_4"> <label for="k3_4">จดรายละเอียดชื่อ เบอร์โทรติดต่อ และหมายเลขทะเบียนรถยนต์ของผู้เช่าใหม่</label></li>
+                    </ul>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-arrow-pointer me-2"></i>ขั้นตอนการดำเนินงานในหน้าจอระบบ</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เข้าหน้าจอ <a href="manage_change_house_holder.php" class="fw-bold text-decoration-none">เปลี่ยนสิทธิ์ผู้อยู่อาศัย</a></li>
+                        <li class="mb-2">เลือกประเภทการดำเนินการเป็น <strong>"กรณี 3: เปลี่ยนตัวผู้เช่าใหม่ (ผู้เช่าเดิมย้ายออก) (CHANGE_TENANT)"</strong></li>
+                        <li class="mb-2">ค้นหาบ้านเลขที่ที่ต้องการสลับตัวผู้เช่า ตรวจสอบรายละเอียดฝั่งขวา</li>
+                        <li class="mb-2">ปรับ <strong>"สถานะผู้อยู่อาศัยใหม่"</strong> ให้ระบุเป็น <span class="badge bg-info text-dark">บ้านเช่า / ผู้เช่า (Tenant)</span></li>
+                        <li class="mb-2">อัปเดตข้อมูล <strong>ชื่อผู้อยู่อาศัยใหม่</strong> และ <strong>เบอร์โทรศัพท์ติดต่อใหม่</strong> เป็นของผู้เช่ารายใหม่</li>
+                        <li class="mb-2">ที่การตั้งค่าความปลอดภัย ตรวจสอบให้มั่นใจว่าได้เลือก:
+                            <ul>
+                                <li>ระงับบัญชีผู้ใช้ระบบเว็บ (ims_user) ของผู้เช่าเดิมออก (อ้างอิงจากเบอร์เก่า)</li>
+                                <li>ยกเลิกสิทธิ์ผูก LINE OA ของผู้เช่าเดิมออก</li>
+                                <li>ระงับสิทธิ์ยานพาหนะและล้างทะเบียนรถยนต์เดิมทั้งหมด</li>
+                            </ul>
+                        </li>
+                        <li class="mb-2">บันทึกหมายเหตุการทำงาน เช่น <code>เปลี่ยนผู้เช่าใหม่ แทนผู้เช่าเดิมที่หมดสัญญาเช่า วันที่ 06/07/2026</code></li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูลและสิทธิ์"</strong></li>
+                        <li class="mb-2">นำผู้เช่าคนใหม่สแกน QR Code ลงทะเบียนรับสิทธิ์ LINE OA เพื่อเปิดการแจ้งเตือนพัสดุและข่าวสารของบ้านเลขที่นี้</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Case 4 -->
+        <div class="tab-pane fade" id="tab-case4" role="tabpanel">
+            <div class="card card-custom move-between">
+                <div class="card-header-custom">
+                    <div>
+                        <span class="step-badge bg-primary">4</span>
+                        <span class="text-primary fw-bold">กรณีที่ 4: ย้ายบ้านข้ามบ้านเลขที่ภายในโครงการ (เช่น ย้ายจาก 67/1 ไป 67/8)</span>
+                    </div>
+                    <span class="badge-type bg-primary text-white">ย้ายบ้านภายในโครงการ</span>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">ใช้ในกรณีที่ลูกบ้านท่านเดิม ย้ายที่พักอาศัยขยับขยายไปบ้านเลขที่หลังอื่นภายในโครงการ โดยต้องการนำประวัติ ข้อมูล LINE รถยนต์ และสัตว์เลี้ยงทั้งหมดตามไปด้วยโดยอัตโนมัติ</p>
+                    
+                    <div class="info-box">
+                        <h6 class="fw-bold"><i class="fa-solid fa-magic me-1"></i> ความสะดวกและการทำงานของระบบอัตโนมัติ:</h6>
+                        <p class="mb-0">ในการดำเนินการกรณีนี้ นิติบุคคลไม่จำเป็นต้องล้างข้อมูลเดิมหรือกรอกข้อมูลผู้อยู่อาศัยใหม่ด้วยตนเอง ระบบหลังบ้านจะจัดการให้โดยอัตโนมัติ ดังนี้:</p>
+                        <ul class="mb-0 mt-1 small">
+                            <li><strong>ล้างบ้านเลขที่เดิม (67/1):</strong> ปรับข้อมูลเป็น "บ้านว่าง", ล้างข้อมูลยานพาหนะ และปรับสถานะเป็น 'V' (Vacant)</li>
+                            <li><strong>สลับสิทธิ์เข้าบ้านเลขที่ใหม่ (67/8):</strong> โอนย้ายชื่อติดต่อ, เบอร์โทรศัพท์, ข้อมูลทะเบียนยานพาหนะ และสิทธิ์สติ๊กเกอร์ทั้งหมดเข้าแทนที่</li>
+                            <li><strong>โอนย้ายระบบ LINE OA:</strong> ปรับพิกัดบ้านเลขที่ของ LINE ID ของลูกบ้านคนนั้นในระบบให้ตรงกับบ้านหลังใหม่ทันที เพื่อให้ไม่ต้องเริ่มลงทะเบียนหรือรับ OTP ใหม่</li>
+                            <li><strong>โอนย้ายสัตว์เลี้ยง:</strong> ปรับพิกัดประวัติสัตว์เลี้ยงทั้งหมดตามเจ้าของย้ายไปผูกบ้านเลขที่ใหม่ทันที</li>
+                        </ul>
+                    </div>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-list-check me-2"></i>รายการตรวจสอบก่อนเริ่มดำเนินงาน (Checklist)</h5>
+                    <ul class="checklist-list mb-3">
+                        <li><input type="checkbox" id="k4_1"> <label for="k4_1">ตรวจสอบเอกสารสำเนาสัญญา/สิทธิ์ครอบครองบ้านเลขที่หลังใหม่ (โอนกรรมสิทธิ์หรือสัญญาเช่า)</label></li>
+                        <li><input type="checkbox" id="k4_2"> <label for="k4_2">ตรวจสอบหนี้ค้างชำระของบ้านเลขที่หลังเดิม และจัดแจงชำระเงินหรือปรับปรุงยอดให้ถูกต้องก่อนย้ายออก</label></li>
+                        <li><input type="checkbox" id="k4_3"> <label for="k4_3">เรียกคืนคีย์การ์ดเดิม (เพื่อนำไปลงทะเบียนอนุญาตเข้าพิกัดของบ้านหลังใหม่)</label></li>
+                    </ul>
+
+                    <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-arrow-pointer me-2"></i>ขั้นตอนการดำเนินงานในหน้าจอระบบ</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เข้าหน้าจอ <a href="manage_change_house_holder.php" class="fw-bold text-decoration-none">เปลี่ยนสิทธิ์ผู้อยู่อาศัย</a></li>
+                        <li class="mb-2">ในช่องเลือกประเภทการดำเนินการ ให้เลือก <span class="badge bg-primary">กรณี 4: ย้ายบ้านข้ามบ้านเลขที่ (เช่น 67/1 ไป 67/8)</span></li>
+                        <li class="mb-2">ระบบจะสลับแบบฟอร์มแสดงช่องกรอกข้อมูลบ้านเลขที่เดิมและบ้านเลขที่ใหม่โดยอัตโนมัติ และซ่อนช่องกรอกประวัติอื่น ๆ เนื่องจากข้อมูลจะโอนย้ายข้ามโดยตรง</li>
+                        <li class="mb-2">ในช่อง <strong>"ค้นหาบ้านเลขที่เดิม (ย้ายออก)"</strong> ให้พิมพ์เลขบ้านหลังเก่า (เช่น 67/1) แล้วเลือกจากรายการ Autocomplete เพื่อโหลดข้อมูลปัจจุบัน</li>
+                        <li class="mb-2">ในช่อง <strong>"ค้นหาบ้านเลขที่ใหม่ (ย้ายเข้า)"</strong> ให้พิมพ์เลขบ้านหลังใหม่ (เช่น 67/8)</li>
+                        <li class="mb-2">ติ๊กตรวจสอบ Checklist ความถูกต้องทั้งสองข้อ</li>
+                        <li class="mb-2">ป้อนหมายเหตุการย้ายสิทธิ์ เช่น <code>ลูกบ้านย้ายขยับขยายที่อยู่ภายในโครงการ จาก 67/1 ไป 67/8</code></li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูลและสิทธิ์"</strong> และกดยืนยันในหน้าต่าง Bootbox</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Technical -->
+        <div class="tab-pane fade" id="tab-dev" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-terminal me-2"></i>ข้อมูลสำหรับโปรแกรมเมอร์และการดำเนินการในระบบฐานข้อมูล (Developer Reference)</h4>
+                    <p class="text-muted">ด้านล่างคือรายละเอียดการทำงานในฐานข้อมูล SQL และตัวควบคุม PHP Controller สำหรับการดำเนินงานตามแบบโครงสร้างความสัมพันธ์ในระบบ</p>
+                    
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">1. โครงสร้างตารางและฟิลด์ที่เกี่ยวข้อง (Database Schema)</h5>
+                    <ul>
+                        <li class="mb-2"><strong><span class="font-code">ims_house</span>:</strong> เก็บข้อมูลบ้านหลัก มีฟิลด์สำคัญคือ <span class="font-code">contact_name</span> (ชื่อผู้อยู่อาศัยหลัก), <span class="font-code">phone_number</span> (เบอร์โทร), <span class="font-code">house_status</span> (O=Owner, R=Tenant), และ <span class="font-code">car_no1 - car_no8</span></li>
+                        <li class="mb-2"><strong><span class="font-code">ims_user</span>:</strong> เก็บข้อมูลสิทธิ์ล็อกอินหน้าเว็บ ใช้ <span class="font-code">user_id</span> (ตรงกับ phone_number) และเก็บสถานะบัญชีที่ฟิลด์ <span class="font-code">status</span> ('Active', 'Inactive')</li>
+                        <li class="mb-2"><strong><span class="font-code">ims_house_line_user</span>:</strong> เก็บการเชื่อมโยงระบบแจ้งเตือนไลน์ มีความสัมพันธ์ผ่านคีย์ <span class="font-code">house_number</span> และ <span class="font-code">line_phone</span></li>
+                        <li class="mb-2"><strong><span class="font-code">ims_house_pet</span>:</strong> เก็บข้อมูลสัตว์เลี้ยงสัมพันธ์กับบ้านเลขที่และลูกบ้าน</li>
+                        <li class="mb-2"><strong><span class="font-code">ims_house_change_log</span>:</strong> เก็บประวัติการแก้ไขและเหตุผลการเปลี่ยนสิทธิ์ผู้อยู่อาศัยเพื่อใช้อ้างอิงตรวจสอบย้อนหลัง</li>
+                    </ul>
+
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">2. ชุดคำสั่ง SQL ที่ประมวลผลเบื้องหลัง (Behind-the-Scenes SQL Commands)</h5>
+                    
+                    <h6 class="fw-bold text-dark mt-3">A. บันทึกข้อมูล Audit Log และระงับบัญชีผู้ใช้เดิม (Cases 1, 2, 3)</h6>
+                    <pre><code><span class="sql-comment">-- 1. บันทึกประวัติการเปลี่ยนตัวผู้อยู่อาศัยลง Log</span>
+<span class="sql-keyword">INSERT INTO</span> <span class="sql-table">ims_house_change_log</span> (
+    house_number, change_type, old_contact_name, old_phone_number, old_house_status, 
+    new_contact_name, new_phone_number, new_house_status, remark, created_by
+)
+<span class="sql-keyword">VALUES</span> (
+    :house_number, :change_type, :old_name, :old_phone, :old_status, 
+    :new_name, :new_phone, :new_status, :remark, :admin_name
+);
+
+<span class="sql-comment">-- 2. ระงับการใช้งานบัญชีผู้ใช้ระบบเว็บ (ims_user) ของผู้อยู่อาศัยเดิม</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_user</span> 
+<span class="sql-keyword">SET</span> status = <span class="sql-value">'Inactive'</span> 
+<span class="sql-keyword">WHERE</span> user_id = :old_phone;
+
+<span class="sql-comment">-- 3. ทำลาย Active Session เพื่อบังคับ Logout ออกจากระบบในทันที</span>
+<span class="sql-keyword">DELETE FROM</span> <span class="sql-table">ims_user_login_logs</span> 
+<span class="sql-keyword">WHERE</span> user_id = :old_phone;</code></pre>
+
+                    <h6 class="fw-bold text-dark mt-4">B. การยกเลิกสิทธิ์ผูก LINE OA (แยกตามเงื่อนไขเพื่อคงสิทธิ์เจ้าของบ้าน)</h6>
+                    <pre><code><span class="sql-comment">-- เงื่อนไขที่ 1: กรณี CHANGE_OWNER (ขายบ้าน) ให้ตัดสิทธิ์ LINE ทุกคนในบ้าน</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_line_user</span> 
+<span class="sql-keyword">SET</span> status = <span class="sql-value">'N'</span> 
+<span class="sql-keyword">WHERE</span> house_number = :house_number;
+
+<span class="sql-comment">-- เงื่อนไขที่ 2: กรณี CHANGE_TENANT (เปลี่ยนผู้เช่า) ให้ตัดสิทธิ์เฉพาะ LINE ของคนเบอร์เก่าเท่านั้น</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_line_user</span> 
+<span class="sql-keyword">SET</span> status = <span class="sql-value">'N'</span> 
+<span class="sql-keyword">WHERE</span> house_number = :house_number 
+  <span class="sql-keyword">AND</span> line_phone = :old_phone;</code></pre>
+
+                    <h6 class="fw-bold text-dark mt-4">C. การจัดการประวัติสัตว์เลี้ยงและรถยนต์ (Cases 1, 2, 3)</h6>
+                    <pre><code><span class="sql-comment">-- 1. ยกเลิกและล้างข้อมูลรถยนต์และสติกเกอร์ที่ผูกอยู่</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house</span> 
+<span class="sql-keyword">SET</span> 
+    car_no1 = :car1, car_no1_province = :prov1, car_no1_type = :type1, car_no1_brand = :brand1, car_no1_color = :color1,
+    car_no2 = '', car_no3 = '', car_no4 = '', car_no5 = '', 
+    sticker_receive_status = 'N', sticker_receive_date = NULL
+<span class="sql-keyword">WHERE</span> house_number = :house_number;
+
+<span class="sql-comment">-- 2. ย้ายหรือยกเลิกสิทธิ์ข้อมูลสัตว์เลี้ยงของคนเก่า (กรณีเปลี่ยนเจ้าของบ้าน)</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_pet</span> 
+<span class="sql-keyword">SET</span> remark = CONCAT(<span class="sql-value">'ย้ายออกจากการปรับปรุงสิทธิ์เมื่อ '</span>, NOW()) 
+<span class="sql-keyword">WHERE</span> house_number = :house_number;
+
+<span class="sql-comment">-- 3. อัปเดตข้อมูลผู้รับผิดชอบสัตว์เลี้ยงเดิม (กรณีเปลี่ยนผู้เช่าแต่สิทธิ์ดูแลยังคงอยู่)</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_pet</span> 
+<span class="sql-keyword">SET</span> contact_name = :new_name, phone_number = :new_phone 
+<span class="sql-keyword">WHERE</span> house_number = :house_number;</code></pre>
+
+                    <h6 class="fw-bold text-dark mt-4">D. การอัปเดตข้อมูลบ้านหลักเพื่อนำส่งข้อมูลใหม่เข้าตาราง</h6>
+                    <pre><code><span class="sql-comment">-- อัปเดตข้อมูลบ้านหลักด้วยชื่อ เบอร์โทรศัพท์ และสถานะการอยู่อาศัยใหม่</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house</span> 
+<span class="sql-keyword">SET </span> 
+    contact_name = :new_name,
+    phone_number = :new_phone,
+    house_status = :new_status,
+    remark = :remark,
+    update_by = :admin_name
+<span class="sql-keyword">WHERE</span> house_number = :house_number;</code></pre>
+
+                    <h6 class="fw-bold text-dark mt-4">E. การโอนย้ายสิทธิ์ข้ามบ้านเลขที่ (MOVE_HOUSE_MEMBER_SIMPLIFIED - กรณีที่ 4)</h6>
+                    <p>ในกรณีที่ลูกบ้านย้ายบ้านภายในโครงการ ระบบจะรันคำสั่ง SQL ดังนี้:</p>
+                    <pre><code><span class="sql-comment">-- 1. เคลียร์ข้อมูลบ้านเดิมให้กลายเป็นบ้านว่าง (สถานะ 'V')</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house</span> <span class="sql-keyword">SET</span> 
+    contact_name = <span class="sql-value">'บ้านว่าง'</span>, phone_number = <span class="sql-value">''</span>, house_status = <span class="sql-value">'V'</span>,
+    car_no1 = '', car_no2 = '', car_no3 = '', car_no4 = '', car_no5 = '',
+    car_no6 = '', car_no7 = '', car_no8 = '', car_no9 = '', car_no10 = '',
+    sticker_receive_status = <span class="sql-value">'N'</span>,
+    remark = <span class="sql-value">'ย้ายออกไปยังบ้านเลขที่ :new_house'</span>, update_by = :admin_name
+<span class="sql-keyword">WHERE</span> house_number = :old_house;
+
+<span class="sql-comment">-- 2. โอนย้ายข้อมูลผู้อยู่อาศัยและทะเบียนรถไปยังบ้านหลังใหม่ (UPDATE ในกรณีที่บ้านใหม่มีอยู่แล้ว)</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house</span> <span class="sql-keyword">SET</span> 
+    contact_name = :old_resident_name, phone_number = :old_phone, house_status = :new_status,
+    car_no1 = :old_car1, car_no2 = :old_car2, car_no3 = :old_car3, -- โอนย้ายรถยนต์ทั้งหมด
+    sticker_receive_status = :old_sticker_status, remark = <span class="sql-value">'ย้ายเข้าจากบ้านเลขที่ :old_house'</span>, update_by = :admin_name
+<span class="sql-keyword">WHERE</span> house_number = :new_house;
+
+<span class="sql-comment">-- 3. ย้ายสิทธิ์การเชื่อมต่อ LINE OA ไปยังบ้านเลขที่ใหม่</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_line_user</span> <span class="sql-keyword">SET</span> 
+    house_number = :new_house, status = <span class="sql-value">'Y'</span> 
+<span class="sql-keyword">WHERE</span> line_phone = :old_phone;
+
+<span class="sql-comment">-- 4. ย้ายทะเบียนและผู้รับผิดชอบสัตว์เลี้ยงไปยังบ้านเลขที่ใหม่</span>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_pet</span> <span class="sql-keyword">SET</span> 
+    house_number = :new_house, contact_name = :old_resident_name 
+<span class="sql-keyword">WHERE</span> house_number = :old_house;</code></pre>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- Footer -->
+    <div class="text-center mt-5 text-muted pb-4" style="font-size: 0.85rem;">
+        <hr>
+        <p>&copy; 2026 PS33 Home Management System. All rights reserved.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ติ๊ก Checklist และทำให้ตัวอักษรจางลงเพื่ออำนวยความสะดวกให้แก่นิติบุคคลในการทำงาน
+    document.querySelectorAll('.checklist-list input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const label = this.nextElementSibling;
+            if (this.checked) {
+                label.parentElement.classList.add('checked');
+            } else {
+                label.parentElement.classList.remove('checked');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือเจ้าหน้าที่นิติบุคคล: การเปลี่ยนข้อมูลบ้านและลูกบ้าน - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            padding: 2.5rem 1.5rem;
+            border-bottom: 4px solid #084298;
+            margin-bottom: 2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .card-step {
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            margin-bottom: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+        }
+        .card-header-step {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        .step-badge {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+        .badge-case {
+            font-size: 0.85rem;
+            padding: 0.4em 0.8em;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .case-1 { background-color: #e2f0d9; color: #385723; } /* ย้ายบ้าน */
+        .case-2 { background-color: #fff2cc; color: #7f6000; } /* เปลี่ยนผู้เช่า */
+        .case-3 { background-color: #fce4d6; color: #c65911; } /* เปลี่ยนเจ้าของ */
+        
+        .tip-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #0d6efd;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .danger-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .todo-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .todo-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .todo-list li input[type="checkbox"] {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+        .todo-list li.checked {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-section text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2"><i class="fa-solid fa-book me-2"></i>คู่มือการใช้งานสำหรับเจ้าหน้าที่นิติบุคคล</h1>
+        <p class="lead mb-0">ขั้นตอนการเปลี่ยนข้อมูลผู้อยู่อาศัย ย้ายบ้าน เปลี่ยนผู้เช่า และเปลี่ยนเจ้าของบ้านอย่างถูกต้อง</p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+    
+    <!-- Quick Selector -->
+    <div class="card mb-4 border-primary">
+        <div class="card-body bg-light">
+            <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-route me-1"></i> เลือกกรณีที่คุณต้องการดำเนินการด่วน:</h5>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <a href="#case-move-out" class="btn btn-outline-success w-100 py-2"><i class="fa-solid fa-truck-ramp-box me-1"></i> 1. ลูกบ้านย้ายบ้านออก</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#case-change-tenant" class="btn btn-outline-warning w-100 py-2"><i class="fa-solid fa-people-arrows me-1"></i> 2. เปลี่ยนตัวผู้เช่าใหม่</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#case-change-owner" class="btn btn-outline-danger w-100 py-2"><i class="fa-solid fa-file-signature me-1"></i> 3. เปลี่ยนเจ้าของบ้านใหม่</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Case 1: Move Out -->
+    <div class="card card-step" id="case-move-out">
+        <div class="card-header-step justify-content-between">
+            <div>
+                <span class="step-badge bg-success">1</span>
+                <span>กรณีที่ 1: ลูกบ้านเดิมย้ายออกทั้งหมด (บ้านว่าง / ไม่มีผู้อยู่)</span>
+            </div>
+            <span class="badge-case case-1">ลูกบ้านย้ายออก</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">ใช้ในกรณีที่ผู้พักอาศัยเดิมทั้งหมด ขนของย้ายออกจากโครงการ และปัจจุบันบ้านหลังดังกล่าวไม่มีผู้อยู่อาศัย (ปล่อยว่างเพื่อรอขายหรือรอปล่อยเช่า)</p>
+            
+            <h6 class="fw-bold text-success"><i class="fa-solid fa-list-check me-1"></i> รายการที่เจ้าหน้าที่ต้องเช็ค (Checklistก่อนบันทึก)</h6>
+            <ul class="todo-list mb-3">
+                <li><input type="checkbox" id="c1_1"> <label for="c1_1">ตรวจสอบเอกสารการแจ้งขอย้ายออกจากโครงการ (ถ้ามี)</label></li>
+                <li><input type="checkbox" id="c1_2"> <label for="c1_2">จดบันทึกยอดหนี้ค้างชำระ (ค่าส่วนกลาง/ขยะ) ส่งฝ่ายบัญชีเพื่อติดตามทวงถาม</label></li>
+                <li><input type="checkbox" id="c1_3"> <label for="c1_3">เรียกคืนคีย์การ์ดผ่านเข้า-ออกหมู่บ้านของลูกบ้านเดิมทั้งหมด</label></li>
+            </ul>
+
+            <h6 class="fw-bold text-dark"><i class="fa-solid fa-arrow-pointer me-1"></i> ขั้นตอนการคลิกทำบนหน้าจอระบบ:</h6>
+            <ol class="ps-3">
+                <li class="mb-2">พิมพ์ <strong>เลขที่บ้าน</strong> ในช่องค้นหา เพื่อดึงข้อมูลเดิมขึ้นมา</li>
+                <li class="mb-2">เลือกประเภทรายการเป็น <strong>"ย้ายเข้า/ย้ายออก"</strong></li>
+                <li class="mb-2">ปรับสถานะการอยู่อาศัยใหม่เป็น <strong>"บ้านว่าง"</strong></li>
+                <li class="mb-2">กรอกชื่อผู้ติดต่อชั่วคราวเป็น <code>บ้านว่าง / รอผู้อยู่อาศัย</code> และลบเบอร์โทรศัพท์เดิมออก</li>
+                <li class="mb-2">ติ๊กถูกที่ช่อง <strong>"ระงับสิทธิ์บัญชีผู้ใช้หน้าเว็บ"</strong> และ <strong>"ยกเลิกผูกสิทธิ์ LINE"</strong> เพื่อป้องกันไม่ให้คนเดิมเปิดดูข้อมูลได้อีก</li>
+                <li class="mb-2">กดปุ่ม <strong>"บันทึกรายการ"</strong></li>
+            </ol>
+
+            <div class="warning-box mb-0">
+                <strong><i class="fa-solid fa-circle-exclamation me-1"></i> สิ่งที่จะเกิดขึ้นในระบบอัตโนมัติ:</strong>
+                <ul class="mb-0 mt-1 small">
+                    <li>บัญชีเว็บและระบบไลน์ของลูกบ้านเดิมจะถูกระงับสิทธิ์ทันทีเพื่อความปลอดภัยข้อมูล</li>
+                    <li>ทะเบียนรถเดิมของบ้านหลังนี้จะถูกยกเลิก (สติกเกอร์จอดรถเก่าจะใช้ผ่านเข้าออกไม่ได้อีก)</li>
+                    <li>ประวัติยอดชำระเงินในอดีตยังคงถูกจัดเก็บไว้กับเลขที่บ้านเดิม ไม่สูญหาย</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Case 2: Change Tenant -->
+    <div class="card card-step" id="case-change-tenant">
+        <div class="card-header-step justify-content-between">
+            <div>
+                <span class="step-badge bg-warning">2</span>
+                <span>กรณีที่ 2: เปลี่ยนตัวผู้เช่าใหม่ (เจ้าของบ้านเดิมปล่อยเช่าต่อ)</span>
+            </div>
+            <span class="badge-case case-2">เปลี่ยนผู้เช่า</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">ใช้ในกรณีที่มีผู้เช่ารายเดิมย้ายออก และมีผู้เช่ารายใหม่ทำสัญญาเช่าเข้ามาอยู่แทน โดยที่กรรมสิทธิ์บ้านยังคงเป็นของเจ้าของบ้านคนเดิม</p>
+            
+            <h6 class="fw-bold text-warning"><i class="fa-solid fa-list-check me-1"></i> รายการที่เจ้าหน้าที่ต้องเช็ค (Checklistก่อนบันทึก)</h6>
+            <ul class="todo-list mb-3">
+                <li><input type="checkbox" id="c2_1"> <label for="c2_1">ขอสำเนาสัญญาเช่าหรือหนังสือยินยอมจากเจ้าของบ้าน</label></li>
+                <li><input type="checkbox" id="c2_2"> <label for="c2_2">จดบันทึก <strong>"ชื่อ-นามสกุล และเบอร์โทร"</strong> ของผู้เช่าคนใหม่ให้ถูกต้อง</label></li>
+                <li><input type="checkbox" id="c2_3"> <label for="c2_3">ขอข้อมูลทะเบียนรถยนต์คันใหม่ที่จะใช้ในหมู่บ้าน</label></li>
+            </ul>
+
+            <h6 class="fw-bold text-dark"><i class="fa-solid fa-arrow-pointer me-1"></i> ขั้นตอนการคลิกทำบนหน้าจอระบบ:</h6>
+            <ol class="ps-3">
+                <li class="mb-2">พิมพ์ค้นหา <strong>เลขที่บ้าน</strong> เพื่อดึงข้อมูลเดิม</li>
+                <li class="mb-2">เลือกประเภทรายการเป็น <strong>"เปลี่ยนผู้เช่า"</strong></li>
+                <li class="mb-2">กรอกข้อมูลผู้ติดต่อใหม่: <strong>ชื่อผู้เช่าคนใหม่</strong> และ <strong>เบอร์โทรศัพท์ผู้เช่าใหม่</strong></li>
+                <li class="mb-2">ปรับสถานะอยู่อาศัยเป็น <strong>"ผู้เช่า"</strong></li>
+                <li class="mb-2">พิมพ์ <strong>ทะเบียนรถใหม่</strong> ของผู้เช่ารายใหม่ลงในช่องทะเบียนรถยนต์</li>
+                <li class="mb-2">ตรวจสอบให้แน่ใจว่าติ๊กถูกเลือก <strong>"ระงับสิทธิ์บัญชีผู้ใช้หน้าเว็บเดิม"</strong> และ <strong>"ยกเลิกผูกสิทธิ์ LINE"</strong></li>
+                <li class="mb-2">กดปุ่ม <strong>"บันทึกรายการ"</strong></li>
+            </ol>
+
+            <div class="tip-box mb-0">
+                <strong><i class="fa-solid fa-lightbulb me-1"></i> คำแนะนำและผลกระทบสิทธิ์:</strong>
+                <ul class="mb-0 mt-1 small">
+                    <li>ระบบจะยกเลิกบัญชีผู้ใช้ของ <strong>"ผู้เช่าเดิม"</strong> เท่านั้น แต่จะ <strong>ไม่ยุ่งเกี่ยวกับบัญชี LINE ของเจ้าของบ้านจริง</strong> เพื่อให้เจ้าของบ้านยังคงเห็นยอดและใบเสร็จค่าส่วนกลางได้ตามปกติ</li>
+                    <li>เมื่อเซฟเสร็จแล้ว ให้แอดมินส่ง <strong>ลิงก์ลงทะเบียน LINE OA</strong> ให้แก่ผู้เช่าใหม่สแกนลงทะเบียนทันที เพื่อเริ่มใช้งานรับข่าวสารหมู่บ้าน</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Case 3: Change Owner -->
+    <div class="card card-step" id="case-change-owner">
+        <div class="card-header-step justify-content-between">
+            <div>
+                <span class="step-badge bg-danger">3</span>
+                <span>กรณีที่ 3: เปลี่ยนเจ้าของบ้านใหม่ (ซื้อขายบ้าน/โอนกรรมสิทธิ์)</span>
+            </div>
+            <span class="badge-case case-3">เปลี่ยนเจ้าของบ้าน</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">ใช้เมื่อบ้านถูกขายเปลี่ยนมือ มีการโอนกรรมสิทธิ์ ณ กรมที่ดิน และมีเจ้าของบ้านคนใหม่เข้ามาดูแลรับผิดชอบแทนเจ้าของรายเดิม</p>
+            
+            <h6 class="fw-bold text-danger"><i class="fa-solid fa-list-check me-1"></i> รายการที่เจ้าหน้าที่ต้องเช็ค (Checklist สำคัญมาก!)</h6>
+            <ul class="todo-list mb-3">
+                <li><input type="checkbox" id="c3_1"> <label for="c3_1"><strong>[สำคัญสูงสุด]</strong> ตรวจสอบยอดหนี้ค้างชำระทั้งหมดในตารางการเงิน ยอดหนี้เก่าต้องเป็น <strong>0.00 บาท</strong> ก่อนเซ็นใบปลอดหนี้</label></li>
+                <li><input type="checkbox" id="c3_2"> <label for="c3_2">ขอสำเนาหนังสือสัญญาซื้อขาย (ทด.13) หรือโฉนดหน้า-หลัง เพื่อเป็นหลักฐานแนบ</label></li>
+                <li><input type="checkbox" id="c3_3"> <label for="c3_3">ขอเบอร์โทรศัพท์และบัตรประชาชนของเจ้าของบ้านคนใหม่</label></li>
+            </ul>
+
+            <h6 class="fw-bold text-dark"><i class="fa-solid fa-arrow-pointer me-1"></i> ขั้นตอนการคลิกทำบนหน้าจอระบบ:</h6>
+            <ol class="ps-3">
+                <li class="mb-2">พิมพ์ค้นหา <strong>เลขที่บ้าน</strong></li>
+                <li class="mb-2">เลือกประเภทรายการเป็น <strong>"เปลี่ยนเจ้าของบ้าน"</strong></li>
+                <li class="mb-2">กรอกข้อมูลผู้ติดต่อใหม่: <strong>ชื่อเจ้าของบ้านคนใหม่</strong> และ <strong>เบอร์โทรศัพท์เจ้าของใหม่</strong></li>
+                <li class="mb-2">ปรับสถานะอยู่อาศัยเป็น <strong>"เจ้าของอยู่เอง"</strong> (หรือ "ให้เช่า" หากเจ้าของใหม่จะปล่อยเช่าทันที)</li>
+                <li class="mb-2">ติ๊กถูกช่องตัวเลือกความปลอดภัย:
+                    <ul>
+                        <li><strong>ระงับสิทธิ์บัญชีผู้ใช้ระบบเว็บ (ims_user) ของผู้อยู่อาศัยรายเดิมทั้งหมด</strong></li>
+                        <li><strong>ยกเลิกการผูกสิทธิ์ LINE OA ทั้งหมดของบ้านหลังนี้</strong></li>
+                    </ul>
+                </li>
+                <li class="mb-2">กรอกหมายเหตุการเปลี่ยนสิทธิ์ เช่น <code>โอนกรรมสิทธิ์เปลี่ยนเจ้าของ วันที่ DD/MM/YYYY อ้างอิงเอกสาร ทด.13</code></li>
+                <li class="mb-2">กดปุ่ม <strong>"บันทึกรายการ"</strong></li>
+            </ol>
+
+            <div class="danger-box mb-0">
+                <strong><i class="fa-solid fa-triangle-exclamation me-1"></i> ข้อควรระวังความปลอดภัยของข้อมูล:</strong>
+                <p class="mb-0 mt-1 small">เนื่องจากการเปลี่ยนเจ้าของคือการเปลี่ยนสิทธิ์ 100% ระบบจะทำการ **ล้างระบบเชื่อมต่อ LINE ทั้งหมดของบ้านหลังนี้ออกทันที** เพื่อไม่ให้เจ้าของคนเดิมเปิดดูข้อมูลการเงินหรือรับแจ้งข่าวสารของบ้านหลังนี้ได้อีก เจ้าของใหม่ต้องทำการลงทะเบียนผูกสิทธิ์ LINE ใหม่ด้วยตนเองเท่านั้น</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // เพิ่มลูกเล่นให้เจ้าหน้าที่คลิกติ๊ก Checklist แล้วตัวอักษรจางลงเพื่อความสะดวกในการปฏิบัติงานหน้างานจริง
+    document.querySelectorAll('.todo-list input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const label = this.nextElementSibling;
+            if (this.checked) {
+                label.parentElement.classList.add('checked');
+            } else {
+                label.parentElement.classList.remove('checked');
+            }
+        });
+    });
+</script>
+</body>
+</html>

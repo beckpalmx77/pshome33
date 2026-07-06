@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการทำงานระบบโอนย้ายลูกบ้านแบบง่าย (Simplified Migration Guide)</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fc;
+            color: #4e73df;
+            padding: 30px 15px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        .card-header {
+            border-top-left-radius: 10px !important;
+            border-top-right-radius: 10px !important;
+            font-weight: bold;
+        }
+        .table-responsive {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        code {
+            background-color: #f1f3f9;
+            color: #e83e8c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+        .badge-owner {
+            background-color: #4e73df;
+            color: white;
+        }
+        .badge-tenant {
+            background-color: #f6c23e;
+            color: #3a3b45;
+        }
+        .step-num {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: #4e73df;
+            color: white;
+            border-radius: 50%;
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="font-weight-bold text-primary"><i class="fa fa-exchange-alt"></i> คู่มือการทำงานของระบบโอนย้ายลูกบ้านแบบง่าย</h1>
+        <p class="text-secondary lead">แนวทางการอัปเดตข้อมูลและระบบรักษาสิทธิ์ของเจ้าของบ้านปลายทางเมื่อเกิดการโอนย้าย</p>
+    </div>
+
+    <!-- Section 1: Overview -->
+    <div class="card border-left-primary">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="m-0"><i class="fa fa-info-circle"></i> ภาพรวมของหน้าจอโอนย้ายแบบย่อ</h5>
+        </div>
+        <div class="card-body text-dark">
+            <p>หน้าจอ <a href="manage_change_house_holder.php">manage_change_house_holder.php</a> ได้รับการออกแบบใหม่ให้มีความง่ายสูงสุดในการทำงาน เจ้าหน้าที่นิติบุคคลไม่จำเป็นต้องป้อนรายละเอียดใหม่ด้วยตนเองทั้งหมด เพียงระบุ:</p>
+            <ol>
+                <li><strong>บ้านเลขที่เดิม (ย้ายออก):</strong> ใช้ระบบ Autocomplete ค้นหา</li>
+                <li><strong>บ้านเลขที่ใหม่ (ย้ายเข้า):</strong> ใช้ระบบ Autocomplete ค้นหา</li>
+                <li><strong>สถานะบ้านหลังใหม่:</strong> เลือกประเภทเป็น <span class="badge badge-owner">เจ้าของร่วม (Owner)</span> หรือ <span class="badge badge-tenant">ผู้เช่า (Tenant)</span></li>
+            </ol>
+            <p class="mb-0">ระบบจะทำการดึงประวัติผู้อยู่อาศัย, เบอร์โทรติดต่อเดิม, ทะเบียนรถยนต์, บัญชี LINE OA และประวัติสัตว์เลี้ยงทั้งหมดมาทำการโอนย้ายข้ามบ้านให้โดยอัตโนมัติผ่านธุรกรรมแบบรวมศูนย์ (Transaction)</p>
+        </div>
+    </div>
+
+    <!-- Section 2: Case Study -->
+    <div class="card border-left-warning">
+        <div class="card-header bg-warning text-dark py-3">
+            <h5 class="m-0 font-weight-bold"><i class="fa fa-question-circle"></i> กรณีศึกษา: ลูกบ้านเดิมย้ายเข้าอยู่บ้านเช่า (ข้อมูลเจ้าบ้านไม่เปลี่ยน)</h5>
+        </div>
+        <div class="card-body text-dark">
+            <h6 class="font-weight-bold text-primary">สถานการณ์:</h6>
+            <ul>
+                <li>บ้าน <strong>67/180</strong> มีข้อมูลเดิมเป็น **เจ้าของบ้านผู้ให้เช่า** (สถานะ O)</li>
+                <li>ลูกบ้านจาก <strong>67/175</strong> ต้องการย้ายเข้าเป็น **ผู้เช่า** ที่บ้าน <strong>67/180</strong> (สถานะ R)</li>
+            </ul>
+            <hr>
+            <h6 class="font-weight-bold text-success"><i class="fa fa-check-circle"></i> ระบบประมวลผลและการทำงานเบื้องหลัง:</h6>
+            
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="width: 25%;">ชื่อตารางข้อมูล</th>
+                            <th style="width: 35%;">การทำงานของระบบ</th>
+                            <th style="width: 40%;">ผลลัพธ์ข้อมูลปลายทาง</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ims_house</strong><br><small class="text-secondary">(ตารางข้อมูลผู้ติดต่อหลัก)</small></td>
+                            <td>ระบบจะทำการ <code>UPDATE</code> ข้อมูลผู้ติดต่อปัจจุบัน of บ้าน 67/180 โดยใช้ข้อมูลผู้เช่าคนใหม่ที่ย้ายเข้ามา (แทนที่ข้อมูลเจ้าของบ้านผู้ให้เช่าเดิม) เพื่อให้สะดวกต่อการติดต่อแจ้งเรื่องหน้างาน รับพัสดุ และจัดเก็บทะเบียนรถใช้งานจริง</td>
+                            <td>
+                                <ul>
+                                    <li><code>contact_name</code> = ชื่อผู้เช่า (คนใหม่)</li>
+                                    <li><code>phone_number</code> = เบอร์ผู้เช่า (คนใหม่)</li>
+                                    <li><code>house_status</code> = <code>'R'</code> (ผู้เช่า)</li>
+                                    <li><code>car_no1 - car_no10</code> = ทะเบียนรถของผู้เช่า</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>ims_house_line_user</strong><br><small class="text-secondary">(ตารางผูกสิทธิ์ LINE OA)</small></td>
+                            <td>ระบบจะย้ายข้อมูลของ **ผู้เช่า** จากบ้านเดิม (67/175) มาที่บ้านใหม่ (67/180) โดย **ไม่มีการแก้ไขหรือลบ** ข้อมูลไลน์ของเจ้าของบ้าน (สิทธิ์ Owner) เดิมที่ผูกกับบ้าน 67/180 ออกไป</td>
+                            <td>
+                                <strong>บ้านเลขที่ 67/180 จะมีผู้เชื่อมต่อ LINE ได้สองฝั่ง:</strong>
+                                <ul>
+                                    <li>ไลน์เจ้าของบ้านเดิม (สถานะ: Owner) - <em>คงเดิม</em></li>
+                                    <li>ไลน์ผู้เช่ารายใหม่ (สถานะ: Tenant) - <em>ย้ายมาผูกใหม่</em></li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>ims_user</strong><br><small class="text-secondary">(ตารางสิทธิ์บัญชีเว็บ)</small></td>
+                            <td>ระบบ **ไม่ทำอะไร** กับบัญชีสมาชิกเจ้าของบ้านเดิม บัญชีจะไม่มีการระงับสิทธิ์หรือลบออก</td>
+                            <td>เจ้าของบ้านเดิม (ผู้ให้เช่า) ยังคงเข้าสู่ระบบเว็บไซต์นิติบุคคลด้วยเบอร์โทร/รหัสผ่านเดิมเพื่อสืบค้นยอดหนี้และค่าส่วนกลางได้ตามปกติ</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ims_house_pet</strong><br><small class="text-secondary">(ตารางทะเบียนสัตว์เลี้ยง)</small></td>
+                            <td>ระบบอัปเดตฟิลด์ <code>house_number</code> ของสัตว์เลี้ยงจากบ้านหลังเก่าให้มาผูกกับบ้านใหม่โดยอัตโนมัติ</td>
+                            <td>ประวัติสัตว์เลี้ยงเดิมของผู้เช่าย้ายตามมารวมกับบ้านเลขที่ 67/180</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ims_house_change_log</strong><br><small class="text-secondary">(ตารางประวัติผู้ติดต่อ)</small></td>
+                            <td>ระบบสร้างใบลงประวัติใหม่บันทึกข้อมูลก่อนและหลังเปลี่ยนของบ้าน 67/175 และ 67/180 เพื่อเป็นประวัติยืนยันการเปลี่ยนผ่าน</td>
+                            <td>นิติบุคคลมีบันทึกประวัติอ้างอิงสถานะบ้านเดิมว่าเคยเป็นเจ้าของดูแลและเปลี่ยนเป็นผู้เช่าเมื่อวันที่ทำรายการ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Summary -->
+    <div class="card border-left-info">
+        <div class="card-header bg-info text-white py-3">
+            <h5 class="m-0"><i class="fa fa-star"></i> สรุปหัวใจสำคัญของโครงสร้างระบบ</h5>
+        </div>
+        <div class="card-body text-dark">
+            <p class="mb-0">ระบบให้ความสำคัญกับ <strong>"สิทธิ์การเป็นเจ้าของ (Ownership)"</strong> ของลูกบ้าน โดยแยกจัดเก็บสิทธิ์ระดับ LINE OA และ Web User ออกจากข้อมูลหน้างานของบ้านเลขที่ ส่งผลให้การย้ายผู้เช่าเข้ามาอยู่อาศัยใหม่ไม่ส่งผลกระทบต่อสิทธิ์ระดับเจ้าของบ้านตัวจริงที่ผูกอยู่เบื้องหลัง ทำให้ประวัติหนี้สิน ประวัติการผูกไลน์ และช่องทางสืบค้นธุรกรรมของเจ้าของบ้าน (Landlord) ยังคงอยู่รักษาสิทธิ์อย่างสมบูรณ์แบบ</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>กรณีศึกษาการย้ายบ้าน: ศิริวรรณ ลุนลี (67/175 -> 67/180)</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Tahoma', sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fc;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e3e6f0;
+        }
+        h1 {
+            color: #4e73df;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 2px solid #eaecf0;
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        h2 {
+            color: #2e59d9;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        h2::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: #4e73df;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        p {
+            margin: 0 0 15px 0;
+            color: #5a5c69;
+        }
+        .meta-box {
+            background-color: #f1f3f9;
+            border-left: 4px solid #858796;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .meta-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .meta-box td {
+            padding: 4px 10px;
+            font-size: 14px;
+        }
+        .meta-box td.label {
+            font-weight: bold;
+            color: #4e73df;
+            width: 150px;
+        }
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #e3e6f0;
+            padding: 12px;
+            text-align: left;
+        }
+        table.data-table th {
+            background-color: #f8f9fc;
+            color: #4e73df;
+            font-weight: bold;
+        }
+        table.data-table tr:hover {
+            background-color: #fcfcfc;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .badge-old {
+            background-color: #ffeef0;
+            color: #e02424;
+        }
+        .badge-new {
+            background-color: #eafaf1;
+            color: #2b7a4b;
+        }
+        pre {
+            background-color: #f8f9fc;
+            border: 1px solid #e3e6f0;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            color: #2e303f;
+        }
+        .sql-keyword {
+            color: #d73a49;
+            font-weight: bold;
+        }
+        .sql-table {
+            color: #6f42c1;
+            font-weight: bold;
+        }
+        .sql-value {
+            color: #032f62;
+        }
+        .step-list {
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+        .step-list li {
+            margin-bottom: 12px;
+            color: #5a5c69;
+        }
+        .step-list strong {
+            color: #2e59d9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>กรณีศึกษาการย้ายบ้านภายในโครงการ (Case Study)</h1>
+    
+    <div class="meta-box">
+        <table>
+            <tr>
+                <td class="label">ข้อมูลลูกบ้าน:</td>
+                <td><strong>คุณศิริวรรณ ลุนลี</strong> (เบอร์โทรศัพท์: 091-1349494)</td>
+            </tr>
+            <tr>
+                <td class="label">การเปลี่ยนแปลง:</td>
+                <td>ย้ายที่อยู่อาศัยภายในโครงการจากบ้านเลขที่ <span class="badge badge-old">67/175</span> ไปยังบ้านเลขที่ <span class="badge badge-new">67/180</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <p>ในการดำเนินการกรณีดังกล่าว เพื่อรักษาความถูกต้องของข้อมูลนิติบุคคล ทะเบียนรถยนต์ สิทธิ์บัญชี LINE OA และประวัติการเงิน ต้องแบ่งการดำเนินงานออกเป็น 2 ส่วนหลัก คือขั้นตอนสำหรับ <strong>เจ้าหน้าที่นิติบุคคล</strong> และรายละเอียดการเขียนคำสั่ง/อัปเดตข้อมูลของ <strong>โปรแกรมเมอร์/ระบบฐานข้อมูล</strong></p>
+
+    <h2>1. ขั้นตอนปฏิบัติสำหรับเจ้าหน้าที่นิติบุคคล (Juristic Workflow)</h2>
+    <ol class="step-list">
+        <li><strong>ขั้นตอนที่ 1: เคลียร์ข้อมูลที่บ้านเลขที่เดิม (67/175)</strong><br>
+            เจ้าหน้าที่เปิดเมนูระบบ ไปที่หน้าจอ <a href="manage_change_house_holder.php" target="_blank">เปลี่ยนสิทธิ์ผู้อยู่อาศัย</a> เลือกบ้านเลขที่ <strong>67/175</strong> จากนั้นเลือกประเภทรายการ <strong>"ย้ายออก/เข้า"</strong> และติ๊กเลือก Checklist เพื่อระงับสิทธิ์ผู้ใช้งานเดิม, ปลดล็อกการผูก LINE OA ของผู้เช่าเดิม, และสั่งยกเลิกสติกเกอร์/ข้อมูลรถยนต์ของบ้านเลขที่นี้ทั้งหมด
+        </li>
+        <li><strong>ขั้นตอนที่ 2: บันทึกข้อมูลที่บ้านเลขที่ใหม่ (67/180)</strong><br>
+            ที่หน้าจอจัดการข้อมูลบ้าน ค้นหาบ้านเลขที่ <strong>67/180</strong> (หากไม่มีประวัติ ให้เพิ่มทะเบียนบ้านใหม่เข้าระบบก่อน) จากนั้นทำการระบุชื่อผู้ติดต่อคนใหม่เป็น <strong>"ศิริวรรณ ลุนลี"</strong> เบอร์โทรศัพท์ <strong>"0911349494"</strong> และโอนย้ายข้อมูลรถยนต์ที่เธอนำมาด้วยไปกรอกที่ข้อมูลบ้านใหม่นี้
+        </li>
+        <li><strong>ขั้นตอนที่ 3: แนะนำให้ลูกบ้านเปิดแอปพลิเคชัน LINE OA อีกครั้ง</strong><br>
+            เนื่องจากระบบตัดสิทธิ์ LINE ของบ้านเก่าออกแล้ว เมื่อคุณศิริวรรณเปิด LINE OA พฤกษา 33 ระบบจะตรวจพบว่าสิทธิ์การผูกเดิมถูกยกเลิก และจะขอให้เธอกรอกเบอร์โทรศัพท์ 091-1349494 ใหม่เพื่อรับ OTP เมื่อยื่นเสร็จ บัญชี LINE ของเธอจะถูกดึงไปเชื่อมโยงกับบ้านเลขที่ 67/180 อัตโนมัติทันที
+        </li>
+    </ol>
+
+    <h2>2. ข้อมูลการเปลี่ยนแปลงในตารางฐานข้อมูล (Database Changes)</h2>
+    <p>ระบบฐานข้อมูล SQL จะมีการเปลี่ยนแปลงในตารางที่เกี่ยวข้อง ดังต่อไปนี้:</p>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ชื่อตาราง (Table)</th>
+                <th>ฟิลด์ที่เกี่ยวข้อง (Field)</th>
+                <th>ข้อมูลเดิม (บ้าน 67/175)</th>
+                <th>ข้อมูลใหม่ (บ้าน 67/180)</th>
+                <th>คำอธิบายเหตุผล</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="4"><strong>ims_house</strong><br>(ตารางข้อมูลบ้าน)</td>
+                <td>contact_name</td>
+                <td>ศิริวรรณ ลุนลี / บุญเลิศ</td>
+                <td>ศิริวรรณ ลุนลี</td>
+                <td>ย้ายชื่อผู้ติดต่อหลักไปอยู่ที่บ้านเลขที่ใหม่</td>
+            </tr>
+            <tr>
+                <td>phone_number</td>
+                <td>0911349494</td>
+                <td>0911349494</td>
+                <td>ย้ายหมายเลขโทรศัพท์หลักสำหรับล็อกอินระบบ</td>
+            </tr>
+            <tr>
+                <td>car_no1 - car_no10</td>
+                <td>ล้างค่าว่าง (Empty)</td>
+                <td>9กฉ5912, 1กณ1726...</td>
+                <td>ย้ายข้อมูลทะเบียนรถยนต์และสีรถย้ายตามเจ้าของ</td>
+            </tr>
+            <tr>
+                <td>sticker_receive_status</td>
+                <td>'N'</td>
+                <td>'Y' (ตามสิทธิ์เดิม)</td>
+                <td>ล้างสิทธิ์สติกเกอร์ที่บ้านเดิม ไปเริ่มนับสิทธิ์ที่บ้านใหม่</td>
+            </tr>
+            <tr>
+                <td><strong>ims_house_line_user</strong><br>(ตารางผูกสิทธิ์ LINE)</td>
+                <td>house_number</td>
+                <td>'67/175'</td>
+                <td>'67/180'</td>
+                <td>เปลี่ยนพิกัดบ้านเลขที่ของไลน์ไอดีเดิม เพื่อส่งข้อมูลบิลส่วนกลางและพัสดุไปบ้านหลังใหม่</td>
+            </tr>
+            <tr>
+                <td><strong>ims_house_pet</strong><br>(ตารางทะเบียนสัตว์เลี้ยง)</td>
+                <td>house_number, contact_name, phone_number</td>
+                <td>อัปเดต remark เป็น 'ย้ายออก'</td>
+                <td>ย้ายไปผูกกับ 67/180 (หากระบุ)</td>
+                <td>ย้ายสิทธิ์ข้อมูลสัตว์เลี้ยงให้สอดคล้องกับเจ้าของที่ย้ายบ้าน</td>
+            </tr>
+            <tr>
+                <td><strong>ims_house_change_log</strong><br>(ตารางประวัติการทำรายการ)</td>
+                <td>-</td>
+                <td>-</td>
+                <td>เพิ่ม 1 Record ใหม่</td>
+                <td>บันทึกหลักฐานการย้ายสิทธิ์ภายในโครงการ ป้องกันการทุจริตย้อนหลัง</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. คำสั่ง SQL ที่ใช้ในการรันคำสั่งเบื้องหลัง (SQL Commands Execution)</h2>
+    <p>คำสั่ง SQL ที่ต้องนำไปประมวลผลจริงในระบบฐานข้อมูลตามลำดับการทำงาน (เรียงตามกฎ Transaction):</p>
+
+    <h3>A. การปิดสิทธิ์และล้างข้อมูลที่บ้านเลขที่เดิม (67/175)</h3>
+    <pre>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house</span> 
+<span class="sql-keyword">SET</span> contact_name = <span class="sql-value">''</span>, 
+    phone_number = <span class="sql-value">''</span>, 
+    car_no1 = <span class="sql-value">''</span>, car_no2 = <span class="sql-value">''</span>, car_no3 = <span class="sql-value">''</span>, car_no4 = <span class="sql-value">''</span>,
+    sticker_receive_status = <span class="sql-value">'N'</span>,
+    remark = <span class="sql-value">'ย้ายออกไปบ้านเลขที่ 67/180'</span>
+<span class="sql-keyword">WHERE</span> house_number = <span class="sql-value">'67/175'</span>;
+
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_line_user</span> 
+<span class="sql-keyword">SET</span> status = <span class="sql-value">'N'</span> 
+<span class="sql-keyword">WHERE</span> house_number = <span class="sql-value">'67/175'</span> <span class="sql-keyword">AND</span> line_phone = <span class="sql-value">'0911349494'</span>;
+
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_pet</span> 
+<span class="sql-keyword">SET</span> remark = <span class="sql-value">'ย้ายออกจากการปรับปรุงสิทธิ์ไป 67/180'</span>
+<span class="sql-keyword">WHERE</span> house_number = <span class="sql-value">'67/175'</span>;</pre>
+
+    <h3>B. การอัปเดตสิทธิ์และเพิ่มข้อมูลที่บ้านเลขที่ใหม่ (67/180)</h3>
+    <pre>
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house</span> 
+<span class="sql-keyword">SET</span> contact_name = <span class="sql-value">'ศิริวรรณ ลุนลี'</span>, 
+    phone_number = <span class="sql-value">'0911349494'</span>,
+    car_no1 = <span class="sql-value">'9กฉ5912'</span>, car_no1_province = <span class="sql-value">'กรุงเทพมหานคร'</span>, car_no1_brand = <span class="sql-value">'Toyota'</span>, car_no1_color = <span class="sql-value">'ดำ'</span>,
+    car_no2 = <span class="sql-value">'1กณ1726'</span>, car_no2_province = <span class="sql-value">'สกลนคร'</span>, car_no2_brand = <span class="sql-value">'Honda'</span>, car_no2_color = <span class="sql-value">'น้ำเงิน-ดำ'</span>,
+    car_no3 = <span class="sql-value">'4ขจ8087'</span>, car_no3_province = <span class="sql-value">'กรุงเทพมหานคร'</span>, car_no3_brand = <span class="sql-value">'Isuzu'</span>, car_no3_color = <span class="sql-value">'เทา'</span>,
+    car_no4 = <span class="sql-value">'3ฒฒ2636'</span>, car_no4_province = <span class="sql-value">'กรุงเทพมหานคร'</span>, car_no4_brand = <span class="sql-value">'Toyota'</span>, car_no4_color = <span class="sql-value">'เทา'</span>,
+    sticker_receive_status = <span class="sql-value">'Y'</span>,
+    house_status = <span class="sql-value">'O'</span>,
+    remark = <span class="sql-value">'ย้ายเข้ามากจากบ้านเลขที่ 67/175'</span>
+<span class="sql-keyword">WHERE</span> house_number = <span class="sql-value">'67/180'</span>;
+
+<span class="sql-keyword">UPDATE</span> <span class="sql-table">ims_house_line_user</span> 
+<span class="sql-keyword">SET</span> house_number = <span class="sql-value">'67/180'</span>,
+    status = <span class="sql-value">'Y'</span>
+<span class="sql-keyword">WHERE</span> line_phone = <span class="sql-value">'0911349494'</span>;</pre>
+
+    <h3>C. บันทึกประวัติการย้ายสิทธิ์ลงใน Log</h3>
+    <pre>
+<span class="sql-keyword">INSERT INTO</span> <span class="sql-table">ims_house_change_log</span> 
+(house_number, change_type, old_contact_name, old_phone_number, new_contact_name, new_phone_number, remark, created_by)
+<span class="sql-keyword">VALUES</span> 
+(<span class="sql-value">'67/175'</span>, <span class="sql-value">'MOVE_OUT_IN'</span>, <span class="sql-value">'ศิริวรรณ ลุนลี'</span>, <span class="sql-value">'0911349494'</span>, <span class="sql-value">''</span>, <span class="sql-value">''</span>, <span class="sql-value">'ย้ายข้อมูลผู้อยู่อาศัยไปบ้านเลขที่ 67/180'</span>, <span class="sql-value">'นิติบุคคล (Admin)'</span>);</pre>
+
+</div>
+
+</body>
+</html>

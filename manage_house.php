@@ -1,7 +1,8 @@
 <?php
 include('includes/Header.php');
-if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == "") {
+if (empty($_SESSION['alogin'])) {
     header("Location: index.php");
+    exit;
 } else {
     ?>
 
@@ -63,8 +64,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
-                                                    <th>Action</th>
-                                                    <th>Action</th>
+                                                    <th>แก้ไข</th>
+                                                    <th>เปลี่ยนสิทธิ์</th>
+                                                    <th>ลบ</th>
                                                 </tr>
                                                 </thead>
                                                 <tfoot>
@@ -77,8 +79,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     <th>ชื่อผู้ติดต่อ</th>
                                                     <th>หมายเลขโทรศัพท์</th>
                                                     <th>Picture</th>
-                                                    <th>Action</th>
-                                                    <th>Action</th>
+                                                    <th>แก้ไข</th>
+                                                    <th>เปลี่ยนสิทธิ์</th>
+                                                    <th>ลบ</th>
                                                 </tr>
                                                 </tfoot>
                                             </table>
@@ -373,6 +376,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         }
                     },
                     {data: 'update'},
+                    {data: 'change_holder'},
                     {data: 'delete'}
                 ]
             });

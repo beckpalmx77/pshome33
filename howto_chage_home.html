@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แนวคิด ขั้นตอน และวิธีการเปลี่ยนข้อมูลลูกบ้าน - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f6f9;
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            border-bottom: 5px solid #142850;
+            margin-bottom: 2.5rem;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background-color: #ffffff;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .card-header-custom {
+            background-color: #1e3c72;
+            color: white;
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        .card-header-custom i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        .step-badge {
+            background-color: #1e3c72;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+        .info-box {
+            background-color: #eef2f7;
+            border-left: 4px solid #1e3c72;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .warning-box {
+            background-color: #fff8eb;
+            border-left: 4px solid #f0ad4e;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .danger-box {
+            background-color: #fdf2f2;
+            border-left: 4px solid #d9534f;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #1e3c72;
+        }
+        .nav-pills .nav-link {
+            color: #1e3c72;
+            font-weight: 500;
+        }
+        .interactive-section {
+            background-color: #ffffff;
+            border: 2px solid #1e3c72;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-section text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2"><i class="fa-solid fa-house-chimney-user me-2"></i>ระบบจัดการการเปลี่ยนย้ายข้อมูลบ้านและบัญชีผู้ใช้งาน</h1>
+        <p class="lead mb-0">เอกสารการออกแบบแนวคิด ขั้นตอน วิธีการพัฒนา และระบบจัดการความเชื่อมโยงบัญชีผู้ใช้แบบโต้ตอบ</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills nav-fill mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pills-concept-tab" data-bs-toggle="pill" data-bs-target="#pills-concept" type="button" role="tab"><i class="fa-solid fa-lightbulb me-1"></i> 1. แนวคิดและส่วนเกี่ยวข้อง</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-steps-tab" data-bs-toggle="pill" data-bs-target="#pills-steps" type="button" role="tab"><i class="fa-solid fa-list-ol me-1"></i> 2. ขั้นตอนการดำเนินงาน</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-technical-tab" data-bs-toggle="pill" data-bs-target="#pills-technical" type="button" role="tab"><i class="fa-solid fa-code me-1"></i> 3. วิธีการทางเทคนิค & SQL</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-mockup-tab" data-bs-toggle="pill" data-bs-target="#pills-mockup" type="button" role="tab"><i class="fa-solid fa-display me-1"></i> 4. หน้าจอจำลองโต้ตอบ (Live Preview)</button>
+        </li>
+    </ul>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="pills-tabContent">
+        
+        <!-- Tab 1: Concept -->
+        <div class="tab-pane fade show active" id="pills-concept" role="tabpanel">
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    <i class="fa-solid fa-brain"></i> 1. แนวคิดและการเชื่อมโยงข้อมูลระบบ (System Mapping Concept)
+                </div>
+                <div class="card-body">
+                    <p>การเปลี่ยนสิทธิ์หรือผู้อยู่อาศัยในบ้านเลขที่หนึ่งๆ จำเป็นต้องจัดการข้อมูลบัญชีผู้ใช้ระบบ (Web Account) และส่วนย่อยอื่นๆ เพื่อป้องกันช่องโหว่ด้านความปลอดภัยและการเข้าถึงข้อมูลโดยไม่ได้รับอนุญาต โดยระบบมีการจัดโครงสร้างและการเชื่อมโยงข้อมูลดังนี้:</p>
+                    
+                    <div class="info-box">
+                        <h6 class="fw-bold"><i class="fa-solid fa-link me-1"></i> โครงสร้างการเชื่อมโยงบัญชีผู้ใช้งาน (User Account Integration)</h6>
+                        <ul>
+                            <li><strong>บัญชีผู้ใช้หน้าเว็บ (<code>ims_user</code>):</strong> ลงทะเบียนและเข้าใช้งานโดยใช้ "หมายเลขโทรศัพท์" เป็นชื่อผู้ใช้ (<code>user_id</code> / <code>email</code>) เพื่อเข้าเช็คข้อมูลการเงินหรือยื่นคำร้อง</li>
+                            <li><strong>บัญชี LINE OA (<code>ims_house_line_user</code>):</strong> เชื่อมโยงบัญชีผู้ใช้เว็บกับระบบ LINE โดยมีคีย์เชื่อมโยงคือ <code>line_phone</code> (เบอร์โทรศัพท์) ร่วมกับ <code>house_number</code> (บ้านเลขที่)</li>
+                            <li><strong>การแสดงผลข้อมูลแบบรวม (Unified View):</strong> ระบบใช้ View <code>v_ims_user</code> ในการผสานบัญชีผู้ใช้หน้าเว็บและโปรไฟล์ไลน์ หากมีการยกเลิก LINE หรือเบอร์โทร ข้อมูลความเชื่อมโยงจะหลุดออกทันที</li>
+                        </ul>
+                    </div>
+
+                    <h5 class="fw-bold mt-4 mb-3 text-secondary">วิเคราะห์การเปลี่ยนข้อมูลและบัญชีผู้ใช้ที่เกี่ยวข้อง</h5>
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>กรณีการดำเนินงาน</th>
+                                <th>การจัดการบัญชีผู้ใช้ (<code>ims_user</code>)</th>
+                                <th>การจัดการบัญชี LINE OA (<code>ims_house_line_user</code>)</th>
+                                <th>ส่วนย่อยอื่นๆ ที่เกี่ยวข้อง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. ลูกบ้านย้ายบ้านออก</strong><br><small class="text-muted">(ย้ายออกจากหมู่บ้าน / ขายบ้าน)</small></td>
+                                <td>
+                                    <span class="badge bg-danger">ระงับการใช้งาน (Inactive)</span><br>
+                                    ของผู้อยู่อาศัยทุกคนที่ผูกกับเบอร์โทรของบ้านนี้
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">ยกเลิกสิทธิ์ (Status = 'N')</span><br>
+                                    ตัดการเชื่อมโยงทุก LINE ID ที่ผูกกับบ้านนี้
+                                </td>
+                                <td>
+                                    - ยกเลิกทะเบียนรถยนต์สะสม<br>
+                                    - ระงับประวัติการลงทะเบียนสัตว์เลี้ยง<br>
+                                    - ลบประวัติสิทธิ์การลงคะแนนประชุม (Meeting Vote)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. เปลี่ยนผู้เช่า (Change Tenant)</strong><br><small class="text-muted">(ผู้เช่าเดิมย้ายออก ผู้เช่าใหม่ย้ายเข้า)</small></td>
+                                <td>
+                                    <span class="badge bg-danger">ระงับเฉพาะบัญชีผู้เช่าเดิม</span><br>
+                                    (โทรศัพท์ผู้เช่าเดิม) แต่คงเหลือบัญชีของเจ้าของบ้านไว้
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning">ยกเลิก LINE ของผู้เช่าเดิม</span><br>
+                                    คงสถานะ LINE ของเจ้าของบ้านไว้รับยอดหนี้ค่าส่วนกลาง
+                                </td>
+                                <td>
+                                    - ลบทะเบียนรถและสติกเกอร์ผู้เช่าเดิม<br>
+                                    - ระงับประวัติสัตว์เลี้ยงผู้เช่าเดิม<br>
+                                    - ประวัติการแจ้งซ่อม (Job) เก่าคงไว้แต่ตัดสิทธิ์เรียกดู
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. เปลี่ยนเจ้าของบ้าน (Change Owner)</strong><br><small class="text-muted">(ขายเปลี่ยนมือโอนกรรมสิทธิ์)</small></td>
+                                <td>
+                                    <span class="badge bg-danger">ระงับบัญชีเจ้าของเดิม & ผู้เช่าเดิม</span><br>
+                                    สลับบัญชีผู้ใช้ใหม่โดยลงทะเบียนเบอร์เจ้าของใหม่
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">ล้างสิทธิ์ LINE ทั้งหมดของบ้าน</span><br>
+                                    เพื่อความปลอดภัยของข้อมูลเจ้าของคนใหม่
+                                </td>
+                                <td>
+                                    - ตรวจสอบยอดหนี้ค้างชำระ (ต้องเป็น 0 เท่านั้น)<br>
+                                    - ลบทะเบียนรถและสัตว์เลี้ยงทั้งหมด<br>
+                                    - การลงคะแนนเสียงประชุมใหญ่สลับไปให้เจ้าของใหม่
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h5 class="fw-bold mt-4 mb-3 text-secondary"><i class="fa-solid fa-circle-nodes"></i> ส่วนอื่นๆ ที่เกี่ยวข้องที่ต้องจัดระเบียบข้อมูล</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card p-3 border-0 bg-light h-100">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-ticket-simple text-warning me-1"></i> สติกเกอร์จอดรถ (<code>ims_sticker_received_list</code>)</h6>
+                                <p class="small text-muted mb-0">สติกเกอร์และสิทธิ์ผ่านเข้า-ออกเดิมที่เคยออกให้ทะเบียนรถเก่าของลูกบ้านเดิมที่ย้ายออก จะต้องถูกระงับสิทธิ์ในระบบและตั้งสถานะยกเลิก (Status = 'N') เพื่อป้อนข้อมูลรถยนต์ของผู้พักอาศัยรายใหม่และออกสติกเกอร์ชุดใหม่</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-3 border-0 bg-light h-100">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-users-rectangle text-info me-1"></i> การประชุมหมู่บ้าน (<code>ims_register_meeting</code>)</h6>
+                                <p class="small text-muted mb-0">ระบบสิทธิ์โหวตและลงทะเบียนเข้าประชุมจะยึดตามความเป็นเจ้าของและผู้อยู่อาศัยปัจจุบัน เมื่อเจ้าของเปลี่ยน สิทธิ์ในการออกเสียงและประวัติการลงทะเบียนที่กำลังมีผลการประชุมรอบใหม่จะย้ายไปที่ข้อมูลติดต่อชุดใหม่ทันที</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-3 border-0 bg-light h-100">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-screwdriver-wrench text-primary me-1"></i> รายการแจ้งซ่อมบำรุง (<code>jobrecord</code> / <code>ims_job_record</code>)</h6>
+                                <p class="small text-muted mb-0">ประวัติการแจ้งซ่อมแซมสิ่งอำนวยความสะดวกในอดีตจะถูกคงไว้เพื่อประวัติของตัวบ้าน แต่รายละเอียดผู้แจ้งจะถูกย้ายเข้าระบบประวัติเก่า แอดมินและลูกบ้านคนใหม่จะไม่เห็นชื่อผู้รับผิดชอบเดิมเพื่อปกป้องข้อมูลส่วนบุคคล (PDPA)</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-3 border-0 bg-light h-100">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-key text-danger me-1"></i> ประวัติการเข้าสู่ระบบ (<code>ims_user_login_logs</code>)</h6>
+                                <p class="small text-muted mb-0">เพื่อความปลอดภัย เมื่อบัญชีผู้ใช้ถูกเปลี่ยนสถานะเป็น Inactive หรือยกเลิกการผูกสิทธิ์ ระบบจะต้องสั่งการล้าง Session ในตารางล็อกการเข้าสู่ระบบและบังคับให้ทุกอุปกรณ์ทำรายการ Logout ออกทันที</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Steps -->
+        <div class="tab-pane fade" id="pills-steps" role="tabpanel">
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    <i class="fa-solid fa-list-check"></i> 2. ขั้นตอนการดำเนินงานบนหน้าจอและบัญชีผู้ใช้
+                </div>
+                <div class="card-body">
+                    <p>ขั้นตอนการจัดการข้อมูลบ้านและบัญชีผู้ใช้อย่างถูกต้องสำหรับเจ้าหน้าที่นิติบุคคล:</p>
+                    
+                    <div class="step-item mb-4">
+                        <h5><span class="step-badge">1</span> ค้นหาและตรวจสอบประวัติบัญชี (Account Audit)</h5>
+                        <p class="text-muted ps-4">แอดมินป้อนเลขที่บ้าน ระบบจะแสดงชื่อลูกบ้านปัจจุบันพร้อมรายชื่อบัญชีผู้ใช้งานหน้าเว็บ (<code>ims_user</code>) และรายการ LINE OA ที่เชื่อมอยู่ รวมถึงสถานะบัญชีการใช้งานในปัจจุบัน</p>
+                    </div>
+
+                    <div class="step-item mb-4">
+                        <h5><span class="step-badge">2</span> เลือกรูปแบบการย้ายและประมวลผลสิทธิ์ (Processing Sinks)</h5>
+                        <p class="text-muted ps-4">แอดมินระบุรูปแบบการย้าย ระบบจะวิเคราะห์อัตโนมัติว่าต้องการระงับบัญชีผู้ใช้ (Web Account) หมายเลขใดบ้าง และบัญชี LINE บัญชีใดต้องทำลายโทเคนการรับแจ้งเตือน</p>
+                    </div>
+
+                    <div class="step-item mb-4">
+                        <h5><span class="step-badge">3</span> ปรับโครงสร้างข้อมูลทางการเงินคงค้าง (Settle Balances)</h5>
+                        <p class="text-muted ps-4">ระบบตรวจสอบประวัติค้างชำระและรายการผ่อนชำระค้างส่ง (Installments) ในกรณีขายเปลี่ยนเจ้าของบ้าน หากมียอดค้างชำระ แอดมินต้องทำรายการรับเงินโอนหรือปรับยอดหนี้เป็นศูนย์ให้เรียบร้อยก่อนเพื่อไม่ให้เกิดการสับสนกับเจ้าของใหม่</p>
+                    </div>
+
+                    <div class="step-item mb-4">
+                        <h5><span class="step-badge">4</span> ป้อนข้อมูลลูกบ้านคนใหม่และสร้างบัญชี (Insert & Provisioning)</h5>
+                        <p class="text-muted ps-4">กรอกข้อมูลผู้ติดต่อหลัก เบอร์โทรศัพท์ และเลขทะเบียนรถยนต์ใหม่ ในขั้นตอนนี้ระบบจะเปิดตัวเลือก <strong>"สร้างบัญชีผู้ใช้เว็บใหม่โดยอัตโนมัติ"</strong> ตามหมายเลขเบอร์โทรศัพท์ที่ป้อนเข้ามาใหม่</p>
+                    </div>
+
+                    <div class="step-item mb-4">
+                        <h5><span class="step-badge">5</span> ตรวจสอบความถูกต้องและส่งสิทธิ์ลงทะเบียน (Security Handover)</h5>
+                        <p class="text-muted ps-4">เมื่อบันทึกข้อมูลเรียบร้อย ระบบจะแจ้งเตือนการล้าง Session เก่าเสร็จสิ้น และมีหน้าจอป๊อปอัปให้ส่ง <strong>QR Code ลงทะเบียนสิทธิ์ LINE OA</strong> ให้แก่ผู้อยู่อาศัยใหม่สแกนเพื่อผูกข้อมูลบัญชีทันที</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Technical -->
+        <div class="tab-pane fade" id="pills-technical" role="tabpanel">
+            <div class="card card-custom">
+                <div class="card-header-custom">
+                    <i class="fa-solid fa-database"></i> 3. วิธีการทางเทคนิค & SQL สำหรับจัดการบัญชีและส่วนเชื่อมโยง
+                </div>
+                <div class="card-body">
+                    
+                    <h5 class="fw-bold text-primary mb-3">1. SQL จัดการบัญชีผู้ใช้และทำลายล้างการเข้าสู่ระบบเก่า (Web Account & Session Termination)</h5>
+                    <p>เมื่อลูกบ้านย้ายออก การระงับสิทธิ์บัญชีผู้ใช้หน้าเว็บ (<code>ims_user</code>) และล้างประวัติเซสชันเข้าใช้งานสามารถจัดการด้วยชุดสคริปต์นี้:</p>
+                    <pre><code>-- 1. ค้นหาเบอร์โทรศัพท์ (ซึ่งใช้เป็น User ID) ของผู้อยู่อาศัยเดิมที่ต้องระงับสิทธิ์
+-- ยกตัวอย่างการระงับสิทธิ์กรณีลูกบ้านเดิมย้ายออก
+UPDATE ims_user SET 
+    status = 'Inactive',
+    role = 'inactive_resident',
+    update_date = NOW()
+WHERE user_id = (
+    SELECT phone_number FROM ims_house WHERE house_number = :house_number
+);
+
+-- 2. ทำลายประวัติหรือล้าง Session การเข้าระบบเพื่อบังคับ Logout ในอุปกรณ์ทั้งหมด
+DELETE FROM ims_user_login_logs 
+WHERE user_id = (
+    SELECT phone_number FROM ims_house WHERE house_number = :house_number
+);</code></pre>
+
+                    <h5 class="fw-bold text-primary mt-4 mb-3">2. SQL จัดการส่วนเกี่ยวข้อง (สัตว์เลี้ยง สติกเกอร์รถ และประวัติการประชุม)</h5>
+                    <p>ระบบต้องอัปเดตสถานะของส่วนย่อยอื่นๆ เพื่อป้องกันประวัติซ้ำซ้อนกับลูกบ้านรายใหม่:</p>
+
+                    <div class="accordion" id="subSqlAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="subHeadingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#subCollapseOne">
+                                    การระงับทะเบียนยานพาหนะและสติกเกอร์ (Vehicle & Sticker Expiry)
+                                </button>
+                            </h2>
+                            <div id="subCollapseOne" class="accordion-collapse collapse show" data-bs-parent="#subSqlAccordion">
+                                <div class="accordion-body">
+                                    <pre><code>-- 1. ระงับรายการสติกเกอร์ที่ผูกกับรถและบ้านเลขที่เดิม
+UPDATE ims_sticker_received_list SET 
+    status = 'N', 
+    remark = CONCAT('ยกเลิกสิทธิ์เนื่องจากเปลี่ยนข้อมูลผู้อยู่อาศัยเมื่อ ', NOW())
+WHERE house_number = :house_number;</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="subHeadingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#subCollapseTwo">
+                                    การจัดการประวัติสัตว์เลี้ยง (Pet Deactivation)
+                                </button>
+                            </h2>
+                            <div id="subCollapseTwo" class="accordion-collapse collapse" data-bs-parent="#subSqlAccordion">
+                                <div class="accordion-body">
+                                    <pre><code>-- 1. ย้ายสถานะสัตว์เลี้ยงของผู้อยู่อาศัยเดิมให้เป็นยกเลิก (เพื่อความสะอาดของทะเบียนรายหลัง)
+UPDATE ims_pet_record SET 
+    status = 'N', 
+    remark = 'ลูกบ้านเดิมย้ายออก' 
+WHERE house_number = :house_number;</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="subHeadingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#subCollapseThree">
+                                    สิทธิ์ในการประชุมและลงคะแนนเสียง (Meeting Voter Handover)
+                                </button>
+                            </h2>
+                            <div id="subCollapseThree" class="accordion-collapse collapse" data-bs-parent="#subSqlAccordion">
+                                <div class="accordion-body">
+                                    <pre><code>-- 1. ลบรายการลงชื่อจองเข้าร่วมประชุมหรือโหวตที่ล่วงหน้าของเจ้าของเดิม (หากรอบการประชุมยังไม่เกิดขึ้นจริง)
+DELETE FROM ims_register_meeting 
+WHERE house_number = :house_number AND meeting_status = 'PENDING';</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold text-primary mt-4 mb-3">3. PHP Controller ที่สมบูรณ์พร้อมระบบจัดการบัญชีและ Audit Log</h5>
+                    <p>นำไปปรับใช้ใน Controller หลักเพื่อรักษาความปลอดภัยระดับ Database Level:</p>
+                    <pre><code>if ($_POST["action"] === 'CHANGE_HOUSE_HOLDER_FULL') {
+    $house_number = $_POST["house_number"];
+    $change_type = $_POST["change_type"];
+    $new_name = $_POST["new_contact_name"];
+    $new_phone = $_POST["new_phone_number"];
+    $new_status = $_POST["new_house_status"];
+    $car1 = $_POST["car_no1"] ?? '';
+    $remark = $_POST["remark"] ?? '';
+    
+    // สถานะระงับบัญชีผู้ใช้เก่า
+    $deactivate_old_user = isset($_POST["deactivate_old_user"]) ? true : false;
+    $admin_name = $_SESSION['first_name'] . " " . $_SESSION['last_name'];
+
+    try {
+        $conn->beginTransaction();
+
+        // ดึงข้อมูลลูกบ้านเดิมก่อนแก้ไขเพื่อเขียน Log และระงับบัญชีเว็บ
+        $stmt_old = $conn->prepare("SELECT contact_name, phone_number, house_status FROM ims_house WHERE house_number = :house_number");
+        $stmt_old->execute([':house_number' => $house_number]);
+        $old_data = $stmt_old->fetch(PDO::FETCH_ASSOC);
+
+        if ($old_data) {
+            $old_phone = $old_data['phone_number'];
+            
+            // 1. ระงับการใช้งานบัญชีผู้ใช้เก่า (ims_user)
+            if ($deactivate_old_user && !empty($old_phone)) {
+                $stmt_deact = $conn->prepare("UPDATE ims_user SET status = 'Inactive' WHERE user_id = :old_phone");
+                $stmt_deact->execute([':old_phone' => $old_phone]);
+
+                // ล้าง Login Session บังคับ Logout
+                $stmt_sess = $conn->prepare("DELETE FROM ims_user_login_logs WHERE user_id = :old_phone");
+                $stmt_sess.execute([':old_phone' => $old_phone]);
+            }
+        }
+
+        // 2. บันทึก Log การย้ายข้อมูล
+        $log_sql = "INSERT INTO ims_house_change_log (house_number, change_type, old_contact_name, old_phone_number, old_house_status, new_contact_name, new_phone_number, new_house_status, remark, created_by)
+                    VALUES (:house_number, :change_type, :old_name, :old_phone, :old_status, :new_name, :new_phone, :new_status, :remark, :admin_name)";
+        $stmt_log = $conn->prepare($log_sql);
+        $stmt_log->execute([
+            ':house_number' => $house_number,
+            ':change_type' => $change_type,
+            ':old_name' => $old_data['contact_name'] ?? '',
+            ':old_phone' => $old_phone ?? '',
+            ':old_status' => $old_data['house_status'] ?? '',
+            ':new_name' => $new_name,
+            ':new_phone' => $new_phone,
+            ':new_status' => $new_status,
+            ':remark' => $remark,
+            ':admin_name' => $admin_name
+        ]);
+
+        // 3. ปรับปรุงข้อมูลบ้าน
+        $update_sql = "UPDATE ims_house SET 
+                        contact_name = :new_name,
+                        phone_number = :new_phone,
+                        house_status = :new_status,
+                        car_no1 = :car1, car_no2 = '', car_no3 = '', car_no4 = '', car_no5 = '',
+                        remark = :remark,
+                        update_by = :admin_name
+                       WHERE house_number = :house_number";
+        $stmt_update = $conn->prepare($update_sql);
+        $stmt_update->execute([
+            ':new_name' => $new_name,
+            ':new_phone' => $new_phone,
+            ':new_status' => $new_status,
+            ':car1' => $car1,
+            ':remark' => $remark,
+            ':admin_name' => $admin_name,
+            ':house_number' => $house_number
+        ]);
+
+        // 4. จัดการสิทธิ์การผูก LINE
+        if ($change_type === 'CHANGE_OWNER' || $change_type === 'MOVE_OUT_IN') {
+            $line_sql = "UPDATE ims_house_line_user SET status = 'N' WHERE house_number = :house_number";
+            $stmt_line = $conn->prepare($line_sql);
+            $stmt_line->execute([':house_number' => $house_number]);
+        } else if ($change_type === 'CHANGE_TENANT') {
+            $line_sql = "UPDATE ims_house_line_user SET status = 'N' WHERE house_number = :house_number AND user_type IN ('Tenant', 'Resident')";
+            $stmt_line = $conn->prepare($line_sql);
+            $stmt_line->execute([':house_number' => $house_number]);
+        }
+
+        $conn->commit();
+        echo json_encode(["status" => "success", "message" => "ดำเนินการเปลี่ยนสิทธิ์ข้อมูลและเคลียร์บัญชีเสร็จสิ้น"]);
+
+    } catch (Exception $e) {
+        $conn->rollBack();
+        echo json_encode(["status" => "error", "message" => "ข้อผิดพลาดระบบ: " . $e->getMessage()]);
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Mockup (Interactive Preview) -->
+        <div class="tab-pane fade" id="pills-mockup" role="tabpanel">
+            <div class="card card-custom">
+                <div class="card-header-custom bg-success">
+                    <i class="fa-solid fa-gamepad"></i> 4. หน้าจอตัวอย่างการทำรายการจริง (Interactive UI Preview)
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4"><i class="fa-solid fa-circle-info text-info me-1"></i> แอดมินทดลองป้อนข้อมูลและเลือกตัวเลือกต่างๆ เพื่อตรวจสอบผลกระทบของข้อมูลบัญชีผู้ใช้ระบบ (Web Account) และส่วนย่อยด้านล่างนี้</p>
+                    
+                    <div class="interactive-section">
+                        <div class="row">
+                            <!-- Left: Form -->
+                            <div class="col-lg-7 border-end">
+                                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-pen-to-square me-1"></i> แบบฟอร์มทำรายการ (Admin Input)</h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="mockHouse" class="form-label">ค้นหาและระบุบ้านเลขที่</label>
+                                        <select class="form-select" id="mockHouse" onchange="loadMockHouseData(this.value)">
+                                            <option value="123/45">123/45 (ซอย 3)</option>
+                                            <option value="99/12">99/12 (ซอย 1)</option>
+                                            <option value="204/8">204/8 (ซอย 5)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">ประเภทรายการดำเนินการ</label>
+                                        <div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="mockChangeType" id="typeMove" value="MOVE_OUT_IN" checked onchange="toggleFormMode('MOVE_OUT_IN')">
+                                                <label class="form-check-label" for="typeMove">ย้ายออก/เข้า</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="mockChangeType" id="typeTenant" value="CHANGE_TENANT" onchange="toggleFormMode('CHANGE_TENANT')">
+                                                <label class="form-check-label" for="typeTenant">เปลี่ยนผู้เช่า</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="mockChangeType" id="typeOwner" value="CHANGE_OWNER" onchange="toggleFormMode('CHANGE_OWNER')">
+                                                <label class="form-check-label" for="typeOwner">เปลี่ยนเจ้าของบ้าน</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-1">
+
+                                    <div class="col-md-6">
+                                        <label for="mockNewName" class="form-label" id="labelNewName">ชื่อลูกบ้านใหม่</label>
+                                        <input type="text" class="form-control" id="mockNewName" value="สมเกียรติ ยอดเยี่ยม" oninput="updateImpactPreview()">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mockNewPhone" class="form-label">เบอร์โทรศัพท์ติดต่อใหม่</label>
+                                        <input type="text" class="form-control" id="mockNewPhone" value="098-765-4321" oninput="updateImpactPreview()">
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label for="mockNewStatus" class="form-label">สถานะการอยู่อาศัยใหม่</label>
+                                        <select class="form-select" id="mockNewStatus" onchange="updateImpactPreview()">
+                                            <option value="เจ้าของอยู่เอง" selected>เจ้าของอยู่เอง</option>
+                                            <option value="ผู้เช่า">ผู้เช่า</option>
+                                            <option value="ว่าง">บ้านว่าง</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mockCar" class="form-label">ทะเบียนรถใหม่</label>
+                                        <input type="text" class="form-control" id="mockCar" value="กข 1234 นครปฐม" oninput="updateImpactPreview()">
+                                    </div>
+
+                                    <!-- Security & Account Settings -->
+                                    <div class="col-12 bg-light p-3 rounded border">
+                                        <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-user-shield me-1"></i> ตัวเลือกการจัดการสิทธิ์และบัญชีผู้ใช้</h6>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="chkDeactUser" checked onchange="updateImpactPreview()">
+                                            <label class="form-check-label text-danger fw-bold" for="chkDeactUser">
+                                                ระงับการใช้งานบัญชีผู้ใช้ระบบเว็บ (ims_user) ของผู้อยู่อาศัยรายเดิมทันที
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="chkDeactLine" checked onchange="updateImpactPreview()">
+                                            <label class="form-check-label" for="chkDeactLine">
+                                                ยกเลิกการผูกบัญชีสิทธิ์ LINE OA (ims_house_line_user) ที่เกี่ยวข้อง
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="chkDeactStickers" checked onchange="updateImpactPreview()">
+                                            <label class="form-check-label" for="chkDeactStickers">
+                                                ระงับและหมดอายุรายการสติกเกอร์ยานพาหนะเดิมทั้งหมด
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="mockRemark" class="form-label">หมายเหตุเพิ่มเติม</label>
+                                        <textarea class="form-control" id="mockRemark" rows="2" placeholder="ระบุรายละเอียดเพิ่มเติม..." oninput="updateImpactPreview()"></textarea>
+                                    </div>
+                                    
+                                    <div class="col-12 text-end">
+                                        <button class="btn btn-warning me-2" type="button" onclick="resetMockForm()"><i class="fa-solid fa-rotate-left"></i> รีเซ็ต</button>
+                                        <button class="btn btn-success" type="button" onclick="submitMockChange()"><i class="fa-solid fa-floppy-disk"></i> บันทึกรายการ</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right: Preview Analysis -->
+                            <div class="col-lg-5 ps-lg-4 mt-4 mt-lg-0">
+                                <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-magnifying-glass-chart me-1"></i> สรุปผลกระทบระบบ (System Impact Preview)</h5>
+                                
+                                <div class="card border bg-light mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">ผู้ติดต่อปัจจุบัน:</span>
+                                            <strong id="previewCurrentInfo">คุณวิชัย (เจ้าของบ้าน)</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">เบอร์โทรศัพท์ (User ID):</span>
+                                            <strong id="previewUserAccount" class="text-primary">081-111-2222</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">สถานะบัญชีเว็บปัจจุบัน:</span>
+                                            <span class="badge bg-success" id="previewUserStatus">Active</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">สิทธิ์โหวต / LINE:</span>
+                                            <strong id="previewLineCount" class="text-danger">3 บัญชี</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">ทะเบียนยานพาหนะเดิม:</span>
+                                            <strong id="previewCar" class="text-secondary">กข 7890 กรุงเทพ</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="text-muted">ยอดค้างชำระ:</span>
+                                            <strong id="previewDebt" class="text-success">0.00 บาท</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="warning-box mb-3 py-2 px-3 fs-7" id="mockAlertArea">
+                                    <strong><i class="fa-solid fa-circle-exclamation me-1"></i> แจ้งเตือน:</strong> 
+                                    <span id="mockAlertText">กำลังคำนวณข้อมูลสิทธิ์...</span>
+                                </div>
+
+                                <div class="card border">
+                                    <div class="card-header bg-dark text-white py-2 font-monospace fs-7">
+                                        <i class="fa-solid fa-code me-1"></i> Database Operations (Real-time SQL):
+                                    </div>
+                                    <div class="card-body bg-light p-2 font-monospace fs-7" style="max-height: 250px; overflow-y: auto;">
+                                        <div id="previewSql" class="text-secondary small">
+                                            -- กำลังโหลดแบบร่างคำสั่ง SQL...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="text-center mt-5 text-muted pb-4" style="font-size: 0.85rem;">
+        <hr>
+        <p>&copy; 2026 PS33 Home Management System. All rights reserved.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ข้อมูลบ้านจำลองสำหรับ Interactive Mockup พร้อมบัญชีผู้ใช้
+    const mockHouseDatabase = {
+        "123/45": {
+            owner: "คุณสมชาย มั่งคั่ง",
+            tenant: "คุณนารี ใจดี",
+            phone: "081-111-2222",
+            status: "ผู้เช่า",
+            debt: 0.00,
+            lineUsers: [
+                { name: "Somchai LINE", type: "Owner", id: "U12345" },
+                { name: "Naree LINE", type: "Tenant", id: "U67890" },
+                { name: "Naree's Son", type: "Resident", id: "U99999" }
+            ],
+            pets: 1,
+            car: "กข 7890 กรุงเทพ",
+            webUserStatus: "Active"
+        },
+        "99/12": {
+            owner: "คุณธนพล ศิริเดช",
+            tenant: "-",
+            phone: "089-999-8888",
+            status: "เจ้าของอยู่เอง",
+            debt: 2400.00,
+            lineUsers: [
+                { name: "Tanapol Line", type: "Owner", id: "U88112" }
+            ],
+            pets: 0,
+            car: "ฮฮ 9999 นนทบุรี",
+            webUserStatus: "Active"
+        },
+        "204/8": {
+            owner: "นิติบุคคลหมู่บ้าน (ยึดทรัพย์)",
+            tenant: "-",
+            phone: "",
+            status: "ว่าง",
+            debt: 15600.00,
+            lineUsers: [],
+            pets: 0,
+            car: "",
+            webUserStatus: "Inactive"
+        }
+    };
+
+    function loadMockHouseData(houseNo) {
+        const data = mockHouseDatabase[houseNo];
+        if (!data) return;
+
+        // อัปเดตส่วนพรีวิว
+        document.getElementById("previewCurrentInfo").innerText = `${data.owner} (${data.status})`;
+        document.getElementById("previewUserAccount").innerText = data.phone || "ไม่มีเบอร์ลงทะเบียน";
+        
+        const userStatusEl = document.getElementById("previewUserStatus");
+        userStatusEl.innerText = data.webUserStatus;
+        if (data.webUserStatus === 'Active') {
+            userStatusEl.className = "badge bg-success";
+        } else {
+            userStatusEl.className = "badge bg-secondary";
+        }
+
+        const debtEl = document.getElementById("previewDebt");
+        debtEl.innerText = data.debt.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + " บาท";
+        if (data.debt > 0) {
+            debtEl.className = "text-danger";
+        } else {
+            debtEl.className = "text-success";
+        }
+
+        document.getElementById("previewLineCount").innerText = `${data.lineUsers.length} บัญชี`;
+        document.getElementById("previewCar").innerText = data.car || "ไม่มีรถยนต์";
+
+        updateImpactPreview();
+    }
+
+    function toggleFormMode(type) {
+        const labelName = document.getElementById("labelNewName");
+        const nameInput = document.getElementById("mockNewName");
+        const phoneInput = document.getElementById("mockNewPhone");
+        const statusSelect = document.getElementById("mockNewStatus");
+        const carInput = document.getElementById("mockCar");
+
+        if (type === 'MOVE_OUT_IN') {
+            labelName.innerText = "ชื่อผู้อยู่อาศัยใหม่";
+            nameInput.value = "สมเกียรติ ยอดเยี่ยม";
+            statusSelect.value = "เจ้าของอยู่เอง";
+        } else if (type === 'CHANGE_TENANT') {
+            labelName.innerText = "ชื่อผู้เช่าคนใหม่";
+            nameInput.value = "คุณพิมพ์ชนก สวยงาม";
+            statusSelect.value = "ผู้เช่า";
+        } else if (type === 'CHANGE_OWNER') {
+            labelName.innerText = "ชื่อเจ้าของคนใหม่";
+            nameInput.value = "คุณกิตติศักดิ์ พูนทรัพย์";
+            statusSelect.value = "เจ้าของอยู่เอง";
+        }
+
+        updateImpactPreview();
+    }
+
+    function updateImpactPreview() {
+        const houseNo = document.getElementById("mockHouse").value;
+        const changeType = document.querySelector('input[name="mockChangeType"]:checked').value;
+        const data = mockHouseDatabase[houseNo];
+        const alertArea = document.getElementById("mockAlertArea");
+        const alertText = document.getElementById("mockAlertText");
+        const sqlDiv = document.getElementById("previewSql");
+
+        const deactUser = document.getElementById("chkDeactUser").checked;
+        const deactLine = document.getElementById("chkDeactLine").checked;
+        const deactStickers = document.getElementById("chkDeactStickers").checked;
+
+        if (!data) return;
+
+        let warningMsg = "";
+        let sqlCode = "";
+
+        // คำนวณ Warning Alerts
+        if (changeType === 'CHANGE_OWNER' && data.debt > 0) {
+            warningMsg = `⚠️ ระวัง: มีหนี้ค้างชำระ ${data.debt.toFixed(2)} บาท บัญชีเว็บ (ims_user) ของเจ้าของเดิมจะถูกระงับสิทธิ์หลังจากทำรายการ`;
+            alertArea.className = "danger-box py-2 px-3 fs-7";
+        } else if (changeType === 'CHANGE_TENANT') {
+            warningMsg = `💡 ระบบจะระงับการใช้งานเฉพาะบัญชีผู้เช่าเดิม (${data.phone}) และยกเลิก LINE ของผู้เช่าออก (${data.lineUsers.filter(u => u.type !== 'Owner').length} บัญชี)`;
+            alertArea.className = "warning-box py-2 px-3 fs-7";
+        } else {
+            warningMsg = `✅ ทุกระบบพร้อมบันทึก การดำเนินการจะถูกจัดเก็บเข้าตาราง Change Log และแจ้งเตือนให้ทำการสมัครบัญชีสำหรับลูกบ้านใหม่`;
+            alertArea.className = "info-box py-2 px-3 fs-7";
+        }
+        alertText.innerText = warningMsg;
+
+        // คำนวณ SQL Preview
+        const newName = document.getElementById("mockNewName").value;
+        const newPhone = document.getElementById("mockNewPhone").value;
+        const newStatus = document.getElementById("mockNewStatus").value;
+        const newCar = document.getElementById("mockCar").value;
+        const remark = document.getElementById("mockRemark").value || 'ดำเนินการปรับสิทธิ์และย้ายที่อยู่';
+
+        sqlCode = `-- 1. บันทึกประวัติ Log การทำรายการ\n`;
+        sqlCode += `INSERT INTO ims_house_change_log \n`;
+        sqlCode += `  (house_number, change_type, old_contact_name, old_phone_number, old_house_status, new_contact_name, new_phone_number, new_house_status, remark, created_by)\n`;
+        sqlCode += `VALUES \n`;
+        sqlCode += `  ('${houseNo}', '${changeType}', '${data.owner}', '${data.phone}', '${data.status}', '${newName}', '${newPhone}', '${newStatus}', '${remark}', 'System Admin');\n\n`;
+
+        if (deactUser && data.phone !== '-') {
+            sqlCode += `-- 2. ระงับบัญชีผู้ใช้ระบบเว็บ (ims_user)\n`;
+            sqlCode += `UPDATE ims_user SET status = 'Inactive' \nWHERE user_id = '${data.phone}';\n`;
+            sqlCode += `-- ล้าง Active Session เพื่อบังคับให้ออกจากระบบ\n`;
+            sqlCode += `DELETE FROM ims_user_login_logs \nWHERE user_id = '${data.phone}';\n\n`;
+        }
+
+        sqlCode += `-- 3. อัปเดตตารางหลักบ้าน (ims_house)\n`;
+        sqlCode += `UPDATE ims_house SET \n`;
+        sqlCode += `  contact_name = '${newName}',\n`;
+        sqlCode += `  phone_number = '${newPhone}',\n`;
+        sqlCode += `  house_status = '${newStatus}',\n`;
+        sqlCode += `  car_no1 = '${newCar}', car_no2 = '', car_no3 = '',\n`;
+        sqlCode += `  remark = '${remark}'\n`;
+        sqlCode += `WHERE house_number = '${houseNo}';\n\n`;
+
+        if (deactLine) {
+            sqlCode += `-- 4. จัดการยกเลิกผูกสิทธิ์ LINE OA\n`;
+            if (changeType === 'CHANGE_OWNER' || changeType === 'MOVE_OUT_IN') {
+                sqlCode += `UPDATE ims_house_line_user SET status = 'N' \nWHERE house_number = '${houseNo}';\n\n`;
+            } else if (changeType === 'CHANGE_TENANT') {
+                sqlCode += `UPDATE ims_house_line_user SET status = 'N' \nWHERE house_number = '${houseNo}' AND user_type IN ('Tenant', 'Resident');\n\n`;
+            }
+        }
+
+        if (deactStickers && data.car) {
+            sqlCode += `-- 5. ยกเลิกสติกเกอร์ติดรถยนต์เดิม\n`;
+            sqlCode += `UPDATE ims_sticker_received_list SET status = 'N' \nWHERE house_number = '${houseNo}';\n`;
+        }
+
+        sqlDiv.innerHTML = sqlCode.replace(/\n/g, '<br>').replace(/  /g, '&nbsp;&nbsp;');
+    }
+
+    function submitMockChange() {
+        const houseNo = document.getElementById("mockHouse").value;
+        const changeType = document.querySelector('input[name="mockChangeType"]:checked').value;
+        const newName = document.getElementById("mockNewName").value;
+        const deactUser = document.getElementById("chkDeactUser").checked;
+        
+        let confirmText = `🎉 [จำลองบันทึกเสร็จสิ้น]\n- บ้านเลขที่: ${houseNo}\n- ประเภท: ${changeType}\n- ผู้ดูแลใหม่: ${newName}\n`;
+        if (deactUser) {
+            confirmText += `- ทำการบล็อคบัญชีเว็บ (ims_user) ของผู้อยู่อาศัยรายเดิมในฐานข้อมูลเรียบร้อยแล้ว!\n- ตัดสิทธิ์การเข้าใช้งานผ่านระบบ LINE OA สำเร็จ!\n`;
+        }
+        alert(confirmText);
+    }
+
+    function resetMockForm() {
+        document.getElementById("mockHouse").value = "123/45";
+        document.getElementById("typeMove").checked = true;
+        document.getElementById("mockRemark").value = "";
+        document.getElementById("chkDeactUser").checked = true;
+        document.getElementById("chkDeactLine").checked = true;
+        document.getElementById("chkDeactStickers").checked = true;
+        toggleFormMode("MOVE_OUT_IN");
+    }
+
+    // โหลดข้อมูลตัวแรกเมื่อเปิดหน้า
+    document.addEventListener("DOMContentLoaded", function() {
+        loadMockHouseData("123/45");
+    });
+</script>
+</body>
+</html>
