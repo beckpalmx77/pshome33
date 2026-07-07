@@ -72,7 +72,7 @@ $preset_house = $_GET['house_number'] ?? '';
                     <div class="col-lg-12">
                         <div class="card mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary text-white">
-                                <h6 class="m-0 font-weight-bold"><i class="fa fa-exchange-alt"></i> ฟอร์มเปลี่ยนสิทธิ์ผู้อยู่อาศัย / เปลี่ยนผู้เช่า / เปลี่ยนเจ้าของบ้าน</h6>
+                                <h6 class="m-0 font-weight-bold"><i class="fa fa-exchange"></i> ฟอร์มเปลี่ยนสิทธิ์ผู้อยู่อาศัย / เปลี่ยนผู้เช่า / เปลี่ยนเจ้าของบ้าน</h6>
                             </div>
                             <div class="card-body">
                                 <form id="formChangeHolder">
@@ -180,7 +180,7 @@ $preset_house = $_GET['house_number'] ?? '';
                                             <!-- Security Options Card -->
                                             <div class="card my-3 border-danger" id="securityOptionsCard">
                                                 <div class="card-header bg-danger text-white py-2">
-                                                    <h6 class="mb-0 font-weight-bold"><i class="fa fa-user-shield"></i> การจัดการระบบและสิทธิ์ข้อมูลส่วนบุคคล (PDPA)</h6>
+                                                    <h6 class="mb-0 font-weight-bold"><i class="fa fa-shield"></i> การจัดการระบบและสิทธิ์ข้อมูลส่วนบุคคล (PDPA)</h6>
                                                 </div>
                                                 <div class="card-body py-2">
                                                     <div class="custom-control custom-checkbox mt-1">
@@ -220,6 +220,7 @@ $preset_house = $_GET['house_number'] ?? '';
                                             <div class="text-right mb-3">
                                                 <input type="hidden" name="action" value="CHANGE_HOUSE_HOLDER_FULL">
                                                 <button type="button" class="btn btn-secondary" onclick="window.history.back();">ยกเลิก</button>
+                                                <button type="button" class="btn btn-warning" onclick="showImpactPreview();"><i class="fa fa-stethoscope"></i> ทดสอบ/ตรวจสอบผลกระทบ</button>
                                                 <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="fa fa-save"></i> บันทึกข้อมูลและสิทธิ์</button>
                                             </div>
                                         </div>
@@ -268,6 +269,13 @@ $preset_house = $_GET['house_number'] ?? '';
                                                         <li class="list-group-item text-muted text-center py-3">เลือกเลขที่บ้านเพื่อโหลดรายชื่อผู้เชื่อม LINE...</li>
                                                     </ul>
                                                 </div>
+                                            </div>                                            <div class="card mb-3">
+                                                <div class="card-header bg-secondary text-white py-2 font-weight-bold"><i class="fa fa-car"></i> ยานพาหนะที่ลงทะเบียนปัจจุบัน</div>
+                                                <div class="card-body p-0">
+                                                    <ul class="list-group list-group-flush" id="carList">
+                                                        <li class="list-group-item text-muted text-center py-3">เลือกเลขที่บ้านเพื่อโหลดรายการทะเบียนรถ...</li>
+                                                    </ul>
+                                                </div>
                                             </div>
 
                                             <div class="alert alert-warning py-3 px-3 fs-7" id="alertArea" style="display: none;">
@@ -290,6 +298,27 @@ $preset_house = $_GET['house_number'] ?? '';
     </div>
 </div>
 
+<!-- Modal for impact preview -->
+<div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title font-weight-bold" id="previewModalLabel"><i class="fa fa-stethoscope"></i> ตรวจสอบการเปลี่ยนแปลงและผลกระทบก่อนบันทึกจริง</h5>
+                <button type="button" class="close text-dark" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="previewModalBody">
+                <!-- Content generated dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิดหน้าต่าง</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmFromPreview"><i class="fa fa-check-circle"></i> ข้อมูลถูกต้อง ยืนยันบันทึก</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -300,6 +329,8 @@ $preset_house = $_GET['house_number'] ?? '';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 <script>
+    let currentHouseData = null;
+
     $(document).ready(function () {
         // ระบบ Autocomplete สำหรับค้นหาบ้านเลขที่ (กรณี 1, 2, 3)
         $("#house_number").autocomplete({
@@ -562,7 +593,78 @@ $preset_house = $_GET['house_number'] ?? '';
                 }
             });
         }
+
+        // ยืนยันบันทึกข้อมูลจากปุ่มใน Modal ทดสอบการเปลี่ยนแปลง
+        $('#btnConfirmFromPreview').on('click', function () {
+            $('#previewModal').modal('hide');
+            $('#formChangeHolder').submit();
+        });
     });
+
+    function updateRightSideCard(d) {
+        // ปรับข้อมูลการแสดงผลปัจจุบันด้านขวา
+        $('#curContact').text(d.contact_name);
+        $('#curPhone').text(d.phone_number || '-');
+        
+        let statusText = d.house_status === 'O' ? 'บ้านตนเอง' : (d.house_status === 'R' ? 'บ้านเช่า' : 'บ้านว่าง');
+        $('#curStatus').text(statusText).attr('class', 'badge ' + (d.house_status === 'O' ? 'badge-primary' : (d.house_status === 'R' ? 'badge-warning' : 'badge-secondary')));
+        
+        $('#curWebStatus').text(d.web_user_status).attr('class', 'badge ' + (d.web_user_status === 'Active' ? 'badge-success' : 'badge-light border'));
+        
+        let debtAmount = parseFloat(d.outstanding_amount);
+        $('#curDebt').text(debtAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' บาท');
+        if (debtAmount > 0) {
+            $('#curDebt').attr('class', 'text-danger font-weight-bold');
+        } else {
+            $('#curDebt').attr('class', 'text-success font-weight-bold');
+        }
+
+        $('#curLineCount').text(d.line_count + ' บัญชี');
+        $('#curPets').text(d.pet_count + ' ตัว');
+
+        // อัปเดตรายชื่อผู้ผูกไลน์
+        let lineList = $('#lineUsersList');
+        lineList.empty();
+        if (d.line_users && d.line_users.length > 0) {
+            d.line_users.forEach(function (user) {
+                let typeBadge = user.user_type === 'Owner' ? 'เจ้าของ' : (user.user_type === 'Tenant' ? 'ผู้เช่า' : 'ผู้อยู่อาศัย');
+                lineList.append('<li class="list-group-item d-flex justify-content-between align-items-center py-2">' +
+                    '<span><i class="fab fa-line text-success"></i> ' + user.line_user_name + '</span>' +
+                    '<span class="badge badge-info">' + typeBadge + '</span>' +
+                    '</li>');
+            });
+        } else {
+            lineList.append('<li class="list-group-item text-muted text-center py-3">บ้านหลังนี้ไม่มีบัญชี LINE OA ผูกสิทธิ์อยู่</li>');
+        }
+
+        // อัปเดตรายการรถยนต์ที่ลงทะเบียน
+        let carList = $('#carList');
+        carList.empty();
+        if (d.cars && d.cars.length > 0) {
+            d.cars.forEach(function (car) {
+                let carDetail = (car.brand ? car.brand : '') + 
+                                (car.color ? ' สี' + car.color : '') + 
+                                (car.type ? ' (' + car.type + ')' : '');
+                carList.append('<li class="list-group-item d-flex justify-content-between align-items-center py-2">' +
+                    '<span><i class="fa fa-car text-primary"></i> <strong>' + car.car_no + '</strong> ' + (car.province ? car.province : '') + '</span>' +
+                    '<span class="small text-muted">' + carDetail + '</span>' +
+                    '</li>');
+            });
+        } else {
+            carList.append('<li class="list-group-item text-muted text-center py-3">บ้านหลังนี้ไม่มีรถยนต์ลงทะเบียนไว้</li>');
+        }
+
+        // วิเคราะห์การแจ้งเตือน
+        let alertArea = $('#alertArea');
+        let alertText = $('#alertText');
+        if (debtAmount > 0) {
+            alertText.html("<strong class='text-danger'><i class='fa fa-exclamation-triangle'></i> ตรวจพบยอดค้างชำระค่าส่วนกลาง!</strong> โปรดประสานงานเคลียร์ยอดค้างชำระให้เป็นศูนย์เรียบร้อยก่อนทำการเปลี่ยนเจ้าของบ้าน");
+            alertArea.attr('class', 'alert alert-danger py-2 px-3 small').show();
+        } else {
+            alertText.html("<i class='fa fa-info-circle'></i> ข้อมูลบ้านพร้อมทำรายการ ระบบจะเคลียร์บัญชีและรถยนต์เดิม และเปิดลิงก์สำหรับสมัครบัญชีคนใหม่");
+            alertArea.attr('class', 'alert alert-info py-2 px-3 small').show();
+        }
+    }
 
     function loadHouseDetailForChange(houseNo) {
         $.ajax({
@@ -573,52 +675,8 @@ $preset_house = $_GET['house_number'] ?? '';
             success: function (response) {
                 if (response.status === 'success') {
                     let d = response.data;
-                    
-                    // ปรับข้อมูลการแสดงผลปัจจุบันด้านขวา
-                    $('#curContact').text(d.contact_name);
-                    $('#curPhone').text(d.phone_number || '-');
-                    
-                    let statusText = d.house_status === 'O' ? 'บ้านตนเอง' : (d.house_status === 'R' ? 'บ้านเช่า' : 'บ้านว่าง');
-                    $('#curStatus').text(statusText).attr('class', 'badge ' + (d.house_status === 'O' ? 'badge-primary' : (d.house_status === 'R' ? 'badge-warning' : 'badge-secondary')));
-                    
-                    $('#curWebStatus').text(d.web_user_status).attr('class', 'badge ' + (d.web_user_status === 'Active' ? 'badge-success' : 'badge-light border'));
-                    
-                    let debtAmount = parseFloat(d.outstanding_amount);
-                    $('#curDebt').text(debtAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 }) + ' บาท');
-                    if (debtAmount > 0) {
-                        $('#curDebt').attr('class', 'text-danger font-weight-bold');
-                    } else {
-                        $('#curDebt').attr('class', 'text-success font-weight-bold');
-                    }
-
-                    $('#curLineCount').text(d.line_count + ' บัญชี');
-                    $('#curPets').text(d.pet_count + ' ตัว');
-
-                    // อัปเดตรายชื่อผู้ผูกไลน์
-                    let lineList = $('#lineUsersList');
-                    lineList.empty();
-                    if (d.line_users && d.line_users.length > 0) {
-                        d.line_users.forEach(function (user) {
-                            let typeBadge = user.user_type === 'Owner' ? 'เจ้าของ' : (user.user_type === 'Tenant' ? 'ผู้เช่า' : 'ผู้อยู่อาศัย');
-                            lineList.append('<li class="list-group-item d-flex justify-content-between align-items-center py-2">' +
-                                '<span><i class="fab fa-line text-success"></i> ' + user.line_user_name + '</span>' +
-                                '<span class="badge badge-info">' + typeBadge + '</span>' +
-                                '</li>');
-                        });
-                    } else {
-                        lineList.append('<li class="list-group-item text-muted text-center py-3">บ้านหลังนี้ไม่มีบัญชี LINE OA ผูกสิทธิ์อยู่</li>');
-                    }
-
-                    // วิเคราะห์การแจ้งเตือน
-                    let alertArea = $('#alertArea');
-                    let alertText = $('#alertText');
-                    if (debtAmount > 0) {
-                        alertText.html("<strong class='text-danger'><i class='fa fa-exclamation-triangle'></i> ตรวจพบยอดค้างชำระค่าส่วนกลาง!</strong> โปรดประสานงานเคลียร์ยอดค้างชำระให้เป็นศูนย์เรียบร้อยก่อนทำการเปลี่ยนเจ้าของบ้าน");
-                        alertArea.attr('class', 'alert alert-danger py-2 px-3 small').show();
-                    } else {
-                        alertText.html("<i class='fa fa-info-circle'></i> ข้อมูลบ้านพร้อมทำรายการ ระบบจะเคลียร์บัญชีและรถยนต์เดิม และเปิดลิงก์สำหรับสมัครบัญชีคนใหม่");
-                        alertArea.attr('class', 'alert alert-info py-2 px-3 small').show();
-                    }
+                    currentHouseData = d;
+                    updateRightSideCard(d);
                 } else {
                     alertify.error(response.message);
                 }
@@ -630,6 +688,7 @@ $preset_house = $_GET['house_number'] ?? '';
     }
 
     function clearHouseDetails() {
+        currentHouseData = null;
         $('#curContact').text('-');
         $('#curPhone').text('-');
         $('#curStatus').text('-').attr('class', 'badge badge-secondary');
@@ -638,7 +697,221 @@ $preset_house = $_GET['house_number'] ?? '';
         $('#curLineCount').text('0 บัญชี');
         $('#curPets').text('0 ตัว');
         $('#lineUsersList').html('<li class="list-group-item text-muted text-center py-3">เลือกเลขที่บ้านเพื่อโหลดรายชื่อผู้เชื่อม LINE...</li>');
+        $('#carList').html('<li class="list-group-item text-muted text-center py-3">เลือกเลขที่บ้านเพื่อโหลดรายการทะเบียนรถ...</li>');
         $('#alertArea').hide();
+    }
+
+    // ฟังก์ชันทดสอบและจำลองผลกระทบก่อนการเปลี่ยนแปลง
+    function showImpactPreview() {
+        let changeType = $('#change_type').val();
+        
+        if (changeType === 'MOVE_HOUSE_BETWEEN') {
+            let oldHouse = $('#old_house_number').val();
+            let newHouse = $('#new_house_number').val();
+
+            if (!oldHouse || !newHouse) {
+                alertify.error("กรุณาระบุบ้านเลขที่เดิมและบ้านเลขที่ใหม่ก่อนทดสอบ");
+                return;
+            }
+            if (oldHouse === newHouse) {
+                alertify.error("บ้านเลขที่เดิมและใหม่ต้องไม่ซ้ำกัน");
+                return;
+            }
+
+            // ถ้ายังไม่ได้โหลดข้อมูล หรือข้อมูลที่มีไม่ตรงกับบ้านเลขที่ที่กรอก ให้ดึงข้อมูลมาใหม่ก่อน
+            if (!currentHouseData || currentHouseData.house_number !== oldHouse) {
+                alertify.success("กำลังค้นหาและดึงข้อมูลบ้านเดิมเพื่อประเมินผลกระทบ...");
+                $.ajax({
+                    url: 'model/manage_house_process.php',
+                    type: 'POST',
+                    data: { action: 'GET_HOUSE_DETAIL_FOR_CHANGE', house_number: oldHouse },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            currentHouseData = response.data;
+                            updateRightSideCard(response.data);
+                            showImpactPreview();
+                        } else {
+                            alertify.error("ไม่พบข้อมูลบ้านเดิม: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        alertify.error("ไม่สามารถเชื่อมต่อระบบเพื่อดึงข้อมูลได้");
+                    }
+                });
+                return;
+            }
+
+            let html = `
+                <div class="alert alert-info py-2 mb-3">
+                    <h5 class="mb-1"><i class="fa fa-exchange"></i> ย้ายผู้อยู่อาศัยข้ามบ้านเลขที่: <strong>${oldHouse}</strong> &rarr; <strong>${newHouse}</strong></h5>
+                    <p class="mb-0 small text-muted">ระบบจะย้ายข้อมูลประวัติ ทะเบียนรถ และสิทธิ์ทั้งหมดข้ามบ้านเลขที่โดยอัตโนมัติ</p>
+                </div>
+                
+                <h6 class="font-weight-bold text-dark mb-2"><i class="fa fa-tasks"></i> รายการเปรียบเทียบข้อมูลและการเปลี่ยนแปลง:</h6>
+                <table class="table table-bordered table-sm small">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="width: 25%;">หัวข้อ</th>
+                            <th style="width: 38%;">บ้านเดิม (${oldHouse})</th>
+                            <th style="width: 37%;">บ้านใหม่ (${newHouse})</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-weight-bold">ชื่อผู้อยู่อาศัย</td>
+                            <td><span class="text-danger"><del>${currentHouseData.contact_name}</del></span> &rarr; <span class="text-muted">บ้านว่าง / รอผู้อยู่อาศัย</span></td>
+                            <td><span class="text-success font-weight-bold">${currentHouseData.contact_name}</span> (ย้ายเข้า)</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">เบอร์โทรศัพท์</td>
+                            <td><span class="text-danger"><del>${currentHouseData.phone_number || 'ไม่มีเบอร์'}</del></span> &rarr; <span class="text-muted">-</span></td>
+                            <td><span class="text-success font-weight-bold">${currentHouseData.phone_number || 'ไม่มีเบอร์'}</span> (ย้ายเข้า)</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">บัญชี LINE OA</td>
+                            <td colspan="2"><span class="text-primary font-weight-bold">สลับพิกัดสิทธิ์ในระบบ:</span> ย้ายรายชื่อผู้เชื่อมต่อ LINE ของเบอร์โทร ${currentHouseData.phone_number || '-'} จำนวน ${currentHouseData.line_count} บัญชี ไปผูกกับบ้านใหม่ <strong>${newHouse}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">ข้อมูลยานพาหนะ</td>
+                            <td><span class="text-danger">เคลียร์ข้อมูลรถเดิมทั้งหมดเป็นค่าว่าง</span> และระงับสติกเกอร์เดิม</td>
+                            <td>ย้ายข้อมูลทะเบียนรถเดิม <strong>${currentHouseData.car_no1 || 'ไม่มีรถ'}</strong> ไปผูกกับบ้านใหม่</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">สัตว์เลี้ยง</td>
+                            <td colspan="2"><span class="text-primary font-weight-bold">โอนย้ายประวัติสัตว์เลี้ยง:</span> ย้ายประวัติรูปภาพและทะเบียนสัตว์เลี้ยงสะสมจำนวน ${currentHouseData.pet_count} ตัว ไปผูกกับบ้านใหม่ <strong>${newHouse}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold text-danger">หนี้ค่าส่วนกลาง</td>
+                            <td>ยอดค้างปัจจุบัน: <strong class="${parseFloat(currentHouseData.outstanding_amount) > 0 ? 'text-danger' : 'text-success'}">${parseFloat(currentHouseData.outstanding_amount).toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท</strong></td>
+                            <td>*หนี้สินของบ้านเดิมจะไม่โอนย้ายตามตัวลูกบ้าน กรุณาเคลียร์หนี้ที่ค้างอยู่ของบ้านเก่าก่อนย้ายออก</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            $('#previewModalBody').html(html);
+            $('#previewModal').modal('show');
+        } else {
+            let houseNumber = $('#house_number').val();
+            let newName = $('#new_contact_name').val();
+            let newPhone = $('#new_phone_number').val();
+            let newStatus = $('#new_house_status').val();
+            let newStatusText = $('#new_house_status option:selected').text();
+
+            if (!houseNumber) {
+                alertify.error("กรุณาระบุหรือค้นหาบ้านเลขที่ก่อนทดสอบ");
+                return;
+            }
+            if (!newName || !newPhone) {
+                alertify.error("กรุณากรอกชื่อและเบอร์โทรศัพท์ผู้อยู่อาศัยใหม่ก่อนทดสอบ");
+                return;
+            }
+
+            // ถ้ายังไม่ได้โหลดข้อมูล หรือข้อมูลที่มีไม่ตรงกับบ้านเลขที่ที่ระบุ ให้ดึงข้อมูลมาก่อน
+            if (!currentHouseData || currentHouseData.house_number !== houseNumber) {
+                alertify.success("กำลังค้นหาและดึงข้อมูลบ้านเพื่อประเมินผลกระทบ...");
+                $.ajax({
+                    url: 'model/manage_house_process.php',
+                    type: 'POST',
+                    data: { action: 'GET_HOUSE_DETAIL_FOR_CHANGE', house_number: houseNumber },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            currentHouseData = response.data;
+                            updateRightSideCard(response.data);
+                            showImpactPreview();
+                        } else {
+                            alertify.error("ไม่พบข้อมูลบ้าน: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        alertify.error("ไม่สามารถเชื่อมต่อเพื่อดึงข้อมูลได้");
+                    }
+                });
+                return;
+            }
+
+            let changeTypeText = $('#change_type option:selected').text();
+            let deactUser = $('#deactivate_old_user').is(':checked');
+            let deactLine = $('#deactivate_line').is(':checked');
+            let deactSticker = $('#deactivate_stickers').is(':checked');
+
+            let html = `
+                <div class="alert alert-info py-2 mb-3">
+                    <h5 class="mb-1"><i class="fa fa-home"></i> การเปลี่ยนสิทธิ์บ้านเลขที่: <strong>${houseNumber}</strong></h5>
+                    <p class="mb-0 small"><strong>ประเภทรายการ:</strong> ${changeTypeText}</p>
+                </div>
+                
+                <h6 class="font-weight-bold text-dark mb-2"><i class="fa fa-user-edit"></i> สรุปการเปลี่ยนแปลงข้อมูลผู้อยู่อาศัย:</h6>
+                <table class="table table-bordered table-sm small mb-3">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>รายการ</th>
+                            <th>ข้อมูลเดิมในระบบ</th>
+                            <th>ข้อมูลที่จะบันทึกใหม่</th>
+                            <th>สถานะการอัปเดต</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-weight-bold">ชื่อผู้ติดต่อหลัก</td>
+                            <td>${currentHouseData.contact_name || '-'}</td>
+                            <td class="text-success font-weight-bold">${newName}</td>
+                            <td><span class="badge badge-success">อัปเดต</span></td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">เบอร์โทรศัพท์</td>
+                            <td>${currentHouseData.phone_number || '-'}</td>
+                            <td class="text-success font-weight-bold">${newPhone}</td>
+                            <td><span class="badge badge-success">อัปเดต</span></td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">สถานะผู้อยู่อาศัย</td>
+                            <td>${currentHouseData.house_status === 'O' ? 'บ้านตนเอง' : (currentHouseData.house_status === 'R' ? 'บ้านเช่า' : 'บ้านว่าง')}</td>
+                            <td class="text-success font-weight-bold">${newStatusText}</td>
+                            <td><span class="badge badge-success">อัปเดต</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h6 class="font-weight-bold text-dark mb-2"><i class="fa fa-shield"></i> สรุปผลกระทบระบบและความปลอดภัย (PDPA):</h6>
+                <ul class="list-group list-group-flush border rounded mb-3 small">
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                        <span>1. บัญชีเว็บ (ims_user) ของเบอร์เก่า (${currentHouseData.phone_number || 'ไม่มีเบอร์'}):</span>
+                        ${deactUser ? '<span class="text-danger font-weight-bold"><i class="fa fa-ban"></i> จะถูกระงับสิทธิ์การใช้งาน (Inactive)</span>' : '<span class="text-muted">ไม่มีผลกระทบ</span>'}
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                        <span>2. การเชื่อมต่อ LINE OA ของผู้อยู่อาศัยเดิม:</span>
+                        ${deactLine ? 
+                            (changeType === 'CHANGE_OWNER' ? 
+                                '<span class="text-danger font-weight-bold"><i class="fa fa-trash"></i> ปลดการเชื่อมต่อ LINE ทุกคนของบ้านนี้ออก</span>' : 
+                                '<span class="text-warning font-weight-bold"><i class="fa fa-user-minus"></i> ปลดเฉพาะเบอร์เดิม (' + currentHouseData.phone_number + ') คงเหลือเบอร์อื่นไว้</span>') 
+                            : '<span class="text-muted">ไม่มีผลกระทบ</span>'}
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                        <span>3. ทะเบียนรถยนต์และสติ๊กเกอร์เดิม:</span>
+                        ${deactSticker ? '<span class="text-danger font-weight-bold"><i class="fa fa-eraser"></i> ล้างค่าทะเบียนเก่าทั้งหมด และยกเลิกสติกเกอร์เดิม</span>' : '<span class="text-muted">คงเดิม</span>'}
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                        <span>4. การจัดการข้อมูลสัตว์เลี้ยง (ims_house_pet):</span>
+                        ${changeType === 'CHANGE_OWNER' ? 
+                            '<span class="text-danger font-weight-bold"><i class="fa fa-arrow-right"></i> ย้ายประวัติสัตว์เลี้ยงเดิม ('+ currentHouseData.pet_count +' ตัว) เป็นสถานะ ย้ายออก</span>' : 
+                            '<span class="text-success font-weight-bold"><i class="fa fa-edit"></i> เปลี่ยนชื่อผู้รับผิดชอบสัตว์เลี้ยงเป็น ' + newName + '</span>'}
+                    </li>
+                </ul>
+            `;
+            
+            if (changeType === 'CHANGE_OWNER' && parseFloat(currentHouseData.outstanding_amount) > 0) {
+                html += `
+                    <div class="alert alert-danger py-2 px-3 small">
+                        <strong><i class="fa fa-exclamation-triangle"></i> คำเตือนยอดค้างชำระ:</strong> บ้านเลขที่นี้มียอดค้างชำระค่าส่วนกลางอยู่ <strong>${parseFloat(currentHouseData.outstanding_amount).toLocaleString('th-TH', {minimumFractionDigits: 2})} บาท</strong> กรุณาติดตามเก็บยอดค้างให้เรียบร้อยก่อนโอนกรรมสิทธิ์!
+                    </div>
+                `;
+            }
+
+            $('#previewModalBody').html(html);
+            $('#previewModal').modal('show');
+        }
     }
 </script>
 </body>

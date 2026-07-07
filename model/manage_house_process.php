@@ -405,6 +405,21 @@ if ($_POST["action"] === 'GET_HOUSE_DETAIL_FOR_CHANGE') {
             $web_user_status = $web_status;
         }
     }
+
+    // 7. ดึงข้อมูลรถยนต์ที่ลงทะเบียนไว้ทั้งหมด (สูงสุด 10 คัน)
+    $cars = [];
+    for ($i = 1; $i <= 10; $i++) {
+        $car_no = $house_data["car_no$i"] ?? '';
+        if (!empty($car_no)) {
+            $cars[] = [
+                "car_no" => $car_no,
+                "province" => $house_data["car_no{$i}_province"] ?? '',
+                "brand" => $house_data["car_no{$i}_brand"] ?? '',
+                "color" => $house_data["car_no{$i}_color"] ?? '',
+                "type" => $house_data["car_no{$i}_type"] ?? ''
+            ];
+        }
+    }
     
     echo json_encode([
         "status" => "success",
@@ -413,11 +428,7 @@ if ($_POST["action"] === 'GET_HOUSE_DETAIL_FOR_CHANGE') {
             "contact_name" => $house_data['contact_name'],
             "phone_number" => $house_data['phone_number'],
             "house_status" => $house_data['house_status'],
-            "car_no1" => $house_data['car_no1'] ?? '',
-            "car_brand" => $house_data['car_no1_brand'] ?? '',
-            "car_color" => $house_data['car_no1_color'] ?? '',
-            "car_province" => $house_data['car_no1_province'] ?? '',
-            "car_type" => $house_data['car_no1_type'] ?? '',
+            "cars" => $cars,
             "remark" => $house_data['remark'] ?? '',
             "line_count" => $line_count,
             "line_users" => $line_users,
