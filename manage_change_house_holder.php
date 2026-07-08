@@ -73,6 +73,7 @@ $preset_house = $_GET['house_number'] ?? '';
                         <div class="card mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary text-white">
                                 <h6 class="m-0 font-weight-bold"><i class="fa fa-exchange"></i> ฟอร์มเปลี่ยนสิทธิ์ผู้อยู่อาศัย / เปลี่ยนผู้เช่า / เปลี่ยนเจ้าของบ้าน</h6>
+                                <a href="how_to_change_data.html" target="_blank" class="btn btn-sm btn-light font-weight-bold text-primary shadow-sm"><i class="fa fa-book"></i> คู่มือการใช้งาน</a>
                             </div>
                             <div class="card-body">
                                 <form id="formChangeHolder">
