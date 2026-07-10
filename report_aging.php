@@ -477,6 +477,8 @@ if (strlen($_SESSION['alogin']) == "") {
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/myadmin.min.js"></script>
 
     <link rel="stylesheet" href="css/spin_datatables_v2.css"/>
     <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>

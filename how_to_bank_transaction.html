@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานระบบบันทึกธุรกรรมธนาคาร - PS33 Home System</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f5f7fb;
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #1e3d59 0%, #17b978 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            border-bottom: 4px solid #17b978;
+            margin-bottom: 2rem;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .nav-pills {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+        .nav-pills::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-pills::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .nav-pills .nav-link {
+            color: #1e3d59;
+            font-weight: 500;
+            border: 1px solid #dee2e6;
+            margin-right: 0.5rem;
+            background-color: white;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #1e3d59;
+            color: white;
+            border-color: #1e3d59;
+        }
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: #f1f3f9;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            background-color: #ffffff;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border-left: 5px solid #1e3d59;
+        }
+        .card-custom.deposit-tab {
+            border-left-color: #198754;
+        }
+        .card-custom.withdraw-tab {
+            border-left-color: #dc3545;
+        }
+        .card-custom.adjust-tab {
+            border-left-color: #0d6efd;
+        }
+        .card-header-custom {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .badge-type {
+            font-size: 0.85rem;
+            padding: 0.4em 0.8em;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .step-badge {
+            background-color: #1e3d59;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+        }
+        .info-box {
+            background-color: #eef2f7;
+            border-left: 4px solid #1e3d59;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .warning-box {
+            background-color: #fff8eb;
+            border-left: 4px solid #fd7e14;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .danger-box {
+            background-color: #fdf2f2;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .checklist-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .checklist-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.6rem;
+        }
+        .checklist-list li input[type="checkbox"] {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
+        }
+        .checklist-list li.checked {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        .font-code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            background-color: #f1f3f9;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-banner text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2"><i class="fa-solid fa-money-bill-transfer me-2"></i>คู่มือการจัดการระบบ: บันทึกธุรกรรมธนาคาร</h1>
+        <p class="lead mb-0">ขั้นตอนการฝาก ถอน ปรับยอดเงิน บันทึกบัญชี และอัปโหลดสลิปธุรกรรมการเงินของโครงการ</p>
+    </div>
+</div>
+
+<div class="container-fluid px-4 px-lg-5" style="max-width: 100%;">
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-summary-link" data-bs-toggle="pill" data-bs-target="#tab-summary" type="button" role="tab"><i class="fa-solid fa-list me-1"></i> ภาพรวมและการกรองข้อมูล</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-deposit-link" data-bs-toggle="pill" data-bs-target="#tab-deposit" type="button" role="tab"><i class="fa-solid fa-circle-down text-success me-1"></i> การฝากเงิน & ดอกเบี้ยรับ</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-withdraw-link" data-bs-toggle="pill" data-bs-target="#tab-withdraw" type="button" role="tab"><i class="fa-solid fa-circle-up text-danger me-1"></i> การถอนเงิน & ค่าธรรมเนียม</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-adjust-link" data-bs-toggle="pill" data-bs-target="#tab-adjust" type="button" role="tab"><i class="fa-solid fa-scale-balanced text-primary me-1"></i> การปรับปรุงยอด (Adjustment)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-faq-link" data-bs-toggle="pill" data-bs-target="#tab-faq" type="button" role="tab"><i class="fa-solid fa-circle-question me-1"></i> คำแนะนำ & ข้อควรระวัง (FAQs)</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="pills-tabContent">
+        
+        <!-- Tab: Summary / Overview -->
+        <div class="tab-pane fade show active" id="tab-summary" role="tabpanel">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-vault me-2"></i>ภาพรวมหน้าจอ บันทึกธุรกรรมธนาคาร</h4>
+                    <p class="text-muted">หน้าจอนี้ใช้สำหรับบันทึกรายการเคลื่อนไหวทางการเงินผ่านบัญชีธนาคารทั้งหมดของโครงการ (Ledger Statement) เพื่อตรวจสอบยอดเงินคงเหลือสะสม (Accumulated Balance) และใช้ทำรายการกระทบยอดเงินสดและเงินฝากธนาคารจริง</p>
+                    
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">1. ตัวกรองการแสดงผลข้อมูล (Filters)</h5>
+                    <p>ระบบอนุญาตให้ผู้ดูแลระบบคัดกรองข้อมูลธุรกรรมเพื่อความสะดวกรวดเร็วในการตรวจสอบ:</p>
+                    <ul>
+                        <li class="mb-2"><strong>กรองบัญชีธนาคาร:</strong> เลือกเพื่อแสดงเฉพาะธุรกรรมของสมุดบัญชีธนาคารเล่มที่ต้องการ หรือเลือกแสดงทุกบัญชี</li>
+                        <li class="mb-2"><strong>ช่วงเวลา (ตั้งแต่วันที่ - ถึงวันที่):</strong> จำกัดขอบเขตวันเวลาทำรายการโดยการเลือกปฏิทิน (Datepicker) เพื่อตรวจสอบรายการรายสัปดาห์ รายเดือน หรือรายปี</li>
+                        <li class="mb-2">เมื่อตั้งค่าตัวกรองเรียบร้อยแล้ว ให้กดปุ่ม <span class="badge bg-primary"><i class="fa fa-search"></i> ค้นหา</span> เพื่อดึงข้อมูล หรือกดปุ่ม <span class="badge bg-outline-success border text-success"><i class="fa fa-refresh"></i> โหลดข้อมูลใหม่</span> เพื่อล้างตัวกรองและโหลดข้อมูลตั้งต้น</li>
+                    </ul>
+
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">2. ตารางแสดงความเคลื่อนไหวทางบัญชี (Ledger Table)</h5>
+                    <p>ตารางประกอบด้วยคอลัมน์สำคัญที่ช่วยนิติบุคคลประเมินประวัติการรับจ่ายเงิน ได้แก่:</p>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered align-middle small">
+                            <thead class="table-dark text-center">
+                                <tr>
+                                    <th>หัวข้อคอลัมน์</th>
+                                    <th>ความหมาย / หน้าที่</th>
+                                    <th>ข้อแนะนำเพิ่มเติม</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">วันเวลาที่ทำรายการ</td>
+                                    <td>วันเวลาที่ระบุในสลิปจริงหรือรายการสเตทเม้นต์ของธนาคาร</td>
+                                    <td>เป็นตัวแบ่งลำดับการคำนวณเงินเข้าและออกตามลำดับเวลาจริง</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">เลขที่ธุรกรรม</td>
+                                    <td>รหัสที่ระบบสร้างขึ้นโดยอัตโนมัติเพื่อใช้ควบคุมคีย์ข้อมูล</td>
+                                    <td>ใช้สำหรับอ้างอิงรหัสเอกสารการเงินในระบบ</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">ฝาก/เข้า (+)</td>
+                                    <td>จำนวนเงินที่ได้รับโอนเข้าบัญชี (แสดงเป็นตัวเลขบวก สีเขียว)</td>
+                                    <td>ยอดนี้จะถูกสะสมเพิ่มใน Balance คงเหลือ</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">ถอน/ออก (-)</td>
+                                    <td>จำนวนเงินที่ถอนหรือโอนออกเพื่อชำระหนี้ (แสดงเป็นตัวเลขลบ สีแดง)</td>
+                                    <td>ยอดนี้จะถูกหักออกจาก Balance คงเหลือ</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">ค่าธรรมเนียม</td>
+                                    <td>ค่าธรรมเนียมการทำรายการที่หักออกจากบัญชีธนาคารโดยตรง (ถ้ามี)</td>
+                                    <td>แยกฟิลด์ออกมาชัดเจนเพื่อใช้ตรวจสอบค่าบริการของธนาคาร</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">ยอดเงินคงเหลือสะสม</td>
+                                    <td>ยอดเงินสุทธิที่คงเหลือในสมุดบัญชี ณ รายการนั้น ๆ</td>
+                                    <td><strong>ยอดนี้ต้องสัมพันธ์และตรงกับยอดคงเหลือในสเตทเม้นต์จริงตามช่วงเวลา</strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">สลิปหลักฐาน</td>
+                                    <td>ภาพถ่ายหรือไฟล์เอกสารหลักฐานของธุรกรรม</td>
+                                    <td>สามารถคลิกเพื่อดาวน์โหลดหรือเปิดดูสลิปภาพจริงในระบบได้</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Deposit -->
+        <div class="tab-pane fade" id="tab-deposit" role="tabpanel">
+            <div class="card card-custom deposit-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-success mb-3"><i class="fa-solid fa-circle-arrow-down me-2"></i>การบันทึกรายการฝากเงินสด & ดอกเบี้ยรับ (Deposits & Interests)</h4>
+                    <p class="text-muted">ใช้เมื่อโครงการได้รับเงินจากลูกบ้าน เงินสนับสนุน หรือดอกเบี้ยออมทรัพย์ และเงินดังกล่าวถูกนำฝากเข้าบัญชีธนาคารแล้ว</p>
+                    
+                    <div class="info-box">
+                        <strong><i class="fa-solid fa-lightbulb"></i> คำแนะนำประเภทธุรกรรม:</strong>
+                        <ul class="mb-0 mt-1">
+                            <li><strong>เงินฝาก (DEPOSIT):</strong> การนำฝากเงินสด หรือการรับโอนเงินค่าส่วนกลาง/เงินกองกลางเข้าบัญชีโดยตรง</li>
+                            <li><strong>ดอกเบี้ยรับ (INTEREST):</strong> ยอดดอกเบี้ยออมทรัพย์ที่ธนาคารจ่ายให้ตามรอบบัญชีประจำปี (มักจะเป็นช่วงเดือนมิถุนายน และธันวาคม)</li>
+                        </ul>
+                    </div>
+
+                    <h5 class="fw-bold text-secondary mb-2">ขั้นตอนการบันทึกรายการ:</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">กดปุ่ม <span class="badge bg-primary"><i class="fa fa-plus"></i> บันทึกธุรกรรมการเงิน</span> เพื่อเปิดหน้าต่างเพิ่มรายการ</li>
+                        <li class="mb-2">เลือก <strong>บัญชีธนาคาร (Bank Account)</strong> ปลายทางที่เงินเข้าจริง</li>
+                        <li class="mb-2">ระบุ <strong>วันเวลาทำรายการ</strong> ตามเวลาที่ระบุใน Slip หรือหลักฐานการโอน (รูปแบบ: <span class="font-code">วัน-เดือน-ปี ชั่วโมง:นาที</span> เช่น <span class="font-code">15-08-2026 14:30</span>)</li>
+                        <li class="mb-2">เลือกประเภทธุรกรรมเป็น <strong>"เงินฝาก (Deposit)"</strong> หรือ <strong>"ดอกเบี้ยรับ (Interest)"</strong></li>
+                        <li class="mb-2">ระบุ <strong>จำนวนเงิน (Amount)</strong> ที่โอนเข้าสุทธิ</li>
+                        <li class="mb-2">หากเป็นการรับเช็คหรือโอนต่างธนาคารแล้วมีค่าธรรมเนียมหักออก ให้ระบุในช่อง <strong>"ค่าธรรมเนียม"</strong> (ถ้ามี)</li>
+                        <li class="mb-2">กรอก <strong>เลขอ้างอิงสลิป/เช็ค (Ref No.)</strong> เพื่อใช้ตรวจสอบและค้นหาย้อนกลับ</li>
+                        <li class="mb-2">อัปเดตอัปโหลดภาพสลิปหลักฐานโดยกดเลือกไฟล์ที่ช่อง <strong>"อัปโหลดไฟล์รูปภาพสลิป (หลักฐานการรับเงิน)"</strong></li>
+                        <li class="mb-2">กรอกข้อความที่ช่อง <strong>"หมายเหตุ"</strong> เพื่อความสะดวกในการตรวจสอบ เช่น "รับโอนค่าส่วนกลางปี 2569 บ้านเลขที่ 67/1"</li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูล"</strong> เพื่อบันทึกเข้าสู่ฐานข้อมูล</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Withdraw -->
+        <div class="tab-pane fade" id="tab-withdraw" role="tabpanel">
+            <div class="card card-custom withdraw-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-danger mb-3"><i class="fa-solid fa-circle-arrow-up me-2"></i>การบันทึกธุรกรรมการถอนเงิน & ค่าธรรมเนียม (Withdrawals & Fees)</h4>
+                    <p class="text-muted">ใช้เมื่อโครงการมีการจ่ายค่าใช้จ่ายต่าง ๆ เช่น ค่าจ้างเจ้าหน้าที่รักษาความปลอดภัย ค่าบำรุงรักษาระบบประปา หรือค่าใช้จ่ายสำนักงาน</p>
+
+                    <div class="danger-box">
+                        <strong><i class="fa-solid fa-triangle-exclamation"></i> ข้อควรระวังสูงสุด:</strong>
+                        <p class="mb-0 small mt-1">ยอดถอนต้องถูกกรอกให้ตรงตามความจริง รวมทั้งหากมีการเก็บค่าธรรมเนียมการโอน (เช่น โอนต่างธนาคารมีค่าธรรมเนียม 5 บาท หรือ 10 บาท) ต้องบันทึกแยกช่องหรือทำรายการหักออกให้ครบถ้วน เพื่อยอดเงินสะสมในระบบจะได้ตรงกับ Statement ของธนาคาร</p>
+                    </div>
+
+                    <h5 class="fw-bold text-secondary mb-2">ขั้นตอนการบันทึกรายการ:</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เปิดหน้าต่างเพิ่มรายการโดยกดปุ่ม <span class="badge bg-primary"><i class="fa fa-plus"></i> บันทึกธุรกรรมการเงิน</span></li>
+                        <li class="mb-2">เลือก <strong>บัญชีธนาคาร (Bank Account)</strong> ต้นทางที่หักเงินออก</li>
+                        <li class="mb-2">ระบุ <strong>วันเวลาทำรายการ</strong> ตามเวลาที่เกิดการถอนหรือโอนจ่ายจริง</li>
+                        <li class="mb-2">เลือกประเภทธุรกรรมเป็น <strong>"เงินถอน (Withdrawal)"</strong> หรือ <strong>"ค่าธรรมเนียมธนาคาร (Fee)"</strong></li>
+                        <li class="mb-2">ระบุ <strong>จำนวนเงิน (Amount)</strong> ที่ถอนออกจริง</li>
+                        <li class="mb-2">หากการถอนนั้นมีค่าธรรมเนียมแฝง ให้กรอกค่าธรรมเนียมลงในช่อง <strong>"ค่าธรรมเนียม"</strong> ด้วย</li>
+                        <li class="mb-2">แนบภาพสลิปการโอนเงิน/ใบเสร็จ หรือหลักฐานการจ่ายเงินเพื่อเป็นหลักฐานการทำบัญชีโปร่งใส</li>
+                        <li class="mb-2">ระบุข้อความอธิบายที่ช่อง <strong>"หมายเหตุ"</strong> เช่น "จ่ายค่าซ่อมบำรุงไม้กั้นทางเข้า-ออกงวดที่ 1"</li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูล"</strong></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Adjust -->
+        <div class="tab-pane fade" id="tab-adjust" role="tabpanel">
+            <div class="card card-custom adjust-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-scale-unbalanced-flip me-2"></i>การปรับปรุงยอดคงเหลือในระบบ (Adjustment & Reconciliation)</h4>
+                    <p class="text-muted">ใช้ในกรณีที่ยอดเงินคงเหลือในระบบคลาดเคลื่อนไม่ตรงกับสมุดบัญชีธนาคารจริง หรือใช้ปรับยอดเปิดปีก่อนเริ่มใช้โปรแกรม</p>
+
+                    <h5 class="fw-bold text-secondary mb-2">ทำไมต้องทำการปรับปรุงยอด (Adjustment)?</h5>
+                    <ul>
+                        <li class="mb-2"><strong>ยอดเปิดบัญชีเริ่มต้น:</strong> เมื่อโครงการเริ่มต้นนำระบบคอมพิวเตอร์ตัวนี้มาใช้งานครั้งแรก จำเป็นต้องลงทะเบียนปรับยอดให้เท่ากับจำนวนเงินที่มีอยู่จริงในสมุดบัญชีสะสมปัจจุบัน</li>
+                        <li class="mb-2"><strong>กรณีเกิดรายการค่าใช้จ่ายยิบย่อยตกหล่น:</strong> หากตรวจพบยอดตกหล่นและต้องการกระทบยอดด่วนโดยไม่ต้องกรอกย้อนหลังทีละรายการ</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <strong><i class="fa-solid fa-triangle-exclamation"></i> การเลือกทิศทางของยอดปรับปรุง:</strong>
+                        <ul class="mb-0 mt-1">
+                            <li><strong>ปรับปรุงยอดเพิ่ม (+):</strong> ยอดเงินในบัญชีธนาคารจริงมากกว่ายอดในระบบ ให้เพิ่มยอดเงินเข้ามาในระบบสะสม</li>
+                            <li><strong>ปรับปรุงยอดลด (-):</strong> ยอดเงินในบัญชีธนาคารจริงน้อยกว่ายอดในระบบ ให้หักลดจำนวนยอดคงเหลือระบบออก</li>
+                        </ul>
+                    </div>
+
+                    <h5 class="fw-bold text-secondary mb-2">ขั้นตอนการปรับปรุงยอด:</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เปิดฟอร์มกรอกรายการ ธุรกรรมการเงิน</li>
+                        <li class="mb-2">เลือกประเภทรายการเป็น <strong>"ปรับปรุงยอดเพิ่ม (+)"</strong> หรือ <strong>"ปรับปรุงยอดลด (-)"</strong></li>
+                        <li class="mb-2">ระบุจำนวนเงินที่คลาดเคลื่อนหรือจำนวนเงินเริ่มต้น</li>
+                        <li class="mb-2">พิมพ์อธิบายที่มาลงในช่อง <strong>หมายเหตุ</strong> เสมอ เพื่อการสืบค้นประวัติในภายหลัง เช่น "ปรับยอดเงินเปิดบัญชีเริ่มต้นระบบ ณ วันที่ 01-01-2026"</li>
+                        <li class="mb-2">กดบันทึกข้อมูลเพื่ออัปเดตยอดคงเหลือของบัญชีนั้น ๆ</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: FAQ -->
+        <div class="tab-pane fade" id="tab-faq" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-circle-info me-2"></i>คำถามที่พบบ่อยและแนวปฏิบัติที่ดี (Reconciliation Best Practices)</h4>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHead1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <strong>Q: ยอดคงเหลือสะสม (Accumulated Balance) คำนวณอย่างไร?</strong>
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    A: ระบบจะนำยอดเงินก่อนหน้า มาคำนวณบวกยอดรับในธุรกรรมถัดไป แล้วหักลบด้วยยอดถอนและค่าธรรมเนียมตามลำดับของ <strong>วันเวลาทำรายการจริง</strong> ดังนั้นการป้อนข้อมูลวันเวลาให้ตรงตามความจริงและสอดคล้องกันจึงเป็นเรื่องสำคัญสูงสุดเพื่อให้กราฟหรือรายงานการเงินของโครงการแสดงผลถูกต้องแม่นยำ
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHead2">
+                                <button class="accordion-button class-collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <strong>Q: ไฟล์รูปภาพสลิปที่อัปโหลดต้องมีขนาดเท่าใดและรองรับสกุลไฟล์ใดบ้าง?</strong>
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    A: ระบบรองรับไฟล์ภาพมาตรฐานทั่วไป เช่น <strong>JPG, JPEG, PNG, และ GIF</strong> ขนาดไฟล์ไม่ควรเกิน 5MB เพื่อประหยัดพื้นที่จัดเก็บและโหลดเปิดข้อมูลดูได้รวดเร็ว
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHead3">
+                                <button class="accordion-button class-collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <strong>Q: เมื่อกรอกข้อมูลผิดพลาด สามารถแก้ไขหรือลบธุรกรรมได้หรือไม่?</strong>
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    A: ทำได้โดยการกดปุ่ม <span class="badge bg-warning text-dark"><i class="fa fa-edit"></i> แก้ไข</span> หรือปุ่ม <span class="badge bg-danger"><i class="fa fa-trash"></i> ลบ</span> ในตารางรายชื่อรายการ แต่หลังจากมีการเปลี่ยนแปลงหรือลบข้อมูล ยอดสะสมในตารางบัญชีจะทำการรีเฟรชคำนวณใหม่ตั้งแต่รายการนั้น ๆ ลงมาโดยอัตโนมัติ เพื่อให้สมดุลบัญชีมีความถูกต้อง
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box mt-4">
+                        <strong><i class="fa-solid fa-shield-halved"></i> นโยบาย PDPA และความปลอดภัยของภาพสลิป:</strong>
+                        <p class="mb-0 small mt-1">หลีกเลี่ยงการเปิดเผยรายละเอียดส่วนตัวของบุคคลที่ไม่เกี่ยวข้องลงในช่องหมายเหตุสาธารณะ และรูปภาพสลิปควรมีข้อมูลยอดโอน บัญชีผู้ส่งและผู้รับชัดเจนเพื่อการตรวจสอบที่โปร่งใส</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

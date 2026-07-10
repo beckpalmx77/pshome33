@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานระบบจัดการสัญญาผ่อนชำระค่าส่วนกลาง - PS33 Home System</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f5f7fb;
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #1e3d59 0%, #17b978 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            border-bottom: 4px solid #17b978;
+            margin-bottom: 2rem;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .nav-pills {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+        .nav-pills::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-pills::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .nav-pills .nav-link {
+            color: #1e3d59;
+            font-weight: 500;
+            border: 1px solid #dee2e6;
+            margin-right: 0.5rem;
+            background-color: white;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #1e3d59;
+            color: white;
+            border-color: #1e3d59;
+        }
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: #f1f3f9;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            background-color: #ffffff;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border-left: 5px solid #1e3d59;
+        }
+        .card-custom.add-tab {
+            border-left-color: #198754;
+        }
+        .card-custom.update-tab {
+            border-left-color: #fd7e14;
+        }
+        .card-custom.legal-tab {
+            border-left-color: #dc3545;
+        }
+        .card-header-custom {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .badge-type {
+            font-size: 0.85rem;
+            padding: 0.4em 0.8em;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .step-badge {
+            background-color: #1e3d59;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+        }
+        .info-box {
+            background-color: #eef2f7;
+            border-left: 4px solid #1e3d59;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .warning-box {
+            background-color: #fff8eb;
+            border-left: 4px solid #fd7e14;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .danger-box {
+            background-color: #fdf2f2;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .font-code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            background-color: #f1f3f9;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-banner text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2"><i class="fa-solid fa-calculator me-2"></i>คู่มือการจัดการระบบ: สัญญาผ่อนชำระค่าส่วนกลาง</h1>
+        <p class="lead mb-0">ขั้นตอนการลงทะเบียนการผ่อนชำระ การแก้ไขสัญญา และเอกสารหนังสือรับสภาพหนี้ค่าส่วนกลาง</p>
+    </div>
+</div>
+
+<div class="container-fluid px-4 px-lg-5" style="max-width: 100%;">
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-overview-link" data-bs-toggle="pill" data-bs-target="#tab-overview" type="button" role="tab"><i class="fa-solid fa-list me-1"></i> ภาพรวมและการทำงาน</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-add-link" data-bs-toggle="pill" data-bs-target="#tab-add" type="button" role="tab"><i class="fa-solid fa-file-circle-plus text-success me-1"></i> การลงทะเบียนสัญญาใหม่ (Add)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-update-link" data-bs-toggle="pill" data-bs-target="#tab-update" type="button" role="tab"><i class="fa-solid fa-pen-to-square text-warning me-1"></i> การพิมพ์ & ปรับปรุง (Update)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-legal-link" data-bs-toggle="pill" data-bs-target="#tab-legal" type="button" role="tab"><i class="fa-solid fa-file-shield text-danger me-1"></i> หนังสือรับสภาพหนี้ & ข้อกฎหมาย</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="pills-tabContent">
+        
+        <!-- Tab: Overview -->
+        <div class="tab-pane fade show active" id="tab-overview" role="tabpanel">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-scale-balanced me-2"></i>ระบบผ่อนชำระหนี้ค้างชำระค่าส่วนกลาง (Installment Management)</h4>
+                    <p class="text-muted">ใช้เมื่อลูกบ้านมียอดค้างชำระค่าส่วนกลางสะสมเป็นจำนวนมาก และเข้าสู่กระบวนการเจรจาประนอมหนี้กับนิติบุคคล โดยทำการทำสัญญาผ่อนชำระออกเป็นงวดตามเงื่อนไขที่ตกลงร่วมกัน เพื่อช่วยบรรเทาภาระทางการเงินของลูกบ้านและรักษาสมดุลกระแสเงินสดของนิติบุคคล</p>
+                    
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">1. ฟังก์ชันและปุ่มเมนูหลัก (Action Buttons)</h5>
+                    <ul>
+                        <li class="mb-2"><strong>ปุ่ม <span class="badge bg-primary">Add <i class="fa fa-plus"></i></span>:</strong> เปิดฟอร์มลงทะเบียนสัญญาผ่อนชำระใหม่ในหน้าต่างใหม่ (ส่งพารามิเตอร์เพื่อเริ่มระบุข้อมูลหนี้และจำนวนงวด)</li>
+                        <li class="mb-2"><strong>ปุ่ม <span class="badge bg-outline-success border text-success">Reload <i class="fa fa-refresh"></i></span>:</strong> ดึงข้อมูลสัญญาผ่อนชำระล่าสุดในตาราง DataTable ใหม่</li>
+                        <li class="mb-2"><strong>ปุ่ม <span class="badge bg-success">หนังสือรับสภาพหนี้ <i class="fa fa-rss"></i></span>:</strong> เปิด/ดาวน์โหลดแบบฟอร์มเอกสาร "หนังสือรับสภาพหนี้ค่าส่วนกลางหมู่บ้าน.pdf" ที่เป็นทางการ</li>
+                    </ul>
+
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">2. ตารางรายชื่อคู่สัญญา (Record List Table)</h5>
+                    <p>ตารางจะแสดงสถานะโดยรวมของการผ่อนชำระของทุกบ้านเลขที่ ได้แก่:</p>
+                    <ul>
+                        <li><strong>เงินต้นทั้งหมด (Principal Amount):</strong> หนี้สินสะสมเริ่มสัญญาประนอมหนี้</li>
+                        <li><strong>เงินดาวน์ / เงินทำสัญญา (Down Payment):</strong> ยอดชำระ ณ วันทำสัญญาก้อนแรก</li>
+                        <li><strong>จำนวนงวดสะสม:</strong> จำนวนงวดที่ต้องแบ่งผ่อนทั้งหมด (เช่น 6 งวด, 10 งวด)</li>
+                        <li><strong>จำนวนงวดที่ผ่อนชำระแล้ว:</strong> อัปเดตเมื่อมีการชำระเงินตามประวัติบิลจริง</li>
+                        <li><strong>ยอดชำระต่อรอบ (Per Period):</strong> ยอดเงินเฉลี่ยต่อเดือนที่ลูกบ้านต้องจ่ายเข้าระบบ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Add -->
+        <div class="tab-pane fade" id="tab-add" role="tabpanel">
+            <div class="card card-custom add-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-success mb-3"><i class="fa-solid fa-file-invoice-dollar me-2"></i>การลงทะเบียนสัญญาประนอมหนี้ฉบับใหม่</h4>
+                    <p class="text-muted">ผู้ดูแลระบบคีย์ลงทะเบียนเมื่อลูกบ้านผ่านกระบวนการเซ็นสัญญาประนอมหนี้แล้ว</p>
+                    
+                    <h5 class="fw-bold text-secondary mb-2">ขั้นตอนปฏิบัติในการบันทึกข้อมูล:</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">กดปุ่ม <span class="badge bg-primary">Add <i class="fa fa-plus"></i></span> เพื่อเปิดแบบฟอร์มบันทึกสัญญา</li>
+                        <li class="mb-2">ระบุ <strong>วันเวลาที่ทำสัญญา</strong> และ <strong>เลขที่ใบเอกสารสัญญาประนอมหนี้</strong></li>
+                        <li class="mb-2">กรอกหรือเลือก <strong>บ้านเลขที่ (House Number)</strong> ที่ต้องการประนอมหนี้ ระบบจะดึงชื่อลูกบ้านที่เป็นเจ้าของปัจจบันมาแสดงให้อัตโนมัติในช่องลูกหนี้</li>
+                        <li class="mb-2">กรอก <strong>จำนวนเงินต้น (Principal)</strong> ที่เป็นยอดค้างชำระทั้งหมด</li>
+                        <li class="mb-2">กรอก <strong>ยอดชำระวันทำสัญญา (Down Payment)</strong> หากมี หรือกรอก 0.00 บาท หากไม่มี</li>
+                        <li class="mb-2">กรอก <strong>จำนวนงวดที่ต้องการผ่อน (Installments)</strong> (เช่น 6, 12, 18, 24 งวด)</li>
+                        <li class="mb-2">กรอก <strong>จำนวนเงินผ่อนต่อหนึ่งงวด (Installment per Period)</strong> (ระบบจะใช้สมการ: (เงินต้น - เงินดาวน์) / จำนวนงวด เป็นหลักการคำนวณขั้นต้น)</li>
+                        <li class="mb-2">กำหนดช่องทางรับเงิน วิธีชำระเงิน และรอบวันที่ครบกำหนดชำระของทุกเดือน (เช่น ทุกวันที่ 5 ของเดือน)</li>
+                        <li class="mb-2">อัปโหลดไฟล์สแกน **ภาพเอกสารสัญญา หรือหนังสือรับสภาพหนี้ที่มีการเซ็นจริงของลูกบ้าน** เพื่อเป็นหลักฐานทางกฎหมาย</li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกสัญญา"</strong></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Update -->
+        <div class="tab-pane fade" id="tab-update" role="tabpanel">
+            <div class="card card-custom update-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-warning mb-3"><i class="fa-solid fa-print me-2"></i>การพิมพ์เอกสารใบสำคัญและการอัปเดตสัญญา (Update & Print)</h4>
+                    
+                    <h5 class="fw-bold text-secondary mb-2">1. การพิมพ์เอกสารคู่สัญญา:</h5>
+                    <ul>
+                        <li class="mb-2">ในคอลัมน์ขวาสุดของตาราง ให้กดปุ่มพิมพ์สัญญาหรือพริ้นต์ใบเสร็จ โดยจะลิงก์ส่งต่อไปยังหน้าเว็บ <span class="font-code">print_payment_voucher_pdf.php</span> เพื่อสร้างไฟล์ PDF ทรงมาตรฐานสำหรับพิมพ์ส่งมอบให้ลูกบ้านหรือเจ้าหน้าที่เก็บเป็นสำเนาบัญชีการเงิน</li>
+                    </ul>
+
+                    <h5 class="fw-bold text-secondary mb-2">2. การอัปเดต / แก้ไขข้อมูล:</h5>
+                    <ul>
+                        <li class="mb-2">กดปุ่ม <span class="badge bg-warning text-dark"><i class="fa fa-edit"></i> แก้ไข</span> ที่รายการบ้านที่ต้องการ</li>
+                        <li class="mb-2">ระบบจะดึงข้อมูลประวัติจากดาต้าเบสแล้วส่งไปยังฟอร์มแก้ไข โดยนำข้อมูลรหัส ลำดับ และการผ่อนมาให้ตรวจทาน</li>
+                        <li class="mb-2">สามารถปรับปรุงยอดชำระ งวดผ่อน หรือสถานะการอนุมัติ (Approve Status) เมื่อลูกบ้านชำระยอดงวดเสร็จเรียบร้อย</li>
+                        <li class="mb-2">กดบันทึกความเปลี่ยนแปลงทุกครั้งเพื่อรีเฟรชยอดหนี้สะสมคงเหลือ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Legal -->
+        <div class="tab-pane fade" id="tab-legal" role="tabpanel">
+            <div class="card card-custom legal-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-danger mb-3"><i class="fa-solid fa-gavel me-2"></i>คู่มือระเบียบนิติกรรมการรับสภาพหนี้ (Legal Guidelines)</h4>
+                    
+                    <div class="warning-box">
+                        <strong><i class="fa-solid fa-circle-exclamation"></i> ความสำคัญของหนังสือรับสภาพหนี้:</strong>
+                        <p class="mb-0 small mt-1">ตามกฎหมายแพ่งและพาณิชย์ การลงนามในหนังสือรับสภาพหนี้เป็นหลักฐานสำคัญที่สุดที่ทำให้ "อายุความฟ้องร้องไม่ขาดตอน" และเป็นการยืนยันสิริหนี้สินของลูกบ้านอย่างเป็นทางการ นิติบุคคลต้องให้ลูกบ้านผู้มีอำนาจหรือเจ้าของกรรมสิทธิ์บ้านเลขที่เซ็นลายมือชื่อจริง และพยานอย่างน้อย 1 คน พร้อมแนบสำเนาบัตรประชาชนประกอบ</p>
+                    </div>
+
+                    <h5 class="fw-bold text-secondary mb-2">แนวปฏิบัติที่ดีในการประนอมหนี้:</h5>
+                    <ul class="ps-3">
+                        <li class="mb-2"><strong>การอัปโหลดไฟล์:</strong> ภาพถ่ายหรือ PDF ใบสัญญาที่อัปโหลดต้องสมบูรณ์ มีลายเซ็นชัดเจน ตัวหนังสือไม่เบลอเลอะเลือน</li>
+                        <li class="mb-2"><strong>ยอดเงินคงเหลือ:</strong> ห้ามทำการปรับแก้ตัวเลขยอดหนี้เงินต้นในโปรแกรมตามอำเภอใจโดยไม่มีเอกสารใบยินยอมการลดหย่อนดอกเบี้ย/ค่าปรับที่มีมติอนุมัติจากคณะกรรมการหมู่บ้านแนบกำกับไว้</li>
+                        <li class="mb-2"><strong>การลบข้อมูล:</strong> ระบบจะเก็บประวัติการลบไว้เพื่อตรวจสอบ Audit Log ป้องกันการแก้ไขเพื่อสิริประโยชน์ส่วนตัว</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

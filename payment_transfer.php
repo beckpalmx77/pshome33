@@ -74,7 +74,10 @@ if (strlen($_SESSION['alogin']) === "") {
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between"></div>
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary"><i class="fa fa-credit-card"></i> ชำระเงินค่าส่วนกลางและแนบหลักฐานการโอน</h6>
+                                    <a href="how_to_payment_transfer.html" target="_blank" class="btn btn-sm btn-light font-weight-bold text-primary shadow-sm"><i class="fa fa-book"></i> คู่มือการใช้งาน</a>
+                                </div>
                                 <div class="card-body">
                                     <form id="transfer_form" method="POST" enctype="multipart/form-data">
 

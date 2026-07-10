@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานระบบชำระเงินค่าส่วนกลางและโอนเงิน - PS33 Home System</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f5f7fb;
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #1e3d59 0%, #17b978 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            border-bottom: 4px solid #17b978;
+            margin-bottom: 2rem;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .nav-pills {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+        .nav-pills::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-pills::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .nav-pills .nav-link {
+            color: #1e3d59;
+            font-weight: 500;
+            border: 1px solid #dee2e6;
+            margin-right: 0.5rem;
+            background-color: white;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #1e3d59;
+            color: white;
+            border-color: #1e3d59;
+        }
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: #f1f3f9;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            background-color: #ffffff;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border-left: 5px solid #1e3d59;
+        }
+        .card-custom.yearly-tab {
+            border-left-color: #198754;
+        }
+        .card-custom.monthly-tab {
+            border-left-color: #fd7e14;
+        }
+        .card-custom.upload-tab {
+            border-left-color: #0d6efd;
+        }
+        .card-header-custom {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .badge-type {
+            font-size: 0.85rem;
+            padding: 0.4em 0.8em;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .step-badge {
+            background-color: #1e3d59;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+        }
+        .info-box {
+            background-color: #eef2f7;
+            border-left: 4px solid #1e3d59;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .warning-box {
+            background-color: #fff8eb;
+            border-left: 4px solid #fd7e14;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .danger-box {
+            background-color: #fdf2f2;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .font-code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            background-color: #f1f3f9;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-banner text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2"><i class="fa-solid fa-credit-card me-2"></i>คู่มือการจัดการระบบ: หน้าจอชำระเงิน-โอนเงิน แนบ Slip</h1>
+        <p class="lead mb-0">ขั้นตอนการบันทึกรายการชำระเงินค่าส่วนกลาง การเลือกปี/งวดเดือน คำนวณเงิน และการแนบหลักฐาน</p>
+    </div>
+</div>
+
+<div class="container-fluid px-4 px-lg-5" style="max-width: 100%;">
+    
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-overview-link" data-bs-toggle="pill" data-bs-target="#tab-overview" type="button" role="tab"><i class="fa-solid fa-list me-1"></i> ภาพรวมการทำงาน</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-yearly-link" data-bs-toggle="pill" data-bs-target="#tab-yearly" type="button" role="tab"><i class="fa-solid fa-calendar-check text-success me-1"></i> ขั้นตอนชำระรายปี (Yearly)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-monthly-link" data-bs-toggle="pill" data-bs-target="#tab-monthly" type="button" role="tab"><i class="fa-solid fa-calendar-minus text-warning me-1"></i> ขั้นตอนชำระรายเดือน (Monthly)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-upload-link" data-bs-toggle="pill" data-bs-target="#tab-upload" type="button" role="tab"><i class="fa-solid fa-upload text-primary me-1"></i> อัปโหลด Slip และระบบจัดเก็บ</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-notes-link" data-bs-toggle="pill" data-bs-target="#tab-notes" type="button" role="tab"><i class="fa-solid fa-circle-question me-1"></i> คำถามที่พบบ่อย & PDPA</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="pills-tabContent">
+        
+        <!-- Tab: Overview -->
+        <div class="tab-pane fade show active" id="tab-overview" role="tabpanel">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-sliders me-2"></i>ภาพรวมหน้าจอ ชำระเงินค่าส่วนกลาง (Payment Transfer)</h4>
+                    <p class="text-muted">หน้าจอนี้สำหรับให้ลูกบ้านหรือเจ้าหน้าที่นิติบุคคลกรอกข้อมูลบันทึกธุรกรรมการชำระเงินค่าส่วนกลาง โดยรองรับการคำนวณเงินสด การโอนเงินต่างบัญชี และระบุงวดเดือนที่ต้องการชำระเงินย้อนหลังหรือล่วงหน้าได้สูงสุด 12 เดือน</p>
+                    
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">1. โหมดสิทธิ์ผู้ใช้งาน (User Modes)</h5>
+                    <ul>
+                        <li class="mb-2"><strong>สิทธิ์ลูกบ้านทั่วไป (Resident User):</strong> ระบบจะดึงข้อมูลบ้านเลขที่, ชื่อ-นามสกุล, เบอร์โทรศัพท์, พื้นที่ ตรว. และอัตราค่าส่วนกลางจากฐานข้อมูลปัจจุบันมาเติมให้อัตโนมัติ (Read-only) เพื่อความง่ายในการบันทึก</li>
+                        <li class="mb-2"><strong>สิทธิ์ผู้ดูแลระบบ (Admin User):</strong> สามารถแก้ไขเลขที่บ้าน ชื่อผู้โอน และเบอร์โทรศัพท์ด้วยตนเอง เหมาะสำหรับนิติบุคคลที่ต้องการคีย์ข้อมูลแทนลูกบ้านที่ชำระเงินด้วยเงินสดหรือนำสลิปมาส่งที่สำนักงาน</li>
+                    </ul>
+
+                    <h5 class="fw-bold text-secondary mt-4 mb-2">2. ข้อมูลการเงินโครงการ (Bank details)</h5>
+                    <p>ระบบจะดึงข้อมูลหมายเลขบัญชีธนาคาร ชื่อบัญชี และธนาคารรับโอนหลักของส่วนกลางมาแสดงในช่อง <strong>"โอนเงินเข้าบัญชี"</strong> เพื่อให้ลูกบ้านตรวจสอบความถูกต้องก่อนทำรายการโอนเงิน</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Yearly -->
+        <div class="tab-pane fade" id="tab-yearly" role="tabpanel">
+            <div class="card card-custom yearly-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-success mb-3"><i class="fa-solid fa-calendar-days me-2"></i>การบันทึกรายการชำระรายปี (Yearly Payment)</h4>
+                    <p class="text-muted">ใช้เมื่อต้องการชำระเหมาล่วงหน้าทั้งปี (12 เดือน) ซึ่งสอดคล้องกับแคมเปญส่งเสริมการขายส่วนลดของโครงการ</p>
+                    
+                    <div class="info-box">
+                        <strong><i class="fa-solid fa-gift"></i> สิทธิ์ประโยชน์การชำระรายปี:</strong>
+                        <p class="mb-0 mt-1 small">โดยทั่วไป ระบบจะทำการตั้งค่าเลือกชำระรายปีและตัวเลข 12 เดือนเป็นค่าเริ่มต้น เพื่อให้ระบบคำนวณเบี้ยส่วนกลางแบบเต็มปี หากโครงการมีส่วนลดพิเศษยอดเงินดังกล่าวจะลดหย่อนอัตโนมัติตามนโยบายสโมสร</p>
+                    </div>
+
+                    <h5 class="fw-bold text-secondary mb-2">ขั้นตอนการดำเนินการ:</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เลือกตัวเลือก <strong>"ชำระรายปี"</strong> ในช่องการชำระ</li>
+                        <li class="mb-2">ช่อง <strong>จำนวนเดือนที่ชำระ</strong> จะตั้งค่าเป็น <span class="font-code">12</span> โดยอัตโนมัติ</li>
+                        <li class="mb-2">ระบุ <strong>เริ่มงวดเดือน</strong> เป็นเดือนแรกที่เริ่มชำระ (เช่น "มกราคม") และเลือก <strong>ถึงงวดเดือน</strong> เป็นเดือนสุดท้าย (เช่น "ธันวาคม")</li>
+                        <li class="mb-2">เลือก <strong>งวดปี</strong> ที่ต้องการชำระเงิน</li>
+                        <li class="mb-2">กดคลิกเพื่อคำนวณยอดเงิน ระบบจะประมวลผลยอดเงินชำระจากพื้นที่ ตรว. คูณค่าส่วนกลางรายเดือนขึ้นมาแสดงในช่อง <strong>"จำนวนเงินชำระ"</strong></li>
+                        <li class="mb-2">เลือกวิธีการชำระเงิน (โอนเงิน หรือ เงินสด) และอัปโหลดสลิปธนาคาร</li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูล"</strong></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Monthly -->
+        <div class="tab-pane fade" id="tab-monthly" role="tabpanel">
+            <div class="card card-custom monthly-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-warning mb-3"><i class="fa-solid fa-clock-rotate-left me-2"></i>การบันทึกรายการชำระรายเดือน (Monthly Payment)</h4>
+                    <p class="text-muted">ใช้เมื่อต้องการชำระเงินเฉพาะบางงวดเดือน เช่น ชำระครั้งละ 1 เดือน, 3 เดือน หรือ 6 เดือน</p>
+
+                    <h5 class="fw-bold text-secondary mb-2">ขั้นตอนการดำเนินการ:</h5>
+                    <ol class="ps-3">
+                        <li class="mb-2">เลือกตัวเลือก <strong>"ชำระรายเดือน"</strong></li>
+                        <li class="mb-2">ป้อนจำนวนเดือนที่ประสงค์ชำระเงินลงในช่อง <strong>"จำนวนเดือนที่ชำระ"</strong> (ตัวเลขอยู่ระหว่าง 1 ถึง 11 เดือน)</li>
+                        <li class="mb-2">เลือก <strong>เริ่มงวดเดือน</strong> และ <strong>ถึงงวดเดือน</strong> ให้สอดคล้องกับจำนวนเดือนที่ต้องการบันทึกชำระ (เช่น ระบุชำระ 3 เดือน เริ่มงวดเดือน "มกราคม" ถึงงวดเดือน "มีนาคม")</li>
+                        <li class="mb-2">กดคลิกเพื่อให้ระบบประมวลผลคำนวณยอดเงินรวมให้อัตโนมัติ</li>
+                        <li class="mb-2">ป้อนยอดเงินชำระสุทธิ ตรวจทานชื่อผู้โอนและเบอร์โทรศัพท์</li>
+                        <li class="mb-2">กดปุ่ม <strong>"บันทึกข้อมูล"</strong></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Upload -->
+        <div class="tab-pane fade" id="tab-upload" role="tabpanel">
+            <div class="card card-custom upload-tab border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-image me-2"></i>การจัดการไฟล์ภาพสลิปและการรองรับไฟล์รูปแบบพิเศษ (HEIC/HEIF)</h4>
+                    <p class="text-muted">ระบบมีโมดูลการประมวลผลไฟล์ภาพที่ทันสมัยเพื่ออำนวยความสะดวกให้ผู้ใช้อัปโหลดสลิปจากสมาร์ทโฟนได้โดยตรง</p>
+
+                    <div class="info-box">
+                        <strong><i class="fa-solid fa-mobile-screen-button"></i> รองรับสลิปจากระบบ iOS (iPhone / iPad):</strong>
+                        <p class="mb-0 mt-1 small">กล้องถ่ายภาพของระบบ iPhone รุ่นใหม่มักบันทึกไฟล์เป็นสกุล <span class="font-code">.heic</span> หรือ <span class="font-code">.heif</span> ซึ่งบราวเซอร์ทั่วไปไม่สามารถเปิดแสดงผลได้โดยตรง ระบบนี้ได้รับการติดตั้งไลบรารี <span class="font-code">heic2any</span> พิเศษเพื่อแปลงภาพเหล่านี้เป็น <span class="font-code">JPEG</span> บนหน้าเว็บให้ทันทีโดยอัตโนมัติก่อนส่งไปยังเซิร์ฟเวอร์</p>
+                    </div>
+
+                    <h5 class="fw-bold text-secondary mb-2">ข้อแนะนำในการแนบหลักฐาน:</h5>
+                    <ul>
+                        <li class="mb-2"><strong>ความละเอียดภาพ:</strong> ภาพถ่ายควรชัดเจนและเห็นวันเวลาทำรายการ จำนวนเงินโอน และหมายเลขอ้างอิงทำรายการ เพื่อความรวดเร็วในการยืนยันยอดเงินของเจ้าหน้าที่นิติบุคคล</li>
+                        <li class="mb-2"><strong>พรีวิวภาพตัวอย่าง:</strong> ทันทีที่เลือกไฟล์ภาพ ระบบจะจำลองตัวอย่างสลิปขึ้นมาด้านล่างตัวเลือกอัปโหลด เพื่อให้ตรวจสอบก่อนกดส่งฟอร์ม</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Notes -->
+        <div class="tab-pane fade" id="tab-notes" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-circle-exclamation me-2"></i>ข้อพึงระวังและคำถามที่พบบ่อย (Reconciliation & Security)</h4>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHead1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <strong>Q: กรณีโอนชำระเงินผิด หรือยอดเงินผิดพลาด ต้องจัดการอย่างไร?</strong>
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    A: เมื่อบันทึกรายการแล้ว ข้อมูลจะเข้าสู่หน้าจอรอตรวจสอบ นิติบุคคลสามารถทำการแก้ไขยอดเงิน หรือยกเลิกเพื่อส่งเรื่องคืนเงินให้ลูกบ้านได้โดยผู้ดูแลระบบ และเงินจำนวนดังกล่าวจะไม่สมบูรณ์จนกว่าสถานะจะเปลี่ยนเป็นอนุมัติ
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHead2">
+                                <button class="accordion-button class-collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <strong>Q: ช่อง "รับเงินสด" ด้านขวาล่างใช้เมื่อใด?</strong>
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    A: ช่อง <strong>"รับเงินสด"</strong> จะเปิดให้กรอกก็ต่อเมื่อเลือกวิธีการชำระเงินเป็น "เงินสด" ใช้สำหรับให้โปรแกรมเมอร์คำนวณเงินทอนแก่ลูกบ้านที่จ่ายเงินหน้ารวมกับนิติบุคคล โดยระบบจะหักยอดเงินสดกับยอดค่าส่วนกลางและแสดงเงินทอนให้ตรวจสอบ
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHead3">
+                                <button class="accordion-button class-collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <strong>Q: การชำระเงินล่วงหน้าต่างปี (เช่น ข้ามปีถัดไป) สามารถบันทึกอย่างไร?</strong>
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    A: ในตัวเลือก <strong>"งวดปี"</strong> จะมีรายชื่อปีปัจจุบัน ปีล่วงหน้า 2 ปี และปีในอดีตย้อนหลัง 20 ปีให้เลือก นิติบุคคลหรือลูกบ้านสามารถคลิกเลือกปีงบประมาณถัดไปเพื่อชำระล่วงหน้าก่อนสิ้นปีได้ตามเงื่อนไขสะสม
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box mt-4">
+                        <strong><i class="fa-solid fa-user-lock"></i> นโยบายความคุ้มครองข้อมูลส่วนบุคคล (PDPA):</strong>
+                        <p class="mb-0 small mt-1">ไฟล์สลิปหลักฐานการชำระเงินจะถูกเข้ารหัสเก็บรักษาไว้ในโฟลเดอร์ระบบที่จำกัดสิทธิ์การเข้าถึง และแสดงผลเฉพาะเจ้าของบ้านเลขที่นั้น ๆ และผู้ดูแลระบบเท่านั้น เพื่อความปลอดภัยสูงสุดทางข้อมูลสิริสิทธิ์</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

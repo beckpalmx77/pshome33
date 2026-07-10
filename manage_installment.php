@@ -37,6 +37,8 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                         <div class="col-lg-12">
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary"><i class="fa fa-calculator"></i> รายการสัญญาผ่อนชำระค่าส่วนกลาง (Installment Management)</h6>
+                                    <a href="how_to_installment.html" target="_blank" class="btn btn-sm btn-light font-weight-bold text-primary shadow-sm"><i class="fa fa-book"></i> คู่มือการใช้งาน</a>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -72,8 +74,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                                     <th>จำนวนงวด</th>
                                                     <th>จำนวนงวดที่ผ่อนชำระ</th>
                                                     <th>จำนวนผ่อนแต่ละงวด</th>
-                                                    <th>Action</th>
-                                                    <th>Action</th>
+                                                    <th>แก้ไข</th>
+                                                    <th>พิมพ์</th>
+                                                    <th>ลบรายการ</th>
                                                 </tr>
                                                 </thead>
                                             </table>
@@ -211,6 +214,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                     {data: 'installment_paid_period', className: 'text-right'}, // จัดชิดขวา
                     {data: 'installment_per_period', className: 'text-right'}, // จัดชิดขวา
                     {data: 'update'},
+                    {data: 'print'},
                     {data: 'delete'}
                 ]
             });
@@ -277,7 +281,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
 
                             let main_menu = document.getElementById("main_menu").value;
                             let sub_menu = document.getElementById("sub_menu").value;
-                            let url = "manage_installment_data?title=จัดซื้อ-จัดจ้าง(Purchase Order)"
+                            let url = "manage_installment_data?title=จัดการผ่อนชำระค่าส่วนกลาง(Manage Installment)"
                                 + '&main_menu=' + main_menu + '&sub_menu=' + sub_menu
                                 + '&id=' + id
                                 + '&doc_date=' + doc_date
@@ -292,7 +296,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['installment_id']) == 
                                 + '&down_payment=' + down_payment
                                 + '&payment_method=' + payment_method
                                 + '&bank_no=' + bank_no
-                                + '&payment_due_day_period' + payment_due_day_period
+                                + '&payment_due_day_period=' + payment_due_day_period
                                 + '&approve_status=' + approve_status
                                 + '&status=' + status
                                 + '&action=UPDATE';

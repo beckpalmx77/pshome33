@@ -27,6 +27,20 @@
             border-radius: 0 0 12px 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
+        .nav-pills {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+        .nav-pills::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-pills::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
         .nav-pills .nav-link {
             color: #1e3d59;
             font-weight: 500;
@@ -34,6 +48,7 @@
             margin-right: 0.5rem;
             background-color: white;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
         .nav-pills .nav-link.active {
             background-color: #1e3d59;
@@ -177,7 +192,7 @@
     </div>
 </div>
 
-<div class="container" style="max-width: 1150px;">
+<div class="container-fluid px-4 px-lg-5" style="max-width: 100%;">
     
     <!-- Navigation Tabs -->
     <ul class="nav nav-pills justify-content-center mb-4" id="pills-tab" role="tablist">
@@ -304,7 +319,7 @@
                     <ul class="checklist-list mb-3">
                         <li><input type="checkbox" id="k1_1"> <label for="k1_1">ตรวจสอบเอกสารสำเนาหนังสือสัญญาซื้อขาย (ทด. 13) หรือโฉนดที่ดินหน้า-หลัง</label></li>
                         <li><input type="checkbox" id="k1_2"> <label for="k1_2">ตรวจสอบว่าไม่มีหนี้สินค้างชำระค่าส่วนกลางหรือค่าจัดการโครงการอื่นๆ</label></li>
-                        <li><input type="checkbox" id="k1_3"> <label for="k1_3">เรียกคืนคีย์การ์ดผ่านเข้า-ออกหมู่บ้าน และยกเลิกสิทธิ์คีย์การ์ดเดิม</label></li>
+                        <li><input type="checkbox" id="k1_3"> <label for="k1_3">ยกเลิกทะเบียนรถ เข้า-ออกหมู่บ้าน ในระบบไม้กั้นเข้า-ออก หมู่บ้าน</label></li>
                         <li><input type="checkbox" id="k1_4"> <label for="k1_4">ขอข้อมูลบัตรประชาชน เบอร์โทรศัพท์ และข้อมูลยานพาหนะของเจ้าของใหม่</label></li>
                     </ul>
 
@@ -399,7 +414,7 @@
                     <ul class="checklist-list mb-3">
                         <li><input type="checkbox" id="k3_1"> <label for="k3_1">สัญญาเช่าชุดใหม่ของผู้เช่าคนใหม่ หรือหนังสือยืนยันการเปลี่ยนสัญญาเช่าจากเจ้าของบ้าน</label></li>
                         <li><input type="checkbox" id="k3_2"> <label for="k3_2">ตรวจสอบว่าไม่มีทรัพย์สินของโครงการเสียหาย และเคลียร์ค่าส่วนกลางค้างชำระที่ผู้เช่าเดิมค้างอยู่ (ถ้ามี) จากเงินค้ำประกัน</label></li>
-                        <li><input type="checkbox" id="k3_3"> <label for="k3_3">เรียกคืนคีย์การ์ดผ่านเข้า-ออกและของใช้อื่นๆ จากผู้เช่าเดิม</label></li>
+                        <li><input type="checkbox" id="k3_3"> <label for="k3_3">ยกเลิกทะเบียนรถ เข้า-ออกหมู่บ้าน ในระบบไม้กั้นเข้า-ออก หมู่บ้าน</label></li>
                         <li><input type="checkbox" id="k3_4"> <label for="k3_4">จดรายละเอียดชื่อ เบอร์โทรติดต่อ และหมายเลขทะเบียนรถยนต์ของผู้เช่าใหม่</label></li>
                     </ul>
 
@@ -453,7 +468,7 @@
                     <ul class="checklist-list mb-3">
                         <li><input type="checkbox" id="k4_1"> <label for="k4_1">ตรวจสอบเอกสารสำเนาสัญญา/สิทธิ์ครอบครองบ้านเลขที่หลังใหม่ (โอนกรรมสิทธิ์หรือสัญญาเช่า)</label></li>
                         <li><input type="checkbox" id="k4_2"> <label for="k4_2">ตรวจสอบหนี้ค้างชำระของบ้านเลขที่หลังเดิม และจัดแจงชำระเงินหรือปรับปรุงยอดให้ถูกต้องก่อนย้ายออก</label></li>
-                        <li><input type="checkbox" id="k4_3"> <label for="k4_3">เรียกคืนคีย์การ์ดเดิม (เพื่อนำไปลงทะเบียนอนุญาตเข้าพิกัดของบ้านหลังใหม่)</label></li>
+                        <li><input type="checkbox" id="k4_3"> <label for="k4_3">ยกเลิกหมายเลขทะเบียนรถ บ้านหลังเดิม เพื่อให้สิทธิ์บ้านหลังใหม่ ในระบบไม้กั้น เข้า-ออก หมู่บ้าน</label></li>
                     </ul>
 
                     <h5 class="fw-bold mt-4 mb-2 text-dark"><i class="fa-solid fa-arrow-pointer me-2"></i>ขั้นตอนการดำเนินงานในหน้าจอระบบ</h5>
@@ -476,7 +491,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h4 class="fw-bold text-primary mb-3"><i class="fa-solid fa-terminal me-2"></i>ข้อมูลสำหรับโปรแกรมเมอร์และการดำเนินการในระบบฐานข้อมูล (Developer Reference)</h4>
-                    <p class="text-muted">ด้านล่างคือรายละเอียดการทำงานในฐานข้อมูล SQL และตัวควบคุม PHP Controller สำหรับการดำเนินงานตามแบบโครงสร้างความสัมพันธ์ในระบบ</p>
+                    <p class="text-muted">ด้านล่างคือรายละเอียดการทำงานในฐานข้อมูล SQL สำหรับการดำเนินงานตามแบบโครงสร้างความสัมพันธ์ในระบบ</p>
                     
                     <h5 class="fw-bold text-secondary mt-4 mb-2">1. โครงสร้างตารางและฟิลด์ที่เกี่ยวข้อง (Database Schema)</h5>
                     <ul>

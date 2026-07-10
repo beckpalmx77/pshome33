@@ -42,6 +42,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                             <div class="card mb-12">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">ความเคลื่อนไหวทางบัญชีโครงการ (Ledger Statement)</h6>
+                                    <a href="how_to_bank_transaction.html" target="_blank" class="btn btn-sm btn-light font-weight-bold text-primary shadow-sm"><i class="fa fa-book"></i> คู่มือการใช้งาน</a>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
