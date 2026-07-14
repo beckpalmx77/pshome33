@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบโหวตประชามติลูกบ้าน - PS33 Home System</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container-main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            background-color: #ffffff;
+        }
+        .header-section {
+            background-color: #2e5b88;
+            color: white;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+        }
+        .header-section h2 {
+            font-weight: 600;
+            margin: 0;
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-link {
+            color: #495057;
+            font-weight: 400;
+            border: none;
+            padding: 12px 20px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #2e5b88;
+            background-color: #f1f3f5;
+            border-radius: 8px 8px 0 0;
+        }
+        .nav-link.active {
+            color: #2e5b88 !important;
+            font-weight: 600;
+            border-bottom: 3px solid #2e5b88 !important;
+            background-color: transparent !important;
+        }
+        .section-title {
+            color: #2e5b88;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #2e5b88;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #2e5b88;
+        }
+        .note-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #2e5b88;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #1e3d59;
+        }
+        .code-inline {
+            background-color: #f1f2f6;
+            color: #c0392b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .option-input-group {
+            margin-bottom: 10px;
+        }
+        .chart-bar-container {
+            background-color: #e9ecef;
+            border-radius: 8px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .chart-bar-fill {
+            background-color: #2e5b88;
+            height: 100%;
+            border-radius: 8px 0 0 8px;
+            transition: width 0.5s ease-in-out;
+        }
+        .chart-percent-text {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #495057;
+        }
+        .choice-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .choice-card:hover {
+            background-color: #f8f9fa;
+            border-color: #b0c4de;
+        }
+        .choice-card input[type="radio"]:checked + label {
+            font-weight: 600;
+        }
+        .choice-card.selected {
+            background-color: #e8f4fd;
+            border-color: #2e5b88;
+        }
+        .badge-vote-count {
+            background-color: #e9ecef;
+            color: #495057;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container container-main">
+    <div class="card">
+        <!-- Header -->
+        <div class="header-section text-center text-sm-start d-sm-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="fas fa-poll"></i> ระบบโหวตประชามติ (Community Voting System)</h2>
+                <p class="mb-0 mt-2 opacity-75">จำลองการตั้งหัวข้อโหวต จำกัดสิทธิ์ 1 โหวตต่อ 1 บ้านเลขที่ พร้อมรายงานผลแบบกราฟ</p>
+            </div>
+            <div class="mt-3 mt-sm-0">
+                <span class="badge bg-light text-dark py-2 px-3 border"><i class="fas fa-home"></i> PS33 System Prototype</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="card-header bg-white border-0 pt-3 px-4">
+            <ul class="nav nav-tabs card-header-tabs" id="votingTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="vote-tab" data-bs-toggle="tab" data-bs-target="#vote-content" type="button" role="tab" aria-controls="vote-content" aria-selected="true">
+                        <i class="fas fa-vote-yea"></i> หน้าจอลงคะแนน (Voter)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="results-tab" data-bs-toggle="tab" data-bs-target="#results-content" type="button" role="tab" aria-controls="results-content" aria-selected="false" onclick="renderCharts()">
+                        <i class="fas fa-chart-bar"></i> ผลการโหวตและกราฟ
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="admin-tab" href="vote_setup.html">
+                        <i class="fas fa-cog"></i> ตั้งหัวข้อ & จัดการระบบ (Admin)
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs-content" type="button" role="tab" aria-controls="logs-content" aria-selected="false" onclick="renderLogs()">
+                        <i class="fas fa-history"></i> ประวัติการโหวต
+                    </button>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <div class="tab-content" id="votingTabContent">
+                
+                <!-- 1. Voter Tab Content -->
+                <div class="tab-pane fade show active" id="vote-content" role="tabpanel" aria-labelledby="vote-tab">
+                    <h4 class="section-title"><i class="fas fa-person-booth"></i> ฟอร์มลงคะแนนเสียงสำหรับลูกบ้าน</h4>
+                    
+                    <div id="no-active-topics-alert" class="alert alert-warning d-none">
+                        <i class="fas fa-exclamation-circle"></i> ขณะนี้ยังไม่มีหัวข้อโหวตเปิดใช้งาน กรุณาไปเพิ่มหัวข้อโหวตในแท็บ <strong>"ตั้งหัวข้อ & จัดการระบบ (Admin)"</strong> ก่อน
+                    </div>
+
+                    <form id="voteForm" onsubmit="submitVote(event)">
+                        <!-- Step 1: Select Topic -->
+                        <div class="mb-4">
+                            <label for="voteTopicSelect" class="form-label font-weight-bold"><strong>1. เลือกหัวข้อที่ต้องการโหวต:</strong></label>
+                            <select class="form-select form-select-lg" id="voteTopicSelect" required onchange="onTopicSelectChanged()">
+                                <!-- Options populated by JS -->
+                            </select>
+                            <div class="form-text text-muted mt-1" id="topicDescText"></div>
+                        </div>
+
+                        <!-- Step 2: Input House Number -->
+                        <div class="mb-4">
+                            <label for="houseNumberInput" class="form-label"><strong>2. กรอกบ้านเลขที่ของท่าน:</strong></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home text-muted"></i></span>
+                                <input type="text" class="form-control form-control-lg" id="houseNumberInput" placeholder="ตัวอย่าง: 99/123 หรือ 99/9" required>
+                            </div>
+                            <div class="form-text text-danger mt-1">
+                                * จำกัดสิทธิ์ 1 บ้านเลขที่ สามารถส่งคะแนนโหวตได้เพียง 1 ครั้งต่อ 1 หัวข้อเท่านั้น
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Choose Option -->
+                        <div class="mb-4">
+                            <label class="form-label"><strong>3. เลือกคำตอบ / ตัวเลือกที่ต้องการโหวต:</strong></label>
+                            <div id="voteOptionsList">
+                                <!-- Dynamic Options Populated by JS -->
+                            </div>
+                            <div class="invalid-feedback d-block" id="voteOptionError" style="display:none;"></div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg" style="background-color: #2e5b88; border-color: #2e5b88;">
+                                <i class="fas fa-paper-plane me-2"></i> ส่งคะแนนโหวต
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. Results & Charts Tab Content -->
+                <div class="tab-pane fade" id="results-content" role="tabpanel" aria-labelledby="results-tab">
+                    <h4 class="section-title"><i class="fas fa-chart-pie"></i> รายงานสรุปผลคะแนนและกราฟแท่ง</h4>
+                    
+                    <div class="mb-4">
+                        <label for="chartTopicSelect" class="form-label"><strong>เลือกหัวข้อโหวตเพื่อดูรายงานผล:</strong></label>
+                        <select class="form-select form-select-lg" id="chartTopicSelect" onchange="renderCharts()">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+
+                    <div class="card border p-4 bg-light">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0" id="chartTitle">หัวข้อโหวต: -</h5>
+                            <span class="badge bg-secondary p-2" id="chartTotalVotes">จำนวนผู้โหวตทั้งหมด: 0 บ้านเลขที่</span>
+                        </div>
+                        <p class="text-muted small" id="chartDesc">-</p>
+                        
+                        <hr>
+
+                        <div id="chartResultsArea">
+                            <!-- Dynamic charts generated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Admin Tab Content -->
+                <div class="tab-pane fade" id="admin-content" role="tabpanel" aria-labelledby="admin-tab">
+                    <h4 class="section-title"><i class="fas fa-tools"></i> ส่วนควบคุมและสร้างหัวข้อโหวต (สำหรับนิติบุคคล)</h4>
+                    
+                    <div class="row">
+                        <!-- Create New Topic Form -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card border p-4">
+                                <h5 class="card-title text-primary mb-3"><i class="fas fa-plus-circle"></i> สร้างหัวข้อโหวตใหม่</h5>
+                                <form id="createTopicForm" onsubmit="createTopic(event)">
+                                    <div class="mb-3">
+                                        <label for="newTopicTitle" class="form-label">หัวข้อการโหวต/ประชามติ:</label>
+                                        <input type="text" class="form-control" id="newTopicTitle" placeholder="เช่น การจ้างงานปรับปรุงกล้องวงจรปิด" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newTopicDesc" class="form-label">รายละเอียด / คำอธิบายเพิ่มเติม:</label>
+                                        <textarea class="form-control" id="newTopicDesc" rows="2" placeholder="อธิบายเงื่อนไขหรือข้อมูลประกอบการตัดสินใจ"></textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label d-flex justify-content-between align-items-center">
+                                            <span>รายการตัวเลือกการโหวต (ไม่จำกัด):</span>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addOptionInput()">
+                                                <i class="fas fa-plus"></i> เพิ่มตัวเลือก
+                                            </button>
+                                        </label>
+                                        
+                                        <div id="newTopicOptionsContainer">
+                                            <!-- Dynamic Option inputs -->
+                                            <div class="input-group option-input-group">
+                                                <input type="text" class="form-control option-input-field" placeholder="ตัวเลือกที่ 1" required>
+                                                <button class="btn btn-outline-danger" type="button" onclick="removeOptionInput(this)"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                            <div class="input-group option-input-group">
+                                                <input type="text" class="form-control option-input-field" placeholder="ตัวเลือกที่ 2" required>
+                                                <button class="btn btn-outline-danger" type="button" onclick="removeOptionInput(this)"><i class="fas fa-trash"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid mt-4">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-save me-1"></i> บันทึกและเปิดโหวต
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Manage Existing Topics -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card border p-4">
+                                <h5 class="card-title text-danger mb-3"><i class="fas fa-database"></i> จัดการฐานข้อมูลและข้อมูลจำลอง</h5>
+                                
+                                <div class="mb-3">
+                                    <h6>ข้อมูลตัวอย่างสำหรับการทดสอบ (Demo Helper):</h6>
+                                    <p class="text-muted small">ระบบจะจำลองหัวข้อ และประวัติการโหวต 20 บ้านเลขที่ เพื่อให้ท่านทดสอบดูการแสดงผลของกราฟแท่งและสถิติได้ในทันที</p>
+                                    <button class="btn btn-outline-primary w-100 mb-2" onclick="loadSampleData()">
+                                        <i class="fas fa-magic"></i> โหลดข้อมูลตัวอย่างเข้าระบบ
+                                    </button>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6>การล้างข้อมูลทั้งหมด:</h6>
+                                    <p class="text-muted small text-danger">* การกดปุ่มนี้จะลบหัวข้อโหวต ประวัติการลงคะแนนทั้งหมดออกจากบราวเซอร์ (LocalStorage)</p>
+                                    <button class="btn btn-danger w-100" onclick="clearAllData()">
+                                        <i class="fas fa-trash-alt"></i> ลบข้อมูลทั้งหมด (Reset System)
+                                    </button>
+                                </div>
+
+                                <hr>
+
+                                <h5>หัวข้อโหวตปัจจุบันทั้งหมดในระบบ</h5>
+                                <div id="adminTopicsList" class="list-group mt-2">
+                                    <!-- Dynamic list populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Voting Logs Tab Content -->
+                <div class="tab-pane fade" id="logs-content" role="tabpanel" aria-labelledby="logs-tab">
+                    <h4 class="section-title"><i class="fas fa-history"></i> ประวัติการโหวตทั้งหมด (Audit Log)</h4>
+                    <p class="text-muted">ตารางแสดงรายการโหวตเพื่อการตรวจสอบการโปร่งใส (ตรวจสอบจากบ้านเลขที่และตัวเลือกที่เลือก)</p>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 10%;">ลำดับ</th>
+                                    <th style="width: 25%;">วัน-เวลาที่โหวต</th>
+                                    <th style="width: 30%;">หัวข้อการโหวต</th>
+                                    <th style="width: 15%;" class="text-center">บ้านเลขที่</th>
+                                    <th style="width: 20%;">ตัวเลือกที่โหวต</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Data rows generated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="card-footer text-center bg-white border-0 py-3">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal สำหรับแจ้งเตือนความผิดพลาด/ความสำเร็จ -->
+<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="alertModalHeader">
+                <h5 class="modal-title" id="alertModalLabel">แจ้งเตือนระบบ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="alertModalBody">
+                ข้อความแจ้งเตือน...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ตกลง</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // --- โครงสร้างฐานข้อมูลจำลอง (LocalStorage) ---
+    // key: 'ps33_voting_topics' -> array of {id, title, desc, options: []}
+    // key: 'ps33_voting_records' -> array of {id, topicId, houseNumber, optionId, votedAt}
+
+    // ข้อมูลหัวข้อเริ่มต้นหากระบบว่างเปล่า
+    const DEFAULT_TOPICS = [
+        {
+            id: 1,
+            title: "ปรับปรุงและติดตั้งอุปกรณ์สนามเด็กเล่นในสวนสาธารณะส่วนกลาง",
+            desc: "หัวข้อสอบถามความคิดเห็นเกี่ยวกับการจัดสรรงบประมาณในการปรับปรุงสวนหย่อมและพื้นที่สำหรับสันทนาการของเด็กๆ ในหมู่บ้าน PS33 ประจำปีงบประมาณ 2569",
+            options: [
+                { id: 101, text: "เห็นชอบ - จัดซื้อเครื่องเล่นใหม่เพิ่มเติม (สไลเดอร์, ชิงช้า)" },
+                { id: 102, text: "เห็นชอบ - ปรับปรุงสวนหย่อม ปลูกหญ้าและต้นไม้ใหญ่ให้ร่มรื่น" },
+                { id: 103, text: "เห็นชอบ - เทพื้นยางกันกระแทกเพื่อความปลอดภัยของเด็กๆ" },
+                { id: 104, text: "ไม่เห็นชอบ - ควรนำงบประมาณไปใช้อย่างอื่นที่เร่งด่วนกว่า" }
+            ]
+        },
+        {
+            id: 2,
+            title: "กำหนดเวลาเปิด-ปิด ประตูโครงการฝั่งทิศเหนือ (เชื่อมทางออกซอยหลัก)",
+            desc: "เนื่องจากปัจจุบันมีความต้องการใช้งานที่แตกต่างกัน นิติบุคคลจึงขอรับฟังประชามติในการกำหนดเวลาเพื่อความปลอดภัยและการเดินทางที่สะดวกของลูกบ้าน",
+            options: [
+                { id: 201, text: "เปิดให้บริการตลอด 24 ชั่วโมงตามเดิม" },
+                { id: 202, text: "เปิดเฉพาะช่วงเวลาเร่งด่วน 06:00 - 09:00 น. และ 16:00 - 20:00 น." },
+                { id: 203, text: "เปิดตั้งแต่ 05:00 - 22:00 น. นอกเวลาต้องอ้อมไปใช้ประตูหลัก" },
+                { id: 204, text: "ปิดถาวรและเปิดใช้เฉพาะประตูทางเข้าหลักเพื่อความปลอดภัยสูงสุด" }
+            ]
+        }
+    ];
+
+    // โหลดหรือกำหนดข้อมูลพื้นฐานเริ่มต้น
+    function initDatabase() {
+        if (!localStorage.getItem('ps33_voting_topics')) {
+            localStorage.setItem('ps33_voting_topics', JSON.stringify(DEFAULT_TOPICS));
+        }
+        if (!localStorage.getItem('ps33_voting_records')) {
+            localStorage.setItem('ps33_voting_records', JSON.stringify([]));
+        }
+    }
+
+    // ดึงหัวข้อทั้งหมด
+    function getTopics() {
+        return JSON.parse(localStorage.getItem('ps33_voting_topics')) || [];
+    }
+
+    // บันทึกหัวข้อใหม่
+    function saveTopics(topics) {
+        localStorage.setItem('ps33_voting_topics', JSON.stringify(topics));
+    }
+
+    // ดึงประวัติโหวตทั้งหมด
+    function getRecords() {
+        return JSON.parse(localStorage.getItem('ps33_voting_records')) || [];
+    }
+
+    // บันทึกประวัติโหวต
+    function saveRecords(records) {
+        localStorage.setItem('ps33_voting_records', JSON.stringify(records));
+    }
+
+    // แสดงโมดอลข้อความแจ้งเตือน
+    function showAlert(title, message, isSuccess = false) {
+        const modalHeader = document.getElementById('alertModalHeader');
+        const modalLabel = document.getElementById('alertModalLabel');
+        const modalBody = document.getElementById('alertModalBody');
+        
+        modalLabel.textContent = title;
+        modalBody.innerHTML = message;
+
+        if (isSuccess) {
+            modalHeader.className = "modal-header bg-success text-white";
+        } else {
+            modalHeader.className = "modal-header bg-danger text-white";
+        }
+
+        const myModal = new bootstrap.Modal(document.getElementById('alertModal'));
+        myModal.show();
+    }
+
+    // --- สิ้นสุดการทำงานเกี่ยวกับฐานข้อมูล ---
+
+    // เมื่อเริ่มโหลดหน้าจอ
+    document.addEventListener("DOMContentLoaded", () => {
+        initDatabase();
+        populateTopicSelects();
+        onTopicSelectChanged();
+        renderAdminTopics();
+    });
+
+    // แสดงตัวเลือกใน Dropdown ของผู้โหวตและผลโหวต
+    function populateTopicSelects() {
+        const topics = getTopics();
+        const voteSelect = document.getElementById('voteTopicSelect');
+        const chartSelect = document.getElementById('chartTopicSelect');
+
+        voteSelect.innerHTML = "";
+        chartSelect.innerHTML = "";
+
+        if (topics.length === 0) {
+            document.getElementById('no-active-topics-alert').classList.remove('d-none');
+            document.getElementById('voteForm').classList.add('d-none');
+            
+            const opt = document.createElement('option');
+            opt.value = "";
+            opt.textContent = "-- ไม่มีหัวข้อโหวต --";
+            voteSelect.appendChild(opt);
+            
+            const chartOpt = document.createElement('option');
+            chartOpt.value = "";
+            chartOpt.textContent = "-- ไม่มีหัวข้อโหวต --";
+            chartSelect.appendChild(chartOpt);
+            return;
+        }
+
+        document.getElementById('no-active-topics-alert').classList.add('d-none');
+        document.getElementById('voteForm').classList.remove('d-none');
+
+        topics.forEach(topic => {
+            const opt1 = document.createElement('option');
+            opt1.value = topic.id;
+            opt1.textContent = topic.title;
+            voteSelect.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = topic.id;
+            opt2.textContent = topic.title;
+            chartSelect.appendChild(opt2);
+        });
+    }
+
+    // เมื่อคลิกเปลี่ยนหัวข้อโหวตในหน้า Voter
+    function onTopicSelectChanged() {
+        const select = document.getElementById('voteTopicSelect');
+        const topicId = parseInt(select.value);
+        if (!topicId) return;
+
+        const topics = getTopics();
+        const selectedTopic = topics.find(t => t.id === topicId);
+        
+        if (!selectedTopic) return;
+
+        // อัปเดตคำอธิบายหัวข้อ
+        document.getElementById('topicDescText').innerHTML = `<i class="fas fa-info-circle"></i> รายละเอียด: ${selectedTopic.desc || 'ไม่มีรายละเอียดเพิ่มเติม'}`;
+
+        // โหลดตัวเลือกคำตอบ
+        const optionsListContainer = document.getElementById('voteOptionsList');
+        optionsListContainer.innerHTML = "";
+
+        selectedTopic.options.forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = "choice-card";
+            card.id = `card-opt-${opt.id}`;
+            card.onclick = () => selectChoiceCard(opt.id);
+
+            card.innerHTML = `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="voteOption" id="opt-${opt.id}" value="${opt.id}" required>
+                    <label class="form-check-label w-100" for="opt-${opt.id}">
+                        ${opt.text}
+                    </label>
+                </div>
+            `;
+            optionsListContainer.appendChild(card);
+        });
+    }
+
+    // ฟังก์ชันในการทำให้ Card ตัวเลือกโหวตดูสวยงามเวลาคลิกเลือก
+    function selectChoiceCard(optId) {
+        // ยกเลิก selected ทุกอันก่อน
+        const cards = document.querySelectorAll('#voteOptionsList .choice-card');
+        cards.forEach(c => c.classList.remove('selected'));
+
+        // ใส่ selected ให้ card ปัจจุบัน
+        const activeCard = document.getElementById(`card-opt-${optId}`);
+        if (activeCard) {
+            activeCard.classList.add('selected');
+        }
+
+        // ติ๊ก input radio ข้างในด้วย
+        const radio = document.getElementById(`opt-${optId}`);
+        if (radio) {
+            radio.checked = true;
+        }
+    }
+
+    // --- การส่งคะแนนโหวต (Submit Vote) ---
+    function submitVote(e) {
+        e.preventDefault();
+        
+        const topicSelect = document.getElementById('voteTopicSelect');
+        const topicId = parseInt(topicSelect.value);
+        
+        // รับค่าและกรองช่องว่างของบ้านเลขที่ให้เรียบร้อย (Data Normalization)
+        let houseNumber = document.getElementById('houseNumberInput').value.trim();
+        // แปลงรูปแบบเช่น ปรับภาษาไทย/อังกฤษ หรือลบช่องว่างภายใน เพื่อความแม่นยำ
+        houseNumber = houseNumber.replace(/\s+/g, ''); 
+
+        const selectedRadio = document.querySelector('input[name="voteOption"]:checked');
+        
+        if (!topicId) {
+            showAlert('ข้อผิดพลาด', 'กรุณาเลือกหัวข้อโหวต', false);
+            return;
+        }
+        if (!houseNumber) {
+            showAlert('ข้อผิดพลาด', 'กรุณากรอกบ้านเลขที่', false);
+            return;
+        }
+        if (!selectedRadio) {
+            showAlert('ข้อผิดพลาด', 'กรุณาเลือกคำตอบ / ตัวเลือกการโหวต', false);
+            return;
+        }
+
+        const optionId = parseInt(selectedRadio.value);
+        const records = getRecords();
+
+        // ตรวจสอบความซ้ำซ้อน: 1 บ้านเลขที่ ต่อ 1 หัวข้อโหวต
+        const alreadyVoted = records.find(r => r.topicId === topicId && r.houseNumber.toLowerCase() === houseNumber.toLowerCase());
+
+        if (alreadyVoted) {
+            const votedTime = new Date(alreadyVoted.votedAt).toLocaleString('th-TH');
+            showAlert(
+                'สิทธิ์การลงคะแนนซ้ำซ้อน', 
+                `<strong>บ้านเลขที่ ${houseNumber}</strong> ได้ทำการลงคะแนนในหัวข้อนี้ไปแล้วเมื่อ <strong>${votedTime}</strong><br><br><span class="text-danger"><i class="fas fa-exclamation-triangle"></i> กฎกติกากำหนดไว้ว่า 1 บ้านเลขที่สามารถโหวตได้เพียง 1 คะแนนเท่านั้น</span>`, 
+                false
+            );
+            return;
+        }
+
+        // หากยังไม่เคยโหวต ให้ทำการเพิ่มบันทึกใหม่
+        const newRecord = {
+            id: Date.now(),
+            topicId: topicId,
+            houseNumber: houseNumber,
+            optionId: optionId,
+            votedAt: new Date().toISOString()
+        };
+
+        records.push(newRecord);
+        saveRecords(records);
+
+        // แสดงความสำเร็จ
+        const topics = getTopics();
+        const currentTopic = topics.find(t => t.id === topicId);
+        const currentOption = currentTopic.options.find(o => o.id === optionId);
+
+        showAlert(
+            'บันทึกคะแนนโหวตสำเร็จ', 
+            `ขอบคุณลูกบ้าน บ้านเลขที่ <strong>${houseNumber}</strong> ที่มีส่วนร่วมเสนอประชามติครั้งนี้<br><br><strong>ตัวเลือกที่โหวต:</strong> ${currentOption.text}`, 
+            true
+        );
+
+        // Reset ฟอร์ม
+        document.getElementById('houseNumberInput').value = "";
+        onTopicSelectChanged(); // รีโหลดตัวเลือกเพื่อเคลียร์ค่าที่เลือกไว้
+    }
+
+    // --- การสร้างหัวข้อโหวตใหม่ ---
+    let optionCounter = 2; // ตัวนับเพื่อการสร้าง input ตัวเลือก
+
+    function addOptionInput() {
+        optionCounter++;
+        const container = document.getElementById('newTopicOptionsContainer');
+        const div = document.createElement('div');
+        div.className = "input-group option-input-group";
+        div.innerHTML = `
+            <input type="text" class="form-control option-input-field" placeholder="ตัวเลือกที่ ${optionCounter}" required>
+            <button class="btn btn-outline-danger" type="button" onclick="removeOptionInput(this)"><i class="fas fa-trash"></i></button>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeOptionInput(btn) {
+        const container = document.getElementById('newTopicOptionsContainer');
+        if (container.children.length <= 2) {
+            alert("หัวข้อการโหวตจำเป็นต้องมีอย่างน้อย 2 ตัวเลือกขึ้นไป");
+            return;
+        }
+        btn.closest('.option-input-group').remove();
+    }
+
+    function createTopic(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('newTopicTitle').value.trim();
+        const desc = document.getElementById('newTopicDesc').value.trim();
+        const optionFields = document.querySelectorAll('.option-input-field');
+        
+        const options = [];
+        let optIdStart = Date.now();
+        
+        optionFields.forEach((field, index) => {
+            const val = field.value.trim();
+            if (val) {
+                options.push({
+                    id: optIdStart + index,
+                    text: val
+                });
+            }
+        });
+
+        if (options.length < 2) {
+            alert("กรุณากรอกตัวเลือกอย่างน้อย 2 รายการ");
+            return;
+        }
+
+        const topics = getTopics();
+        const newTopic = {
+            id: Date.now(),
+            title: title,
+            desc: desc,
+            options: options
+        };
+
+        topics.push(newTopic);
+        saveTopics(topics);
+
+        alert("สร้างหัวข้อโหวตประชามติสำเร็จและเปิดใช้งานแล้ว");
+        
+        // Reset ฟอร์ม
+        document.getElementById('createTopicForm').reset();
+        document.getElementById('newTopicOptionsContainer').innerHTML = `
+            <div class="input-group option-input-group">
+                <input type="text" class="form-control option-input-field" placeholder="ตัวเลือกที่ 1" required>
+                <button class="btn btn-outline-danger" type="button" onclick="removeOptionInput(this)"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="input-group option-input-group">
+                <input type="text" class="form-control option-input-field" placeholder="ตัวเลือกที่ 2" required>
+                <button class="btn btn-outline-danger" type="button" onclick="removeOptionInput(this)"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        optionCounter = 2;
+
+        // อัปเดต Dropdowns และหน้าจอแอดมิน
+        populateTopicSelects();
+        onTopicSelectChanged();
+        renderAdminTopics();
+    }
+
+    // แสดงหัวข้อโหวตทั้งหมดในฝั่ง Admin
+    function renderAdminTopics() {
+        const topics = getTopics();
+        const records = getRecords();
+        const container = document.getElementById('adminTopicsList');
+        container.innerHTML = "";
+
+        if (topics.length === 0) {
+            container.innerHTML = `<div class="text-muted text-center py-3">ยังไม่มีหัวข้อการโหวตในระบบ</div>`;
+            return;
+        }
+
+        topics.forEach(topic => {
+            const totalVotes = records.filter(r => r.topicId === topic.id).length;
+            const item = document.createElement('div');
+            item.className = "list-group-item d-flex justify-content-between align-items-center";
+            item.innerHTML = `
+                <div>
+                    <h6 class="mb-1">${topic.title}</h6>
+                    <small class="text-muted">มีจำนวนตัวเลือกทั้งหมด ${topic.options.length} รายการ</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-primary rounded-pill me-2">${totalVotes} โหวต</span>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTopic(${topic.id})"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function deleteTopic(topicId) {
+        if (!confirm("คุณแน่ใจหรือไม่ที่จะลบหัวข้อโหวตนี้? ประวัติคะแนนโหวตทั้งหมดที่เกี่ยวกับหัวข้อนี้จะถูกลบไปด้วย")) return;
+
+        let topics = getTopics();
+        topics = topics.filter(t => t.id !== topicId);
+        saveTopics(topics);
+
+        let records = getRecords();
+        records = records.filter(r => r.topicId !== topicId);
+        saveRecords(records);
+
+        populateTopicSelects();
+        onTopicSelectChanged();
+        renderAdminTopics();
+        renderCharts();
+    }
+
+    // --- การแสดงผลกราฟแท่ง (Render Results & Charts) ---
+    function renderCharts() {
+        const chartSelect = document.getElementById('chartTopicSelect');
+        const topicId = parseInt(chartSelect.value);
+        const chartTitle = document.getElementById('chartTitle');
+        const chartDesc = document.getElementById('chartDesc');
+        const chartTotalVotes = document.getElementById('chartTotalVotes');
+        const chartResultsArea = document.getElementById('chartResultsArea');
+
+        chartResultsArea.innerHTML = "";
+
+        if (!topicId) {
+            chartTitle.textContent = "หัวข้อโหวต: -";
+            chartDesc.textContent = "-";
+            chartTotalVotes.textContent = "จำนวนผู้โหวตทั้งหมด: 0 บ้านเลขที่";
+            chartResultsArea.innerHTML = `<div class="text-center text-muted py-5">กรุณาเลือกหัวข้อโหวตที่เปิดใช้งาน</div>`;
+            return;
+        }
+
+        const topics = getTopics();
+        const selectedTopic = topics.find(t => t.id === topicId);
+        if (!selectedTopic) return;
+
+        chartTitle.textContent = selectedTopic.title;
+        chartDesc.textContent = selectedTopic.desc || "ไม่มีรายละเอียดเพิ่มเติม";
+
+        const records = getRecords();
+        const topicRecords = records.filter(r => r.topicId === topicId);
+        const totalVotesCount = topicRecords.length;
+
+        chartTotalVotes.textContent = `จำนวนผู้โหวตทั้งหมด: ${totalVotesCount} บ้านเลขที่`;
+
+        // คำนวณคะแนนของแต่ละตัวเลือก
+        selectedTopic.options.forEach((opt, index) => {
+            const optVotes = topicRecords.filter(r => r.optionId === opt.id).length;
+            const percent = totalVotesCount > 0 ? ((optVotes / totalVotesCount) * 100).toFixed(1) : 0;
+
+            const div = document.createElement('div');
+            div.className = "mb-3";
+            // กำหนดสีแท่งสลับกันเพื่อความสวยงาม (Clean compositions)
+            const colors = ['#2e5b88', '#198754', '#0dcaf0', '#ffc107', '#6c757d'];
+            const barColor = colors[index % colors.length];
+
+            div.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold">${opt.text}</span>
+                    <span class="badge-vote-count font-weight-bold">${optVotes} โหวต (${percent}%)</span>
+                </div>
+                <div class="chart-bar-container">
+                    <div class="chart-bar-fill" style="width: ${percent}%; background-color: ${barColor};"></div>
+                    <div class="chart-percent-text">${percent}%</div>
+                </div>
+            `;
+            chartResultsArea.appendChild(div);
+        });
+    }
+
+    // --- การแสดงผลประวัติการลงคะแนน (Render Audit Logs) ---
+    function renderLogs() {
+        const records = getRecords();
+        const topics = getTopics();
+        const tbody = document.getElementById('logsTableBody');
+        tbody.innerHTML = "";
+
+        if (records.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">ยังไม่เคยมีลูกบ้านลงคะแนนเสียงในระบบ</td></tr>`;
+            return;
+        }
+
+        // เรียงลำดับจากล่าสุดไปหาเก่าสุด
+        const sortedRecords = [...records].reverse();
+
+        sortedRecords.forEach((rec, idx) => {
+            const tr = document.createElement('tr');
+            const topic = topics.find(t => t.id === rec.topicId);
+            const topicTitle = topic ? topic.title : `<span class="text-danger">[หัวข้อถูกลบแล้ว]</span>`;
+            
+            let optionText = "-";
+            if (topic) {
+                const opt = topic.options.find(o => o.id === rec.optionId);
+                optionText = opt ? opt.text : `<span class="text-danger">[ตัวเลือกถูกลบแล้ว]</span>`;
+            }
+
+            const localTime = new Date(rec.votedAt).toLocaleString('th-TH');
+
+            tr.innerHTML = `
+                <td class="text-center">${sortedRecords.length - idx}</td>
+                <td>${localTime}</td>
+                <td>${topicTitle}</td>
+                <td class="text-center font-weight-bold text-primary"><strong>${rec.houseNumber}</strong></td>
+                <td>${optionText}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // --- ฟังก์ชันช่วยเหลือสำหรับ Demo (Demo Helper) ---
+    function loadSampleData() {
+        if (!confirm("ระบบจะโหลดข้อมูลตัวอย่างสำหรับทดสอบ และลบข้อมูลการโหวตปัจจุบันทั้งหมดที่คุณกรอกไว้ ท่านต้องการดำเนินการต่อหรือไม่?")) return;
+
+        // ข้อมูลหัวข้อโหวต
+        localStorage.setItem('ps33_voting_topics', JSON.stringify(DEFAULT_TOPICS));
+
+        // ข้อมูลจำลองบ้านเลขที่
+        const mockHouses = [
+            "99/1", "99/5", "99/7", "99/12", "99/15", "99/19", "99/22", "99/28", "99/33", "99/45",
+            "99/50", "99/62", "99/65", "99/72", "99/80", "99/88", "99/91", "99/100", "99/112", "99/120"
+        ];
+
+        const records = [];
+        const baseTime = Date.now();
+
+        // สุ่มเพิ่มคะแนนโหวตสำหรับหัวข้อที่ 1
+        mockHouses.forEach((house, index) => {
+            // สุ่มกระจายตัวเลือก 101, 102, 103, 104
+            const optionIds = [101, 102, 103, 104];
+            const randomOption = optionIds[Math.floor(Math.random() * optionIds.length)];
+            
+            records.push({
+                id: baseTime - (index * 60000), // ลบเวลาละ 1 นาทีให้ประวัติสวยงาม
+                topicId: 1,
+                houseNumber: house,
+                optionId: randomOption,
+                votedAt: new Date(baseTime - (index * 60000)).toISOString()
+            });
+        });
+
+        // สุ่มเพิ่มคะแนนโหวตสำหรับหัวข้อที่ 2 (บางส่วน)
+        mockHouses.slice(0, 14).forEach((house, index) => {
+            const optionIds = [201, 202, 203, 204];
+            const randomOption = optionIds[Math.floor(Math.random() * optionIds.length)];
+            
+            records.push({
+                id: baseTime - (index * 75000) - 5000,
+                topicId: 2,
+                houseNumber: house,
+                optionId: randomOption,
+                votedAt: new Date(baseTime - (index * 75000) - 5000).toISOString()
+            });
+        });
+
+        localStorage.setItem('ps33_voting_records', JSON.stringify(records));
+
+        // อัปเดต UI ทั้งหมด
+        populateTopicSelects();
+        onTopicSelectChanged();
+        renderAdminTopics();
+        renderCharts();
+        renderLogs();
+
+        alert("โหลดข้อมูลตัวอย่าง 20 บ้านเลขที่สำเร็จแล้ว! คุณสามารถไปที่แท็บ 'ผลการโหวตและกราฟ' และ 'ประวัติการโหวต' เพื่อดูการรายงานผล");
+    }
+
+    function clearAllData() {
+        if (!confirm("คุณแน่ใจหรือไม่ที่จะรีเซ็ตล้างข้อมูลทั้งหมด?")) return;
+        localStorage.clear();
+        initDatabase();
+        
+        populateTopicSelects();
+        onTopicSelectChanged();
+        renderAdminTopics();
+        renderCharts();
+        renderLogs();
+
+        alert("ระบบรีเซ็ตกลับสู่ค่าเริ่มต้นเรียบร้อยแล้ว");
+    }
+</script>
+
+</body>
+</html>

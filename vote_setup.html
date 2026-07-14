@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตั้งค่าหัวข้อโหวตประชามติ - PS33 Home System</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .container-admin {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+            background-color: #ffffff;
+        }
+        .header-admin {
+            background-color: #2c3e50;
+            color: white;
+            padding: 25px;
+            border-radius: 10px 10px 0 0;
+        }
+        .header-admin h2 {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+        .section-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .option-input-group {
+            margin-bottom: 12px;
+        }
+        .topic-item {
+            border-left: 4px solid #34495e;
+            transition: all 0.2s ease;
+        }
+        .topic-item:hover {
+            background-color: #f8f9fa;
+        }
+        .option-badge {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .helper-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #2980b9;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container container-admin">
+    <!-- Header Panel -->
+    <div class="card">
+        <div class="header-admin d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h2><i class="fas fa-cog"></i> จัดการหัวข้อโหวตประชามติ (Vote Topic Setup)</h2>
+                <p class="mb-0 mt-1 opacity-75">หน้าจอสำหรับนิติบุคคลในการกำหนดหัวข้อโหวตและตัวเลือกแบบไม่จำกัด</p>
+            </div>
+            <div>
+                <a href="vote_howto.html" class="btn btn-sm btn-outline-light">
+                    <i class="fas fa-arrow-left"></i> กลับหน้าจอโหวตหลัก
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Box for sharing LocalStorage -->
+    <div class="helper-box">
+        <i class="fas fa-info-circle"></i> <strong>การทำงานของระบบ:</strong> หน้าจอนี้แชร์ฐานข้อมูล (LocalStorage) ร่วมกับระบบหลัก 
+        เมื่อท่านเพิ่มหรือลบหัวข้อโหวตที่นี่ ข้อมูลจะอัปเดตไปยังหน้าลงคะแนนประชามติของลูกบ้านและกราฟรายงานผลในหน้าหลักทันที
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Create Topic Form -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body p-4 p-md-5">
+                    <h4 class="section-title"><i class="fas fa-plus-circle"></i> สร้างหัวข้อการโหวตใหม่</h4>
+                    
+                    <form id="createTopicForm" onsubmit="handleCreateTopic(event)">
+                        <!-- Topic Title -->
+                        <div class="mb-3">
+                            <label for="topicTitle" class="form-label"><strong>หัวข้อโหวต / ประเด็นประชามติ:</strong></label>
+                            <input type="text" class="form-control form-control-lg" id="topicTitle" placeholder="ตัวอย่าง: ปรับปรุงกล้องวงจรปิด CCTV ทั่วหมู่บ้าน" required>
+                            <div class="form-text">กรอกหัวข้อที่กระชับและเข้าใจง่ายสำหรับลูกบ้าน</div>
+                        </div>
+
+                        <!-- Topic Description -->
+                        <div class="mb-3">
+                            <label for="topicDesc" class="form-label"><strong>รายละเอียดและข้อมูลประกอบ (Description):</strong></label>
+                            <textarea class="form-control" id="topicDesc" rows="3" placeholder="ตัวอย่าง: อธิบายรายละเอียดโครงการ งบประมาณที่จะใช้ หรือรายละเอียดทางเลือกต่างๆ เพื่อให้ลูกบ้านเข้าใจและตัดสินใจได้ง่ายขึ้น"></textarea>
+                        </div>
+
+                        <!-- Dynamic Options Builder -->
+                        <div class="mb-4">
+                            <label class="form-label d-flex justify-content-between align-items-center">
+                                <strong>ตัวเลือกในการโหวต (Choices):</strong>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="addNewOption()">
+                                    <i class="fas fa-plus"></i> เพิ่มตัวเลือก
+                                </button>
+                            </label>
+                            
+                            <div id="optionsContainer">
+                                <!-- Option 1 (Default Required) -->
+                                <div class="input-group option-input-group">
+                                    <span class="input-group-text bg-light text-muted">ตัวเลือกที่ 1</span>
+                                    <input type="text" class="form-control choice-input" placeholder="กรอกข้อความตัวเลือก เช่น เห็นชอบ..." required>
+                                    <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <!-- Option 2 (Default Required) -->
+                                <div class="input-group option-input-group">
+                                    <span class="input-group-text bg-light text-muted">ตัวเลือกที่ 2</span>
+                                    <input type="text" class="form-control choice-input" placeholder="กรอกข้อความตัวเลือก เช่น ไม่เห็นชอบ..." required>
+                                    <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-text text-danger">* การโหวตจำเป็นต้องมีอย่างน้อย 2 ตัวเลือกขึ้นไป</div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save me-2"></i> บันทึกและเปิดระบบโหวต
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right/Bottom Column: Topics list -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body p-4 p-md-5">
+                    <h4 class="section-title"><i class="fas fa-list"></i> รายการหัวข้อโหวตปัจจุบันทั้งหมดในระบบ</h4>
+                    
+                    <div id="topicsListArea">
+                        <!-- Content populated dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Guide Section -->
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body p-4 p-md-5">
+                    <h4 class="section-title"><i class="fas fa-code"></i> คู่มือการพัฒนาและสถาปัตยกรรมข้อมูล (Integration Guide)</h4>
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-lightbulb text-warning"></i> 1. แนวคิดและตรรกะการตรวจสอบ (Validation Logic)</h5>
+                        <p class="text-muted">
+                            ในการจำกัดสิทธิ์ <strong>"1 บ้านเลขที่ ต่อ 1 โหวตในแต่ละหัวข้อ"</strong> ระบบจะทำการตรวจสอบแบบ <code>Composite Key</code> 
+                            ที่ประกอบด้วย <strong>รหัสหัวข้อ (Topic ID) + บ้านเลขที่ (House Number)</strong> โดยมีลอจิกการทำงานดังนี้:
+                        </p>
+                        <div class="note-box mb-3">
+                            <strong>กระบวนการตรวจสอบ (Validation Step):</strong>
+                            <ol class="mb-0 mt-2">
+                                <li>รับค่าบ้านเลขที่ที่กรอกเข้ามา จากนั้นทำความสะอาดข้อมูล (Data Normalization) เช่น ตัดช่องว่างหัวท้าย, ปรับตัวอักษรให้อยู่ในรูปแบบเดียวกัน</li>
+                                <li>สืบค้นจากประวัติการลงคะแนน (ในฐานข้อมูล) ค้นหาว่ามีเรคคอร์ดที่ตรงกับ <code>Topic ID</code> และ <code>House Number</code> แล้วหรือไม่</li>
+                                <li>หากพบข้อมูล ระบบจะแสดงการแจ้งเตือนปฏิเสธการโหวต พร้อมชี้แจงวันเวลาที่เคยโหวตไปแล้ว</li>
+                                <li>หากไม่พบข้อมูล ระบบจะบันทึกผลการโหวตเข้าสู่ฐานข้อมูล</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5><i class="fas fa-database text-info"></i> 2. โครงสร้างตารางฐานข้อมูลที่แนะนำ (MySQL / PostgreSQL)</h5>
+                        <p class="text-muted">การพัฒนาบนฐานข้อมูล SQL แนะนำให้ออกแบบตารางออกเป็น 3 ตารางดังนี้:</p>
+                        
+                        <div class="card border p-3 bg-light">
+                            <strong>1) ตารางหัวข้อโหวต (<code>ims_vote_topic</code>)</strong>
+                            <pre class="bg-dark text-light p-3 rounded mt-2" style="font-size: 0.9rem;">
+CREATE TABLE `ims_vote_topic` (
+  `topic_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(255) NOT NULL COMMENT 'หัวข้อการโหวต',
+  `description` TEXT NULL COMMENT 'รายละเอียดหัวข้อ',
+  `status` ENUM('active', 'inactive') DEFAULT 'active' COMMENT 'สถานะการเปิดโหวต',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</pre>
+                        </div>
+
+                        <div class="card border p-3 bg-light mt-3">
+                            <strong>2) ตารางตัวเลือก (<code>ims_vote_option</code>)</strong>
+                            <pre class="bg-dark text-light p-3 rounded mt-2" style="font-size: 0.9rem;">
+CREATE TABLE `ims_vote_option` (
+  `option_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `topic_id` INT NOT NULL,
+  `option_text` VARCHAR(255) NOT NULL COMMENT 'ข้อความตัวเลือก',
+  FOREIGN KEY (`topic_id`) REFERENCES `ims_vote_topic`(`topic_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</pre>
+                        </div>
+
+                        <div class="card border p-3 bg-light mt-3">
+                            <strong>3) ตารางเก็บประวัติการโหวต (<code>ims_vote_record</code>)</strong>
+                            <pre class="bg-dark text-light p-3 rounded mt-2" style="font-size: 0.9rem;">
+CREATE TABLE `ims_vote_record` (
+  `vote_id` INT AUTO_INCREMENT PRIMARY KEY,
+  `topic_id` INT NOT NULL,
+  `house_number` VARCHAR(50) NOT NULL COMMENT 'บ้านเลขที่ผู้โหวต',
+  `option_id` INT NOT NULL COMMENT 'ไอดีตัวเลือกที่โหวต',
+  `voted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  /* ทำ UNIQUE KEY เพื่อบังคับระดับฐานข้อมูลให้ 1 บ้านเลขที่โหวตได้ 1 ครั้งในแต่ละหัวข้อ */
+  UNIQUE KEY `uq_topic_house` (`topic_id`, `house_number`),
+  FOREIGN KEY (`topic_id`) REFERENCES `ims_vote_topic`(`topic_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`option_id`) REFERENCES `ims_vote_option`(`option_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</pre>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5><i class="fas fa-server text-success"></i> 3. ตัวอย่างการตรวจสอบระดับ Backend API (PHP Sample Code)</h5>
+                        <p class="text-muted">ตัวอย่างซอร์สโค้ด PHP ในการตรวจสอบและบันทึกคะแนนโหวตในฝั่งเซิร์ฟเวอร์:</p>
+                        
+                        <pre class="bg-dark text-light p-3 rounded" style="font-size: 0.9rem;">
+&lt;?php
+// file: api_submit_vote.php
+header('Content-Type: application/json');
+require_once 'config.php'; // ไฟล์เชื่อมต่อฐานข้อมูล PDO
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid Request Method']);
+    exit;
+}
+
+$topic_id = filter_input(INPUT_POST, 'topic_id', FILTER_VALIDATE_INT);
+$house_number = trim(filter_input(INPUT_POST, 'house_number', FILTER_UNSAFE_RAW));
+$option_id = filter_input(INPUT_POST, 'option_id', FILTER_VALIDATE_INT);
+
+if (!$topic_id || !$house_number || !$option_id) {
+    echo json_encode(['status' => 'error', 'message' => 'กรุณากรอกข้อมูลให้ครบถ้วน']);
+    exit;
+}
+
+try {
+    // 1. ตรวจสอบว่าบ้านเลขที่นี้เคยโหวตหัวข้อนี้ไปแล้วหรือยัง
+    $stmt = $pdo->prepare("SELECT voted_at FROM ims_vote_record WHERE topic_id = ? AND house_number = ?");
+    $stmt->execute([$topic_id, $house_number]);
+    $existing = $stmt->fetch();
+
+    if ($existing) {
+        echo json_encode([
+            'status' => 'error', 
+            'message' => "บ้านเลขที่ $house_number ได้ลงคะแนนในหัวข้อนี้ไปแล้วเมื่อ " . $existing['voted_at']
+        ]);
+        exit;
+    }
+
+    // 2. ทำการบันทึกคะแนนโหวต
+    $insert = $pdo->prepare("INSERT INTO ims_vote_record (topic_id, house_number, option_id) VALUES (?, ?, ?)");
+    $insert->execute([$topic_id, $house_number, $option_id]);
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'บันทึกการลงคะแนนของคุณเรียบร้อยแล้ว ขอบคุณสำหรับการมีส่วนร่วม'
+    ]);
+
+} catch (PDOException $e) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' . $e->getMessage()
+    ]);
+}
+?&gt;</pre>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5><i class="fab fa-line text-success"></i> 4. การดึงและล็อกบ้านเลขที่อัตโนมัติจาก LINE LIFF (Auto-Locking House Number)</h5>
+                        <p class="text-muted">
+                            เพื่อป้องกันไม่ให้ลูกบ้านกรอกบ้านเลขที่อื่นหรือสวมรอยโหวตแทนบ้านอื่น เมื่อเปิดหน้าเว็บนี้ผ่าน LINE OA (LIFF) ระบบสามารถดึงประวัติการลงทะเบียนของ LINE Account นั้น และล็อก (Lock) ช่องบ้านเลขที่ให้เป็น <code>readonly</code> อัตโนมัติ:
+                        </p>
+                        <div class="note-box mb-3">
+                            <strong>กระบวนการล็อกสิทธิ์ (Flow):</strong>
+                            <ol class="mb-0 mt-2">
+                                <li>เรียกใช้งาน <code>liff.init()</code> และตรวจสอบการล็อกอินด้วย <code>liff.isLoggedIn()</code></li>
+                                <li>เรียกคำสั่ง <code>liff.getProfile()</code> เพื่อดึง <code>userId</code> ของบัญชี LINE</li>
+                                <li>ยิง AJAX POST ไปยัง API หลังบ้านเพื่อดึงรายละเอียดบ้านเลขที่ที่เคยลงทะเบียนผูกไว้ในตาราง <code>ims_house_line_user</code></li>
+                                <li>หากพบข้อมูล ระบบจะนำบ้านเลขที่มาใส่ในช่องกรอก และตั้งแอตทริบิวต์ <code>readonly="true"</code> ทันทีเพื่อล็อกค่าไม่ให้แก้ไขได้</li>
+                                <li>หากไม่พบการลงทะเบียนระบบจะแสดงป๊อปอัปแจ้งให้ลูกบ้านไปทำการลงทะเบียนผูกบัญชีก่อน จึงจะมีสิทธิ์เข้าถึงหน้าโหวตนี้</li>
+                            </ol>
+                        </div>
+                        <p class="text-muted">ตัวอย่างการเขียนโค้ดฝั่ง Javascript สำหรับเปิดใช้ระบบล็อกอัตโนมัติ:</p>
+                        <pre class="bg-dark text-light p-3 rounded" style="font-size: 0.9rem;">
+// โค้ดเชื่อมต่อกับ LINE LIFF SDK
+liff.init({ liffId: "YOUR_LIFF_ID" }).then(() => {
+    if (liff.isLoggedIn()) {
+        liff.getProfile().then(profile => {
+            const lineUserId = profile.userId;
+            
+            // ยิงไปตรวจสอบที่หลังบ้านว่าเคยสมัครสมาชิกผูกเลขที่บ้านไว้หรือยัง
+            $.post("https://ps33home.com/line_oa/house/register_house_with_line_api.php", {
+                action: 'check',
+                lineUserId: lineUserId
+            }, function(data) {
+                if (data.success && data.registered) {
+                    const user = data.user;
+                    
+                    // 1. นำเลขที่บ้านที่ผูกกับ LINE มาใส่ในฟอร์มโดยอัตโนมัติ
+                    const houseInput = document.getElementById('houseNumberInput');
+                    houseInput.value = user.house_number;
+                    
+                    // 2. ทำการล็อก (Readonly) ช่องกรอกบ้านเลขที่ทันที ลูกบ้านจะไม่สามารถแก้ไขค่าได้
+                    houseInput.setAttribute('readonly', 'true');
+                    houseInput.style.backgroundColor = '#e9ecef'; // ทำเป็นสีเทาเพื่อแสดงว่าล็อกไว้
+                    
+                    console.log("ล็อกบ้านเลขที่สิทธิ์การโหวตเป็น: " + user.house_number);
+                } else {
+                    // หากยังไม่เคยผูกบัญชี LINE กับเลขที่บ้าน
+                    alert("⚠️ บัญชี LINE นี้ยังไม่ได้ลงทะเบียนลูกบ้าน กรุณาลงทะเบียนก่อนเข้าโหวต");
+                    window.location.href = "register_house_user.php";
+                }
+            });
+        });
+    } else {
+        liff.login();
+    }
+}).catch(err => console.error("LIFF SDK Error:", err));</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ดึงและอัปเดตข้อมูล LocalStorage
+    function getTopics() {
+        return JSON.parse(localStorage.getItem('ps33_voting_topics')) || [];
+    }
+
+    function saveTopics(topics) {
+        localStorage.setItem('ps33_voting_topics', JSON.stringify(topics));
+    }
+
+    function getRecords() {
+        return JSON.parse(localStorage.getItem('ps33_voting_records')) || [];
+    }
+
+    function saveRecords(records) {
+        localStorage.setItem('ps33_voting_records', JSON.stringify(records));
+    }
+
+    // จำนวนตัวเลือกเพื่อสร้าง Label สวยงาม
+    let choiceCount = 2;
+
+    // เพิ่มช่องตัวเลือกใหม่แบบ Dynamic
+    function addNewOption() {
+        choiceCount++;
+        const container = document.getElementById('optionsContainer');
+        const div = document.createElement('div');
+        div.className = "input-group option-input-group animate__animated animate__fadeIn";
+        div.innerHTML = `
+            <span class="input-group-text bg-light text-muted">ตัวเลือกที่ ${choiceCount}</span>
+            <input type="text" class="form-control choice-input" placeholder="กรอกข้อความตัวเลือก..." required>
+            <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        container.appendChild(div);
+        renumberOptions();
+    }
+
+    // ลบช่องตัวเลือก
+    function removeOption(btn) {
+        const container = document.getElementById('optionsContainer');
+        if (container.children.length <= 2) {
+            alert("ไม่สามารถลบได้: หัวข้อโหวตต้องมีตัวเลือกขั้นต่ำอย่างน้อย 2 รายการ");
+            return;
+        }
+        btn.closest('.option-input-group').remove();
+        renumberOptions();
+    }
+
+    // เรียงเลขลำดับตัวเลือกใหม่ให้ถูกต้องหลังมีการเพิ่มหรือลบ
+    function renumberOptions() {
+        const labels = document.querySelectorAll('#optionsContainer .input-group-text');
+        choiceCount = labels.length;
+        labels.forEach((label, index) => {
+            label.textContent = `ตัวเลือกที่ ${index + 1}`;
+        });
+    }
+
+    // บันทึกหัวข้อการโหวตใหม่
+    function handleCreateTopic(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('topicTitle').value.trim();
+        const desc = document.getElementById('topicDesc').value.trim();
+        const choiceInputs = document.querySelectorAll('.choice-input');
+        
+        const options = [];
+        const baseOptId = Date.now();
+
+        choiceInputs.forEach((input, index) => {
+            const val = input.value.trim();
+            if (val) {
+                options.push({
+                    id: baseOptId + index,
+                    text: val
+                });
+            }
+        });
+
+        if (options.length < 2) {
+            alert("กรุณากรอกตัวเลือกการโหวตอย่างน้อย 2 รายการ");
+            return;
+        }
+
+        const topics = getTopics();
+        const newTopic = {
+            id: Date.now(),
+            title: title,
+            desc: desc,
+            options: options
+        };
+
+        topics.push(newTopic);
+        saveTopics(topics);
+
+        alert("เพิ่มหัวข้อประชามติใหม่และเปิดระบบลงคะแนนเรียบร้อยแล้ว");
+        
+        // ล้างฟอร์ม
+        document.getElementById('createTopicForm').reset();
+        document.getElementById('optionsContainer').innerHTML = `
+            <div class="input-group option-input-group">
+                <span class="input-group-text bg-light text-muted">ตัวเลือกที่ 1</span>
+                <input type="text" class="form-control choice-input" placeholder="กรอกข้อความตัวเลือก เช่น เห็นชอบ..." required>
+                <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="input-group option-input-group">
+                <span class="input-group-text bg-light text-muted">ตัวเลือกที่ 2</span>
+                <input type="text" class="form-control choice-input" placeholder="กรอกข้อความตัวเลือก เช่น ไม่เห็นชอบ..." required>
+                <button class="btn btn-outline-danger" type="button" onclick="removeOption(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        choiceCount = 2;
+
+        renderTopicsList();
+    }
+
+    // แสดงรายการหัวข้อโหวตที่มีอยู่ทั้งหมด
+    function renderTopicsList() {
+        const topics = getTopics();
+        const records = getRecords();
+        const area = document.getElementById('topicsListArea');
+        area.innerHTML = "";
+
+        if (topics.length === 0) {
+            area.innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-folder-open fa-2x mb-2"></i>
+                    <p class="mb-0">ยังไม่มีหัวข้อโหวตในระบบ</p>
+                </div>
+            `;
+            return;
+        }
+
+        topics.forEach(topic => {
+            const topicVotes = records.filter(r => r.topicId === topic.id).length;
+            const card = document.createElement('div');
+            card.className = "card border topic-item mb-3";
+            
+            // สร้าง Badges รายการตัวเลือก
+            let optionsBadgesHtml = "";
+            topic.options.forEach(opt => {
+                optionsBadgesHtml += `<span class="option-badge"><i class="far fa-circle text-muted me-1"></i>${opt.text}</span>`;
+            });
+
+            card.innerHTML = `
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                        <div>
+                            <h5 class="card-title fw-bold text-dark mb-1">${topic.title}</h5>
+                            <p class="card-text text-muted small mb-2">${topic.desc || 'ไม่มีรายละเอียดประกอบหัวข้อ'}</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-primary px-3 py-2"><i class="fas fa-chart-bar me-1"></i>โหวตแล้ว ${topicVotes} หลัง</span>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTopic(${topic.id})">
+                                <i class="fas fa-trash-alt"></i> ลบหัวข้อ
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2 pt-2 border-top">
+                        <small class="text-muted d-block mb-1"><strong>รายการตัวเลือกโหวต:</strong></small>
+                        <div>${optionsBadgesHtml}</div>
+                    </div>
+                </div>
+            `;
+            area.appendChild(card);
+        });
+    }
+
+    // ลบหัวข้อโหวต
+    function deleteTopic(topicId) {
+        if (!confirm("คุณแน่ใจหรือไม่ที่จะลบหัวข้อโหวตนี้? ประวัติคะแนนโหวตทั้งหมดของหัวข้อนี้จะถูกลบไปด้วยและไม่สามารถกู้คืนได้")) return;
+
+        let topics = getTopics();
+        topics = topics.filter(t => t.id !== topicId);
+        saveTopics(topics);
+
+        let records = getRecords();
+        records = records.filter(r => r.topicId !== topicId);
+        saveRecords(records);
+
+        renderTopicsList();
+    }
+
+    // โหลดรายการเมื่อเริ่มทำงาน
+    document.addEventListener("DOMContentLoaded", () => {
+        // หากไม่มีข้อมูล ให้กำหนดค่าเริ่มต้น
+        if (!localStorage.getItem('ps33_voting_topics')) {
+            const defaultTopics = [
+                {
+                    id: 1,
+                    title: "ปรับปรุงและติดตั้งอุปกรณ์สนามเด็กเล่นในสวนสาธารณะส่วนกลาง",
+                    desc: "หัวข้อสอบถามความคิดเห็นเกี่ยวกับการจัดสรรงบประมาณในการปรับปรุงสวนหย่อมและพื้นที่สำหรับสันทนาการของเด็กๆ ในหมู่บ้าน PS33 ประจำปีงบประมาณ 2569",
+                    options: [
+                        { id: 101, text: "เห็นชอบ - จัดซื้อเครื่องเล่นใหม่เพิ่มเติม (สไลเดอร์, ชิงช้า)" },
+                        { id: 102, text: "เห็นชอบ - ปรับปรุงสวนหย่อม ปลูกหญ้าและต้นไม้ใหญ่ให้ร่มรื่น" },
+                        { id: 103, text: "เห็นชอบ - เทพื้นยางกันกระแทกเพื่อความปลอดภัยของเด็กๆ" },
+                        { id: 104, text: "ไม่เห็นชอบ - ควรนำงบประมาณไปใช้อย่างอื่นที่เร่งด่วนกว่า" }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "กำหนดเวลาเปิด-ปิด ประตูโครงการฝั่งทิศเหนือ (เชื่อมทางออกซอยหลัก)",
+                    desc: "เนื่องจากปัจจุบันมีความต้องการใช้งานที่แตกต่างกัน นิติบุคคลจึงขอรับฟังประชามติในการกำหนดเวลาเพื่อความปลอดภัยและการเดินทางที่สะดวกของลูกบ้าน",
+                    options: [
+                        { id: 201, text: "เปิดให้บริการตลอด 24 ชั่วโมงตามเดิม" },
+                        { id: 202, text: "เปิดเฉพาะช่วงเวลาเร่งด่วน 06:00 - 09:00 น. และ 16:00 - 20:00 น." },
+                        { id: 203, text: "เปิดตั้งแต่ 05:00 - 22:00 น. นอกเวลาต้องอ้อมไปใช้ประตูหลัก" },
+                        { id: 204, text: "ปิดถาวรและเปิดใช้เฉพาะประตูทางเข้าหลักเพื่อความปลอดภัยสูงสุด" }
+                    ]
+                }
+            ];
+            localStorage.setItem('ps33_voting_topics', JSON.stringify(defaultTopics));
+        }
+        
+        renderTopicsList();
+    });
+</script>
+
+</body>
+</html>

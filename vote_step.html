@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือขั้นตอนระบบประชามติ - PS33 Home System</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Prompt & Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', 'Prompt', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 850px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            background-color: #ffffff;
+        }
+        .header-section {
+            background-color: #1e3d59;
+            color: white;
+            padding: 35px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #1e3d59;
+            border-bottom: 2px solid #1e3d59;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #1e3d59;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #1e3d59;
+        }
+        .note-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #1e3d59;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #1e3d59;
+        }
+        .code-inline {
+            background-color: #f1f2f6;
+            color: #c0392b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .table-custom th {
+            background-color: #f1f3f5;
+            color: #1e3d59;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <!-- Header -->
+        <div class="header-section">
+            <h2 class="mb-2"><i class="fas fa-poll-h"></i> คู่มือขั้นตอนการทำงานและติดตั้งระบบประชามติ</h2>
+            <p class="mb-0 opacity-75">สรุปสถาปัตยกรรม ข้อมูลตาราง ขั้นตอนการใช้งานของลูกบ้านและผู้ดูแลระบบ PS33 Home System</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            
+            <!-- Section 1: Overview -->
+            <div class="mb-4">
+                <h4 class="section-title"><i class="fas fa-info-circle"></i> 1. ภาพรวมระบบ (System Overview)</h4>
+                <p class="text-muted">
+                    ระบบประชามติ (Voting System) พัฒนาขึ้นเพื่อช่วยให้นิติกรรมหมู่บ้านของโครงการ **PS33** สามารถสอบถามความคิดเห็น โหวตลงคะแนนเสียง หรือรับฟังความคิดเห็นจากลูกบ้านได้อย่างโปร่งใส สะดวก และปลอดภัย ผ่านทางแอปพลิเคชัน <strong>LINE OA (LINE Front-end Framework - LIFF)</strong>
+                </p>
+                <div class="note-box my-3">
+                    <strong>กฎกติกาหลัก:</strong> จำกัดการใช้สิทธิ์โหวตได้เพียง **1 สิทธิ์ต่อ 1 บ้านเลขที่** ในแต่ละหัวข้อโหวต เพื่อป้องกันความซ้ำซ้อนและรักษาความเที่ยงตรงของคะแนนเสียง
+                </div>
+            </div>
+
+            <!-- Section 2: Database Structure -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-database"></i> 2. สถาปัตยกรรมตารางข้อมูล (Database Architecture)</h4>
+                <p class="text-muted">โครงสร้างฐานข้อมูล MySQL ที่ใช้จัดเก็บข้อมูลมีตารางหลักที่ทำงานสัมพันธ์กัน 3 ตารางดังนี้:</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-custom align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">ชื่อตาราง</th>
+                                <th style="width: 35%;">คอลัมน์สำคัญ</th>
+                                <th style="width: 40%;">บทบาทหน้าที่</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong><span class="code-inline">ims_vote_topic</span></strong></td>
+                                <td><small>topic_id, title, description, status</small></td>
+                                <td>เก็บหัวข้อการโหวตหลักที่ตั้งขึ้นโดยนิติบุคคล</td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="code-inline">ims_vote_option</span></strong></td>
+                                <td><small>option_id, topic_id, option_text</small></td>
+                                <td>เก็บข้อความตัวเลือกย่อยของแต่ละหัวข้อโหวต (ไม่จำกัดจำนวนตัวเลือก)</td>
+                            </tr>
+                            <tr>
+                                <td><strong><span class="code-inline">ims_vote_record</span></strong></td>
+                                <td><small>vote_id, topic_id, house_number, option_id, voted_at</small></td>
+                                <td>เก็บประวัติการลงประชามติ โดยกำหนดค่า <code>UNIQUE KEY(topic_id, house_number)</code> เพื่อบังคับสิทธิ์ 1 สิทธิ์โหวตต่อบ้านเลขที่ในระดับ Database</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small mt-2">
+                    <i class="fas fa-link"></i> ตารางสัมพันธ์กับตารางผูก LINE หลักของลูกบ้าน: ระบบจะดึงข้อมูลบ้านเลขที่จากตาราง <code>ims_house_line_user</code> ของโครงการเพื่อยืนยันตัวตนก่อนโหวต
+                </p>
+            </div>
+
+            <!-- Section 3: Admin Flow -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-user-shield"></i> 3. ขั้นตอนการตั้งค่าหัวข้อสำหรับนิติบุคคล (Admin Workflow)</h4>
+                <p class="text-muted">นิติบุคคลสามารถจัดการโหวตได้ผ่านหน้าจอแผงควบคุมหลัก โดยทำตามขั้นตอนดังนี้:</p>
+
+                <div class="step-item">
+                    <h5><span class="step-number">1</span> เข้าใช้งานเมนูระบบประชามติ</h5>
+                    <p class="text-muted">
+                        ล็อกอินเข้าสู่ระบบหลังบ้านของผู้ดูแลระบบ จากนั้นไปที่เมนู **"ระบบประชามติ (Voting) -> ตั้งค่าหัวข้อโหวต"** หรือเข้าใช้งานโดยตรงที่ไฟล์ <span class="code-inline">manage_vote.php</span>
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span> สร้างหัวข้อและกำหนดตัวเลือก</h5>
+                    <p class="text-muted">
+                        กดปุ่ม <strong>"เพิ่มหัวข้อใหม่"</strong> เพื่อเปิดหน้าต่างสร้างโหวต จากนั้นกรอกหัวข้อ รายละเอียด และกดเพิ่มตัวเลือกได้ไม่จำกัดจำนวน (ต้องกรอกอย่างน้อย 2 ตัวเลือกขึ้นไป) จากนั้นกดบันทึกเพื่อเปิดรับโหวต
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span> ควบคุมสถานะการโหวต</h5>
+                    <p class="text-muted">
+                        ในตารางจัดการหลัก นิติบุคคลสามารถกดปุ่ม <strong>"ปิดโหวต"</strong> หรือ <strong>"เปิดโหวต"</strong> เพื่อควบคุมการเปิดรับความคิดเห็นของลูกบ้านได้ตลอดเวลา หรือกดลบหัวข้อหากไม่ต้องการใช้งานแล้ว
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">4</span> ดูรายงานผลและประวัติ</h5>
+                    <p class="text-muted">
+                        กดปุ่ม <strong>"รายงานผล"</strong> บนแถวหัวข้อเพื่อดูสถิติคะแนนเสียง โดยแสดงผลเป็นกราฟแท่งแบ่งสัดส่วนเปอร์เซ็นต์อย่างชัดเจน พร้อมมีตารางประวัติผู้ร่วมลงมติแยกตามบ้านเลขที่เพื่อความโปร่งใส (Audit Log)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 4: Voter Flow -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fab fa-line"></i> 4. ขั้นตอนการลงมติสำหรับลูกบ้าน (Voter LIFF Workflow)</h4>
+                <p class="text-muted">เมื่อลูกบ้านกดเข้าเมนู "โหวตประชามติ" จาก LINE OA ของหมู่บ้าน (ลิงก์ไปยังหน้าจอ <span class="code-inline">line_oa/house/vote.php</span>):</p>
+
+                <div class="step-item">
+                    <h5><span class="step-number">1</span> ยืนยันตัวตนอัตโนมัติ (LIFF Verification)</h5>
+                    <p class="text-muted">
+                        ระบบจะเรียกใช้งาน LINE LIFF SDK เพื่อดึงโปรไฟล์ LINE User ID ขึ้นมาตรวจสอบกับตารางทะเบียนลูกบ้าน <code>ims_house_line_user</code> หลังบ้านทันที
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span> ล็อกเลขที่บ้าน (Readonly Lock)</h5>
+                    <p class="text-muted">
+                        หากลูกบ้านเคยลงทะเบียนผูกบัญชี LINE ไว้แล้ว ระบบจะดึงค่าบ้านเลขที่ของลูกบ้านขึ้นมาแสดงในแถบข้อมูลส่วนบุคคล พร้อม **ล็อกช่องบ้านเลขที่และปิดช่องแก้ไข** เพื่อไม่ให้ผู้ใช้งานเปลี่ยนบ้านเลขที่โหวตแทนบ้านอื่น
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span> เลือกหัวข้อและตรวจสอบสิทธิ์ซ้ำซ้อน</h5>
+                    <p class="text-muted">
+                        ลูกบ้านเลือกหัวข้อที่ต้องการโหวต ทันทีที่เลือกหัวข้อ ระบบจะส่งการตรวจสอบ (AJAX) ไปยัง API เพื่อสืบค้นว่าบ้านเลขที่นี้เคยลงคะแนนในหัวข้อนี้ไปแล้วหรือไม่
+                        <ul>
+                            <li><strong>หากยังไม่เคยโหวต:</strong> ระบบจะเปิดสิทธิ์ให้ลูกบ้านเลือกคำตอบและกดปุ่ม "ส่งคะแนนโหวต" ได้ตามปกติ</li>
+                            <li><strong>หากเคยโหวตไปแล้ว:</strong> ระบบจะแสดงการแจ้งเตือนแถบสีแดงชี้แจงวันเวลาที่โหวต พร้อมระบุคำตอบที่เคยเลือกไว้ และปิดกั้นปุ่มกดส่งโหวต</li>
+                        </ul>
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">4</span> บันทึกและส่งข้อความแจ้งเตือน</h5>
+                    <p class="text-muted">
+                        เมื่อกดส่งสำเร็จ ข้อมูลประวัติการโหวตจะถูกเก็บลงตาราง <code>ims_vote_record</code> และหน้าจอ LIFF จะทำการปิดตัวลงอัตโนมัติ
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 5: Security -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-shield-alt"></i> 5. มาตรการความปลอดภัยและการป้องกันสวมสิทธิ์</h4>
+                <ul>
+                    <li class="mb-2 text-muted">
+                        <strong>Server-side Cross Validation:</strong> เมื่อลูกบ้านกดส่งโหวต API ฝั่งเซิร์ฟเวอร์ (<span class="code-inline">vote_submit_api.php</span>) จะดึงประวัติการลงทะเบียนของ LINE User ID นั้นมาเทียบกับค่าบ้านเลขที่ที่ส่งมาอีกครั้ง เพื่อป้องกันการดัดแปลง Payload ผ่านเบราว์เซอร์
+                    </li>
+                    <li class="mb-2 text-muted">
+                        <strong>Database Constraint:</strong> ตาราง <code>ims_vote_record</code> มีการสร้าง Unique Constraint ครอบคลุมสองคีย์หลัก ทำให้มั่นใจได้ว่าจะไม่มีค่าซ้ำเกิดขึ้นในระดับโครงสร้างข้อมูล
+                    </li>
+                    <li class="mb-2 text-muted">
+                        <strong>User Validation Protection:</strong> หากผู้ใช้คนใดนำลิงก์ไปเปิดนอกระบบ LINE หรือไม่มีประวัติการลงทะเบียน ทะเบียนบ้านจะไม่มีสิทธิ์ร่วมโหวตเด็ดขาด ระบบจะบล็อกและแสดงคำแนะนำให้ลงทะเบียนก่อน
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-footer text-center bg-white border-0 py-3">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
