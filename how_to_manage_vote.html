@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการตั้งค่าหัวข้อโหวตประชามติ - PS33 Home System</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Prompt & Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', 'Prompt', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 750px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-section {
+            background-color: #2e5b88;
+            color: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        .step-number {
+            background-color: #2e5b88;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+        }
+        .step-item {
+            margin-bottom: 30px;
+            padding-left: 15px;
+            border-left: 3px solid #dee2e6;
+        }
+        .step-item h5 {
+            font-weight: 600;
+            color: #2e5b88;
+            margin-bottom: 12px;
+        }
+        .note-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .btn-action-info {
+            background-color: #e8f4fd;
+            color: #2e5b88;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header-section">
+            <img src="ps33_logo.png" width="60" alt="Logo" class="mb-3" style="display: none;">
+            <h2>คู่มือการตั้งค่าหัวข้อโหวตประชามติ</h2>
+            <p class="mb-0 opacity-75">สำหรับเจ้าหน้าที่นิติบุคคลในการจัดการระบบลงประชามติของหมู่บ้าน PS33</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+            
+            <div class="alert alert-info text-start mb-4" role="alert">
+                <i class="fas fa-info-circle me-1"></i> <strong>วัตถุประสงค์:</strong> หน้าจอนี้ใช้สำหรับสร้างประเด็นประชามติ เพื่อรับความคิดเห็นจากลูกบ้านผ่านระบบ LINE OA โดยลูกบ้านแต่ละหลังคาเรือนจะสามารถโหวตได้เพียงครั้งเดียวในแต่ละหัวข้อ
+            </div>
+
+            <!-- Step 1 -->
+            <div class="step-item">
+                <h5><span class="step-number">1</span>เข้าสู่หน้าจอจัดการหัวข้อโหวต</h5>
+                <p class="text-muted">
+                    ไปที่แถบเมนูด้านซ้าย เลือกเมนู <strong>"ระบบประชามติ (Voting) -> ตั้งค่าหัวข้อโหวต"</strong> หรือเข้าใช้โดยตรงที่ลิงก์ <a href="manage_vote.php" class="btn-action-info text-decoration-none"><i class="fas fa-link"></i> manage_vote.php</a> บนเบราว์เซอร์
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-item">
+                <h5><span class="step-number">2</span>การสร้างหัวข้อโหวตใหม่</h5>
+                <p class="text-muted">
+                    1. กดปุ่ม <span class="badge bg-primary"><i class="fa fa-plus"></i> เพิ่มหัวข้อใหม่</span> ที่อยู่บริเวณมุมบนขวาของตารางจัดการ<br>
+                    2. กรอก <strong>"หัวข้อโหวต / ประเด็นประชามติ"</strong> เช่น ปรับปรุงสวนสาธารณะส่วนกลางปี 2569<br>
+                    3. กรอก <strong>"รายละเอียดประกอบ"</strong> เพื่ออธิบายรายละเอียด งบประมาณ หรือข้อมูลที่ลูกบ้านจำเป็นต้องทราบประกอบการตัดสินใจ<br>
+                    4. กรอก <strong>"รายการตัวเลือกการโหวต"</strong> (ระบบเริ่มต้นให้ 2 ช่องตัวเลือก)<br>
+                    5. หากต้องการเพิ่มตัวเลือกเพิ่ม ให้กดปุ่ม <span class="badge bg-outline-primary border border-primary text-primary"><i class="fa fa-plus"></i> เพิ่มตัวเลือก</span> เพื่อเพิ่มช่องรับข้อมูลเพิ่มเติม (ไม่จำกัดจำนวนตัวเลือก)<br>
+                    6. กดปุ่ม <strong>"บันทึกและเปิดโหวต"</strong> เพื่อเริ่มใช้งานทันที
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-item">
+                <h5><span class="step-number">3</span>การปิดรับคะแนนโหวต / เปิดโหวตซ้ำ</h5>
+                <p class="text-muted">
+                    ในตารางรายการหัวข้อการโหวต เจ้าหน้าที่นิติบุคคลสามารถเปลี่ยนสถานะของหัวข้อได้โดย:<br>
+                    - กดปุ่ม <span class="badge bg-warning text-dark"><i class="fa fa-ban"></i> ปิดโหวต</span> เพื่อหยุดรับโหวตชั่วคราวหรือถาวร (ลูกบ้านจะไม่เห็นหัวข้อนี้ในหน้าโหวต)<br>
+                    - กดปุ่ม <span class="badge bg-success"><i class="fa fa-play"></i> เปิดโหวต</span> เพื่อเริ่มรับคะแนนเสียงโหวตอีกครั้ง
+                </p>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-item">
+                <h5><span class="step-number">4</span>การดูผลคะแนนโหวต (รายงานผลประชามติ)</h5>
+                <p class="text-muted">
+                    1. กดปุ่ม <span class="badge bg-info text-dark"><i class="fa fa-bar-chart"></i> รายงานผล</span> บนตารางรายการหัวข้อที่ต้องการตรวจสอบ<br>
+                    2. ระบบจะแสดงสถิติคะแนนรวม และการกระจายตัวของคะแนนเสียงเป็นเปอร์เซ็นต์ด้วยแถบกราฟสีสันต่าง ๆ<br>
+                    3. ตรวจสอบตารางด้านล่างของกราฟเพื่อดู <strong>ประวัติการโหวตรายบ้านเลขที่ (Audit Log)</strong> เพื่อยืนยันความถูกต้องและความโปร่งใสของการลงคะแนน
+                </p>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-item">
+                <h5><span class="step-number">5</span>การลบหัวข้อการโหวต</h5>
+                <p class="text-muted">
+                    กดปุ่ม <span class="badge bg-danger"><i class="fa fa-trash"></i> ลบ</span> หากต้องการยกเลิกหัวข้อโหวตนั้นออกจากระบบ
+                </p>
+                <div class="note-box mt-2">
+                    <strong>⚠️ ข้อควรระวัง:</strong> การลบหัวข้อโหวตจะทำให้ข้อมูลคะแนนและประวัติการลงคะแนน (Audit Log) ทั้งหมดที่เกี่ยวกับหัวข้อนั้นถูกลบออกไปถาวรและไม่สามารถกู้คืนได้
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer text-center bg-white border-0 py-3">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

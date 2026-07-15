@@ -112,6 +112,10 @@ include('includes/Header.php');
                                         <button type="button" id="petBtn" class="btn btn-info btn-block">
                                             ลงทะเบียนสัตว์เลี้ยง
                                         </button>
+
+                                        <button type="button" id="greenBtn" class="btn btn-success btn-block" style="margin-top: 5px;">
+                                            การลงมติของหมู่บ้าน
+                                        </button>
                                     </div>
                                 </form>
 
@@ -209,6 +213,16 @@ include('includes/Header.php');
         background-color: #b792ec;
     }
 
+    .btn-success {
+        background-color: #6bc5a0;
+        border-color: #6bc5a0;
+    }
+
+    .btn-success:hover {
+        background-color: #5ab390;
+        border-color: #5ab390;
+    }
+
     .rounded-circle {
         border: 2px solid #cfaef7;
     }
@@ -244,6 +258,7 @@ include('includes/Header.php');
                     .then(response => response.json())
                     .then(data => {
                         if (data.house_number) {
+                            userHouseNumber = data.house_number;
                             document.getElementById('user-info-liff3').innerText = displayName;
                             $('#profilePic').attr('src', profile.pictureUrl || "../img/user-001.png");
                         } else {
@@ -262,6 +277,8 @@ include('includes/Header.php');
 
 </script>
 <script>
+    let userHouseNumber = '';
+
     $(document).ready(function() {
 
         // Load statistics
@@ -277,6 +294,11 @@ include('includes/Header.php');
         $('#petBtn').on('click', function() {
             // Redirect to the pet registration page URL
             window.location.href = 'https://liff.line.me/2007370141-WVrXGgKP'; // <-- ‼️ **แก้ไข URL ของหน้าลงทะเบียนสัตว์เลี้ยงที่นี่**
+        });
+
+        // When the green button is clicked
+        $('#greenBtn').on('click', function() {
+            window.location.href = 'https://liff.line.me/2007370141-JHWwGTRP?house_number=' + encodeURIComponent(userHouseNumber);
         });
 
     });

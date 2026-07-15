@@ -13,6 +13,99 @@ $house_number = trim($_POST['house_number'] ?? '');
 $option_id = filter_input(INPUT_POST, 'option_id', FILTER_VALIDATE_INT);
 $line_user_id = trim($_POST['lineUserId'] ?? '');
 
+// 0. ตรวจสอบ LINE User ID และดึงข้อมูลโปรไฟล์จากฐานข้อมูล
+if ($action === 'check_line_user') {
+    if (empty($line_user_id)) {
+        echo json_encode(["success" => false, "message" => "ไม่พบ LINE User ID"]);
+        exit;
+    }
+
+    try {
+        $stmt = $conn->prepare("SELECT f_name, l_name, house_number, line_picture_profile, line_user_name FROM ims_house_line_user WHERE line_user_id = ?");
+        $stmt->execute([$line_user_id]);
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($userData) {
+            echo json_encode([
+                "success" => true,
+                "registered" => true,
+                "user" => $userData
+            ]);
+        } else {
+            echo json_encode([
+                "success" => true,
+                "registered" => false
+            ]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    }
+    exit;
+}
+
+// 1.5 ดึงสถานะโหวตทั้งหมดของบ้านเลขที่ (ใช้สำหรับแสดงสถานะใน dropdown)
+if ($action === 'get_voted_status') {
+    if (empty($house_number)) {
+        echo json_encode(["success" => false, "message" => "กรุณาระบุบ้านเลขที่"]);
+        exit;
+    }
+
+    try {
+        $stmt = $conn->prepare("SELECT r.topic_id, r.voted_at, o.option_text 
+            FROM ims_vote_record r 
+            JOIN ims_vote_option o ON r.option_id = o.option_id 
+            WHERE r.house_number = ?");
+        $stmt->execute([$house_number]);
+        $votedRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode(["success" => true, "voted_topics" => $votedRecords]);
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    }
+    exit;
+}
+
+// 1.6 ดึงผลโหวตสรุปรวมทุกหัวข้อ
+if ($action === 'get_vote_results') {
+    try {
+        // ดึงหัวข้อทั้งหมด (active + closed)
+        $stmt_topics = $conn->prepare("SELECT * FROM ims_vote_topic ORDER BY topic_id DESC");
+        $stmt_topics->execute();
+        $topics = $stmt_topics->fetchAll(PDO::FETCH_ASSOC);
+
+        $results = [];
+        $stmt_opt = $conn->prepare("SELECT * FROM ims_vote_option WHERE topic_id = ? ORDER BY option_id ASC");
+        $stmt_count = $conn->prepare("SELECT COUNT(*) FROM ims_vote_record WHERE topic_id = ? AND option_id = ?");
+        $stmt_total = $conn->prepare("SELECT COUNT(*) FROM ims_vote_record WHERE topic_id = ?");
+
+        foreach ($topics as &$topic) {
+            $stmt_opt->execute([$topic['topic_id']]);
+            $options = $stmt_opt->fetchAll(PDO::FETCH_ASSOC);
+
+            $stmt_total->execute([$topic['topic_id']]);
+            $totalVotes = (int) $stmt_total->fetchColumn();
+
+            $optionsWithCount = [];
+            foreach ($options as $opt) {
+                $stmt_count->execute([$topic['topic_id'], $opt['option_id']]);
+                $count = (int) $stmt_count->fetchColumn();
+                $opt['vote_count'] = $count;
+                $opt['percent'] = $totalVotes > 0 ? round(($count / $totalVotes) * 100, 1) : 0;
+                $optionsWithCount[] = $opt;
+            }
+
+            $topic['options'] = $optionsWithCount;
+            $topic['total_votes'] = $totalVotes;
+            $topic['status_text'] = $topic['status'] === 'active' ? 'เปิดรับโหวต' : 'ปิดโหวตแล้ว';
+        }
+
+        echo json_encode(["success" => true, "results" => $results ?: $topics]);
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    }
+    exit;
+}
+
 // 1. ดึงหัวข้อโหวตที่เปิดใช้งานอยู่
 if ($action === 'get_active_topics') {
     try {

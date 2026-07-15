@@ -36,6 +36,9 @@ if (empty($_SESSION['alogin'])) {
                                     <button type="button" id="btnReload" class="btn btn-outline-success btn-sm">
                                         <i class="fa fa-refresh"></i> รีโหลดข้อมูล
                                     </button>
+                                    <a href="how_to_manage_vote.html" target="_blank" class="btn btn-outline-info btn-sm">
+                                        <i class="fa fa-book"></i> คู่มือการใช้งาน
+                                    </a>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -43,7 +46,7 @@ if (empty($_SESSION['alogin'])) {
                                     <table class="table table-bordered table-striped" id="TableVoteList">
                                         <thead>
                                             <tr>
-                                                <th style="width: 8%;">ID</th>
+                                                <th style="width: 8%;">ลำดับ</th>
                                                 <th>หัวข้อโหวต/ประชามติ</th>
                                                 <th style="width: 15%;">สถานะ</th>
                                                 <th style="width: 15%;">จำนวนผู้โหวต</th>
@@ -82,6 +85,7 @@ if (empty($_SESSION['alogin'])) {
                 </button>
             </div>
             <form id="voteTopicForm">
+                <input type="hidden" id="topicId" name="id" value="">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="topicTitle" class="font-weight-bold">หัวข้อโหวต / ประเด็นประชามติ:</label>
@@ -185,6 +189,7 @@ if (empty($_SESSION['alogin'])) {
             optionIndex++;
             let fieldHtml = `
                 <div class="input-group mb-2 option-group animate__animated animate__fadeIn">
+                    <input type="hidden" class="option-id-field" name="option_ids[]" value="">
                     <input type="text" class="form-control option-text-field" name="options[]" placeholder="ตัวเลือกที่ ${optionIndex}" required>
                     <div class="input-group-append">
                         <button class="btn btn-outline-danger btn-remove-option" type="button"><i class="fa fa-trash"></i></button>
@@ -224,7 +229,8 @@ if (empty($_SESSION['alogin'])) {
                 success: function (response) {
                     if (response.status === "success") {
                         let rows = "";
-                        response.data.forEach(function (topic) {
+                        let totalRows = response.data.length;
+                        response.data.forEach(function (topic, idx) {
                             let statusBadge = "";
                             let toggleBtn = "";
 
@@ -238,7 +244,7 @@ if (empty($_SESSION['alogin'])) {
 
                             rows += `
                                 <tr>
-                                    <td class="text-center">${topic.topic_id}</td>
+                                    <td class="text-center">${totalRows - idx}</td>
                                     <td>
                                         <div class="font-weight-bold text-dark">${topic.title}</div>
                                         <div class="text-muted small">${topic.description || 'ไม่มีรายละเอียดเพิ่มเติม'}</div>
@@ -248,6 +254,7 @@ if (empty($_SESSION['alogin'])) {
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-info btn-sm view-results" id="${topic.topic_id}" title="ดูผลลัพธ์และสถิติ"><i class="fa fa-bar-chart"></i> รายงานผล</button>
+                                            <button class="btn btn-primary btn-sm edit-topic" id="${topic.topic_id}" title="แก้ไขหัวข้อ"><i class="fa fa-edit"></i> แก้ไข</button>
                                             ${toggleBtn}
                                             <button class="btn btn-danger btn-sm delete-topic" id="${topic.topic_id}" title="ลบหัวข้อ"><i class="fa fa-trash"></i> ลบ</button>
                                         </div>
@@ -277,14 +284,17 @@ if (empty($_SESSION['alogin'])) {
         // 3. แสดง Modal เพิ่มหัวข้อโหวต
         $("#btnAdd").click(function () {
             $("#voteTopicForm")[0].reset();
+            $("#topicId").val("");
             $("#optionsContainer").html(`
                 <div class="input-group mb-2 option-group">
+                    <input type="hidden" class="option-id-field" name="option_ids[]" value="">
                     <input type="text" class="form-control option-text-field" name="options[]" placeholder="ตัวเลือกที่ 1" required>
                     <div class="input-group-append">
                         <button class="btn btn-outline-danger btn-remove-option" type="button"><i class="fa fa-trash"></i></button>
                     </div>
                 </div>
                 <div class="input-group mb-2 option-group">
+                    <input type="hidden" class="option-id-field" name="option_ids[]" value="">
                     <input type="text" class="form-control option-text-field" name="options[]" placeholder="ตัวเลือกที่ 2" required>
                     <div class="input-group-append">
                         <button class="btn btn-outline-danger btn-remove-option" type="button"><i class="fa fa-trash"></i></button>
@@ -292,13 +302,58 @@ if (empty($_SESSION['alogin'])) {
                 </div>
             `);
             optionIndex = 2;
+            $("#recordModal .modal-title").html("<i class='fa fa-plus'></i> เพิ่มหัวข้อการโหวตใหม่");
+            $("#btnSaveTopic").text("บันทึกและเปิดโหวต").removeClass("btn-primary").addClass("btn-success");
             $("#recordModal").modal("show");
         });
 
-        // 4. ส่งฟอร์มสร้างหัวข้อโหวตใหม่
+        // 3.1. แสดง Modal แก้ไขหัวข้อโหวต
+        $(document).on("click", ".edit-topic", function () {
+            let id = $(this).attr("id");
+            $.ajax({
+                type: "POST",
+                url: "model/manage_vote_process.php",
+                data: { action: "GET_DATA", id: id },
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#voteTopicForm")[0].reset();
+                        $("#topicId").val(response.topic.topic_id);
+                        $("#topicTitle").val(response.topic.title);
+                        $("#topicDescription").val(response.topic.description);
+                        
+                        let optionsHtml = "";
+                        response.options.forEach((opt, idx) => {
+                            optionsHtml += `
+                                <div class="input-group mb-2 option-group animate__animated animate__fadeIn">
+                                    <input type="hidden" class="option-id-field" name="option_ids[]" value="${opt.option_id}">
+                                    <input type="text" class="form-control option-text-field" name="options[]" value="${opt.option_text}" placeholder="ตัวเลือกที่ ${idx + 1}" required>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-danger btn-remove-option" type="button"><i class="fa fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        $("#optionsContainer").html(optionsHtml);
+                        optionIndex = response.options.length;
+
+                        $("#recordModal .modal-title").html("<i class='fa fa-edit'></i> แก้ไขหัวข้อการโหวต");
+                        $("#btnSaveTopic").text("บันทึกการแก้ไข").removeClass("btn-success").addClass("btn-primary");
+                        $("#recordModal").modal("show");
+                    } else {
+                        alertify.error(response.message);
+                    }
+                }
+            });
+        });
+
+        // 4. ส่งฟอร์มสร้างหรือแก้ไขหัวข้อโหวต
         $("#voteTopicForm").on("submit", function (e) {
             e.preventDefault();
-            let formData = $(this).serialize() + "&action=ADD";
+            let isEdit = $("#topicId").val() !== "";
+            let actionName = isEdit ? "UPDATE" : "ADD";
+            
+            let formData = $(this).serialize() + "&action=" + actionName;
             $.ajax({
                 type: "POST",
                 url: "model/manage_vote_process.php",
