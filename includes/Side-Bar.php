@@ -119,12 +119,12 @@ $sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sid
     <hr class="sidebar-divider">
 
     <div class="sidebar-heading text-xs font-weight-bold text-muted px-3 mb-1" style="text-transform: none; line-height: 1.5; font-size: 0.8rem; height: auto;">
-        ระบบประชามติ (Voting)
+        ระบบแจ้งซ่อม (Repair)
     </div>
     <li class="nav-item">
-        <a class="nav-link" href="manage_vote.php?m=%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%96%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%8A%E0%B8%B2%E0%B8%A1%E0%B8%95%E0%B8%B4&s=%E0%B8%95%E0%B8%B1%E0%B9%82%E0%B8%95%E0%B8%AB%E0%B8%B1%E0%B8%A7%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B9%82%E0%B8%AB%E0%B8%A7%E0%B8%95">
-            <i class="fas fa-poll"></i>
-            <span>ตั้งค่าหัวข้อโหวต</span></a>
+        <a class="nav-link" href="member_repair_request.php?m=%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%9A%E0%B9%81%E0%B8%88%E0%B9%89%E0%B8%87%E0%B8%8B%E0%B9%88%E0%B8%AD%E0%B8%A1&s=%E0%B9%81%E0%B8%88%E0%B9%89%E0%B8%87%E0%B8%8B%E0%B9%88%E0%B8%AD%E0%B8%A1/%E0%B9%81%E0%B8%88%E0%B9%89%E0%B8%87%E0%B8%9B%E0%B8%B1%E0%B8%8D%E0%B8%AB%E0%B8%B2">
+            <i class="fas fa-tools"></i>
+            <span>แจ้งซ่อม / แจ้งปัญหา</span></a>
     </li>
 
     <hr class="sidebar-divider">

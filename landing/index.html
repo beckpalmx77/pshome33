@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบริหารจัดการหมู่บ้านและนิติบุคคลอัจฉริยะ | Smart Juristic System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0f172a; /* Slate 900 */
+            --secondary-color: #1e293b; /* Slate 800 */
+            --accent-color: #2563eb; /* Blue 600 */
+            --accent-hover: #1d4ed8; /* Blue 700 */
+            --line-green: #06c755; /* LINE OA Green */
+            --text-dark: #0f172a;
+            --text-muted: #64748b; /* Slate 500 */
+            --bg-light: #f8fafc; /* Slate 50 */
+            --border-color: #e2e8f0; /* Slate 200 */
+            --success-color: #10b981; /* Emerald 500 */
+            --warning-color: #f59e0b; /* Amber 500 */
+        }
+
+        body {
+            font-family: 'Sarabun', 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Typography & Structure */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 3rem;
+            font-size: 2.25rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .section-title.left::after {
+            left: 0;
+            transform: none;
+        }
+
+        /* Navbar Customization */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand span {
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--secondary-color);
+            padding: 0.5rem 1.25rem !important;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .btn-navbar-cta {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 0.5rem 1.25rem;
+            border: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-navbar-cta:hover {
+            background-color: var(--accent-hover);
+            color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background-color: var(--bg-light);
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge i {
+            font-size: 0.75rem;
+        }
+
+        .hero-title {
+            font-size: 2.75rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .hero-desc {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-cta-btn {
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .hero-stat-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-stat-num {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hero-stat-lbl {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Multi-Platform Showcase (Interactive Mockups) */
+        .showcase-section {
+            padding: 5rem 0;
+        }
+
+        .mockup-tab-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mockup-tab {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mockup-tab:hover {
+            border-color: var(--accent-color);
+            background-color: var(--bg-light);
+        }
+
+        .mockup-tab.active {
+            border-color: var(--accent-color);
+            background-color: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+        }
+
+        .mockup-tab-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background-color: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            transition: all 0.2s;
+        }
+
+        .mockup-tab.active .mockup-tab-icon {
+            background-color: var(--accent-color);
+            color: #ffffff;
+        }
+
+        .mockup-tab.line-tab.active .mockup-tab-icon {
+            background-color: var(--line-green);
+        }
+
+        .mockup-tab-text h4 {
+            font-size: 1.05rem;
+            margin: 0 0 4px 0;
+            font-weight: 700;
+        }
+
+        .mockup-tab-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* CSS Mockup Windows & Frames */
+        .mockup-window-wrapper {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 520px;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* 1. PC Web Browser Mockup */
+        .browser-mockup {
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .browser-header {
+            background-color: #f1f5f9;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .browser-dot.red { background-color: #ef4444; }
+        .browser-dot.yellow { background-color: #f59e0b; }
+        .browser-dot.green { background-color: #10b981; }
+
+        .browser-address-bar {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 2px 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            flex-grow: 1;
+            margin-left: 15px;
+            max-width: 400px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .browser-body {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            height: 380px;
+            background-color: #f8fafc;
+        }
+
+        .browser-sidebar {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .browser-sidebar-logo {
+            font-weight: 800;
+            font-size: 0.9rem;
+            padding-left: 8px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .browser-sidebar-menu-item {
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .browser-sidebar-menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .browser-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .browser-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .browser-content-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .browser-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .browser-mini-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .browser-mini-card h5 {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0 0 5px 0;
+        }
+
+        .browser-mini-card p {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .browser-mini-card p.success-text {
+            color: var(--success-color);
+        }
+
+        .browser-chart-area {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .browser-chart-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .browser-chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 120px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .browser-chart-bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .browser-chart-bar {
+            width: 16px;
+            background-color: var(--accent-color);
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s;
+        }
+
+        .browser-chart-bar.expense {
+            background-color: #94a3b8;
+        }
+
+        .browser-chart-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 2. Smartphone Frame Mockup */
+        .phone-mockup {
+            width: 270px;
+            height: 520px;
+            background-color: #0f172a;
+            border-radius: 36px;
+            padding: 10px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            border: 4px solid #334155;
+        }
+
+        .phone-notch {
+            width: 110px;
+            height: 18px;
+            background-color: #0f172a;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 12px 12px;
+            z-index: 10;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #f1f5f9;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* LINE Chat View */
+        .line-header {
+            background-color: #242a36;
+            color: #ffffff;
+            padding: 22px 12px 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .line-header i {
+            color: #ffffff;
+        }
+
+        .line-body {
+            background-color: #8c9eb5;
+            flex-grow: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.75rem;
+        }
+
+        .line-bubble {
+            max-width: 85%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .line-bubble.bot {
+            background-color: #ffffff;
+            color: #000000;
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+        }
+
+        .line-bubble.user {
+            background-color: #9eea6a;
+            color: #000000;
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+        }
+
+        .line-flex-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+            margin-top: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .line-flex-header {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 8px 12px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+
+        .line-flex-body {
+            padding: 10px;
+        }
+
+        .line-flex-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.7rem;
+        }
+
+        .line-flex-lbl {
+            color: var(--text-muted);
+        }
+
+        .line-flex-val {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .line-flex-val.price {
+            color: #ef4444;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .line-flex-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: #f1f5f9;
+            color: var(--accent-color);
+            font-weight: 600;
+            padding: 6px;
+            border-radius: 4px;
+            margin-top: 6px;
+            border: none;
+            font-size: 0.7rem;
+            transition: background-color 0.2s;
+        }
+
+        .line-flex-btn.primary-btn {
+            background-color: var(--line-green);
+            color: #ffffff;
+        }
+
+        .line-flex-btn.primary-btn:hover {
+            background-color: #05b04b;
+        }
+
+        .line-footer {
+            background-color: #ffffff;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .line-input {
+            background-color: #f1f5f9;
+            border-radius: 16px;
+            flex-grow: 1;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border: none;
+        }
+
+        /* Mobile Visitor App View */
+        .app-header {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            padding: 22px 12px 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .app-body {
+            flex-grow: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .app-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .app-card h6 {
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .app-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .app-lbl {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .app-val-box {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .app-btn {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 8px;
+            border-radius: 6px;
+            width: 100%;
+            border: none;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .app-btn.orange-btn {
+            background-color: var(--warning-color);
+        }
+
+        .app-list-item {
+            border-left: 3px solid var(--accent-color);
+            background-color: var(--bg-light);
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            border-radius: 0 4px 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-list-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .app-list-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .app-list-sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            background-color: #d1fae5;
+            color: #065f46;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Features Section */
+        .features-section {
+            background-color: var(--bg-light);
+            padding: 5rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .feature-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Pain Points Section */
+        .pain-points-section {
+            padding: 5rem 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .comparison-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 1.25rem;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pain-text {
+            color: #ef4444;
+            font-weight: 500;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .solution-text {
+            color: var(--success-color);
+            font-weight: 600;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        /* Pricing & SLA Section */
+        .pricing-section {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 5rem 0;
+        }
+
+        .pricing-section h2, .pricing-section .section-title::after {
+            color: #ffffff;
+        }
+
+        .pricing-section .section-title::after {
+            background-color: var(--accent-color);
+        }
+
+        .pricing-card {
+            background-color: var(--secondary-color);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .pricing-badge {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 50px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .pricing-features-list {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .pricing-features-list li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .pricing-features-list li i {
+            color: var(--accent-color);
+        }
+
+        .pricing-cta-btn {
+            width: 100%;
+            padding: 0.875rem;
+            font-weight: 600;
+            border-radius: 8px;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.2s;
+        }
+
+        .pricing-cta-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .sla-card {
+            background-color: var(--secondary-color);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 2rem;
+            height: 100%;
+        }
+
+        .sla-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .sla-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .sla-item h4 {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sla-item h4 i {
+            color: var(--success-color);
+            font-size: 1.2rem;
+        }
+
+        .sla-item p {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin: 0;
+            padding-left: 28px;
+        }
+
+        /* Case Study Section */
+        .case-study-section {
+            padding: 5rem 0;
+            background-color: var(--bg-light);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .case-study-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .quote-icon {
+            font-size: 2.5rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .case-study-text {
+            font-size: 1.125rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .case-study-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .case-study-author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .case-study-author-info h5 {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .case-study-author-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 5rem 0;
+        }
+
+        .contact-form-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-color: var(--border-color);
+            border-radius: 8px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: #cbd5e1;
+            padding: 4rem 0 2rem 0;
+            font-size: 0.9rem;
+            border-top: 1px solid #334155;
+        }
+
+        footer h5 {
+            color: #ffffff;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        footer ul li {
+            margin-bottom: 10px;
+        }
+
+        footer ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer ul li a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            padding-top: 2rem;
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            .mockup-window-wrapper {
+                min-height: auto;
+                padding: 1rem;
+                margin-top: 2rem;
+            }
+            .browser-body {
+                grid-template-columns: 140px 1fr;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .section-title {
+                font-size: 1.75rem;
+            }
+            .comparison-table thead {
+                display: none;
+            }
+            .comparison-table tr {
+                display: block;
+                border-bottom: 2px solid var(--border-color);
+                padding: 1rem 0;
+            }
+            .comparison-table td {
+                display: block;
+                padding: 0.5rem 1rem;
+                border: none;
+            }
+            .comparison-table td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                display: block;
+                font-size: 0.8rem;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Real Screenshot Section */
+        .screenshots-section {
+            padding: 5rem 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .screenshot-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+
+        .screenshot-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .screenshot-img-wrapper {
+            height: 220px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .screenshot-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            transition: transform 0.3s;
+        }
+
+        .screenshot-card:hover .screenshot-img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .screenshot-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .screenshot-info {
+            padding: 1.25rem;
+        }
+
+        .screenshot-info h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .screenshot-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .screenshot-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        
+        .screenshot-link:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        /* Print Styles for Brochure / Presentation PDF */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 15mm 12mm 15mm 12mm;
+            }
+
+            body {
+                font-size: 11pt;
+                color: #0f172a !important;
+                background-color: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Hide elements not needed in the printed brochure */
+            .navbar,
+            .navbar-toggler,
+            .btn-navbar-cta,
+            .hero-cta-btn,
+            #leadForm,
+            #successMessage,
+            .submit-btn,
+            .line-footer,
+            .app-btn,
+            .browser-address-bar,
+            .screenshot-link,
+            .pricing-cta-btn,
+            footer .col-lg-2, 
+            footer .col-lg-3,
+            .footer-bottom .d-flex {
+                display: none !important;
+            }
+
+            /* Adjust columns for full page printing */
+            .showcase-section .col-lg-4 {
+                display: none !important;
+            }
+            
+            .showcase-section .col-lg-8 {
+                width: 100% !important;
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+            }
+
+            /* Force display backgrounds and colors on printing */
+            .hero-badge,
+            .hero-stat-card,
+            .browser-mini-card,
+            .browser-chart-bar,
+            .phone-mockup,
+            .line-bubble.bot,
+            .line-bubble.user,
+            .line-flex-card,
+            .app-card,
+            .app-list-item,
+            .status-badge,
+            .feature-card,
+            .feature-icon,
+            .comparison-table th,
+            .comparison-table td,
+            .pricing-card,
+            .pricing-badge,
+            .sla-card,
+            .case-study-card,
+            .contact-form-card,
+            footer {
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Dark background elements keep their colors in print to look premium */
+            .browser-sidebar,
+            .line-header,
+            .app-header,
+            .line-flex-header,
+            .pricing-card.featured,
+            .pricing-badge,
+            .sla-card,
+            footer {
+                background-color: #0f172a !important;
+                color: #ffffff !important;
+            }
+
+            .browser-sidebar-menu-item {
+                color: #cbd5e1 !important;
+            }
+
+            .browser-sidebar-menu-item.active {
+                background-color: rgba(255, 255, 255, 0.15) !important;
+                color: #ffffff !important;
+            }
+
+            /* Layout control for sections - start each major section on a new page */
+            .hero-section {
+                padding: 1rem 0 !important;
+                page-break-after: always;
+                border: none !important;
+            }
+
+            .showcase-section,
+            .features-section,
+            .screenshots-section,
+            .pain-points-section,
+            .pricing-section,
+            .case-study-section,
+            .contact-section {
+                padding: 1.5rem 0 !important;
+                page-break-before: always;
+                break-before: page;
+            }
+
+            /* Prevent elements from breaking across pages */
+            .feature-card,
+            .screenshot-card,
+            .pricing-card,
+            .sla-card,
+            .case-study-card,
+            .contact-form-card,
+            .hero-stat-card {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                margin-bottom: 1.25rem;
+            }
+
+            /* Mockups print layout transformation: show all 4 mockups sequentially */
+            .mockup-window-wrapper {
+                background: none !important;
+                border: none !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 2rem !important;
+            }
+
+            .mockup-content {
+                display: block !important;
+                margin-bottom: 2rem !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .browser-mockup {
+                width: 100% !important;
+            }
+
+            .phone-mockup {
+                width: 320px !important;
+                height: 600px !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Nav -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid fa-hotel text-primary"></i> Smart<span>Juristic</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#showcase">ระบบจำลอง</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#screenshots">ภาพระบบจริง</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">ฟีเจอร์เด่น</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">แพ็กเกจ & บริการ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#case-study">ตัวอย่างความสำเร็จ</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a href="#contact" class="btn btn-navbar-cta" id="nav-cta-btn">ติดต่อขอสาธิตระบบ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 pr-lg-5">
+                    <div class="hero-badge">
+                        <i class="fa-solid fa-cloud"></i> ระบบคลาวด์เช่าใช้รายปี รวมบริการดูแล 24/7
+                    </div>
+                    <h1 class="hero-title">
+                        ระบบนิติบุคคลหมู่บ้านจัดสรร อัจฉริยะ ยกระดับงานบริการยุคดิจิทัล
+                    </h1>
+                    <p class="hero-desc">
+                        ครอบคลุมการทำงานแบบ 360 องศา ทั้งผู้บริหารและลูกบ้าน สะดวกสบาย ใช้งานได้ทันทีบน PC Web Browser, Smart Phone และ LINE OA โดยไม่ต้องลงแอปพลิเคชันเพิ่มเติม
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <a href="#contact" class="btn btn-primary hero-cta-btn" id="hero-primary-cta">
+                            <i class="fa-solid fa-calendar-check"></i> นัดหมายแนะนำระบบฟรี
+                        </a>
+                        <a href="#showcase" class="btn btn-outline-dark hero-cta-btn" id="hero-secondary-cta">
+                            <i class="fa-solid fa-laptop-code"></i> ชมตัวอย่างการทำงาน
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="hero-stat-card">
+                                <div class="hero-stat-num">80%</div>
+                                <p class="hero-stat-lbl">ลดภาระงานเอกสาร</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hero-stat-card">
+                                <div class="hero-stat-num">100%</div>
+                                <p class="hero-stat-lbl">ติดตามยอดค้างชำระได้แม่นยำ</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hero-stat-card">
+                                <div class="hero-stat-num">24/7</div>
+                                <p class="hero-stat-lbl">ดูแลและซัพพอร์ตระบบ</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hero-stat-card">
+                                <div class="hero-stat-num">5 Sec</div>
+                                <p class="hero-stat-lbl">ส่งแจ้งเตือนลูกบ้านทันที</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Platform Showcase Section -->
+    <section class="showcase-section" id="showcase">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">ใช้งานง่ายผ่าน 3 ช่องทางหลัก</h2>
+                <p class="text-muted max-w-2xl mx-auto">ระบบถูกออกแบบมาเพื่อรองรับผู้ใช้งานทุกกลุ่ม ตั้งแต่ลูกบ้าน กรรมการ ไปจนถึงเจ้าหน้าที่สนามและรปภ.</p>
+            </div>
+            
+            <div class="row align-items-center">
+                <!-- Tabs on the left -->
+                <div class="col-lg-4">
+                    <div class="mockup-tab-container">
+                        <button class="mockup-tab active" onclick="switchMockup('admin')" id="tab-admin">
+                            <div class="mockup-tab-icon">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div class="mockup-tab-text">
+                                <h4>PC Web Browser (สำหรับนิติบุคคล)</h4>
+                                <p>จัดการบัญชี ค่าส่วนกลาง ประธานการประชุม และรายงานสรุป</p>
+                            </div>
+                        </button>
+                        
+                        <button class="mockup-tab line-tab" onclick="switchMockup('line')" id="tab-line">
+                            <div class="mockup-tab-icon" style="color: #06c755;">
+                                <i class="fa-brands fa-line"></i>
+                            </div>
+                            <div class="mockup-tab-text">
+                                <h4>LINE OA (สำหรับลูกบ้าน)</h4>
+                                <p>เช็คยอดค้างชำระ โอนเงิน ตรวจสอบสลิป รับ E-Receipt และพัสดุ</p>
+                            </div>
+                        </button>
+                        
+                        <button class="mockup-tab" onclick="switchMockup('visitor')" id="tab-visitor">
+                            <div class="mockup-tab-icon">
+                                <i class="fa-solid fa-id-card"></i>
+                            </div>
+                            <div class="mockup-tab-text">
+                                <h4>Smart Phone Web (สำหรับงานสนาม)</h4>
+                                <p>ระบบบันทึกผู้มาติดต่อ ยานพาหนะ และลงทะเบียนประชุม</p>
+                            </div>
+                        </button>
+
+                        <button class="mockup-tab" onclick="switchMockup('jobs')" id="tab-jobs">
+                            <div class="mockup-tab-icon">
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+                            </div>
+                            <div class="mockup-tab-text">
+                                <h4>Job Record (สำหรับงานซ่อมบำรุง)</h4>
+                                <p>แจ้งเตือนและบันทึกงานของช่างนิติบุคคลแบบเรียลไทม์</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Mockup Display on the right -->
+                <div class="col-lg-8">
+                    <div class="mockup-window-wrapper">
+                        
+                        <!-- 1. PC Web Browser Mockup -->
+                        <div id="admin-mockup" class="browser-mockup mockup-content">
+                            <div class="browser-header">
+                                <div class="browser-dot red"></div>
+                                <div class="browser-dot yellow"></div>
+                                <div class="browser-dot green"></div>
+                                <div class="browser-address-bar">https://admin.pruksa33.com/dashboard</div>
+                            </div>
+                            <div class="browser-body">
+                                <div class="browser-sidebar">
+                                    <div class="browser-sidebar-logo"><i class="fa-solid fa-hotel"></i> พฤกษา 33 นิติบุคคล</div>
+                                    <div class="browser-sidebar-menu-item active"><i class="fa-solid fa-gauge"></i> แดชบอร์ด</div>
+                                    <div class="browser-sidebar-menu-item"><i class="fa-solid fa-house"></i> ข้อมูลบ้านเลขที่</div>
+                                    <div class="browser-sidebar-menu-item"><i class="fa-solid fa-file-invoice-dollar"></i> ค่าส่วนกลาง</div>
+                                    <div class="browser-sidebar-menu-item"><i class="fa-solid fa-wallet"></i> รายรับ - รายจ่าย</div>
+                                    <div class="browser-sidebar-menu-item"><i class="fa-solid fa-users"></i> งานประชุมลูกบ้าน</div>
+                                </div>
+                                <div class="browser-content">
+                                    <div class="browser-content-header">
+                                        <h3 class="browser-content-title">แดชบอร์ดภาพรวมการเงิน</h3>
+                                        <span class="status-badge">ข้อมูล ณ วันนี้</span>
+                                    </div>
+                                    <div class="browser-stat-grid">
+                                        <div class="browser-mini-card">
+                                            <h5>รายรับค่าส่วนกลาง (เดือนนี้)</h5>
+                                            <p class="success-text">185,000 บาท</p>
+                                        </div>
+                                        <div class="browser-mini-card">
+                                            <h5>ยอดค้างชำระสะสม</h5>
+                                            <p style="color: #ef4444;">35,000 บาท</p>
+                                        </div>
+                                        <div class="browser-mini-card">
+                                            <h5>รายจ่ายนิติบุคคล</h5>
+                                            <p>45,200 บาท</p>
+                                        </div>
+                                    </div>
+                                    <div class="browser-chart-area">
+                                        <div class="browser-chart-title">สถิติการชำระเงินย้อนหลัง (ม.ค. - มิ.ย.)</div>
+                                        <div class="browser-chart-bars">
+                                            <div class="browser-chart-bar-group">
+                                                <div class="browser-chart-bar" style="height: 50px;"></div>
+                                                <div class="browser-chart-label">ม.ค.</div>
+                                            </div>
+                                            <div class="browser-chart-bar-group">
+                                                <div class="browser-chart-bar" style="height: 65px;"></div>
+                                                <div class="browser-chart-label">ก.พ.</div>
+                                            </div>
+                                            <div class="browser-chart-bar-group">
+                                                <div class="browser-chart-bar" style="height: 70px;"></div>
+                                                <div class="browser-chart-label">มี.ค.</div>
+                                            </div>
+                                            <div class="browser-chart-bar-group">
+                                                <div class="browser-chart-bar" style="height: 80px;"></div>
+                                                <div class="browser-chart-label">เม.ย.</div>
+                                            </div>
+                                            <div class="browser-chart-bar-group">
+                                                <div class="browser-chart-bar" style="height: 95px;"></div>
+                                                <div class="browser-chart-label">พ.ค.</div>
+                                            </div>
+                                            <div class="browser-chart-bar-group">
+                                                <div class="browser-chart-bar" style="height: 105px;"></div>
+                                                <div class="browser-chart-label">มิ.ย.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 2. LINE OA Mockup -->
+                        <div id="line-mockup" class="phone-mockup mockup-content d-none">
+                            <div class="phone-notch"></div>
+                            <div class="phone-screen">
+                                <div class="line-header">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                    <span>พฤกษา 33 นิติบุคคล</span>
+                                </div>
+                                <div class="line-body">
+                                    <div class="line-bubble bot">
+                                        สวัสดีค่ะ ลูกบ้านบ้านเลขที่ 102/54 ยินดีต้อนรับสู่บริการข้อมูลนิติบุคคลค่ะ
+                                    </div>
+                                    <div class="line-bubble bot">
+                                        ใบแจ้งหนี้ค่าส่วนกลางประจำเดือน ก.ค. 2569 ของท่านพร้อมชำระแล้วค่ะ
+                                        <div class="line-flex-card">
+                                            <div class="line-flex-header">INVOICE: COMMON FEE</div>
+                                            <div class="line-flex-body">
+                                                <div class="line-flex-row">
+                                                    <span class="line-flex-lbl">บ้านเลขที่</span>
+                                                    <span class="line-flex-val">102/54</span>
+                                                </div>
+                                                <div class="line-flex-row">
+                                                    <span class="line-flex-lbl">กำหนดชำระ</span>
+                                                    <span class="line-flex-val">31 ก.ค. 69</span>
+                                                </div>
+                                                <div class="line-flex-row">
+                                                    <span class="line-flex-lbl">ยอดเงิน</span>
+                                                    <span class="line-flex-val price">1,200.00 บาท</span>
+                                                </div>
+                                                <button class="line-flex-btn primary-btn"><i class="fa-solid fa-qrcode"></i> ชำระเงินด้วย PromptPay</button>
+                                                <button class="line-flex-btn"><i class="fa-solid fa-file-pdf"></i> ดาวน์โหลด PDF</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="line-bubble user">
+                                        (ส่งภาพสลิปการโอนเงิน)
+                                    </div>
+                                    <div class="line-bubble bot">
+                                        ✅ ตรวจสอบสลิปอัตโนมัติสำเร็จ!<br>
+                                        <b>ยอดโอน:</b> 1,200.00 บาท<br>
+                                        <b>จาก:</b> ธ.กสิกรไทย (นายสมเจตน์)<br>
+                                        <b>เมื่อ:</b> 16/07/2026 09:40 น.<br>
+                                        ระบบได้ออกใบเสร็จรับเงินเลขที่ RE-69070024 เรียบร้อยแล้วค่ะ
+                                        <button class="line-flex-btn"><i class="fa-solid fa-file-invoice"></i> เปิดใบเสร็จรับเงิน E-Receipt</button>
+                                    </div>
+                                </div>
+                                <div class="line-footer">
+                                    <i class="fa-solid fa-keyboard text-muted"></i>
+                                    <div class="line-input">พิมพ์ข้อความสอบถาม...</div>
+                                    <i class="fa-regular fa-face-smile text-muted"></i>
+                                    <i class="fa-solid fa-plus text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 3. Visitor Management Mockup -->
+                        <div id="visitor-mockup" class="phone-mockup mockup-content d-none">
+                            <div class="phone-notch"></div>
+                            <div class="phone-screen">
+                                <div class="app-header">
+                                    <span>ระบบ Visitor Security</span>
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </div>
+                                <div class="app-body">
+                                    <div class="app-card">
+                                        <h6>บันทึกผู้ติดต่อเข้าโครงการ</h6>
+                                        <div class="app-input-group">
+                                            <span class="app-lbl">ทะเบียนรถ</span>
+                                            <div class="app-val-box">กข 9999 กรุงเทพมหานคร</div>
+                                        </div>
+                                        <div class="app-input-group">
+                                            <span class="app-lbl">ติดต่อบ้านเลขที่</span>
+                                            <div class="app-val-box">102/115 (ซอย 4)</div>
+                                        </div>
+                                        <div class="app-input-group">
+                                            <span class="app-lbl">วัตถุประสงค์</span>
+                                            <div class="app-val-box">ส่งอาหาร / พัสดุ (Shopee Food)</div>
+                                        </div>
+                                        <button class="app-btn"><i class="fa-solid fa-camera"></i> สแกนบัตรประชาชน / ใบขับขี่</button>
+                                    </div>
+                                    <div class="app-card">
+                                        <h6>ผู้มาติดต่อค้างในโครงการ</h6>
+                                        <div class="app-list-item">
+                                            <div class="app-list-info">
+                                                <span class="app-list-title">3xx 7777 (กทม.)</span>
+                                                <span class="app-list-sub">บ้าน 102/54 | เข้า: 09:12 น.</span>
+                                            </div>
+                                            <button class="app-btn orange-btn" style="width: auto; padding: 4px 10px;">ออก</button>
+                                        </div>
+                                        <div class="app-list-item">
+                                            <div class="app-list-info">
+                                                <span class="app-list-title">มค 123 (นนทบุรี)</span>
+                                                <span class="app-list-sub">บ้าน 102/88 | เข้า: 09:25 น.</span>
+                                            </div>
+                                            <button class="app-btn orange-btn" style="width: auto; padding: 4px 10px;">ออก</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Job Record Mockup -->
+                        <div id="jobs-mockup" class="phone-mockup mockup-content d-none">
+                            <div class="phone-notch"></div>
+                            <div class="phone-screen">
+                                <div class="app-header" style="background-color: var(--secondary-color);">
+                                    <span>แจ้งซ่อม & งานบริการช่าง</span>
+                                    <i class="fa-solid fa-wrench"></i>
+                                </div>
+                                <div class="app-body">
+                                    <div class="app-card" style="border-left: 4px solid var(--warning-color);">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <span class="badge bg-warning text-dark" style="font-size: 0.6rem;">รอดำเนินการ</span>
+                                            <span class="text-muted" style="font-size: 0.6rem;">เลขที่ #JOB-098</span>
+                                        </div>
+                                        <h6 class="mb-1" style="font-size: 0.85rem;">ท่อประปาส่วนกลางแตกรั่ว</h6>
+                                        <p class="text-muted mb-2" style="font-size: 0.7rem;">พิกัด: หน้าบ้านเลขที่ 102/12 (ซอย 2)</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span style="font-size: 0.65rem; font-weight: 600;"><i class="fa-regular fa-clock"></i> 16/07/2026 08:15 น.</span>
+                                            <button class="btn btn-sm btn-primary" style="font-size: 0.65rem; padding: 3px 8px;">รับงาน</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="app-card" style="border-left: 4px solid var(--success-color);">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <span class="badge bg-success" style="font-size: 0.6rem;">เสร็จสิ้น</span>
+                                            <span class="text-muted" style="font-size: 0.6rem;">เลขที่ #JOB-097</span>
+                                        </div>
+                                        <h6 class="mb-1" style="font-size: 0.85rem;">ไฟกิ่งส่องสว่างซอย 3 ดับ 2 ดวง</h6>
+                                        <p class="text-muted mb-2" style="font-size: 0.7rem;">การแก้ไข: เปลี่ยนหลอดไฟ LED 25W เรียบร้อย</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span style="font-size: 0.65rem; font-weight: 600; color: var(--success-color);"><i class="fa-regular fa-circle-check"></i> เสร็จเมื่อ 07:45 น.</span>
+                                            <span class="text-muted" style="font-size: 0.65rem;">ช่างสมศักดิ์</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="app-btn" style="background-color: var(--secondary-color);"><i class="fa-solid fa-plus-circle"></i> ออกใบงานสั่งช่างใหม่</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real System Screenshots Section -->
+    <section class="screenshots-section" id="screenshots">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">หน้าจอระบบจริงของโครงการ พฤกษา 33</h2>
+                <p class="text-muted max-w-2xl mx-auto">ภาพจับหน้าจอการใช้งานจริงจากระบบจัดการหมู่บ้าน Pruksa 33 ครอบคลุมงานนิติบุคคลและบริหารงานบุคคลส่วนกลาง</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Screenshot 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrapper">
+                            <span class="screenshot-badge">ระบบนิติบุคคลหลัก</span>
+                            <a href="img/ss2.png" target="_blank">
+                                <img src="img/ss2.png" alt="หน้าจอระบบนิติบุคคลหลัก">
+                            </a>
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>แดชบอร์ดจัดการระบบหลัก</h4>
+                            <p>หน้าหลักสำหรับแอดมินนิติบุคคล แสดงผลรายงานและสถานะการดำเนินงานส่วนต่างๆ ของหมู่บ้านแบบเรียลไทม์</p>
+                            <a href="img/ss2.png" target="_blank" class="screenshot-link">
+                                <i class="fa-solid fa-maximize"></i> ดูภาพขนาดเต็ม
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Screenshot 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrapper">
+                            <span class="screenshot-badge">สรุปเงินเดือน</span>
+                            <a href="img/manage_payroll.png" target="_blank">
+                                <img src="img/manage_payroll.png" alt="ระบบสรุปเงินเดือน">
+                            </a>
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>แดชบอร์ดงานบุคคล & Payroll</h4>
+                            <p>ระบบจัดการเงินเดือนพนักงานส่วนกลาง พนักงานรักษาความปลอดภัย และช่างซ่อมบำรุงในโครงการ</p>
+                            <a href="img/manage_payroll.png" target="_blank" class="screenshot-link">
+                                <i class="fa-solid fa-maximize"></i> ดูภาพขนาดเต็ม
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Screenshot 3 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrapper">
+                            <span class="screenshot-badge">สร้างรายการจ่าย</span>
+                            <a href="img/create_payroll.png" target="_blank">
+                                <img src="img/create_payroll.png" alt="หน้าจอจัดทำเงินเดือน">
+                            </a>
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>ฟอร์มจัดทำรายการเงินเดือน</h4>
+                            <p>ฟอร์มบันทึกเวลาทำงาน วันลา เบี้ยขยัน รายการหัก และการคำนวณรายจ่ายพนักงานรายบุคคลอย่างละเอียด</p>
+                            <a href="img/create_payroll.png" target="_blank" class="screenshot-link">
+                                <i class="fa-solid fa-maximize"></i> ดูภาพขนาดเต็ม
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Screenshot 4 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="screenshot-card">
+                        <div class="screenshot-img-wrapper">
+                            <span class="screenshot-badge">สลิปเงินเดือน</span>
+                            <a href="img/print_slip.png" target="_blank">
+                                <img src="img/print_slip.png" alt="สลิปเงินเดือน">
+                            </a>
+                        </div>
+                        <div class="screenshot-info">
+                            <h4>สลิปเงินเดือนแบบอิเล็กทรอนิกส์</h4>
+                            <p>ใบจ่ายเงินเดือน (E-Slip) ที่ระบบสร้างขึ้นอัตโนมัติเป็นไฟล์ PDF พร้อมจัดพิมพ์หรือจัดส่งให้พนักงานส่วนกลาง</p>
+                            <a href="img/print_slip.png" target="_blank" class="screenshot-link">
+                                <i class="fa-solid fa-maximize"></i> ดูภาพขนาดเต็ม
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Grid -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">ฟีเจอร์เด่นเพื่อการจัดการโครงการอย่างมืออาชีพ</h2>
+                <p class="text-muted max-w-2xl mx-auto">ฟังก์ชันครอบคลุมทุกมิติของการอยู่อาศัยและการทำงานของนิติบุคคลหมู่บ้านจัดสรรและอาคารชุด</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Card 1 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-brands fa-line"></i>
+                        </div>
+                        <h3>Smart LINE Integration</h3>
+                        <p>เช็คยอดค้างชำระ ดาวน์โหลดใบแจ้งหนี้ ชำระเงินผ่าน PromptPay QR และตรวจสอบความถูกต้องของสลิปโดยอัตโนมัติ (OCR Slip Verification) ป้องกันสลิปปลอมได้อย่างมีประสิทธิภาพ</p>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <h3>ความโปร่งใสทางการเงิน</h3>
+                        <p>ระบบบันทึกรายรับ-รายจ่าย รายการเงินสดย่อย (Petty Cash) พร้อมระบบบัญชีแยกประเภท ออกใบเสร็จรับเงินอิเล็กทรอนิกส์ (E-Receipt) เป็นไฟล์ PDF ได้ทันที และรายงานสรุปเสนอคณะกรรมการแบบเรียลไทม์</p>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-id-card-clip"></i>
+                        </div>
+                        <h3>บันทึกความปลอดภัยเข้า-ออก</h3>
+                        <p>Visitor Management และบันทึกยานพาหนะ พร้อมประวัติและภาพถ่ายเพื่อความปลอดภัย ควบคุมสติกเกอร์จอดรถของลูกบ้านได้อย่างเป็นระเบียบผ่านฐานข้อมูลออนไลน์</p>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <h3>จัดการงานประชุมและลงมติ</h3>
+                        <p>ลงทะเบียนเข้าร่วมประชุมใหญ่วิสามัญ/สามัญประจำปี (AGM) ด้วยการสแกน QR Code ตรวจสอบองค์ประชุมอัตโนมัติ และระบบการโหวตลงคะแนนแบบดิจิทัลที่สามารถตรวจสอบความโปร่งใสได้</p>
+                    </div>
+                </div>
+                <!-- Card 5 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <h3>แจ้งซ่อมและรายงานผล (Job)</h3>
+                        <p>ลูกบ้านหรือพนักงานสามารถแจ้งขอรับบริการและซ่อมแซมส่วนกลางผ่านระบบ เจ้าหน้าที่สามารถจ่ายงานให้ช่างผ่านแอปมือถือ ช่างถ่ายภาพอัปโหลดก่อน-หลังทำงาน เพื่อให้ประเมินความพึงพอใจได้</p>
+                    </div>
+                </div>
+                <!-- Card 6 -->
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <h3>พัสดุ งานบุคคล และคลังสินค้า</h3>
+                        <p>ควบคุมสต็อกและวัสดุอุปกรณ์ส่วนกลาง แจ้งเตือนลูกบ้านเมื่อมีพัสดุมาส่งผ่าน LINE และมีระบบบันทึกการทำงานของพนักงาน (Work Time) พร้อมระบบคำนวณเงินเดือนในตัว (Payroll)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table (Pain Points) -->
+    <section class="pain-points-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">แก้ปัญหาเดิมๆ ของนิติบุคคลด้วยระบบอัจฉริยะ</h2>
+                <p class="text-muted">ลดข้อผิดพลาด ลดเวลาการทำงานของพนักงาน และสร้างความโปร่งใสให้ผู้ตรวจสอบบัญชี</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">ปัญหาที่มักพบในนิติบุคคลทั่วไป</th>
+                                <th style="width: 50%;">เมื่อเปลี่ยนมาใช้ Smart Juristic System</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="ปัญหาที่มักพบในนิติบุคคลทั่วไป">
+                                    <div class="pain-text">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        <span><b>สลิปโอนเงินปลอม/ส่งซ้ำ:</b> เจ้าหน้าที่ตรวจสอบความถูกต้องและยอดโอนได้ยาก ทำให้เกิดช่องโหว่ความเสียหายทางการเงิน</span>
+                                    </div>
+                                </td>
+                                <td data-label="เมื่อเปลี่ยนมาใช้ Smart Juristic System">
+                                    <div class="solution-text">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <span><b>เช็คสลิปอัตโนมัติ (OCR):</b> ตรวจสอบข้อมูลผู้โอน ยอดโอน และวันเวลาจากธนาคารทันที ยืนยันยอดเข้าบัญชีนิติบุคคลจริง ป้องกันการส่งสลิปซ้ำ 100%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="ปัญหาที่มักพบในนิติบุคคลทั่วไป">
+                                    <div class="pain-text">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        <span><b>ลูกบ้านอ้างไม่ได้รับใบแจ้งหนี้:</b> การแจกจ่ายใบแจ้งหนี้แบบกระดาษมักสูญหาย เปียกฝน หรือส่งไม่ถึงตัวลูกบ้านที่แท้จริง</span>
+                                    </div>
+                                </td>
+                                <td data-label="เมื่อเปลี่ยนมาใช้ Smart Juristic System">
+                                    <div class="solution-text">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <span><b>ส่งข้อมูลตรงถึงมือถือผ่าน LINE:</b> ระบบส่งใบแจ้งเตือนชำระเงินและใบแจ้งหนี้ PDF ตรงเข้า LINE ของลูกบ้านแต่ละหลัง มั่นใจได้ว่าได้รับแน่นอน</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="ปัญหาที่มักพบในนิติบุคคลทั่วไป">
+                                    <div class="pain-text">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        <span><b>งานเอกสารและสรุปรายงานล่าช้า:</b> ต้องค้นหารายรับรายจ่ายในระบบ Excel หลายหน้า ใช้เวลาหลายสัปดาห์ก่อนวันประชุมใหญ่</span>
+                                    </div>
+                                </td>
+                                <td data-label="เมื่อเปลี่ยนมาใช้ Smart Juristic System">
+                                    <div class="solution-text">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <span><b>รายงานสรุปดึงข้อมูลได้ใน 1 คลิก:</b> ทั้งรายงานรายรับรายจ่าย รายงานยอดค้างชำระสะสม (Aging Report) สรุปเป็นตารางและกราฟสีสันสวยงามพร้อมใช้งานทันที</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="ปัญหาที่มักพบในนิติบุคคลทั่วไป">
+                                    <div class="pain-text">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        <span><b>ขาดการบันทึกผู้มาติดต่อที่เป็นระบบ:</b> นั่งจดลงกระดาษ ลายมืออ่านยาก ค้นหาข้อมูลย้อนหลังไม่ได้หากเกิดเหตุอาชญากรรม</span>
+                                    </div>
+                                </td>
+                                <td data-label="เมื่อเปลี่ยนมาใช้ Smart Juristic System">
+                                    <div class="solution-text">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <span><b>ฐานข้อมูลผู้มาติดต่อเรียลไทม์:</b> บันทึกทะเบียนรถ ภาพถ่ายบัตร และเวลาเข้า-ออกลงฐานข้อมูล ปลอดภัย ค้นหาประวัติย้อนหลังได้รวดเร็ว</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing & Service Level Agreement (SLA) -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">โมเดลเช่าใช้รายปี พร้อมดูแล 24 ชั่วโมง 7 วัน</h2>
+                <p class="text-muted max-w-2xl mx-auto" style="color: #cbd5e1 !important;">ชำระค่าบริการเป็นรายปี ได้สิทธิ์การใช้งานครบทุกระบบและผู้ดูแลช่วยเหลือด้านเทคนิคตลอดเวลาโดยไม่มีค่าใช้จ่ายแอบแฝง</p>
+            </div>
+            
+            <div class="row g-4 align-items-stretch">
+                <!-- Pricing Card -->
+                <div class="col-lg-6">
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge">แพ็กเกจยอดนิยม</div>
+                        <h3 class="mb-4">รายปีอัจฉริยะ (Smart Annual Plan)</h3>
+                        <p class="text-muted" style="color: #cbd5e1 !important;">สำหรับโครงการหมู่บ้านจัดสรร คอนโดมิเนียม หรือนิติต่างๆ ที่ต้องการระบบครบวงจร</p>
+                        <div class="pricing-price">
+                            35,000 บาท <span>/ ปี</span>
+                        </div>
+                        <p class="mb-3" style="color: var(--success-color); font-weight: 600;">(เฉลี่ยเพียงประมาณ 2,917 บาท ต่อเดือนสำหรับระบบซอฟต์แวร์)</p>
+                        
+                        <div class="text-start mx-auto p-3 mb-4 rounded" style="background-color: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); max-width: 450px; font-size: 0.85rem; color: #cbd5e1;">
+                            <div class="mb-2 text-white font-weight-bold" style="font-size: 0.9rem;"><i class="fa-solid fa-circle-info text-warning me-1"></i> รายละเอียดค่าใช้จ่ายเพิ่มเติม (จ่ายตามจริง):</div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>• ค่าเช่า Server & ชื่อ Website Domain</span>
+                                <span class="text-white">~2,500 บาท / ปี</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>• ค่าบริการ LINE OA แพ็กเกจ Standard</span>
+                                <span class="text-white">~1,400 บาท / เดือน</span>
+                            </div>
+                        </div>
+                        
+                        <ul class="pricing-features-list">
+                            <li><i class="fa-solid fa-check"></i> ใช้งานฟีเจอร์หลักครบทุกโมดูล (ไม่มีกั๊กสเปก)</li>
+                            <li><i class="fa-solid fa-check"></i> รองรับสมาชิกและหลังคาเรือนได้ไม่จำกัด</li>
+                            <li><i class="fa-solid fa-check"></i> ฟรี! บริการนำเข้าข้อมูลบ้านและรายชื่อลูกบ้านเริ่มต้น</li>
+                            <li><i class="fa-solid fa-check"></i> บริการติดตั้ง ติดตั้งระบบรักษาความปลอดภัย และสำรองข้อมูลซอฟต์แวร์</li>
+                            <li><i class="fa-solid fa-check"></i> รวมการอัปเกรดฟีเจอร์ใหม่และแพทช์ความปลอดภัยฟรีตลอดปี</li>
+                        </ul>
+                        
+                        <a href="#contact" class="btn pricing-cta-btn" id="pricing-cta-action">เริ่มใช้งาน / สอบถามข้อมูลเพิ่มเติม</a>
+                    </div>
+                </div>
+                
+                <!-- SLA Details -->
+                <div class="col-lg-6">
+                    <div class="sla-card">
+                        <h3 class="mb-4 text-white"><i class="fa-solid fa-shield-halved text-primary"></i> บริการซัพพอร์ตและบำรุงรักษา (24/7 Support SLA)</h3>
+                        <p class="text-muted mb-4" style="color: #cbd5e1 !important;">ความเสถียรและความมั่นใจของโครงการของคุณ คือหน้าที่สำคัญที่สุดของเรา ทีมวิศวกรและผู้เชี่ยวชาญพร้อมช่วยเหลือคุณตลอดเวลา</p>
+                        
+                        <div class="sla-item">
+                            <h4><i class="fa-solid fa-circle-nodes"></i> ระบบเซิร์ฟเวอร์เสถียรภาพสูง (99.9% Uptime Guarantee)</h4>
+                            <p>เซิร์ฟเวอร์ทำงานอยู่บนโครงสร้างระบบคลาวด์ความปลอดภัยสูง มีระบบสำรองทรัพยากรเมื่อมีผู้ใช้งานพร้อมกันจำนวนมาก ระบบเข้าใช้งานได้เสถียรและราบรื่นตลอดเวลา</p>
+                        </div>
+                        
+                        <div class="sla-item">
+                            <h4><i class="fa-solid fa-headset"></i> บริการช่วยเหลือเหตุฉุกเฉินตลอด 24 ชั่วโมง 7 วัน</h4>
+                            <p>มีสายด่วน (Hotline) สำหรับพนักงานนิติบุคคลและคณะกรรมการหมู่บ้าน เพื่อการติดต่อประสานงานกรณีเกิดปัญหาการใช้งานหรือระบบขัดข้อง โดยไม่มีวันหยุดนักขัตฤกษ์</p>
+                        </div>
+                        
+                        <div class="sla-item">
+                            <h4><i class="fa-solid fa-clock-rotate-left"></i> สำรองข้อมูลแบบรายวัน (Daily Backup Process)</h4>
+                            <p>ข้อมูลธุรกรรมการเงิน รายชื่อลูกบ้าน และสถิติต่างๆ จะถูกสำรองเก็บไว้ในระบบ Cloud Storage ภายนอกอย่างปลอดภัยเป็นประจำทุกวัน เพื่อรับประกันว่าข้อมูลจะไม่สูญหายแม้เกิดเหตุสุดวิสัย</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Study Section -->
+    <section class="case-study-section" id="case-study">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">เสียงตอบรับจากหมู่บ้านตัวอย่าง</h2>
+                <p class="text-muted">ความสำเร็จในการแก้ไขปัญหาการค้างชำระและการจัดการงานนิติบุคคล</p>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="case-study-card">
+                        <i class="fa-solid fa-quote-left quote-icon"></i>
+                        <p class="case-study-text">
+                            "หมู่บ้านของเราประสบปัญหาเก็บค่าส่วนกลางได้ไม่ครบ มีลูกบ้านค้างชำระสะสมรวมกว่าหลายแสนบาท เพราะระบบบิลกระดาษหายและลูกบ้านโอนเงินแล้วลืมแจ้งสลิป พอนำระบบ <b>Smart Juristic</b> เข้ามาใช้ผ่าน <b>LINE OA</b> ลูกบ้านกดเช็คยอดและกดโอนจ่ายได้ทันทีใน 1 นาที แถมมีบอทช่วยสแกนเช็คสลิปให้อัตโนมัติ ตอนนี้หลังผ่านไป 3 เดือน อัตราการค้างชำระของเราลดลงเหลือศูนย์ และคณะกรรมการตรวจสอบความโปร่งใสผ่านแดชบอร์ดได้ทุกวัน คุ้มค่าและประหยัดเวลามากค่ะ"
+                        </p>
+                        <div class="case-study-author">
+                            <div class="case-study-author-avatar">
+                                XX
+                            </div>
+                            <div class="case-study-author-info">
+                                <h5>คุณ xxxxxxx yyyyyyyy</h5>
+                                <p>ประธานกรรมการหมู่บ้าน พฤกษา 33</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Lead Generation Form -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="contact-form-card">
+                        <div class="text-center mb-4">
+                            <h2 class="mb-2">สอบถามข้อมูล / นัดหมายสาธิตการใช้งานฟรี</h2>
+                            <p class="text-muted">ส่งข้อมูลโครงการของคุณ เพื่อรับการวิเคราะห์และข้อเสนอราคาพิเศษสำหรับโครงการ</p>
+                        </div>
+                        
+                        <form id="leadForm" onsubmit="handleFormSubmit(event)">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="contactName" class="form-label">ชื่อผู้ติดต่อ / ตำแหน่ง</label>
+                                    <input type="text" class="form-control" id="contactName" placeholder="เช่น คุณสมชาย (ประธานหมู่บ้าน)" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="contactPhone" class="form-label">เบอร์โทรศัพท์ติดต่อ</label>
+                                    <input type="tel" class="form-control" id="contactPhone" placeholder="เช่น 081-234-5678" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="projectName" class="form-label">ชื่อโครงการหมู่บ้าน / คอนโด</label>
+                                    <input type="text" class="form-control" id="projectName" placeholder="เช่น หมู่บ้านแสนสบาย ซอย 5" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="unitCount" class="form-label">จำนวนหลังคาเรือน / ยูนิต</label>
+                                    <select class="form-select" id="unitCount" required>
+                                        <option value="" disabled selected>เลือกช่วงจำนวนยูนิต...</option>
+                                        <option value="less-50">น้อยกว่า 50 ยูนิต</option>
+                                        <option value="51-150">51 - 150 ยูนิต</option>
+                                        <option value="151-300">151 - 300 ยูนิต</option>
+                                        <option value="more-300">300 ยูนิตขึ้นไป</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="additionalNotes" class="form-label">ความต้องการเพิ่มเติม หรือ ปัญหาที่พบในโครงการ</label>
+                                    <textarea class="form-control" id="additionalNotes" rows="3" placeholder="เช่น ต้องการใช้ระบบตรวจสอบสลิป, มีปัญหาการค้างชำระค่าส่วนกลางเยอะ"></textarea>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="submit-btn" id="submit-lead-form">ส่งข้อมูลเพื่อติดต่อกลับ</button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <div id="successMessage" class="alert alert-success d-none mt-4 text-center" role="alert">
+                            <h4 class="alert-heading"><i class="fa-solid fa-circle-check"></i> ส่งข้อมูลสำเร็จ!</h4>
+                            <p class="mb-0">ทีมงานได้รับข้อมูลแล้ว จะรีบติดต่อกลับภายใน 24 ชั่วโมงเพื่อนำเสนอรายละเอียดระบบเพิ่มเติมค่ะ ขอบคุณที่ไว้วางใจเรา</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="navbar-brand text-white mb-3">
+                        <i class="fa-solid fa-hotel"></i> Smart<span>Juristic</span>
+                    </h5>
+                    <p class="text-muted">ระบบบริหารจัดการนิติบุคคลและหมู่บ้านอัจฉริยะ เพื่อยกระดับความโปร่งใส ความสะดวกสบายของผู้อยู่อาศัยในยุคดิจิทัล</p>
+                </div>
+                <div class="col-md-4 col-lg-2">
+                    <h5>เมนูนำทาง</h5>
+                    <ul>
+                        <li><a href="#showcase">หน้าจอตัวอย่าง</a></li>
+                        <li><a href="#features">ฟีเจอร์เด่น</a></li>
+                        <li><a href="#pricing">แพ็กเกจ</a></li>
+                        <li><a href="#case-study">ความสำเร็จ</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <h5>บริการและซัพพอร์ต</h5>
+                    <ul>
+                        <li><a href="#"><i class="fa-solid fa-phone"></i> สายด่วนฉุกเฉิน 24 ชั่วโมง</a></li>
+                        <li><a href="#"><i class="fa-solid fa-book"></i> คู่มือการใช้งานระบบ</a></li>
+                        <li><a href="#"><i class="fa-solid fa-circle-info"></i> นโยบายความเป็นส่วนตัว (PDPA)</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <h5>ติดต่อเรา</h5>
+                    <p class="text-muted mb-2"><i class="fa-solid fa-envelope"></i> contact@smartjuristic.com</p>
+                    <p class="text-muted mb-2"><i class="fa-solid fa-phone-volume"></i> 02-123-4567 (เวลาทำการ)</p>
+                    <p class="text-muted"><i class="fa-solid fa-circle-question"></i> สนับสนุนด้านเทคนิค: support@smartjuristic.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="m-0">&copy; 2026 SmartJuristic System. All rights reserved. (ข้อมูลหมู่บ้านและตัวเลขเป็นกรณีจำลองเพื่อสาธิตการทำงาน)</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-muted"><i class="fa-brands fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-muted"><i class="fa-brands fa-line fa-lg"></i></a>
+                    <a href="#" class="text-muted"><i class="fa-solid fa-globe fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Script for Interactive Tabs & Forms -->
+    <script>
+        function switchMockup(view) {
+            // Hide all mockup views
+            document.querySelectorAll('.mockup-content').forEach(function(mockup) {
+                mockup.classList.add('d-none');
+            });
+
+            // Show selected mockup view
+            var selectedMockup = document.getElementById(view + '-mockup');
+            if (selectedMockup) {
+                selectedMockup.classList.remove('d-none');
+            }
+
+            // Remove active status from all tab buttons
+            document.querySelectorAll('.mockup-tab').forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+
+            // Add active status to current tab button
+            var activeTab = document.getElementById('tab-' + view);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            // Collect form data
+            var name = document.getElementById('contactName').value;
+            var phone = document.getElementById('contactPhone').value;
+            var project = document.getElementById('projectName').value;
+            var unit = document.getElementById('unitCount').value;
+            var notes = document.getElementById('additionalNotes').value;
+            
+            // Console log simulation
+            console.log("Lead Form Submitted:", {
+                name: name,
+                phone: phone,
+                project: project,
+                unit: unit,
+                notes: notes
+            });
+            
+            // Hide form and show success message
+            document.getElementById('leadForm').classList.add('d-none');
+            document.getElementById('successMessage').classList.remove('d-none');
+        }
+    </script>
+</body>
+</html>
