@@ -17,12 +17,13 @@ try {
     $stmtMaster = $conn->query($sqlMaster);
     $houses = $stmtMaster->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2. เตรียม SQL ดึงข้อมูลการจ่ายเงิน (เฉพาะบ้านและปีที่ระบุ)
+    // 2. เตรียม SQL ดึงข้อมูลการจ่ายเงิน (เฉพาะบ้านและปีที่ระบุ และยืนยันการชำระเงินแล้ว)
     $sqlPayment = "SELECT period_month_start, period_month_to, amount 
                    FROM ims_house_payment 
                    WHERE house_number = :house 
                    AND period_year = :year 
-                   AND period_year > 0";
+                   AND period_year > 0
+                   AND payment_status = 'Y'";
     $stmtGetPayment = $conn->prepare($sqlPayment);
 
     // 3. เตรียม SQL Upsert (Update ถ้ามี, Insert ถ้าไม่มี)

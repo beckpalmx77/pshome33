@@ -49076,13 +49076,13 @@ CREATE TABLE `ims_permission`  (
 -- ----------------------------
 -- Records of ims_permission
 -- ----------------------------
-INSERT INTO `ims_permission` VALUES (1, 'admin', 'Administrator', 'M001,M002,M003,M004,M005,M006,M007,M008,', 'S101,S102,S103,S104,S105,S106,S107,S108,S109,S110,S111,S112,S113,S201,S202,S203,S204,S205,S301,S302,S303,S304,S305,S306,S307,S308,S309,S310,S311,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S413,S414,S415,S416,S417,S418,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S611,S701,S702,S703,S704,S705,S706,S707,S708,S709,S712,S713,S714,S715,S716,S717,S801,S802,S803,S804,S805,S806,', 'Dashboard_admin', '-', 'Y');
+INSERT INTO `ims_permission` VALUES (1, 'admin', 'Administrator', 'M001,M002,M003,M004,M005,M006,M007,M008,', 'S101,S102,S103,S104,S105,S106,S107,S108,S109,S110,S111,S112,S113,S201,S202,S203,S204,S205,S301,S302,S303,S304,S305,S306,S307,S308,S309,S310,S312,S311,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S413,S414,S415,S416,S417,S418,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S612,S612,S611,S701,S702,S703,S704,S705,S706,S707,S708,S709,S712,S713,S714,S715,S716,S717,S801,S802,S803,S804,S805,S806,', 'Dashboard_admin', '-', 'Y');
 INSERT INTO `ims_permission` VALUES (2, 'user', 'ผู้ใช้งาน', 'M001,M004,', 'S103,S401,S402,', 'Dashboard_user', '-', 'Y');
-INSERT INTO `ims_permission` VALUES (3, 'supervisor', 'supervisor', 'M001,M002,M003,M004,M005,M006,M007,M008,', 'S103,S108,S201,S202,S301,S302,S303,S304,S305,S306,S307,S308,S310,S311,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S413,S418,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S611,S701,S702,S703,S704,S705,S707,S708,S709,S712,S713,S714,S715,S716,S717,S801,S802,S803,S804,', 'Dashboard_admin', '-', 'Y');
-INSERT INTO `ims_permission` VALUES (4, 'manager', 'manager', 'M001,M002,M003,M004,M005,M006,M007,', 'S103,S108,S201,S202,S301,S302,S303,S304,S305,S306,S307,S308,S310,S311,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S418,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S611,S701,S702,S703,S704,S705,S707,S708,S709,S712,S713,S714,S715,S716,S717,', 'Dashboard_admin', '-', 'Y');
+INSERT INTO `ims_permission` VALUES (3, 'supervisor', 'supervisor', 'M001,M002,M003,M004,M005,M006,M007,M008,', 'S103,S108,S201,S202,S301,S302,S303,S304,S305,S306,S307,S308,S310,S312,S311,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S413,S418,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S612,S612,S611,S701,S702,S703,S704,S705,S707,S708,S709,S712,S713,S714,S715,S716,S717,S801,S802,S803,S804,', 'Dashboard_admin', '-', 'Y');
+INSERT INTO `ims_permission` VALUES (4, 'manager', 'manager', 'M001,M002,M003,M004,M005,M006,M007,', 'S103,S108,S201,S202,S301,S302,S303,S304,S305,S306,S307,S308,S310,S312,S311,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S418,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S612,S612,S611,S701,S702,S703,S704,S705,S707,S708,S709,S712,S713,S714,S715,S716,S717,', 'Dashboard_admin', '-', 'Y');
 INSERT INTO `ims_permission` VALUES (5, 'approve', 'approve', 'M001,M004,', 'S103,S413,', 'Dashboard_admin', '-', 'Y');
 INSERT INTO `ims_permission` VALUES (6, 'account', 'account', 'M001,M003,M004,M006,', 'S103,S302,S303,S304,S305,S306,S405,S406,S407,S408,S411,S412,S413,S601,S602,S603,S604,S605,', 'Dashboard_admin', '-', 'Y');
-INSERT INTO `ims_permission` VALUES (7, 'ast_manager', 'ast_manager', 'M001,M002,M003,M004,M005,M006,M007,', 'S103,S108,S201,S202,S301,S302,S303,S304,S305,S306,S307,S308,S310,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S702,S707,S708,S709,S713,S714,S715,S716,', 'Dashboard_admin', '-', 'Y');
+INSERT INTO `ims_permission` VALUES (7, 'ast_manager', 'ast_manager', 'M001,M002,M003,M004,M005,M006,M007,', 'S103,S108,S201,S202,S301,S302,S303,S304,S305,S306,S307,S308,S310,S312,S401,S402,S403,S404,S405,S406,S407,S408,S409,S410,S411,S412,S501,S502,S503,S601,S602,S603,S604,S605,S606,S607,S608,S609,S610,S612,S612,S702,S707,S708,S709,S713,S714,S715,S716,', 'Dashboard_admin', '-', 'Y');
 
 -- ----------------------------
 -- Table structure for ims_petty_cash
@@ -52183,6 +52183,7 @@ CREATE TABLE `ims_visitor_contact`  (
   `house_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'บ้านเลขที่ (อ้างอิงจาก ims_house_master.house_number)',
   `visitor_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'ชื่อผู้มาติดต่อ',
   `phone_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'เบอร์โทรศัพท์',
+  `license_plate` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'เลขทะเบียนรถ',
   `visitor_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'ประเภท (ลูกบ้าน/ช่าง/แขก/ญาติ/อื่นๆ)',
   `purpose` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'วัตถุประสงค์',
   `card_exchange` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'N' COMMENT 'Y=แลกแล้ว, N=ยังไม่ได้แลก',
@@ -53151,6 +53152,8 @@ INSERT INTO `menu_sub` VALUES (89, 'S611', 'M006', 'หน้าจอแสด�
 INSERT INTO `menu_sub` VALUES (90, 'S418', 'M004', 'สรุปความเคลื่อนไหวเงินสดย่อย', 'สรุปความเคลื่อนไหวเงินสดย่อย', 'petty_cash_statement_report', '_self', 'fa fa-list', 85, 'User', '_self');
 INSERT INTO `menu_sub` VALUES (91, 'S310', 'M003', 'เปลี่ยน/ย้าย ข้อมูลสมาชิก ตามบ้านเลขที่', 'เปลี่ยน/ย้าย ข้อมูลสมาชิก ตามบ้านเลขที่', 'manage_change_house_holder', '_self', 'fa fa-exchange', 86, 'User', '_self');
 INSERT INTO `menu_sub` VALUES (92, 'S311', 'M003', 'ระบบประชามติ (Voting) ตั้งค่าหัวข้อโหวต', 'การลงประชามติ', 'manage_vote', '_self', 'fa fa-check', 87, 'User', '_self');
+INSERT INTO `menu_sub` VALUES (93, 'S312', 'M007', 'ตรวจสอบการ เข้า-ออก (Visitor)', 'ตรวจสอบการ เข้า-ออก (Visitor)', 'manage_visitor_logs', '_self', 'fa fa-clock-o', 80, 'User', '_self');
+INSERT INTO `menu_sub` VALUES (94, 'S612', 'M006', 'สรุปจำนวนบ้านที่ชำระค่าส่วนกลาง (ตามปี)', 'สรุปจำนวนบ้านที่ชำระค่าส่วนกลาง (ตามปี)', 'report_house_payment_split_monthly_2', '_self', 'fa fa-home', 58, 'User', '_self');
 
 -- ----------------------------
 -- Table structure for mposition
