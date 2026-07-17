@@ -256,7 +256,19 @@ if (strlen($_SESSION['alogin']) == "") {
                         "dataSrc": "data"
                     },
                     "columns": [
-                        { "data": "alley" },
+                        {
+                            "data": "alley",
+                            "render": function(data, type, row) {
+                                if (type === 'display') {
+                                    return data !== '' ? data : '-';
+                                }
+                                if (type === 'sort' || type === 'filter') {
+                                    let val = parseInt(data);
+                                    return isNaN(val) ? 9999 : val;
+                                }
+                                return data !== '' ? data : '-';
+                            }
+                        },
                         renderCell("count_month_1", "sum_month_1"),
                         renderCell("count_month_2", "sum_month_2"),
                         renderCell("count_month_3", "sum_month_3"),

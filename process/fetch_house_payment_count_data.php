@@ -45,8 +45,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
 foreach ($data as $row) {
-    // ป้องกันค่า NULL และจัดข้อความแสดงผลซอย
-    $row['alley'] = !empty($row['alley']) ? 'ซอย ' . $row['alley'] : 'ซอย -';
+    $row['alley'] = $row['alley'] !== null ? trim($row['alley']) : '';
     $result[] = $row;
 }
 

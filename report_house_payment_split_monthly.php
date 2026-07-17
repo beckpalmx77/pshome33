@@ -229,6 +229,7 @@ if (strlen($_SESSION['alogin']) == "") {
                     "serverSide": false,
                     "orderCellsTop": true,
                     "fixedHeader": true,
+                    "order": [[1, "asc"], [0, "asc"]],
                     "ajax": {
                         "url": "process/fetch_house_payment_data.php",
                         "type": "POST",
@@ -237,7 +238,16 @@ if (strlen($_SESSION['alogin']) == "") {
                     },
                     "columns": [
                         { "data": "house_number" },
-                        { "data": "alley" },
+                        {
+                            "data": "alley",
+                            "render": function(data, type, row) {
+                                if (type === 'sort' || type === 'filter') {
+                                    let val = parseInt(data);
+                                    return isNaN(val) ? 9999 : val;
+                                }
+                                return data;
+                            }
+                        },
                         { "data": "amount_period_month_1", render: $.fn.dataTable.render.number(',', '.', 2) },
                         { "data": "amount_period_month_2", render: $.fn.dataTable.render.number(',', '.', 2) },
                         { "data": "amount_period_month_3", render: $.fn.dataTable.render.number(',', '.', 2) },
