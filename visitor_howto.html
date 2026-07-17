@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งานระบบผู้มาติดต่อ (Visitor Management System) - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header-section i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .section-title {
+            color: #1e3c72;
+            font-weight: 700;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .step-number {
+            background-color: #1e3c72;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        .step-item {
+            margin-bottom: 25px;
+            padding-left: 15px;
+            border-left: 3px solid #1e3c72;
+        }
+        .step-item h5 {
+            font-weight: 600;
+            color: #2a5298;
+        }
+        .badge-feature {
+            background-color: #eef2f7;
+            color: #1e3c72;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            border: 1px solid #dce4ec;
+        }
+        .note-box {
+            background-color: #e2f0d9;
+            border-left: 5px solid #70ad47;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #385723;
+        }
+        .warning-box {
+            background-color: #fdf2e2;
+            border-left: 5px solid #ed7d31;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #843c0c;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2);
+            transition: all 0.2s;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 60, 114, 0.3);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <!-- Header -->
+        <div class="header-section">
+            <i class="fa fa-id-card"></i>
+            <h2>คู่มือการใช้งานระบบผู้มาติดต่อ</h2>
+            <p class="mb-0 text-white-50">Visitor Management System (VMS) - PS33 Home System</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <!-- 1. แนวความคิดและจุดประสงค์ -->
+            <h4 class="section-title"><i class="fa fa-lightbulb mr-2 text-warning"></i> 1. แนวความคิดและจุดประสงค์ของระบบ</h4>
+            <p>
+                ระบบจัดการผู้มาติดต่อ (Visitor Management System) ได้รับการออกแบบขึ้นเพื่อยกระดับความปลอดภัยและความเป็นระเบียบเรียบร้อยภายในหมู่บ้าน โดยเปลี่ยนรูปแบบการจดบันทึกเอกสารกระดาษที่สูญหายง่ายและตรวจสอบยาก มาเป็นระบบดิจิทัลที่สามารถบันทึกข้อมูล ภาพถ่าย และเวลาเข้า-ออกได้อย่างรวดเร็วและเป็นระบบ
+            </p>
+            <div class="mb-4">
+                <span class="badge-feature"><i class="fa fa-shield-alt mr-1"></i> ความปลอดภัยสูง (Security)</span>
+                <span class="badge-feature"><i class="fa fa-bolt mr-1"></i> สะดวกรวดเร็ว (Convenience)</span>
+                <span class="badge-feature"><i class="fa fa-bell mr-1"></i> แจ้งเตือนทันที (Real-time Notification)</span>
+                <span class="badge-feature"><i class="fa fa-chart-line mr-1"></i> ตรวจสอบย้อนหลังได้ (Auditable Logs)</span>
+            </div>
+
+            <!-- 2. ขั้นตอนการใช้งานสำหรับ รปภ. -->
+            <h4 class="section-title"><i class="fa fa-mobile-alt mr-2"></i> 2. ขั้นตอนการทำงานสำหรับ เจ้าหน้าที่ รปภ. (Smart Phone)</h4>
+            <p class="text-muted mb-3">รปภ. สามารถเปิดใช้งานระบบผ่านโทรศัพท์มือถือ หรือแท็บเล็ตบริเวณป้อมยามทางเข้า-ออก โดยมีขั้นตอนดังนี้</p>
+            
+            <div class="step-item">
+                <h5><span class="step-number">1</span>ค้นหาบ้านเลขที่</h5>
+                <p class="text-muted">พิมพ์บ้านเลขที่เป้าหมายที่ผู้ติดต่อต้องการเดินทางไปพบ (เช่น 68/1) แล้วกดปุ่มค้นหา ระบบจะแสดงชื่อเจ้าของบ้าน ซอย และปุ่มสำหรับเพิ่มข้อมูล</p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">2</span>ลงทะเบียนข้อมูลผู้ติดต่อ (Check In)</h5>
+                <p class="text-muted">
+                    กดปุ่ม <strong>"เพิ่มบันทึกผู้มาติดต่อใหม่"</strong> จากนั้นกรอกข้อมูลดังนี้:<br>
+                    - ชื่อ-นามสกุล และ เบอร์โทรศัพท์ของผู้ติดต่อ<br>
+                    - เลขทะเบียนรถ (เช่น กข 1234 กทม)<br>
+                    - ประเภทผู้ติดต่อ (เช่น ส่งอาหาร, ส่งพัสดุ, ญาติ, ผู้รับเหมา)<br>
+                    - หมายเลขบัตรแลก (กรณีแลกบัตรเข้าหมู่บ้าน)<br>
+                    - ถ่ายภาพประกอบ (สูงสุด 5 รูป) เช่น รูปบัตรประชาชน/ใบขับขี่, รูปทะเบียนรถ หรือรูปสินค้า
+                </p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">3</span>แจ้งเตือนลูกบ้านเข้า LINE อัตโนมัติ</h5>
+                <p class="text-muted">
+                    เมื่อกดปุ่ม <strong>"บันทึกข้อมูล"</strong> ระบบจะบันทึกเวลาเข้า (Check In) อัตโนมัติ และจะ **ส่งข้อความแจ้งเตือนแจ้งข้อมูลของผู้ติดต่อพร้อมทะเบียนรถ เข้าไปยัง LINE ของลูกบ้านที่เป็นเจ้าของบ้านเลขที่นั้นทันที**
+                </p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">4</span>บันทึกการออก (Check Out)</h5>
+                <p class="text-muted">
+                    เมื่อผู้ติดต่อเดินทางออกจากหมู่บ้าน รปภ. สามารถบันทึกออกได้ 2 วิธี:<br>
+                    - <strong>วิธีที่ 1 (แนะนำสำหรับ รปภ. ประจำป้อมทางออก)</strong>: เปิดแท็บ <strong>"ผู้มาติดต่อที่ยังอยู่"</strong> จะแสดงรายชื่อของคนและรถที่ยังค้างอยู่ในหมู่บ้านทั้งหมด สามารถพิมพ์ค้นหาด้วยเลขทะเบียนรถหรือชื่อ จากนั้นกดปุ่ม <strong>"ออก (Check Out)"</strong> สีส้มข้างชื่อได้ทันที<br>
+                    - <strong>วิธีที่ 2</strong>: ค้นหาบ้านเลขที่บนหน้าแรก ดึงรายการประวัติวันนี้ แล้วคลิกที่ชื่อผู้ติดต่อเพื่อกดปุ่ม <strong>"บันทึกออก"</strong>
+                </p>
+            </div>
+
+            <div class="note-box mb-4">
+                <strong><i class="fa fa-info-circle"></i> ข้อดีของการแจ้งเตือนผ่าน LINE OA</strong><br>
+                ระบบจะช่วยให้ลูกบ้านทราบทันทีเมื่อมีแขก ช่าง หรือบริการส่งของเข้ามาหาตนเอง หากลูกบ้านไม่ได้มีการนัดหมายไว้ล่วงหน้า จะสามารถแจ้งประสานงานให้ รปภ. ตรวจสอบหรือระงับการเข้าพื้นที่ได้ทันท่วงที ป้องกันมิจฉาชีพแอบอ้าง
+            </div>
+
+            <!-- 3. ขั้นตอนการทำงานสำหรับ แอดมิน / นิติบุคคล -->
+            <h4 class="section-title"><i class="fa fa-desktop mr-2"></i> 3. ขั้นตอนสำหรับนิติบุคคล / แอดมิน (หลังบ้าน)</h4>
+            <p class="text-muted mb-3">แอดมินหรือนิติบุคคลสามารถเข้าเมนู **"ตรวจสอบการ เข้า-ออก (Visitor)"** บนเครื่องคอมพิวเตอร์เพื่อควบคุมและตรวจสอบระบบความปลอดภัย</p>
+            
+            <div class="step-item">
+                <h5><span class="step-number">1</span>ตรวจสอบผู้มาติดต่อเรียลไทม์</h5>
+                <p class="text-muted">หน้าจอจะแสดงรายการผู้มาติดต่อทั้งหมดพร้อมระบุสถานะ "อยู่ในหมู่บ้าน" (สีส้ม) หรือ "ออกแล้ว" (สีเทา) พร้อมแสดงเวลาเช็คอิน-เช็คเอาท์ และชื่อผู้บันทึกรายการ</p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">2</span>คัดกรองและสืบค้นข้อมูล</h5>
+                <p class="text-muted">สามารถใช้ตัวกรองด้านบนเพื่อระบุความต้องการ เช่น ค้นหาช่วงวันที่, เลือกเฉพาะรถที่ยังจอดค้างอยู่ในหมู่บ้าน, หรือระบุประเภทผู้ติดต่อ (เช่น ค้นหาเฉพาะกลุ่มผู้รับเหมา/ช่าง)</p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">3</span>ตรวจสอบหลักฐานและภาพถ่าย</h5>
+                <p class="text-muted">ในตารางจะมีภาพถ่ายย่อ รปภ. ได้บันทึกไว้ นิติบุคคลสามารถคลิกที่รูปภาพย่อเพื่อขยายเป็นรูปภาพขนาดใหญ่ (Lightbox) เพื่อตรวจสอบรูปถ่ายบัตรประชาชน ทะเบียนรถ หรือใบอนุญาตทำงานได้อย่างสะดวก</p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">4</span>การจัดการและลบข้อมูล</h5>
+                <p class="text-muted">หากพบว่ามีผู้ติดต่อค้างอยู่ในระบบแต่ตัวรถออกจากหมู่บ้านไปแล้ว นิติบุคคลสามารถกดปุ่ม <strong>"เช็คเอาท์"</strong> แทน รปภ. ได้ และมีปุ่มลบประวัติสำหรับแอดมินในกรณีบันทึกผิดพลาด</p>
+            </div>
+
+            <div class="step-item">
+                <h5><span class="step-number">5</span>การส่งออกรายงาน CSV (Export Excel)</h5>
+                <p class="text-muted">กดปุ่ม <strong>"ส่งออกข้อมูล (CSV)"</strong> ระบบจะดาวน์โหลดไฟล์รายงานที่รองรับการเปิดกับ Microsoft Excel สำหรับเก็บเป็นหลักฐานรายงานยอดผู้เข้า-ออกประจำเดือน หรือส่งต่อให้เจ้าหน้าที่ตำรวจกรณีเกิดทรัพย์สินสูญหาย</p>
+            </div>
+
+            <div class="warning-box mb-4">
+                <strong><i class="fa fa-exclamation-triangle"></i> พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล (PDPR)</strong><br>
+                ภาพถ่ายบัตรประชาชนหรือใบขับขี่ที่ รปภ. ถ่ายรูปเข้าระบบไว้จะถูกบันทึกในเซิร์ฟเวอร์อย่างปลอดภัย นิติบุคคลต้องควบคุมสิทธิ์การเข้าถึงเมนูนี้อย่างเข้มงวด และไม่อนุญาตให้เผยแพร่รูปภาพแก่บุคคลที่ไม่มีส่วนเกี่ยวข้องเด็ดขาด
+            </div>
+
+            <!-- Footer Link -->
+            <div class="text-center mt-5">
+                <a href="<?php echo $_SESSION['dashboard_page']; ?>" class="btn-home">
+                    <i class="fa fa-arrow-left mr-2"></i> กลับสู่หน้าหลัก (Dashboard)
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

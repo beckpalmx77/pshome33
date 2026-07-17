@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการพัฒนาระบบตรวจสอบสลิปโอนเงินอัตโนมัติด้วย AI & API</title>
+    <!-- Google Fonts: Sarabun & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #1e293b;
+            --primary-light: #334155;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 24px;
+        }
+
+        .badge-ai {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Blocks */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #475569;
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .tech-box {
+            background-color: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .tech-box:hover {
+            border-color: #cbd5e1;
+        }
+
+        .tech-icon {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .tech-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        /* Architecture Flowchart (SVG Style) */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .flow-step {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 24px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        .flow-step.accent {
+            border-color: var(--accent);
+            background-color: #eff6ff;
+        }
+
+        .flow-arrow {
+            height: 30px;
+            width: 2px;
+            background-color: var(--border);
+            margin: 8px 0;
+            position: relative;
+        }
+
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -4px;
+            border-width: 5px 5px 0;
+            border-style: solid;
+            border-color: var(--border) transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* Table design */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        /* Alert / Callout Boxes */
+        .callout {
+            padding: 16px 20px;
+            border-left: 4px solid;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .callout.info {
+            background-color: #eff6ff;
+            border-color: var(--accent);
+            color: #1e3a8a;
+        }
+
+        .callout.warning {
+            background-color: var(--warning-bg);
+            border-color: var(--warning);
+            color: #78350f;
+        }
+
+        .callout.danger {
+            background-color: var(--danger-bg);
+            border-color: var(--danger);
+            color: #7f1d1d;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            margin: 15px 0 25px 0;
+            border: 1px solid #1e293b;
+        }
+
+        code.inline {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+        }
+
+        .code-header {
+            background-color: #1e293b;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 8px 8px 0 0;
+            font-size: 12px;
+            font-family: monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: -15px;
+            margin-top: 15px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .list-unstyled {
+            list-style: none;
+        }
+
+        .list-styled {
+            margin-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .list-styled li {
+            margin-bottom: 8px;
+        }
+
+        .flex-items-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            .card {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="badge-ai"><i class="fa-solid fa-microchip-ai"></i> AI & FinTech Integration</span>
+        <h1>ระบบตรวจสอบสลิปโอนเงินอัตโนมัติ (Automated Slip Verification)</h1>
+        <p class="subtitle">แนวคิด เทคโนโลยี สถาปัตยกรรม และขั้นตอนการพัฒนาระบบตรวจสอบสลิปด้วย AI และ API สำหรับนักพัฒนา</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'tech')">
+            <i class="fa-solid fa-layer-group"></i> เทคโนโลยีที่ใช้
+        </button>
+        <button class="tab-btn" onclick="switchTab(event, 'architecture')">
+            <i class="fa-solid fa-sitemap"></i> แนวคิด & สถาปัตยกรรม
+        </button>
+        <button class="tab-btn" onclick="switchTab(event, 'workflow')">
+            <i class="fa-solid fa-list-check"></i> ขั้นตอนการทำงาน
+        </button>
+        <button class="tab-btn" onclick="switchTab(event, 'code')">
+            <i class="fa-solid fa-code"></i> ตัวอย่างโค้ดใช้งาน
+        </button>
+        <button class="tab-btn" onclick="switchTab(event, 'integration')">
+            <i class="fa-solid fa-link"></i> การผนวกกับหน้าชำระเงิน
+        </button>
+        <button class="tab-btn" onclick="switchTab(event, 'security')">
+            <i class="fa-solid fa-shield-halved"></i> ความปลอดภัย & การป้องกันกลโกง
+        </button>
+    </nav>
+
+    <!-- TAB 1: เทคโนโลยีที่ใช้ -->
+    <div id="tech" class="tab-content active">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-laptop-code text-accent"></i> เทคโนโลยีที่ควรเลือกใช้ (Technology Stack)</h2>
+            <p>การสร้างระบบตรวจสอบสลิปที่มีประสิทธิภาพและปลอดภัยสูง ไม่ควรพึ่งพาการสแกนรูปภาพด้วย AI OCR เพียงอย่างเดียว เนื่องจากไม่สามารถรับประกันความถูกต้องของยอดเงินโอนจริงได้ 100% (ป้องกันกรณีสลิปตัดต่อ) ทางเลือกที่ดีที่สุดคือ <strong>การผสมผสานระบบสแกน QR Code เพื่อดึงข้อมูล API ควบคู่กับ AI OCR เป็นแผนสำรอง</strong></p>
+            
+            <div class="grid-2">
+                <div class="tech-box">
+                    <div class="tech-icon"><i class="fa-solid fa-key"></i></div>
+                    <div class="tech-title">1. QR Verification API (หัวใจหลัก)</div>
+                    <p style="font-size: 14px; margin-bottom: 0;">ใช้ตรวจสอบข้อมูลธุรกรรมดิจิทัลกับธนาคารโดยตรงจาก <strong>Mini-QR Code (Slip QR)</strong> ที่อยู่บนสลิปโอนเงิน</p>
+                    <ul class="list-styled" style="font-size: 13px; margin-top: 10px; color: var(--text-muted);">
+                        <li><strong>SlipOK API / EasySlip API:</strong> บริการยอดนิยมของไทย เชื่อมต่อง่าย ตรวจเช็คข้อมูลสลิปได้แบบ Real-time</li>
+                        <li><strong>Direct Bank OpenAPI:</strong> ต่อตรงกับธนาคาร (เช่น SCB, KBank Developer) เหมาะกับองค์กรขนาดใหญ่</li>
+                    </ul>
+                </div>
+
+                <div class="tech-box">
+                    <div class="tech-icon"><i class="fa-solid fa-brain"></i></div>
+                    <div class="tech-title">2. AI OCR / Document AI (สำรอง & ตรวจสอบ)</div>
+                    <p style="font-size: 14px; margin-bottom: 0;">ใช้กรณีที่สลิปไม่มี QR Code หรือสแกน QR ไม่ได้ โดยการดึงรายละเอียดข้อความจากรูปภาพสลิป</p>
+                    <ul class="list-styled" style="font-size: 13px; margin-top: 10px; color: var(--text-muted);">
+                        <li><strong>Gemini 1.5 Flash API:</strong> อ่านภาพสลิปวิเคราะห์และแปลงเป็น JSON ได้อย่างรวดเร็วและแม่นยำ</li>
+                        <li><strong>Google Cloud Document AI:</strong> มี Model เฉพาะทางด้านสแกนเอกสารทางการเงิน</li>
+                    </ul>
+                </div>
+
+                <div class="tech-box">
+                    <div class="tech-icon"><i class="fa-solid fa-qrcode"></i></div>
+                    <div class="tech-title">3. QR Detector Libraries (ฝั่ง Client / Server)</div>
+                    <p style="font-size: 14px; margin-bottom: 0;">ไลบรารีสำหรับแกะรหัสภาพ QR Code ออกมาเป็นข้อความข้อมูลดิบ (Raw Payload)</p>
+                    <ul class="list-styled" style="font-size: 13px; margin-top: 10px; color: var(--text-muted);">
+                        <li><strong>jsQR / Html5-QrCode (JS):</strong> สแกนและถอดรหัสบนเว็บเบราว์เซอร์ฝั่งลูกค้าทันที ลดโหลดของเซิร์ฟเวอร์</li>
+                        <li><strong>ZXing (PHP / Java):</strong> ถอดรหัสฝั่งเซิร์ฟเวอร์เพื่อประมวลผลซ้ำเป็นมาตรการความปลอดภัย</li>
+                    </ul>
+                </div>
+
+                <div class="tech-box">
+                    <div class="tech-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="tech-title">4. Image Pre-processing (การเตรียมรูปภาพ)</div>
+                    <p style="font-size: 14px; margin-bottom: 0;">การปรับปรุงรูปภาพสลิปเพื่อให้ไลบรารีถอดรหัส QR Code และ OCR ทำงานได้มีประสิทธิภาพสูงสุด</p>
+                    <ul class="list-styled" style="font-size: 13px; margin-top: 10px; color: var(--text-muted);">
+                        <li><strong>GD Library / ImageMagick:</strong> ครอปตัดเฉพาะส่วน QR (ปกติอยู่ 45% ล่างของสลิป)</li>
+                        <li>ปรับภาพเป็น Grayscale, ปรับ Contrast และลบสัญญาณรบกวน (Denoise) เพื่อให้อ่านภาพชัดเจนขึ้น</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="callout info">
+                <strong><i class="fa-solid fa-circle-info"></i> ข้อดีของระบบแบบผสมผสาน (Hybrid):</strong> หากมี QR Code ระบบจะตรวจเช็คผ่าน API ทันทีซึ่งปลอดภัย 100% แต่หากรูปภาพเสียหายหรือไม่มี QR ระบบจะใช้ AI OCR สแกนข้อความตัวอักษรแทน เพื่อนำเข้าสู่กระบวนการตรวจสอบโดยมนุษย์ (Manual Verification) ต่อไป
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: แนวคิด & สถาปัตยกรรม -->
+    <div id="architecture" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-sitemap text-accent"></i> สถาปัตยกรรมการทำงานร่วมกัน (Hybrid Architecture)</h2>
+            <p>โครงสร้างระบบตรวจสอบแบบ <strong>Double-Check Pipeline</strong> ทำหน้าที่สกัดข้อมูลจากภาพและจับคู่ความถูกต้องของรายการชำระเงินกับฐานข้อมูลเพื่อตัดสิทธิ์การใช้ซ้ำ</p>
+            
+            <div class="flow-container">
+                <div class="flow-step accent">
+                    <i class="fa-solid fa-file-image"></i> อัปโหลดรูปภาพสลิป (Customer Upload Slip)
+                </div>
+                <div class="flow-arrow"></div>
+                <div class="flow-step">
+                    <i class="fa-solid fa-crop-simple"></i> Image Pre-processing (ครอปภาพ / ปรับสี Grayscale)
+                </div>
+                <div class="flow-arrow"></div>
+                <div class="flow-step accent">
+                    <i class="fa-solid fa-qrcode"></i> พยายามถอดรหัส QR Code (QR Detector)
+                </div>
+                
+                <div class="flow-arrow"></div>
+                <div style="display: flex; gap: 20px; width: 100%; max-width: 600px; justify-content: space-between;">
+                    <div style="flex: 1; border: 1px solid var(--border); padding: 12px; border-radius: 8px; background: #ecfdf5; text-align: center;">
+                        <span style="color: var(--success); font-weight: bold; display: block; margin-bottom: 5px;"><i class="fa-solid fa-circle-check"></i> กรณีพบ QR Code</span>
+                        ส่ง Payload ตรวจสอบกับ <br><strong>Bank/Slip API</strong> (เช่น SlipOK)
+                    </div>
+                    <div style="flex: 1; border: 1px solid var(--border); padding: 12px; border-radius: 8px; background: #fffbeb; text-align: center;">
+                        <span style="color: var(--warning); font-weight: bold; display: block; margin-bottom: 5px;"><i class="fa-solid fa-circle-xmark"></i> กรณีไม่พบ QR Code</span>
+                        ส่งภาพให้ <br><strong>AI OCR / Gemini API</strong> ดึงข้อมูลตัวอักษร
+                    </div>
+                </div>
+                
+                <div class="flow-arrow"></div>
+                <div class="flow-step">
+                    <i class="fa-solid fa-shield"></i> ระบบป้องกันความซ้ำซ้อน (Anti-Double Spend Check / Database Unique)
+                </div>
+                <div class="flow-arrow"></div>
+                <div class="flow-step accent">
+                    <i class="fa-solid fa-clipboard-check"></i> อัปเดตสถานะสำเร็จ (Auto-Approve) หรือ ส่งให้แอดมินตรวจมือ (Pending Admin)
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px; margin-bottom: 12px; color: var(--primary);">การเปรียบเทียบแนวทางดึงข้อมูลสลิป</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">คุณลักษณะ</th>
+                        <th style="width: 37%;">1. การเช็คผ่าน QR API (SlipOK / EasySlip)</th>
+                        <th style="width: 38%;">2. การใช้ AI OCR (Gemini / Document AI)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ความแม่นยำ</strong></td>
+                        <td style="color: var(--success); font-weight: 500;">สูงมาก (100%) เนื่องจากดึงข้อมูลตรงจากธนาคาร</td>
+                        <td>ปานกลาง-สูง (90-95%) ขึ้นอยู่กับความคมชัดของภาพ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ความปลอดภัยทางธุรกรรม</strong></td>
+                        <td style="color: var(--success); font-weight: 500;">ป้องกันสลิปตัดต่อได้ 100% (ข้อมูลส่งจาก API ธนาคาร)</td>
+                        <td style="color: var(--danger);">ไม่ปลอดภัยจากการตัดต่อภาพ (เพราะดึงเฉพาะสิ่งที่เห็นบนภาพ)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ข้อจำกัด</strong></td>
+                        <td>ต้องมี QR Code บนสลิปเท่านั้น และมีค่าบริการต่อการเรียกใช้งาน</td>
+                        <td>ใช้โควต้า API ฟรี/จ่ายเงินตามขนาดไฟล์ อาจมีความล่าช้าในการอ่านภาพ</td>
+                    </tr>
+                    <tr>
+                        <td><strong>การประยุกต์ใช้</strong></td>
+                        <td><strong>ใช้เป็นระบบหลัก (Primary Engine)</strong> สำหรับระบบอัตโนมัติ</td>
+                        <td><strong>ใช้เป็นแผนสำรอง (Fallback)</strong> หรือช่วยครอสเช็คการตัดต่อสลิป</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 3: ขั้นตอนการทำงาน -->
+    <div id="workflow" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-list-check text-accent"></i> ขั้นตอนการทำงานของระบบ (Step-by-Step Implementation)</h2>
+            <p>แนวทางการออกแบบขั้นตอนตั้งแต่ผู้ใช้อัปโหลดรูปภาพจนถึงการยืนยันเงินเข้าบัญชีบริษัท:</p>
+            
+            <ol class="list-styled" style="margin-left: 25px;">
+                <li>
+                    <strong>ขั้นตอนที่ 1: ขั้นตอนการรับรูปภาพและแปลงสภาพภาพ (Upload & Preprocessing)</strong>
+                    <p style="margin-top: 5px; font-size: 14px;">ผู้ใช้อัปโหลดภาพสลิป ระบบจะบันทึกไฟล์ภาพต้นฉบับ จากนั้นระบบจะสร้างรูปคัดลอกใหม่เพื่อประมวลผล (เช่น ลดขนาดรูปภาพให้อยู่ในความกว้างไม่เกิน 1000px, ทำเป็น Grayscale และปรับ Contrast เพื่อให้อ่าน QR Code ง่ายขึ้น)</p>
+                </li>
+                <li>
+                    <strong>ขั้นตอนที่ 2: ถอดรหัสข้อมูล QR Code บนภาพ (Scan QR)</strong>
+                    <p style="margin-top: 5px; font-size: 14px;">โปรแกรมทำการตรวจจับสัญลักษณ์ QR Code จากรูปภาพ หากตรวจพบ ระบบจะทำการถอดรหัสข้อความที่อยู่ใน QR (ซึ่งส่วนใหญ่จะเป็น URL หรือข้อมูลดิบตามมาตรฐาน EMVCo เช่น <code class="inline">000201010212303000...</code>)</p>
+                </li>
+                <li>
+                    <strong>ขั้นตอนที่ 3: ตรวจสอบข้อมูลธุรกรรมผ่าน API (Transaction Inquiry)</strong>
+                    <p style="margin-top: 5px; font-size: 14px;">ระบบส่งข้อมูลดิบของ QR ที่แกะได้ไปยังผู้ให้บริการตรวจสลิป (เช่น SlipOK) เพื่อดึงผลลัพธ์ข้อมูลการโอนที่แท้จริงจากธนาคาร เช่น:
+                        <br>- ยอดเงินโอน (Amount)
+                        <br>- ชื่อ-นามสกุล ผู้รับโอนปลายทาง (ต้องเป็นบัญชีของบริษัทเราเท่านั้น)
+                        <br>- วันและเวลาที่ทำรายการสำเร็จ
+                        <br>- รหัสอ้างอิงธุรกรรม (Transaction Reference ID / Sending Bank)
+                    </p>
+                </li>
+                <li>
+                    <strong>ขั้นตอนที่ 4: การป้องกันความปลอดภัยและตรวจสอบความถูกต้องเชิงตรรกะ (Business Logic Rules)</strong>
+                    <p style="margin-top: 5px; font-size: 14px;">
+                        - <strong>ป้องกันสลิปวนใช้ซ้ำ (Anti-Double Spend):</strong> เช็คว่าเลขที่อ้างอิงการโอนนี้ เคยถูกยืนยันในฐานข้อมูลของระบบเราไปแล้วหรือยัง
+                        <br>- <strong>เช็คยอดเงิน (Amount Match):</strong> เช็คว่ายอดเงินโอนตรงกับยอดเงินที่ระบบสั่งให้โอนชำระหรือไม่
+                        <br>- <strong>เช็คบัญชีรับเงิน (Receiver Account Match):</strong> ตรวจสอบว่าเงินโอนเข้าบัญชีถูกธนาคารและถูกชื่อเจ้าของบัญชีบริษัท
+                    </p>
+                </li>
+                <li>
+                    <strong>ขั้นตอนที่ 5: แผนสำรองกรณีไม่มี QR หรือ API ล้มเหลว (AI OCR Fallback)</strong>
+                    <p style="margin-top: 5px; font-size: 14px;">หากสลิปนั้นไม่มี QR Code ระบบจะเรียกใช้ AI OCR เช่น <strong>Gemini 1.5 Flash API</strong> เพื่ออ่านรายละเอียดตัวอักษร จากนั้นระบบจะตั้งค่าให้เป็นสถานะ <code>รอแอดมินยืนยันมือ (Pending Manual Approval)</code> เพื่อความปลอดภัย พร้อมไฮไลท์ข้อมูลที่ AI อ่านพบให้แอดมินเปรียบเทียบดูได้ทันที</p>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- TAB 4: ตัวอย่างโค้ดใช้งาน -->
+    <div id="code" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-code text-accent"></i> ตัวอย่างการติดตั้งและโค้ดตัวอย่าง (Integration Examples)</h2>
+            <p>เพื่อนำแนวคิดไปประยุกต์ใช้จริง นี่คือตัวอย่างโครงสร้างฐานข้อมูลและโค้ดตัวอย่างในภาษา PHP สำหรับการรวมระบบ:</p>
+
+            <h3 style="margin-top: 20px; font-size: 1.15rem; color: var(--primary);"><i class="fa-solid fa-database"></i> 1. การสร้างตารางข้อมูลเพื่อป้องกันการใช้สลิปซ้ำ (SQL Schema)</h3>
+            <div class="code-header">
+                <span>SQL Schema</span>
+                <span>mysql</span>
+            </div>
+<pre><code>CREATE TABLE verified_slips (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_ref_id VARCHAR(100) NOT NULL UNIQUE, -- รหัสอ้างอิงธุรกรรมธนาคาร (เช่น KBank FT12345)
+    sender_bank_code VARCHAR(10) NOT NULL,          -- รหัสธนาคารผู้โอน (เช่น KBANK, SCB, BBL)
+    sender_name VARCHAR(150),                       -- ชื่อผู้โอนเงิน
+    receiver_name VARCHAR(150),                     -- ชื่อผู้รับโอน (ตรวจสอบว่าเป็นชื่อบริษัทเราหรือไม่)
+    amount DECIMAL(10, 2) NOT NULL,                 -- ยอดเงินที่โอนจริง
+    transaction_datetime DATETIME NOT NULL,         -- วันที่เวลาตามสลิป
+    raw_qr_payload TEXT,                            -- ข้อมูลดิบของ QR code
+    order_id VARCHAR(50),                           -- เชื่อมโยงกับคำสั่งซื้อของระบบเรา
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+
+            <h3 style="margin-top: 25px; font-size: 1.15rem; color: var(--primary);"><i class="fa-brands fa-php"></i> 2. การเรียกใช้ SlipOK API ในการตรวจสอบ (PHP)</h3>
+            <div class="code-header">
+                <span>verify_slip.php</span>
+                <span>php</span>
+            </div>
+<pre><code>&lt;?php
+function verifySlipWithSlipOK($qrCodeText, $expectedAmount, $orderId, $conn) {
+    $api_key = "YOUR_SLIPOK_API_KEY";
+    $api_url = "https://api.slipok.com/api/v1/verify"; // หรือ URL ตามแพ็คเกจบริการ
+
+    // ส่งคำขอแบบ POST ไปยัง SlipOK API
+    $ch = curl_init($api_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        "log" => true,
+        "data" => $qrCodeText
+    ]));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Content-Type: application/json",
+        "x-authorization: " . $api_key
+    ]);
+
+    $response = curl_exec($ch);
+    $err = curl_error($ch);
+    curl_close($ch);
+
+    if ($err) {
+        return ["status" => "error", "message" => "API Connection Error: " . $err];
+    }
+
+    $result = json_decode($response, true);
+    
+    if (isset($result['success']) && $result['success'] == true) {
+        $data = $result['data'];
+        $transRef = $data['transRef']; // รหัสธุรกรรม
+        $amount = (float)$data['amount']; // ยอดเงินจริง
+        $receiverName = $data['receiver']['name']; // ชื่อผู้รับเงิน
+        
+        // 1. ตรวจสอบการโอนสลิปซ้ำซ้อน (Anti-Double Spend)
+        $stmt = $conn->prepare("SELECT id FROM verified_slips WHERE transaction_ref_id = ?");
+        $stmt->execute([$transRef]);
+        if ($stmt->fetch()) {
+            return ["status" => "failed", "message" => "สลิปโอนเงินนี้เคยถูกใช้งานไปแล้วในระบบ"];
+        }
+
+        // 2. ตรวจสอบยอดเงินให้ตรงกับที่สั่งซื้อ
+        if (abs($amount - $expectedAmount) > 0.01) { // เผื่อผลต่างทศนิยมเล็กน้อย
+            return ["status" => "failed", "message" => "ยอดโอนจริงไม่ตรงกับยอดสั่งซื้อ (โอนจริง: " . $amount . ")"];
+        }
+
+        // 3. ตรวจสอบผู้รับเงินว่าเป็นบริษัทเราหรือไม่
+        $company_name = "บริษัท พีเอสโฮม จำกัด";
+        if (strpos($receiverName, $company_name) === false) {
+            return ["status" => "failed", "message" => "ผู้รับเงินปลายทางไม่ใช่บัญชีบริษัทของเรา"];
+        }
+
+        // บันทึกธุรกรรมลงฐานข้อมูลหากผ่านเงื่อนไขทั้งหมด
+        $insert = $conn->prepare("INSERT INTO verified_slips (transaction_ref_id, sender_bank_code, sender_name, receiver_name, amount, transaction_datetime, raw_qr_payload, order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $insert->execute([
+            $transRef,
+            $data['sendingBank'],
+            $data['sender']['name'],
+            $receiverName,
+            $amount,
+            $data['transDate'] . ' ' . $data['transTime'],
+            $qrCodeText,
+            $orderId
+        ]);
+
+        return ["status" => "success", "message" => "ยืนยันยอดเงินโอนเรียบร้อย", "data" => $data];
+    } else {
+        return ["status" => "failed", "message" => "ไม่สามารถตรวจสอบสลิปนี้ได้ หรือเป็นสลิปปลอม"];
+    }
+}
+?&gt;</code></pre>
+
+            <h3 style="margin-top: 25px; font-size: 1.15rem; color: var(--primary);"><i class="fa-solid fa-robot"></i> 3. ระบบสำรอง: การเรียกใช้ Gemini API วิเคราะห์สลิป (PHP Fallback)</h3>
+            <div class="code-header">
+                <span>gemini_ocr_fallback.php</span>
+                <span>php</span>
+            </div>
+<pre><code>&lt;?php
+function analyzeSlipWithGemini($imagePath) {
+    $api_key = "YOUR_GEMINI_API_KEY";
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $api_key;
+
+    $imageData = base64_encode(file_get_contents($imagePath));
+    $mimeType = mime_content_type($imagePath);
+
+    // สร้าง Prompt ที่เฉพาะเจาะจงเพื่อให้โมเดลตอบกลับเป็นรูปแบบ JSON โครงสร้างตามสั่ง
+    $prompt = "วิเคราะห์ข้อมูลสลิปการโอนเงินจากภาพนี้ และตอบเป็นรูปแบบ JSON ต่อไปนี้เท่านั้น ห้ามอธิบายเพิ่มเติมโดยเด็ดขาด: " .
+              "{ \"amount\": 0.00, \"date\": \"YYYY-MM-DD\", \"time\": \"HH:mm\", \"sender_name\": \"\", \"receiver_name\": \"\", \"transaction_ref\": \"\" }";
+
+    $payload = [
+        "contents" => [
+            [
+                "parts" => [
+                    ["text" => $prompt],
+                    [
+                        "inlineData" => [
+                            "mimeType" => $mimeType,
+                            "data" => $imageData
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $resArr = json_decode($response, true);
+    $text = $resArr['candidates'][0]['content']['parts'][0]['text'] ?? '';
+    
+    // ทำความสะอาดผลลัพธ์
+    $text = trim(str_replace(['```json', '```'], '', $text));
+    return json_decode($text, true); // คืนค่าข้อมูลสลิปเป็น Array เพื่อนำไปประมวลผลต่อ
+}
+?&gt;</code></pre>
+        </div>
+    </div>
+
+    <!-- TAB 5: ความปลอดภัย & การป้องกันกลโกง -->
+    <div id="security" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-shield-halved text-accent"></i> มาตรการป้องกันกลโกงและการโกงสลิป (Security Best Practices)</h2>
+            <p>ในการประยุกต์ใช้งานจริงในระบบจ่ายเงิน มีกลโกงยอดนิยมที่มักจะเจอกับผู้ทำระบบ หากเราใช้เพียง AI ในการสแกนธรรมดา นี่คือ <strong>3 มาตรการป้องกันที่ต้องปิดช่องโหว่ทันที</strong>:</p>
+            
+            <div class="grid-2">
+                <div style="border-left: 4px solid var(--danger); padding-left: 15px; margin-bottom: 20px;">
+                    <h4 style="font-weight: 600; margin-bottom: 6px;"><i class="fa-solid fa-user-ninja"></i> 1. กลโกง: การวนรูปภาพสลิปเดิม (Double Spend)</h4>
+                    <p style="font-size: 14px; margin-bottom: 0;"><strong>วิธีแก้:</strong> ออกแบบให้คอลัมน์ <code class="inline">transaction_ref_id</code> ในตารางฐานข้อมูลเป็น <code>UNIQUE INDEX</code> ทุกครั้งที่มีการสแกนสลิปสำเร็จ รหัสนี้จะผูกกับระบบและไม่ให้มีซ้ำ หากมีการอัปโหลดซ้ำระบบจะตรวจพบและยกเลิกทันที</p>
+                </div>
+
+                <div style="border-left: 4px solid var(--danger); padding-left: 15px; margin-bottom: 20px;">
+                    <h4 style="font-weight: 600; margin-bottom: 6px;"><i class="fa-solid fa-scissors"></i> 2. กลโกง: การตัดต่อภาพเปลี่ยนตัวเลข (Photoshop Fraud)</h4>
+                    <p style="font-size: 14px; margin-bottom: 0;"><strong>วิธีแก้:</strong> ห้ามตรวจสอบจากข้อความตัวอักษรอย่างเดียว ให้บังคับการสแกน QR Code แล้วดึงข้อมูลจาก API ธนาคาร เนื่องจากข้อมูลจาก API จะเป็นข้อมูลดิบจริงในฐานข้อมูลของธนาคาร แม้ผู้ร้ายจะแต่งรูปสลิปสวยงาม แต่ยอดโอนจริงจาก API จะแสดงค่าจริง (เช่น โอนจริง 1 บาท แต่แต่งรูปเป็น 10,000 บาท ข้อมูลจาก API จะฟ้องว่าเป็น 1 บาท)</p>
+                </div>
+
+                <div style="border-left: 4px solid var(--danger); padding-left: 15px; margin-bottom: 20px;">
+                    <h4 style="font-weight: 600; margin-bottom: 6px;"><i class="fa-solid fa-arrows-spin"></i> 3. กลโกง: การสลับเปลี่ยน QR Code (QR Swap Attack)</h4>
+                    <p style="font-size: 14px; margin-bottom: 0;"><strong>วิธีแก้:</strong> ผู้ร้ายอาจตัดต่อรูปภาพหน้าสลิปมียอดเงิน 10,000 บาท แต่แอบสอดไส้ QR Code ของรายการโอนจริง 1 บาท เพื่อผ่านระบบตรวจสอบอัติโนมัติ 
+                        <br><strong>แนวทางป้องกันเชิงลึก (Cross-Check):</strong> ให้ใช้ระบบผสมผสาน โดยให้อ่านยอดเงินจาก QR API (ได้ 1 บาท) และให้ AI OCR อ่านยอดเงินที่เขียนอยู่ในกระดาษสลิป (ได้ 10,000 บาท) ถ้ายอดจาก API และ OCR แตกต่างกันเกินกว่าเปอร์เซ็นต์ที่กำหนด ให้ระงับอัติโนมัติและแจ้งเตือนแอดมินให้มาตรวจสอบรูปภาพอีกครั้ง</p>
+                </div>
+
+                <div style="border-left: 4px solid var(--danger); padding-left: 15px; margin-bottom: 20px;">
+                    <h4 style="font-weight: 600; margin-bottom: 6px;"><i class="fa-solid fa-clock"></i> 4. กลโกง: การสแกนสลิปเก่าสะสม</h4>
+                    <p style="font-size: 14px; margin-bottom: 0;"><strong>วิธีแก้:</strong> นอกจากการตรวจเช็ครหัสอ้างอิงธุรกรรมแล้ว ควรตั้งค่าเงื่อนไขเวลาด้วย เช่น สลิปโอนเงินต้องทำรายการเสร็จสิ้นไม่เกิน 24-48 ชั่วโมงก่อนที่จะนำมาอัปโหลด เพื่อจำกัดความพยายามใช้สลิปเก่า</p>
+                </div>
+            </div>
+
+            <div class="callout warning">
+                <strong><i class="fa-solid fa-triangle-exclamation"></i> สรุปคำแนะนำสำหรับนักพัฒนา:</strong> สำหรับระบบตัดยอดอัตโนมัติ <strong>ไม่ควรอนุมัติอัตโนมัติหากผลลัพธ์มาจากระบบ OCR ตัวหนังสือเพียงอย่างเดียว</strong> ควรอนุมัติอัตโนมัติเฉพาะกรณีสแกนผ่าน QR API และผ่านเงื่อนไขตรวจสอบซ้ำแล้วเท่านั้น หากไม่ผ่าน QR แต่สแกน OCR ผ่าน ควรตั้งเป็นสถานะ <code>"รอแอดมินอนุมัติ"</code> เสมอ
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 6: การผนวกกับหน้าชำระเงิน -->
+    <div id="integration" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-link text-accent"></i> วิธีการผนวกระบบตรวจสอบสลิปเข้ากับ payment_transfer_smart.php</h2>
+            <p>การผนวกรวมระบบตรวจสอบสลิปอัตโนมัติเข้ากับหน้าจอชำระค่าส่วนกลาง <code>payment_transfer_smart.php</code> และการประมวลผลฝั่งเซิร์ฟเวอร์ใน <code>model/manage_payment_transfer_smart.php</code> มีรายละเอียดขั้นตอนและวิธีการแก้ไขโค้ดดังต่อไปนี้:</p>
+
+            <h3 style="margin-top: 20px; font-size: 1.15rem; color: var(--primary);"><i class="fa-solid fa-database"></i> 1. การปรับปรุงฐานข้อมูลตาราง ims_house_payment</h3>
+            <p>เพื่อบันทึกประวัติและสถานะการตรวจสอบสลิปที่ส่งมาจากหน้าจอดังกล่าว ให้รัน SQL ต่อไปนี้เพื่อเพิ่มคอลัมน์ใหม่ในตาราง:</p>
+            <div class="code-header">
+                <span>Database Migration</span>
+                <span>mysql</span>
+            </div>
+<pre><code>ALTER TABLE ims_house_payment 
+ADD COLUMN slip_verify_status VARCHAR(20) DEFAULT 'unverified', -- สถานะ: verified (ผ่าน), unverified (ไม่ได้ตรวจ/รอตรวจ), mismatch (ข้อมูลไม่ตรง)
+ADD COLUMN slip_trans_ref VARCHAR(100) DEFAULT NULL,          -- รหัสธุรกรรมจากธนาคารจริง
+ADD COLUMN slip_raw_data TEXT DEFAULT NULL,                  -- ผลลัพธ์ดิบรูปแบบ JSON จาก API
+ADD COLUMN slip_verify_method VARCHAR(20) DEFAULT NULL;       -- วิธีตรวจสอบ: qr_api, ai_ocr, manual</code></pre>
+
+            <h3 style="margin-top: 25px; font-size: 1.15rem; color: var(--primary);"><i class="fa-solid fa-file-code"></i> 2. การแก้ไขฝั่งหน้าบ้าน (payment_transfer_smart.php)</h3>
+            <p><strong>ขั้นตอนย่อย A:</strong> เพิ่มฟิลด์อินพุตลับสำหรับเก็บข้อมูลดิบ QR Code และพื้นที่แสดงผลลัพธ์การสแกนใต้แท็กอัปโหลดสลิป:</p>
+            <div class="code-header">
+                <span>ส่วน HTML ในฟอร์ม</span>
+                <span>html</span>
+            </div>
+<pre><code>&lt;!-- เพิ่มอินพุตลับและพื้นที่แสดงสถานะการสแกนในฟอร์ม --&gt;
+&lt;div class="mb-3"&gt;
+    &lt;label for="picture_payment"&gt;แนบ Slip/ใบโอนเงิน/ใบเสร็จ&lt;/label&gt;
+    &lt;input type="file" name="picture_payment" class="form-control" id="picture_payment" required&gt;
+    
+    &lt;!-- ส่วนที่เพิ่มเข้ามา --&gt;
+    &lt;input type="hidden" name="qr_payload" id="qr_payload"&gt;
+    &lt;div id="qr_scan_status" class="mt-2 text-sm" style="display:none;"&gt;&lt;/div&gt;
+    
+    &lt;div class="mt-2"&gt;
+        &lt;img id="preview_image" alt="Preview Slip" class="img-fluid"&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+            <p><strong>ขั้นตอนย่อย B:</strong> เรียกใช้ไลบรารี <code>jsQR</code> (มีอยู่แล้วในระบบ) เพื่อตรวจจับและอ่านค่า QR ทันทีที่ลูกค้าอัปโหลดรูปภาพ:</p>
+            <div class="code-header">
+                <span>ส่วน Javascript ตรวจจับ QR Code ในหน้าจอ</span>
+                <span>javascript</span>
+            </div>
+<pre><code>// โหลดสคริปต์ jsQR ใน &lt;head&gt; หรือก่อนแท็กปิด &lt;/body&gt; หากยังไม่มี
+// &lt;script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"&gt;&lt;/script&gt;
+
+$("#picture_payment").on("change", async function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const statusDiv = document.getElementById("qr_scan_status");
+    const qrPayloadInput = document.getElementById("qr_payload");
+
+    statusDiv.style.display = "block";
+    statusDiv.className = "mt-2 text-sm text-info";
+    statusDiv.innerHTML = "&lt;i class='fas fa-spinner fa-spin'&gt;&lt;/i&gt; กำลังประมวลผลและสแกนสลิปโอนเงิน...";
+    qrPayloadInput.value = ""; // เคลียร์ค่าเก่า
+
+    // อ่านรูปภาพเพื่อสแกน QR Code ด้วย Canvas
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                // ตรวจพบ QR Code บนสลิป
+                qrPayloadInput.value = code.data;
+                statusDiv.className = "mt-2 text-sm text-success";
+                statusDiv.innerHTML = "&lt;i class='fas fa-check-circle'&gt;&lt;/i&gt; ตรวจพบรหัสสลิปโอนเงินพร้อมสำหรับการตรวจสอบอัตโนมัติ";
+            } else {
+                // ไม่พบ QR Code (อาจจะเป็นสลิปแบบเก่า หรือครอปสแกนไม่ติด)
+                statusDiv.className = "mt-2 text-sm text-warning";
+                statusDiv.innerHTML = "&lt;i class='fas fa-exclamation-triangle'&gt;&lt;/i&gt; ไม่พบสัญลักษณ์สแกนอัตโนมัติ ระบบจะส่งให้เจ้าหน้าที่ตรวจสอบด้วยมือ";
+            }
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+});</code></pre>
+
+            <h3 style="margin-top: 25px; font-size: 1.15rem; color: var(--primary);"><i class="fa-solid fa-gears"></i> 3. การแก้ไของค์ประกอบฝั่งเซิร์ฟเวอร์ (model/manage_payment_transfer_smart.php)</h3>
+            <p>ปรับปรุงสคริปต์หลังบ้านเพื่อรับ <code>qr_payload</code> และนำไปตรวจสอบกับ API ของธนาคาร (เช่น SlipOK) ก่อนบันทึกลงฐานข้อมูล:</p>
+            <div class="code-header">
+                <span>model/manage_payment_transfer_smart.php (Backend Logic)</span>
+                <span>php</span>
+            </div>
+<pre><code>// 1. รับค่า qr_payload จาก $_POST
+$qr_payload = isset($_POST['qr_payload']) ? trim($_POST['qr_payload']) : '';
+
+$slip_verify_status = 'unverified';
+$slip_trans_ref = null;
+$slip_raw_data = null;
+$slip_verify_method = null;
+
+if (!empty($qr_payload)) {
+    // 2. เรียกใช้ฟังก์ชันตรวจสอบสลิปผ่าน API (ดูฟังก์ชันตรวจสอบในแท็กตัวอย่างโค้ด)
+    $verify_result = verifySlipWithSlipOK($qr_payload, $amount, $doc_id, $conn);
+    
+    if ($verify_result['status'] === 'success') {
+        $slip_verify_status = 'verified';
+        $slip_trans_ref = $verify_result['data']['transRef'];
+        $slip_raw_data = json_encode($verify_result['data']);
+        $slip_verify_method = 'qr_api';
+        
+        // ทางเลือก: หากผ่านการยืนยันอัตโนมัติ สามารถปรับปรุงหมายเหตุว่าผ่านการตรวจอัตโนมัติได้
+        $remark .= " (ยืนยันสลิปอัตโนมัติ)";
+    } else {
+        // กรณีตรวจสอบ API แล้วล้มเหลว (เช่น ข้อมูลไม่ตรง ยอดเงินผิด หรือสลิปซ้ำ)
+        // เพื่อความปลอดภัยของธุรกรรม แนะนำให้แจ้งข้อผิดพลาดกลับไปหน้าบ้าน
+        echo "SLIP_VERIFY_FAILED: " . $verify_result['message'];
+        exit;
+    }
+} else {
+    // 3. กรณีไม่มี QR payload (สลิปแบบเก่า หรือ สแกนฝั่ง Client ไม่ผ่าน)
+    // สามารถใช้แผนสำรอง AI OCR (Gemini API) เพื่อตรวจจับและสกัดข้อความเพื่อเปรียบเทียบเบื้องต้นได้
+    try {
+        $upload_dir = '../uploads/slips/';
+        $file_path = $upload_dir . $file_name; // พาธรูปภาพสลิปที่เซฟแล้ว
+        
+        $ocr_data = analyzeSlipWithGemini($file_path);
+        if ($ocr_data) {
+            $slip_raw_data = json_encode($ocr_data);
+            $slip_verify_method = 'ai_ocr';
+            
+            // เช็คข้อมูลยอดเงินจาก OCR เบื้องต้นเพื่อประกอบการพิจารณาของแอดมิน
+            if (isset($ocr_data['amount']) && abs((float)$ocr_data['amount'] - (float)$amount) > 0.01) {
+                $slip_verify_status = 'mismatch'; // ยอดเงินไม่ตรงกัน
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Gemini Fallback Error: " . $e->getMessage());
+    }
+}
+
+// 4. บันทึกข้อมูลลงฐานข้อมูล ims_house_payment พร้อมฟิลด์สถานะตรวจสอบสลิป
+$ins_str = "INSERT INTO ims_house_payment (
+    doc_id, payment_date, house_number, detail, runno, 
+    period_month_start, period_month_to, period_year, amount, 
+    picture_payment, remark, payment_type, line_user_id, 
+    line_picture_profile_show, create_by, payment_method,
+    slip_verify_status, slip_trans_ref, slip_raw_data, slip_verify_method
+) VALUES (
+    :doc_id, :payment_date, :house_number, :detail, :runno, 
+    :period_month_start, :period_month_to, :period_year, :amount, 
+    :picture_payment, :remark, :payment_type, :line_user_id, 
+    :line_picture_profile_show, :create_by, :payment_method,
+    :slip_verify_status, :slip_trans_ref, :slip_raw_data, :slip_verify_method
+)";
+
+$stmt = $conn->prepare($ins_str);
+// BindParam ข้อมูลปกติ...
+// และ BindParam ข้อมูลสลิปเพิ่มเติม:
+$stmt->bindParam(':slip_verify_status', $slip_verify_status);
+$stmt->bindParam(':slip_trans_ref', $slip_trans_ref);
+$stmt->bindParam(':slip_raw_data', $slip_raw_data);
+$stmt->bindParam(':slip_verify_method', $slip_verify_method);
+
+if ($stmt->execute()) {
+    // ส่งไลน์ และส่งกลับค่าสำเร็จ 1
+    echo 1;
+}
+?></code></pre>
+
+            <div class="callout info">
+                <strong><i class="fa-solid fa-bell"></i> ประโยชน์ที่นิติบุคคลจะได้รับ:</strong> หลังจากเพิ่มระบบนี้ แอดมินหรือนิติบุคคลจะตรวจสอบสลิปในหน้าหลังบ้านได้สะดวกขึ้นมาก โดยจะเห็นป้ายสถานะ <span style="background-color: var(--success-bg); color: var(--success); padding: 2px 6px; border-radius: 4px; font-weight: bold;">Verified</span> สำหรับบิลที่ตัดยอดอัตโนมัติแล้ว ทำให้ลดเวลาที่นิติบุคคลต้องคอยก้มหน้าสแกนกระดาษสลิปด้วยมือเกือบทั้งหมด
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(evt, tabId) {
+        // ซ่อนเนื้อหาแท็บทั้งหมด
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove("active");
+        }
+
+        // นำสถานะ active ออกจากปุ่มกดทั้งหมด
+        const tabBtns = document.getElementsByClassName("tab-btn");
+        for (let i = 0; i < tabBtns.length; i++) {
+            tabBtns[i].classList.remove("active");
+        }
+
+        // แสดงแท็บที่ถูกคลิก และใส่สถานะ active
+        document.getElementById(tabId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+</body>
+</html>

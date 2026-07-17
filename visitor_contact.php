@@ -119,6 +119,14 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                     </div>
                                                     <div class="col-12 col-md-4">
                                                         <div class="form-group">
+                                                            <label class="control-label">ทะเบียนรถ</label>
+                                                            <input type="text" class="form-control form-control-sm"
+                                                                   id="license_plate"
+                                                                   placeholder="กรอกทะเบียนรถ">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4">
+                                                        <div class="form-group">
                                                             <label class="control-label">ประเภทผู้มาติดต่อ</label>
                                                             <select class="form-control form-control-sm" id="visitor_type">
                                                                 <option value="">-- เลือก --</option>
@@ -523,6 +531,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                         currentVisitorId = id;
                         $('#visitor_name').val(visitor.visitor_name || '');
                         $('#visitor_phone').val(visitor.phone_number || '');
+                        $('#license_plate').val(visitor.license_plate || '');
                         $('#visitor_type').val(visitor.visitor_type || '');
                         $('#purpose').val(visitor.purpose || '');
                         $('#note').val(visitor.note || '');
@@ -584,6 +593,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 function resetForm() {
                     $('#visitor_name').val('');
                     $('#visitor_phone').val('');
+                    $('#license_plate').val('');
                     $('#visitor_type').val('');
                     $('#purpose').val('');
                     $('#note').val('');
@@ -607,6 +617,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     let house_number = currentHouseNumber;
                     let visitor_name = $('#visitor_name').val().trim();
                     let visitor_phone = $('#visitor_phone').val().trim();
+                    let license_plate = $('#license_plate').val().trim();
                     let visitor_type = $('#visitor_type').val().trim();
                     let purpose = $('#purpose').val().trim();
                     let note = $('#note').val().trim();
@@ -629,6 +640,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     formData.append('house_number', house_number);
                     formData.append('visitor_name', visitor_name);
                     formData.append('visitor_phone', visitor_phone);
+                    formData.append('license_plate', license_plate);
                     formData.append('visitor_type', visitor_type);
                     formData.append('purpose', purpose);
                     formData.append('note', note);

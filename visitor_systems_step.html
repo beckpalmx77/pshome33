@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือด้านเทคนิคระบบผู้มาติดต่อ (Technical & DB Schema Guide) - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fc;
+            color: #2b3a4a;
+            font-size: 0.95rem;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.05);
+            background-color: white;
+        }
+        .header-section {
+            background-color: #1a202c;
+            color: #cbd5e0;
+            padding: 35px 25px;
+            border-radius: 12px 12px 0 0;
+        }
+        .header-section h2 {
+            color: #fff;
+            font-weight: 700;
+        }
+        .section-title {
+            color: #2b6cb0;
+            font-weight: 700;
+            border-left: 5px solid #2b6cb0;
+            padding-left: 12px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+        }
+        code, pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+        }
+        pre {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+        .table-schema th {
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            font-weight: 600;
+        }
+        .table-schema td {
+            vertical-align: middle;
+        }
+        .file-box {
+            background-color: #f7fafc;
+            border-radius: 6px;
+            padding: 10px 15px;
+            border: 1px dashed #cbd5e0;
+            margin-bottom: 12px;
+        }
+        .btn-home {
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-home:hover {
+            background-color: #2b5c8f;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <!-- Header -->
+        <div class="header-section text-center">
+            <h2>คู่มือด้านเทคนิคระบบผู้มาติดต่อ (Visitor System)</h2>
+            <p class="mb-0 text-muted">โครงสร้างตารางข้อมูล สคริปต์ประมวลผล และการแจ้งเตือน LINE OA</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <!-- 1. Database Table Schema -->
+            <h4 class="section-title">1. โครงสร้างตารางจัดเก็บข้อมูล (Database Schema)</h4>
+            <p>ตารางหลักที่ใช้ควบคุมและบันทึกข้อมูลการเข้า-ออกของผู้มาติดต่อคือ <strong><code>ims_visitor_contact</code></strong> ซึ่งประกอบด้วยฟิลด์ต่าง ๆ ดังนี้:</p>
+            
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-striped table-schema small">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Column Name</th>
+                            <th style="width: 20%;">Data Type</th>
+                            <th style="width: 10%;">Nullable</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong><code>id</code></strong></td>
+                            <td><code>int (AUTO_INCREMENT)</code></td>
+                            <td><code>NO</code></td>
+                            <td>Primary Key ของข้อมูลประวัติ</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>house_number</code></strong></td>
+                            <td><code>varchar(50)</code></td>
+                            <td><code>YES</code></td>
+                            <td>บ้านเลขที่อ้างอิงของลูกบ้านที่ติดต่อเข้าพบ</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>visitor_name</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>ชื่อ-นามสกุล ของผู้มาติดต่อ</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>phone_number</code></strong></td>
+                            <td><code>varchar(50)</code></td>
+                            <td><code>YES</code></td>
+                            <td>หมายเลขโทรศัพท์ติดต่อของ Visitor</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>license_plate</code></strong></td>
+                            <td><code>varchar(50)</code></td>
+                            <td><code>YES</code></td>
+                            <td>เลขทะเบียนรถ ยานพาหนะของผู้มาติดต่อ</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>visitor_type</code></strong></td>
+                            <td><code>varchar(50)</code></td>
+                            <td><code>YES</code></td>
+                            <td>ประเภทผู้ติดต่อ เช่น ส่งอาหาร, ส่งพัสดุ, ญาติ, ผู้รับเหมา</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>purpose</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>วัตถุประสงค์ของการมาติดต่อขอเข้าพบ</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>card_exchange</code></strong></td>
+                            <td><code>varchar(1)</code></td>
+                            <td><code>YES</code></td>
+                            <td>สถานะการแลกบัตรเข้า (Y = แลกแล้ว, N = ยังไม่ได้แลก)</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>card_no</code></strong></td>
+                            <td><code>varchar(50)</code></td>
+                            <td><code>YES</code></td>
+                            <td>หมายเลขบัตรที่แลกเข้าหมู่บ้าน</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>card_exchange_date</code></strong></td>
+                            <td><code>datetime</code></td>
+                            <td><code>YES</code></td>
+                            <td>วันที่และเวลาที่แลกบัตรเข้าระบบ</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>check_in_datetime</code></strong></td>
+                            <td><code>datetime</code></td>
+                            <td><code>YES</code></td>
+                            <td>วันเวลาที่ทำการเช็คอิน (เข้าหมู่บ้าน)</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>check_out_datetime</code></strong></td>
+                            <td><code>datetime</code></td>
+                            <td><code>YES</code></td>
+                            <td>วันเวลาที่ทำการเช็คเอาท์ (ออกจากหมู่บ้าน)</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>check_in_by</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>บัญชีเจ้าหน้าที่ผู้ทำการ Check-In ผู้มาเยือน</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>check_out_by</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>บัญชีเจ้าหน้าที่ผู้ทำการ Check-Out ผู้มาเยือน</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>check_in_status</code></strong></td>
+                            <td><code>varchar(1)</code></td>
+                            <td><code>YES</code></td>
+                            <td>สถานะการอยู่ในพื้นที่ (Y = อยู่ในหมู่บ้าน, N = ออกแล้ว)</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>picture_1</code> - <code>picture_5</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>ชื่อไฟล์รูปถ่าย 1-5 (อัปโหลดเข้าโฟลเดอร์ <code>uploads/visitor/</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>note</code></strong></td>
+                            <td><code>text</code></td>
+                            <td><code>YES</code></td>
+                            <td>หมายเหตุ หรือรายละเอียดเพิ่มเติม</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>create_by</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>ผู้สร้างรายการข้อมูลคนแรก</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>create_datetime</code></strong></td>
+                            <td><code>datetime</code></td>
+                            <td><code>YES</code></td>
+                            <td>วันเวลาที่ทำรายการบันทึกแรกสุด</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>update_by</code></strong></td>
+                            <td><code>varchar(200)</code></td>
+                            <td><code>YES</code></td>
+                            <td>ผู้ทำรายการแก้ไขข้อมูลล่าสุด</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>update_datetime</code></strong></td>
+                            <td><code>datetime</code></td>
+                            <td><code>YES</code></td>
+                            <td>วันเวลาที่มีการแก้ไขข้อมูลล่าสุด</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Indexes -->
+            <p class="font-weight-bold mb-1 text-dark">ดัชนีข้อมูล (Indexes) เพื่อเพิ่มความเร็วในการสืบค้น:</p>
+            <ul>
+                <li><code>PRIMARY KEY (`id`)</code></li>
+                <li><code>idx_house_number (`house_number`)</code> - ใช้เมื่อค้นหาและดึงประวัติตามบ้านเลขที่</li>
+                <li><code>idx_card_no (`card_no`)</code> - ใช้ตรวจสอบเลขบัตรที่แลกอยู่</li>
+                <li><code>idx_check_in_status (`check_in_status`)</code> - ใช้ดึงรายการ active visitors ในหมู่บ้าน</li>
+                <li><code>idx_check_in_datetime (`check_in_datetime`)</code> - ใช้คัดกรองประวัติตามวันที่ของนิติบุคคล</li>
+            </ul>
+
+            <!-- 2. LINE OA integration -->
+            <h4 class="section-title">2. ระบบแจ้งเตือนผู้อยู่อาศัย (LINE OA Integration Logic)</h4>
+            <p>เมื่อผู้ติดต่อกดเช็คอิน (เข้าหมู่บ้าน) ระบบจะเชื่อมโยงข้อมูลกับตาราง <strong><code>ims_house_line_user</code></strong> เพื่อค้นหาผู้อยู่อาศัยที่ผูกระบบ LINE OA ไว้ แล้วทำการยิง Push Message แจ้งข้อมูลผู้มาเยือนให้เจ้าของบ้านทราบทันที</p>
+            
+            <p class="font-weight-bold mb-1 text-dark">ตารางข้อมูล LINE User อ้างอิง (`ims_house_line_user`):</p>
+            <ul>
+                <li><code>line_user_id</code> (varchar) - รหัสผู้ใช้ Line (เช่น Ua2bc...)</li>
+                <li><code>house_number</code> (varchar) - บ้านเลขที่ที่ผูกไว้</li>
+                <li><code>status</code> (varchar) - สถานะการใช้งาน (ต้องเป็น 'Y' เพื่อใช้รับข้อความ)</li>
+            </ul>
+
+            <p class="font-weight-bold mb-1 text-dark">สคริปต์การทำ cURL Push Notification:</p>
+            <pre><code>$url = 'https://api.line.me/v2/bot/message/push';
+$data = [
+    'to' => $line_user_id,
+    'messages' => [
+        [
+            'type' => 'text',
+            'text' => $message_text // ข้อความรายละเอียดผู้ติดต่อ ทะเบียนรถ วันเวลา
+        ]
+    ]
+];
+$headers = [
+    'Content-Type: application/json',
+    'Authorization: Bearer ' . $line_channel_access_token
+];</code></pre>
+
+            <!-- 3. Script Lifecycle & Workflows -->
+            <h4 class="section-title">3. ขั้นตอนการประมวลผลและการสื่อสาร (System Workflows)</h4>
+            
+            <div class="step-item">
+                <h5>ขั้นตอนการ Check In (เข้าหมู่บ้าน)</h5>
+                <p class="text-muted small">
+                    1. หน้าจอ Smart Phone ทำการอัปโหลดไฟล์รูปถ่าย (ภาพแปลงชื่อเป็นแบบ md5 ป้องกันชื่อซ้ำ) และส่งข้อมูลฟอร์มไปยัง Action <code>SAVE_VISITOR</code><br>
+                    2. สคริปต์ทำการตรวจสอบ หากไม่มี ID เดิมจะทำการบันทึกข้อมูลเข้าตาราง <code>ims_visitor_contact</code> โดยระบบจะตั้งเวลาเข้าและตั้งค่าสถานะ <code>check_in_status = 'Y'</code><br>
+                    3. หากบันทึกข้อมูลเสร็จสิ้นและตรวจพบว่าอยู่ในหมู่บ้าน ระบบจะเรียกใช้ฟังก์ชัน <code>sendVisitorLineNotification()</code> เพื่อส่งแจ้งเตือนเข้า LINE OA ลูกบ้าน
+                </p>
+            </div>
+
+            <div class="step-item">
+                <h5>ขั้นตอนการ Check Out (ออกจากหมู่บ้าน)</h5>
+                <p class="text-muted small">
+                    1. รปภ. กดปุ่ม Check Out จากแท็บรายการ หรือ นิติบุคคลกดจากระบบหลังบ้าน โดยส่งคำขอ Action <code>CHECK_OUT</code> พร้อมตัวแปร <code>id</code><br>
+                    2. สคริปต์ตรวจสอบข้อมูลและทำคำสั่ง Update ตาราง ปรับปรุงสถานะ <code>check_in_status = 'N'</code> และเก็บค่าวันเวลาออก <code>check_out_datetime = NOW()</code> และระบุผู้ทำรายการออกใน <code>check_out_by</code>
+                </p>
+            </div>
+
+            <!-- 4. File Structure -->
+            <h4 class="section-title">4. แผนผังโครงสร้างไฟล์ในระบบ (File Structure Map)</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="file-box small">
+                        <strong><i class="fa fa-file-code text-primary"></i> visitor_contact_smart.php</strong><br>
+                        หน้าจอลงทะเบียนและจัดการเข้า-ออกด้วย Smart Phone (รปภ. ที่ป้อมยาม)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="file-box small">
+                        <strong><i class="fa fa-file-code text-primary"></i> visitor_contact.php</strong><br>
+                        หน้าจอบันทึกข้อมูลการมาติดต่อบนหน้าจอ Desktop สำหรับสำนักงาน
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="file-box small">
+                        <strong><i class="fa fa-file-code text-success"></i> manage_visitor_logs.php</strong><br>
+                        ระบบหลังบ้านตรวจสอบประวัติ ค้นหา คัดกรอง และปุ่มส่งออกรายงาน CSV
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="file-box small">
+                        <strong><i class="fa fa-file-code text-warning"></i> manage_visitor_contact_process.php</strong><br>
+                        สคริปต์ประมวลผลข้อมูล (AJAX Endpoint) อยู่ใต้โฟลเดอร์ <code>model/</code>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="file-box small">
+                        <strong><i class="fa fa-file-alt text-info"></i> visitor_howto.html</strong><br>
+                        คู่มืออธิบายแนวคิดและขั้นตอนการใช้งานทั่วไปของระบบ (User Manual)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="file-box small">
+                        <strong><i class="fa fa-file-alt text-info"></i> visitor_systems_step.html</strong><br>
+                        คู่มือด้านเทคนิค ตารางฐานข้อมูล และโครงสร้างไฟล์ (เอกสารหน้านี้)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Link -->
+            <div class="text-center mt-5 border-top pt-3">
+                <a href="<?php echo $_SESSION['dashboard_page']; ?>" class="btn-home">
+                    <i class="fa fa-arrow-left mr-2"></i> กลับสู่แดชบอร์ดหลัก
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

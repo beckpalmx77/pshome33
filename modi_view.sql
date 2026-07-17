@@ -1,0 +1,27 @@
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- View structure for v_ims_house_payment
+-- ----------------------------
+DROP VIEW IF EXISTS `v_ims_house_payment`;
+CREATE VIEW `v_ims_house_payment` AS select `h`.`id` AS `id`,`h`.`runno` AS `runno`,`h`.`doc_id` AS `doc_id`,`h`.`payment_date` AS `payment_date`,`h`.`house_number` AS `house_number`,`h`.`detail` AS `detail`,`h`.`period_month_start` AS `period_month_start`,`h`.`period_month_to` AS `period_month_to`,`h`.`period_year` AS `period_year`,`h`.`amount` AS `amount`,`h`.`picture_payment` AS `picture_payment`,`h`.`remark` AS `remark`,`h`.`payment_type` AS `payment_type`,`h`.`payment_status` AS `payment_status`,case when `h`.`payment_status` = 'Y' then 'ชำระเรียบร้อยแล้ว' when `h`.`payment_status` = 'N' then 'ยังไม่ยืนยันการชำระ' else 'ไม่ทราบสถานะ' end AS `payment_status_desc`,`h`.`created_at` AS `created_at`,`h`.`updated_at` AS `updated_at`,`h`.`print_first_date` AS `print_first_date`,`h`.`print_last_date` AS `print_last_date`,`h`.`print_status` AS `print_status`,`m_start`.`month_name` AS `month_name_start`,`m_to`.`month_name` AS `month_name_to`,`house`.`alley` AS `alley`,`house`.`contact_name` AS `contact_name`,`house`.`phone_number` AS `phone_number`,`h`.`line_user_id` AS `line_user_id`,`u`.`line_picture_profile` AS `line_picture_profile`,`h`.`line_picture_profile_show` AS `line_picture_profile_show`,`u`.`line_user_name` AS `line_user_name`,`hm`.`area_size` AS `area_size`,`hm`.`garbage_collection_fee` AS `garbage_collection_fee`,`hm`.`common_fee` AS `common_fee`,`h`.`payment_method` AS `payment_method`,`h`.`create_by` AS `create_by`,`h`.`approve_by` AS `approve_by`,`h`.`update_count` AS `update_count` from (((((`ims_house_payment` `h` left join `ims_month` `m_start` on(`h`.`period_month_start` = `m_start`.`month`)) left join `ims_month` `m_to` on(`h`.`period_month_to` = `m_to`.`month`)) left join `ims_house` `house` on(`h`.`house_number` = `house`.`house_number`)) left join `ims_house_master` `hm` on(`hm`.`house_number` = `h`.`house_number`)) left join `v_ims_user` `u` on(`u`.`line_user_id` = `h`.`line_user_id`));
+
+-- ----------------------------
+-- View structure for v_ims_house_payment_date
+-- ----------------------------
+DROP VIEW IF EXISTS `v_ims_house_payment_date`;
+CREATE VIEW `v_ims_house_payment_date` AS select `ims_house_payment`.`payment_date` AS `payment_date`,date_format(str_to_date(`ims_house_payment`.`payment_date`,'%d-%m-%Y'),'%Y-%m-%d') AS `payment_date_start`,date_format(str_to_date(`ims_house_payment`.`payment_date`,'%d-%m-%Y'),'%Y-%m-%d') AS `payment_date_end`,sum(cast(`ims_house_payment`.`amount` as unsigned)) AS `total_amount`,str_to_date(`ims_house_payment`.`payment_date`,'%d-%m-%Y') AS `payment_date_id` from `ims_house_payment` group by `ims_house_payment`.`payment_date`;
+
+-- ----------------------------
+-- View structure for v_ims_installment
+-- ----------------------------
+DROP VIEW IF EXISTS `v_ims_installment`;
+CREATE VIEW `v_ims_installment` AS select `ims_installment`.`id` AS `id`,`ims_installment`.`installment_id` AS `installment_id`,`ims_installment`.`house_number` AS `house_number`,`ims_installment`.`doc_date` AS `doc_date`,`ims_installment`.`debtor` AS `debtor`,`ims_installment`.`detail` AS `detail`,`ims_installment`.`principal_amount` AS `principal_amount`,`ims_installment`.`down_payment` AS `down_payment`,`ims_installment`.`principal_amount_balance` AS `principal_amount_balance`,`ims_installment`.`num_installments` AS `num_installments`,`ims_installment`.`installment_per_period` AS `installment_per_period`,`ims_installment`.`interest_rate` AS `interest_rate`,`ims_installment`.`installment_img` AS `installment_img`,`ims_installment`.`start_date` AS `start_date`,`ims_installment`.`status` AS `status`,`ims_installment`.`create_date` AS `create_date`,`ims_installment`.`update_date` AS `update_date`,`ims_installment`.`payment_due_day_period` AS `payment_due_day_period`,substr(`ims_installment`.`doc_date`,4,2) AS `doc_month`,substr(`ims_installment`.`doc_date`,7,4) AS `doc_year` from `ims_installment`;
+
+-- ----------------------------
+-- View structure for v_ims_installment_detail
+-- ----------------------------
+DROP VIEW IF EXISTS `v_ims_installment_detail`;
+CREATE VIEW `v_ims_installment_detail` AS select `ims_installment_detail`.`id` AS `id`,`ims_installment_detail`.`installment_id` AS `installment_id`,`ims_installment_detail`.`line_no` AS `line_no`,`ims_installment_detail`.`installment_number` AS `installment_number`,`ims_installment_detail`.`doc_date` AS `doc_date`,`ims_installment_detail`.`amount_due` AS `amount_due`,`ims_installment_detail`.`principal_per_installment` AS `principal_per_installment`,`ims_installment_detail`.`interest_per_installment` AS `interest_per_installment`,`ims_installment_detail`.`payment_method` AS `payment_method`,`ims_installment_detail`.`amount_paid` AS `amount_paid`,`ims_installment_detail`.`payment_date` AS `payment_date`,`ims_installment_detail`.`status` AS `status`,`ims_installment_detail`.`notes` AS `notes`,`ims_installment_detail`.`create_date` AS `create_date`,`ims_installment_detail`.`update_date` AS `update_date`,`ims_installment_detail`.`print_status` AS `print_status`,`ims_installment_detail`.`print_first_date` AS `print_first_date`,`ims_installment_detail`.`print_last_date` AS `print_last_date`,substr(`ims_installment_detail`.`payment_date`,4,2) AS `payment_month`,substr(`ims_installment_detail`.`payment_date`,7,4) AS `payment_year` from `ims_installment_detail`;
+
+SET FOREIGN_KEY_CHECKS=1;
