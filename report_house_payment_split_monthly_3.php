@@ -16,10 +16,7 @@ if (strlen($_SESSION['alogin']) == "") {
     <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <title>รายงานสรุปยอดชำระรายเดือน</title>
-        <!--link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap4.min.css"-->
-
+        <title>รายงานสรุปการคาดการณ์การจัดเก็บค่าส่วนกลาง</title>
         <link rel="stylesheet" href="css/spin_datatables.css"/>
         <link href="vendor/date-picker-1.9/css/bootstrap-datepicker.css" rel="stylesheet"/>
         <link rel="stylesheet" href="vendor/datatables/v11/jquery.dataTables.min.css"/>
@@ -29,7 +26,6 @@ if (strlen($_SESSION['alogin']) == "") {
             .btn-process {
                 min-width: 150px;
             }
-            /* Style สำหรับช่องค้นหาในตาราง */
             .filter-input {
                 width: 100%;
                 padding: 4px;
@@ -38,23 +34,32 @@ if (strlen($_SESSION['alogin']) == "") {
                 border: 1px solid #ccc;
                 border-radius: 4px;
             }
-            /* ปรับให้ Header Filter ดูสะอาดตา */
             .filter-row th {
                 background-color: #f8f9fc;
                 padding: 5px;
             }
-
-            /* --- เพิ่ม CSS จัดระเบียบปุ่ม Export และ ตัวเลือกจำนวนรายการ --- */
             .dataTables_wrapper .dataTables_length,
             .dataTables_wrapper .dt-buttons {
-                display: inline-block; /* ให้แสดงผลในบรรทัดเดียวกัน */
+                display: inline-block;
                 vertical-align: middle;
-                margin-right: 10px; /* เว้นระยะห่าง */
+                margin-right: 10px;
                 margin-bottom: 10px;
             }
-            /* ปรับตำแหน่งช่องค้นหา (Filter) ให้ชิดขวาเหมือนเดิม ถ้ามันตกบรรทัด */
             .dataTables_wrapper .dataTables_filter {
                 float: right;
+            }
+            #dataTablePaymentCount td {
+                vertical-align: middle;
+                text-align: center;
+            }
+            #dataTablePaymentCount td:first-child {
+                text-align: left;
+            }
+            #dataTablePaymentCount th {
+                text-align: center;
+            }
+            #dataTablePaymentCount th:first-child {
+                text-align: left;
             }
         </style>
     </head>
@@ -71,11 +76,9 @@ if (strlen($_SESSION['alogin']) == "") {
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
-                            </li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
                             <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
-                            <li class="breadcrumb-item active"
-                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
                         </ol>
                     </div>
 
@@ -85,13 +88,13 @@ if (strlen($_SESSION['alogin']) == "") {
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 class="m-0 font-weight-bold text-primary">ตัวเลือกการค้นหา</h6>
                                     <div>
-                                        <a href="report_house_payment_split_monthly.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('รายการแสดงการชำระค่าส่วนกลาง'); ?>" class="btn btn-sm btn-primary">
+                                        <a href="report_house_payment_split_monthly.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('รายการแสดงการชำระค่าส่วนกลาง'); ?>" class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-dollar-sign"></i> แสดงยอดเงินชำระ
                                         </a>
                                         <a href="report_house_payment_split_monthly_2.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('สรุปจำนวนบ้านที่ชำระค่าส่วนกลาง (ตามปี)'); ?>" class="btn btn-sm btn-outline-primary ml-2">
                                             <i class="fas fa-home"></i> แสดงจำนวนบ้านที่ชำระ
                                         </a>
-                                        <a href="report_house_payment_split_monthly_3.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('คาดการณ์การจัดเก็บค่าส่วนกลาง (ตามปี)'); ?>" class="btn btn-sm btn-outline-primary ml-2">
+                                        <a href="report_house_payment_split_monthly_3.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('คาดการณ์การจัดเก็บค่าส่วนกลาง (ตามปี)'); ?>" class="btn btn-sm btn-primary ml-2">
                                             <i class="fas fa-chart-line"></i> แสดงเป้าหมายคาดการณ์
                                         </a>
                                     </div>
@@ -125,13 +128,12 @@ if (strlen($_SESSION['alogin']) == "") {
                         <div class="col-lg-12">
                             <div class="card mb-4">
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">ตารางข้อมูลการชำระเงิน</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">ตารางวิเคราะห์เป้าหมายคาดการณ์และยอดชำระเงินจริงรายซอย (ยอดจริง / ยอดเป้าหมาย)</h6>
                                 </div>
                                 <div class="table-responsive p-3">
-                                    <table class="table align-items-center table-flush table-hover" id="dataTablePayment">
+                                    <table class="table align-items-center table-flush table-hover table-bordered" id="dataTablePaymentCount">
                                         <thead class="thead-light">
                                         <tr>
-                                            <th>บ้านเลขที่</th>
                                             <th>ซอย</th>
                                             <th>ม.ค.</th>
                                             <th>ก.พ.</th>
@@ -145,15 +147,28 @@ if (strlen($_SESSION['alogin']) == "") {
                                             <th>ต.ค.</th>
                                             <th>พ.ย.</th>
                                             <th>ธ.ค.</th>
-                                            <th>รวมปี</th>
+                                            <th>สรุปรวมทั้งปี</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         </tbody>
                                         <tfoot>
                                         <tr>
-                                            <th colspan="14" style="text-align:right">ยอดรวมทั้งหมด:</th>
-                                            <th></th> </tr>
+                                            <th style="text-align:left">รวมทั้งโครงการ:</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -172,19 +187,6 @@ if (strlen($_SESSION['alogin']) == "") {
     </div>
 
     <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
-
-    <!--script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="js/ruang-admin.min.js"></script>
-
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap4.min.js"></script-->
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -205,17 +207,41 @@ if (strlen($_SESSION['alogin']) == "") {
         $(document).ready(function () {
             let table;
 
+            function renderCell(actualKey, projectedKey) {
+                return {
+                    "data": null,
+                    "render": function(data, type, row) {
+                        let actual = parseFloat(row[actualKey]) || 0;
+                        let projected = parseFloat(row[projectedKey]) || 0;
+                        let pct = projected > 0 ? (actual / projected) * 100 : 0;
+                        
+                        if (type === 'display') {
+                            let pctClass = pct >= 80 ? 'text-success' : (pct >= 50 ? 'text-warning' : 'text-danger');
+                            return '<div style="line-height:1.3">' +
+                                   '<span class="font-weight-bold">' + actual.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span><br>' +
+                                   '<small class="text-muted">เป้า: ' + projected.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</small><br>' +
+                                   '<span class="badge badge-light ' + pctClass + '" style="font-size:0.75rem">' + pct.toFixed(1) + '%</span>' +
+                                   '</div>';
+                        }
+                        if (type === 'sort' || type === 'filter') {
+                            return actual;
+                        }
+                        return actual.toFixed(2) + ' / ' + projected.toFixed(2) + ' (' + pct.toFixed(1) + '%)';
+                    }
+                };
+            }
+
             function loadTable(year) {
-                if ($.fn.DataTable.isDataTable('#dataTablePayment')) {
-                    $('#dataTablePayment').DataTable().destroy();
+                if ($.fn.DataTable.isDataTable('#dataTablePaymentCount')) {
+                    $('#dataTablePaymentCount').DataTable().destroy();
                 }
 
-                $('#dataTablePayment thead tr.filter-row').remove();
-                $('#dataTablePayment thead tr').clone(true).addClass('filter-row').appendTo('#dataTablePayment thead');
+                $('#dataTablePaymentCount thead tr.filter-row').remove();
+                $('#dataTablePaymentCount thead tr').clone(true).addClass('filter-row').appendTo('#dataTablePaymentCount thead');
 
-                $('#dataTablePayment thead tr:eq(1) th').each(function (i) {
+                $('#dataTablePaymentCount thead tr:eq(1) th').each(function (i) {
                     var title = $(this).text();
-                    if (i === 0 || i === 1) {
+                    if (i === 0) {
                         $(this).html('<input type="text" class="filter-input" placeholder="ค้นหา ' + title + '" />');
                         $('input', this).on('keyup change', function () {
                             if (table.column(i).search() !== this.value) {
@@ -227,58 +253,77 @@ if (strlen($_SESSION['alogin']) == "") {
                     }
                 });
 
-                table = $('#dataTablePayment').DataTable({
+                table = $('#dataTablePaymentCount').DataTable({
                     "processing": true,
                     "serverSide": false,
                     "orderCellsTop": true,
                     "fixedHeader": true,
-                    "order": [[1, "asc"], [0, "asc"]],
                     "ajax": {
-                        "url": "process/fetch_house_payment_data.php",
+                        "url": "process/fetch_house_payment_projection_data.php",
                         "type": "POST",
                         "data": { year: year },
                         "dataSrc": "data"
                     },
                     "columns": [
-                        { "data": "house_number" },
                         {
                             "data": "alley",
                             "render": function(data, type, row) {
+                                if (type === 'display') {
+                                    return data !== '' ? data : '-';
+                                }
                                 if (type === 'sort' || type === 'filter') {
                                     let val = parseInt(data);
                                     return isNaN(val) ? 9999 : val;
                                 }
-                                return data;
+                                return data !== '' ? data : '-';
                             }
                         },
-                        { "data": "amount_period_month_1", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_2", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_3", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_4", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_5", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_6", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_7", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_8", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_9", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_10", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_11", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "amount_period_month_12", render: $.fn.dataTable.render.number(',', '.', 2) },
-                        { "data": "total", render: $.fn.dataTable.render.number(',', '.', 2) }
+                        renderCell("sum_month_1", "monthly_projected"),
+                        renderCell("sum_month_2", "monthly_projected"),
+                        renderCell("sum_month_3", "monthly_projected"),
+                        renderCell("sum_month_4", "monthly_projected"),
+                        renderCell("sum_month_5", "monthly_projected"),
+                        renderCell("sum_month_6", "monthly_projected"),
+                        renderCell("sum_month_7", "monthly_projected"),
+                        renderCell("sum_month_8", "monthly_projected"),
+                        renderCell("sum_month_9", "monthly_projected"),
+                        renderCell("sum_month_10", "monthly_projected"),
+                        renderCell("sum_month_11", "monthly_projected"),
+                        renderCell("sum_month_12", "monthly_projected"),
+                        {
+                            "data": null,
+                            "render": function(data, type, row) {
+                                let actual = parseFloat(row.total_amount) || 0;
+                                let projected = (parseFloat(row.monthly_projected) || 0) * 12;
+                                let pct = projected > 0 ? (actual / projected) * 100 : 0;
+                                
+                                if (type === 'display') {
+                                    let pctClass = pct >= 80 ? 'text-success' : (pct >= 50 ? 'text-warning' : 'text-danger');
+                                    return '<div style="line-height:1.3">' +
+                                           '<span class="font-weight-bold text-primary">' + actual.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span><br>' +
+                                           '<small class="text-muted">เป้าปี: ' + projected.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</small><br>' +
+                                           '<span class="badge badge-light ' + pctClass + '" style="font-size:0.75rem">' + pct.toFixed(1) + '%</span>' +
+                                           '</div>';
+                                }
+                                if (type === 'filter' || type === 'sort') {
+                                    return actual;
+                                }
+                                return actual.toFixed(2) + ' / ' + projected.toFixed(2) + ' (' + pct.toFixed(1) + '%)';
+                            }
+                        }
                     ],
-                    "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "ทั้งหมด"]],
-
-                    // --- แก้ไขตรงนี้ครับ ---
-                    // เปลี่ยนจาก 'Blfrtip' เป็น 'lBfrtip'
-                    // (l = Length ขึ้นก่อน, B = Buttons ตามหลัง)
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "ทั้งหมด"]],
                     "dom": 'lBfrtip',
-
                     "buttons": [
                         {
                             extend: 'excelHtml5',
                             text: '<i class="fas fa-file-excel"></i> Export Excel',
                             titleAttr: 'Export to Excel',
                             className: 'btn btn-success',
-                            title: 'รายงานสรุปยอดชำระรายเดือน ประจำปี ' + year
+                            title: 'รายงานวิเคราะห์ยอดชำระค่าส่วนกลางเทียบเป้าหมายการจัดเก็บ ประจำปี ' + year,
+                            exportOptions: {
+                                orthogonal: 'export'
+                            }
                         }
                     ],
                     "footerCallback": function (row, data, start, end, display) {
@@ -286,10 +331,48 @@ if (strlen($_SESSION['alogin']) == "") {
                         let intVal = function (i) {
                             return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                         };
-                        let grandTotal = api.column(14, { page: 'current' }).data().reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                        $(api.column(14).footer()).html(grandTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'));
+
+                        // คำนวณยอดรวมของ ม.ค. ถึง ธ.ค.
+                        for (let col = 1; col <= 12; col++) {
+                            let totalActual = 0;
+                            let totalProjected = 0;
+                            
+                            api.column(col, { page: 'current' }).data().each(function (val) {
+                                if (val) {
+                                    totalActual += intVal(val['sum_month_' + col]);
+                                    totalProjected += intVal(val.monthly_projected);
+                                }
+                            });
+
+                            let pct = totalProjected > 0 ? (totalActual / totalProjected) * 100 : 0;
+                            let pctClass = pct >= 80 ? 'text-success' : (pct >= 50 ? 'text-warning' : 'text-danger');
+
+                            $(api.column(col).footer()).html(
+                                '<span class="font-weight-bold">' + totalActual.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span><br>' +
+                                '<small class="text-muted">เป้า: ' + totalProjected.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</small><br>' +
+                                '<span class="badge badge-light ' + pctClass + '" style="font-size:0.75rem">' + pct.toFixed(1) + '%</span>'
+                            );
+                        }
+
+                        // คำนวณสรุปรวมทั้งปีสะสมในคอลัมน์ที่ 13
+                        let totalAnnualActual = 0;
+                        let totalAnnualProjected = 0;
+                        
+                        api.column(13, { page: 'current' }).data().each(function (val) {
+                            if (val) {
+                                totalAnnualActual += intVal(val.total_amount);
+                                totalAnnualProjected += intVal(val.monthly_projected) * 12;
+                            }
+                        });
+
+                        let pct = totalAnnualProjected > 0 ? (totalAnnualActual / totalAnnualProjected) * 100 : 0;
+                        let pctClass = pct >= 80 ? 'text-success' : (pct >= 50 ? 'text-warning' : 'text-danger');
+
+                        $(api.column(13).footer()).html(
+                            '<span class="font-weight-bold text-primary">' + totalAnnualActual.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span><br>' +
+                            '<small class="text-muted">เป้าปี: ' + totalAnnualProjected.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</small><br>' +
+                            '<span class="badge badge-light ' + pctClass + '" style="font-size:0.75rem">' + pct.toFixed(1) + '%</span>'
+                        );
                     },
                     "language": {
                         "lengthMenu": "แสดง _MENU_ รายการ",
