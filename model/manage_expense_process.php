@@ -38,7 +38,15 @@ if ($_POST["action"] === 'GET_DATA') {
             "remark" => $result['remark'],
             "receipt_name" => $result['receipt_name'],
             "payment_method" => $result['payment_method'],
-            "approve_status" => $result['approve_status']);
+            "approve_status" => $result['approve_status'],
+            "created_by" => $result['created_by'] ?? $result['create_by'] ?? '',
+            "create_by" => $result['created_by'] ?? $result['create_by'] ?? '',
+            "created_date" => $result['created_at'] ?? $result['created_date'] ?? '',
+            "created_at" => $result['created_at'] ?? $result['created_date'] ?? '',
+            "updated_by" => $result['updated_by'] ?? $result['update_by'] ?? '',
+            "update_by" => $result['updated_by'] ?? $result['update_by'] ?? '',
+            "updated_date" => $result['updated_at'] ?? $result['updated_date'] ?? '',
+            "updated_at" => $result['updated_at'] ?? $result['updated_date'] ?? '');
     }
 
     echo json_encode($return_arr);

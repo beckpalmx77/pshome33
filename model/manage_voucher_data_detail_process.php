@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 include('../config/connect_db.php');
 include('../util/gl_util.php');
@@ -30,6 +33,15 @@ $approve_name = $data['approve_name'] ?? '';
 $approve_status = $data['approve_status'] ?? 'N';
 $petty_cash_status = $data['petty_cash_status'] ?? 'N';
 $bank_account = $data['bank_account'] ?? '';
+
+$user_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+if (empty($user_name)) {
+    $user_name = $_SESSION['alogin'] ?? $_SESSION['username'] ?? 'SYSTEM';
+}
+
+if (empty($create_name)) {
+    $create_name = $user_name;
+}
 
 // Default values
 $receipt_name = ($supplier_name === null || $supplier_name === '') ? '-' : $supplier_name;
@@ -86,15 +98,15 @@ try {
     // 3. Prepare Header Insert/Update Statements
     // แก้ไข: ย้ายการ Insert Header ของ ADD มาทำก่อน เพื่อป้องกัน FK Error
     if ($action === 'ADD') {
-        $stmtInsertHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status, address, petty_cash_status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtInsertHeader = $conn->prepare("INSERT INTO ims_payment_voucher (doc_no, doc_date, doc_month, doc_year, doc_runno, requester, supplier_id, supplier_name, purpose, payment_method, bank_no, total_amount, picture_doc, create_name, checker_name, receipt_name, approve_name, approve_status, status, address, petty_cash_status, created_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         // Insert Header ก่อนด้วยยอดเงิน 0 (จะ Update ทีหลัง)
         $stmtInsertHeader->execute([
             $doc_no, $doc_date, date('m', strtotime($doc_date)), date('Y', strtotime($doc_date)),
             $next_pv_runno, $requester, $supplier_id, $supplier_name, $purpose,
             $payment_method, $bank_account, 0, $picture_doc, $create_name,
-            $checker_name, $receipt_name, $approve_name, 'N', 'Active', $address, $petty_cash_status
+            $checker_name, $receipt_name, $approve_name, 'N', 'Active', $address, $petty_cash_status, $user_name
         ]);
 
     } else { // UPDATE
@@ -273,14 +285,14 @@ try {
         doc_date = ?, requester = ?, supplier_id = ?, supplier_name = ?, purpose = ?,
         payment_method = ?, bank_no = ?, total_amount = ?, picture_doc = ?, 
         create_name = ?, checker_name = ?, receipt_name = ?, approve_name = ?, 
-        approve_status = ?, address = ?, petty_cash_status = ?
+        approve_status = ?, address = ?, petty_cash_status = ?, updated_by = ?
         WHERE doc_no = ?");
 
     $stmtUpdateHeaderFinal->execute([
         $doc_date, $requester, $supplier_id, $supplier_name, $purpose,
         $payment_method, $bank_account, $total_amount_header, $picture_doc,
         $create_name, $checker_name, $receipt_name, $approve_name,
-        $approve_status, $address, $petty_cash_status, $doc_no
+        $approve_status, $address, $petty_cash_status, $user_name, $doc_no
     ]);
 
     // 9. Accounting Posting (GL)

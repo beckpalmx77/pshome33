@@ -36,7 +36,15 @@ if ($_POST["action"] === 'GET_DATA') {
             "file_attach" => $result['file_attach'],
             "remark" => $result['remark'],
             "payment_method" => $result['payment_method'],
-            "approve_status" => $result['approve_status']);
+            "approve_status" => $result['approve_status'],
+            "created_by" => $result['created_by'] ?? $result['create_by'] ?? '',
+            "create_by" => $result['created_by'] ?? $result['create_by'] ?? '',
+            "created_date" => $result['created_at'] ?? $result['created_date'] ?? '',
+            "created_at" => $result['created_at'] ?? $result['created_date'] ?? '',
+            "updated_by" => $result['updated_by'] ?? $result['update_by'] ?? '',
+            "update_by" => $result['updated_by'] ?? $result['update_by'] ?? '',
+            "updated_date" => $result['updated_at'] ?? $result['updated_date'] ?? '',
+            "updated_at" => $result['updated_at'] ?? $result['updated_date'] ?? '');
     }
 
     echo json_encode($return_arr);
@@ -135,8 +143,13 @@ if ($_POST["action"] === 'ADD') {
         try {
             $conn->beginTransaction();
 
-            $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name, payment_method, approve_status)
-                    VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name, :payment_method, :approve_status)";
+            $user_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+            if (empty($user_name)) {
+                $user_name = $_SESSION['alogin'] ?? $_SESSION['username'] ?? 'SYSTEM';
+            }
+
+            $sql = "INSERT INTO ims_reciepts(runno, doc_id, reciept_date, rec_month, rec_year, category_id, description, qty, unit_id, amount, remark, inv, file_attach, supplier_name, payment_method, approve_status, created_by)
+                    VALUES (:runno, :doc_id, :reciept_date, :rec_month, :rec_year, :category_id, :description, :qty, :unit_id, :amount, :remark, :inv, :file_attach, :supplier_name, :payment_method, :approve_status, :created_by)";
             $query = $conn->prepare($sql);
             $query->bindParam(':runno', $runno, PDO::PARAM_STR);
             $query->bindParam(':doc_id', $doc_id, PDO::PARAM_STR);
@@ -154,6 +167,7 @@ if ($_POST["action"] === 'ADD') {
             $query->bindParam(':supplier_name', $supplier_name, PDO::PARAM_STR);
             $query->bindParam(':payment_method', $payment_method, PDO::PARAM_STR);
             $query->bindParam(':approve_status', $approve_status, PDO::PARAM_STR);
+            $query->bindParam(':created_by', $user_name, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
 
@@ -183,6 +197,11 @@ if ($_POST["action"] === 'ADD') {
 if ($_POST["action"] === 'UPDATE') {
 
     if (!empty($_POST["reciept_date"])) {
+
+        $user_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+        if (empty($user_name)) {
+            $user_name = $_SESSION['alogin'] ?? $_SESSION['username'] ?? 'SYSTEM';
+        }
 
         $id = $_POST["id"];
         $reciept_date = $_POST["reciept_date"];
@@ -290,7 +309,8 @@ if ($_POST["action"] === 'UPDATE') {
                     inv = :inv,
                     file_attach = :file_attach,
                     supplier_name = :supplier_name,
-                    payment_method = :payment_method
+                    payment_method = :payment_method,
+                    updated_by = :updated_by
                 WHERE id = :id";
 
             $query = $conn->prepare($sql_update);
@@ -308,6 +328,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':file_attach', $finalFileAttach);
             $query->bindParam(':supplier_name', $supplier_name);
             $query->bindParam(':payment_method', $payment_method);
+            $query->bindParam(':updated_by', $user_name);
             $query->bindParam(':id', $id);
             $query->execute();
 

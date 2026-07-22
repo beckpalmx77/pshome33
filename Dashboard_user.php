@@ -371,6 +371,9 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                                 <div class="card-body">
                                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">รายรับอื่นๆ รวมเดือนนี้</div>
                                                     <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_income, 2) ?></div>
+                                                    <button type="button" class="btn btn-outline-success btn-xs mt-2" data-toggle="modal" data-target="#monthlyIncomeModal">
+                                                        <i class="fas fa-list"></i> รายละเอียด
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -381,6 +384,9 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                                         <div class="col-6">
                                                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">รายจ่ายรวมเดือนนี้</div>
                                                             <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_expense, 2) ?></div>
+                                                            <button type="button" class="btn btn-outline-danger btn-xs mt-2" data-toggle="modal" data-target="#monthlyExpenseModal">
+                                                                <i class="fas fa-list"></i> รายละเอียด
+                                                            </button>
                                                         </div>
                                                         <div class="col-6 border-left">
                                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">ยอดจ่ายเงินเดือน (<?= $thai_months[$prev_month] ?>)</div>

@@ -100,7 +100,7 @@ if (strlen($_SESSION['alogin']) == "") {
                                         </div>
 
                                         <div class="modal fade" id="recordModal">
-                                            <div class="modal-dialog modal-lg">
+                                            <div class="modal-dialog modal-xl" style="max-width: 90%;">
                                                 <div class="modal-content">
 
                                                     <div class="modal-header">
@@ -250,6 +250,25 @@ if (strlen($_SESSION['alogin']) == "") {
                                                                     <option value="Y">ยืนยันรายการ (อนุมัติ)
                                                                     </option>
                                                                 </select>
+                                                            </div>
+
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-3">
+                                                                    <label for="created_by" class="control-label">สร้างโดย (Create By)</label>
+                                                                    <input type="text" class="form-control" id="created_by" name="created_by" readonly>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="created_date" class="control-label">วันที่สร้าง</label>
+                                                                    <input type="text" class="form-control" id="created_date" name="created_date" readonly>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="updated_by" class="control-label">ปรับปรุงโดย (Update By)</label>
+                                                                    <input type="text" class="form-control" id="updated_by" name="updated_by" readonly>
+                                                                </div>
+                                                                <div class="col-sm-3">
+                                                                    <label for="updated_date" class="control-label">วันที่ปรับปรุง</label>
+                                                                    <input type="text" class="form-control" id="updated_date" name="updated_date" readonly>
+                                                                </div>
                                                             </div>
 
                                                         </div>
@@ -760,6 +779,11 @@ if (strlen($_SESSION['alogin']) == "") {
                 $('#previewList').html("");
                 $('#filePreview').html("");
 
+                $('#created_by').val("");
+                $('#created_date').val("");
+                $('#updated_by').val("");
+                $('#updated_date').val("");
+
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -861,6 +885,16 @@ if (strlen($_SESSION['alogin']) == "") {
 
                         // ใส่ค่าใน input hidden หรือ text (ถ้ามี)
                         $("#payment_method").val(payment_method);
+
+                        let created_by = response[i].created_by || response[i].create_by || '';
+                        let created_date = response[i].created_date || response[i].created_at || '';
+                        let updated_by = response[i].updated_by || response[i].update_by || '';
+                        let updated_date = response[i].updated_date || response[i].updated_at || '';
+
+                        $('#created_by').val(created_by);
+                        $('#created_date').val(created_date);
+                        $('#updated_by').val(updated_by);
+                        $('#updated_date').val(updated_date);
 
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
@@ -971,6 +1005,16 @@ if (strlen($_SESSION['alogin']) == "") {
 
                         // ใส่ค่าใน input hidden หรือ text (ถ้ามี)
                         $("#payment_method").val(payment_method);
+
+                        let created_by = response[i].created_by || response[i].create_by || '';
+                        let created_date = response[i].created_date || response[i].created_at || '';
+                        let updated_by = response[i].updated_by || response[i].update_by || '';
+                        let updated_date = response[i].updated_date || response[i].updated_at || '';
+
+                        $('#created_by').val(created_by);
+                        $('#created_date').val(created_date);
+                        $('#updated_by').val(updated_by);
+                        $('#updated_date').val(updated_date);
 
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('DELETE');

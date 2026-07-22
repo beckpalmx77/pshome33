@@ -89,7 +89,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                         </div>
 
                                         <div class="modal fade" id="recordModal">
-                                            <div class="modal-dialog modal-lg">
+                                            <div class="modal-dialog modal-xl" style="max-width: 90%;">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h4 class="modal-title">Modal title</h4>
@@ -161,6 +161,37 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                                                                         <option value="Y">อนุมัติ</option>
                                                                     </select>
                                                                 </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="created_by" class="control-label">สร้างโดย (Create By)</label>
+                                                                            <input type="text" class="form-control" id="created_by" name="created_by" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="created_date" class="control-label">วันที่สร้าง</label>
+                                                                            <input type="text" class="form-control" id="created_date" name="created_date" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="updated_by" class="control-label">ปรับปรุงโดย (Update By)</label>
+                                                                            <input type="text" class="form-control" id="updated_by" name="updated_by" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="updated_date" class="control-label">วันที่ปรับปรุง</label>
+                                                                            <input type="text" class="form-control" id="updated_date" name="updated_date" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -333,6 +364,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                 $('#recordModal').modal('show');
                 $('#id').val("");
                 $('#doc_no').val("");
+                $('#created_by').val("");
+                $('#created_date').val("");
+                $('#updated_by').val("");
+                $('#updated_date').val("");
                 $('.modal-title').html("<i class='fa fa-plus'></i> ADD Record");
                 $('#action').val('ADD');
                 $('#save').val('Save');
@@ -362,6 +397,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let transaction_type = response[i].transaction_type;
                         let received_from = response[i].received_from;
                         let status = response[i].status;
+                        let created_by = response[i].created_by || response[i].create_by || '';
+                        let created_date = response[i].created_date || '';
+                        let updated_by = response[i].updated_by || response[i].update_by || '';
+                        let updated_date = response[i].updated_date || '';
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -372,6 +411,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         $('#transaction_type').val(transaction_type);
                         $('#received_from').val(received_from);
                         $('#status').val(status);
+                        $('#created_by').val(created_by);
+                        $('#created_date').val(created_date);
+                        $('#updated_by').val(updated_by);
+                        $('#updated_date').val(updated_date);
                         $('.modal-title').html("<i class='fa fa-plus'></i> Edit Record");
                         $('#action').val('UPDATE');
                         $('#save').val('Save');
@@ -406,6 +449,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         let transaction_type = response[i].transaction_type;
                         let received_from = response[i].received_from;
                         let status = response[i].status;
+                        let created_by = response[i].created_by || response[i].create_by || '';
+                        let created_date = response[i].created_date || '';
+                        let updated_by = response[i].updated_by || response[i].update_by || '';
+                        let updated_date = response[i].updated_date || '';
 
                         $('#recordModal').modal('show');
                         $('#id').val(id);
@@ -416,6 +463,10 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['doc_no']) == "") {
                         $('#transaction_type').val(transaction_type);
                         $('#received_from').val(received_from);
                         $('#status').val(status);
+                        $('#created_by').val(created_by);
+                        $('#created_date').val(created_date);
+                        $('#updated_by').val(updated_by);
+                        $('#updated_date').val(updated_date);
                         $('.modal-title').html("<i class='fa fa-minus'></i> Delete Record");
                         $('#action').val('DELETE');
                         $('#save').val('Confirm Delete');

@@ -217,7 +217,13 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>ผู้จัดทำ</label>
-                                        <input type="text" id="create_name" class="form-control" value="">
+                                        <?php
+                                        $session_user_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+                                        if (empty($session_user_name)) {
+                                            $session_user_name = $_SESSION['alogin'] ?? $_SESSION['username'] ?? '';
+                                        }
+                                        ?>
+                                        <input type="text" id="create_name" class="form-control" value="<?php echo htmlspecialchars($session_user_name); ?>">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -411,7 +417,9 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['department_id']) == "
                 $('#picture_doc').val(queryString["picture_doc"]);
                 $('#totalAmount').val(queryString["total_amount"]);
 
-                $('#create_name').val(queryString["create_name"]);
+                if (queryString["create_name"]) {
+                    $('#create_name').val(queryString["create_name"]);
+                }
                 $('#checker_name').val(queryString["checker_name"]);
                 $('#approve_name').val(queryString["approve_name"]);
                 $('#receipt_name').val(queryString["receipt_name"]);

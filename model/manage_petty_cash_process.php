@@ -26,7 +26,13 @@ if ($_POST["action"] === 'GET_DATA') {
             "received_from" => $result['received_from'],
             "description" => $result['description'],
             "amount" => $result['amount'],
-            "status" => $result['status']);
+            "status" => $result['status'],
+            "created_by" => $result['created_by'],
+            "create_by" => $result['created_by'],
+            "created_date" => $result['created_date'],
+            "updated_by" => $result['updated_by'],
+            "update_by" => $result['updated_by'],
+            "updated_date" => $result['updated_date']);
     }
 
     echo json_encode($return_arr);
@@ -51,6 +57,11 @@ if ($_POST["action"] === 'SEARCH') {
 if ($_POST["action"] === 'ADD') {
 
     if (!empty($_POST["doc_date"])) {
+
+        $user_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+        if (empty($user_name)) {
+            $user_name = $_SESSION['alogin'] ?? $_SESSION['username'] ?? 'SYSTEM';
+        }
 
         // แปลงวันที่
         $doc_date_db = date("Y-m-d", strtotime($_POST["doc_date"]));
@@ -90,8 +101,8 @@ if ($_POST["action"] === 'ADD') {
             echo $dup;
         } else {
 
-            $sql = "INSERT INTO ims_petty_cash(doc_no, doc_date, transaction_type, received_from, description, amount, status)
-                    VALUES (:doc_no, :doc_date, :transaction_type, :received_from, :description, :amount, :status)";
+            $sql = "INSERT INTO ims_petty_cash(doc_no, doc_date, transaction_type, received_from, description, amount, status, created_by)
+                    VALUES (:doc_no, :doc_date, :transaction_type, :received_from, :description, :amount, :status, :created_by)";
 
             $query = $conn->prepare($sql);
             $query->bindParam(':doc_no', $doc_no, PDO::PARAM_STR);
@@ -101,6 +112,7 @@ if ($_POST["action"] === 'ADD') {
             $query->bindParam(':description', $description, PDO::PARAM_STR);
             $query->bindParam(':amount', $amount);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
+            $query->bindParam(':created_by', $user_name, PDO::PARAM_STR);
             $query->execute();
             $lastInsertId = $conn->lastInsertId();
 
@@ -119,6 +131,11 @@ if ($_POST["action"] === 'UPDATE') {
 
     if ($_POST["doc_date"] != '') {
 
+        $user_name = trim(($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? ''));
+        if (empty($user_name)) {
+            $user_name = $_SESSION['alogin'] ?? $_SESSION['username'] ?? 'SYSTEM';
+        }
+
         $id = $_POST["id"];
         $doc_no = $_POST["doc_no"];
         $doc_date = $_POST["doc_date"];
@@ -131,7 +148,7 @@ if ($_POST["action"] === 'UPDATE') {
         $sql_find = "SELECT * FROM ims_petty_cash WHERE id = '" . $id . "'";
         $nRows = $conn->query($sql_find)->fetchColumn();
         if ($nRows > 0) {
-            $sql_update = "UPDATE ims_petty_cash SET doc_no=:doc_no,doc_date=:doc_date,transaction_type=:transaction_type,received_from=:received_from,description=:description,amount=:amount,status=:status            
+            $sql_update = "UPDATE ims_petty_cash SET doc_no=:doc_no,doc_date=:doc_date,transaction_type=:transaction_type,received_from=:received_from,description=:description,amount=:amount,status=:status,updated_by=:updated_by            
             WHERE id = :id";
             $query = $conn->prepare($sql_update);
             $query->bindParam(':doc_no', $doc_no, PDO::PARAM_STR);
@@ -141,6 +158,7 @@ if ($_POST["action"] === 'UPDATE') {
             $query->bindParam(':description', $description, PDO::PARAM_STR);
             $query->bindParam(':amount', $amount, PDO::PARAM_STR);
             $query->bindParam(':status', $status, PDO::PARAM_STR);
+            $query->bindParam(':updated_by', $user_name, PDO::PARAM_STR);
             $query->bindParam(':id', $id, PDO::PARAM_STR);
             $query->execute();
             echo $save_success;
