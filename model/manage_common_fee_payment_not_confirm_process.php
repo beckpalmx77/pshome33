@@ -3,7 +3,7 @@ session_start();
 error_reporting(0);
 
 require_once('../config/connect_db.php');
-require_once('../config/lang.php');
+include('../config/lang.php');
 require_once('../util/record_util.php');
 require_once('../util/reorder_record.php');
 
