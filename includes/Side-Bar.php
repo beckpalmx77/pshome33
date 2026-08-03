@@ -128,11 +128,11 @@ $sidebar_color = isset($_SESSION['theme_sidebar_color']) && $_SESSION['theme_sid
             <span>คู่มือการใช้งานหน้าจอ</span></a>
     </li>
 
-    <li class="nav-item">
+    <!--li class="nav-item">
         <a class="nav-link" href="visitor_howto.html" target="_blank">
             <i class="fas fa-id-card"></i>
             <span>คู่มือระบบผู้มาติดต่อ (Visitor)</span></a>
-    </li>
+    </li-->
 
     <li class="nav-item">
         <a class="nav-link" href="ps33_system_manual.html" target="_blank">
