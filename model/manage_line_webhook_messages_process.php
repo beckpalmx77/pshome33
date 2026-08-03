@@ -6,6 +6,10 @@ include('../config/connect_db.php');
 
 if ($_POST["action"] === 'GET_MESSAGES') {
 
+    ## Delete empty/null records
+    $stmtDelete = $conn->prepare("DELETE FROM ims_line_webhook_messages WHERE (line_user_id IS NULL OR line_user_id = '') OR (line_display_name IS NULL OR line_display_name = '') OR (message_type IS NULL OR message_type = '') OR (message_text IS NULL OR message_text = '')");
+    $stmtDelete->execute();
+
     ## Read value
     $draw = $_POST['draw'];
     $row = $_POST['start'];
