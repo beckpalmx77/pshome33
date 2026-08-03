@@ -58,6 +58,11 @@ $thai_months = [
     5 => "พฤษภาคม", 6 => "มิถุนายน", 7 => "กรกฎาคม", 8 => "สิงหาคม",
     9 => "กันยายน", 10 => "ตุลาคม", 11 => "พฤศจิกายน", 12 => "ธันวาคม"
 ];
+$thai_short_months = [
+    1 => "ม.ค.", 2 => "ก.พ.", 3 => "มี.ค.", 4 => "เม.ย.",
+    5 => "พ.ค.", 6 => "มิ.ย.", 7 => "ก.ค.", 8 => "ส.ค.",
+    9 => "ก.ย.", 10 => "ต.ค.", 11 => "พ.ย.", 12 => "ธ.ค."
+];
 
 $sql_curr_month_collected = "
     SELECT 
@@ -393,7 +398,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                                             </button>
                                                         </div>
                                                         <div class="col-6 border-left">
-                                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">ยอดจ่ายเงินเดือน (<?= $thai_months[$prev_month] ?>)</div>
+                                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">ยอดจ่ายเงินเดือน (<?= $thai_short_months[$prev_month] ?> - <?= $prev_year + 543 ?>)</div>
                                                             <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_staff_salary, 2) ?></div>
                                                             <button type="button" class="btn btn-outline-info btn-xs mt-2" disabled>
                                                                 <i class="fas fa-list"></i> รายละเอียด
