@@ -444,7 +444,8 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                                             </div>
                                                             <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_staff_salary, 2) ?></div>
                                                             <button type="button"
-                                                                    class="btn btn-outline-info btn-xs mt-2" disabled>
+                                                                    class="btn btn-outline-info btn-xs mt-2"
+                                                                    <?= (isset($_SESSION['account_type']) && strtolower($_SESSION['account_type']) === 'user') ? 'disabled' : 'data-toggle="modal" data-target="#staffSalaryModal"' ?>>
                                                                 <i class="fas fa-list"></i> รายละเอียด
                                                             </button>
                                                         </div>
