@@ -285,7 +285,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                         <div class="card-body">
                             <div class="row">
                                 <!-- Left Column: Pie Chart -->
-                                <div class="col-xl-6 col-lg-12 mb-4">
+                                <div class="col-xl-5 col-lg-12 mb-4">
                                     <div class="card <?= $cardClass ?> shadow h-100 py-2">
                                         <div class="card-body text-center d-flex flex-column justify-content-center">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-3">
@@ -308,7 +308,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                 </div>
 
                                 <!-- Right Column: Info Cards Stacked -->
-                                <div class="col-xl-6 col-lg-12">
+                                <div class="col-xl-7 col-lg-12">
                                     <!-- LINE OA & Registration Row -->
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -384,7 +384,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                     <div class="card border-left-warning shadow mb-3">
                                         <div class="card-body">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                ยอดจัดเก็บค่าส่วนกลางเดือนปัจจุบัน
+                                                ยอดจัดเก็บค่าส่วนกลาง (<?= $thai_short_months[$curr_month] ?> - <?= $curr_year + 543 ?>)
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"><?= number_format($total_collected_curr_month, 2) ?>
                                                 บาท
@@ -411,7 +411,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                             <div class="card border-left-success shadow h-100 py-2">
                                                 <div class="card-body">
                                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                        รายรับอื่นๆ รวมเดือนนี้
+                                                        รายรับอื่นๆ (<?= $thai_short_months[$curr_month] ?> - <?= $curr_year + 543 ?>)
                                                     </div>
                                                     <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_income, 2) ?></div>
                                                     <button type="button" class="btn btn-outline-success btn-xs mt-2"
@@ -427,7 +427,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                                     <div class="row">
                                                         <div class="col-6">
                                                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                                รายจ่ายรวมเดือนนี้
+                                                                รายจ่ายรวม (<?= $thai_short_months[$curr_month] ?> - <?= $curr_year + 543 ?>)
                                                             </div>
                                                             <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_monthly_expense, 2) ?></div>
                                                             <button type="button"
@@ -439,7 +439,7 @@ $total_extra_fee_received = $result_sticker_summary->total_extra_fee ?? 0;
                                                         </div>
                                                         <div class="col-6 border-left">
                                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                                ยอดจ่ายเงินเดือน (<?= $thai_short_months[$prev_month] ?>
+                                                                เงินเดือนพนักงาน (<?= $thai_short_months[$prev_month] ?>
                                                                 - <?= $prev_year + 543 ?>)
                                                             </div>
                                                             <div class="h6 mb-0 font-weight-bold text-gray-800"><?= number_format($total_staff_salary, 2) ?></div>
