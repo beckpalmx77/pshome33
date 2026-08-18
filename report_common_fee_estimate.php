@@ -96,15 +96,16 @@ if (strlen($_SESSION['alogin']) == "") {
                 <?php include('includes/Top-Bar.php'); ?>
 
                 <div class="container-fluid" id="container-wrapper">
-                    <input type="hidden" id="main_menu" name="main_menu" value="<?php echo isset($_GET['m']) ? urldecode($_GET['m']) : 'รายงานต่าง ๆ'; ?>">
-                    <input type="hidden" id="sub_menu" name="sub_menu" value="<?php echo isset($_GET['s']) ? urldecode($_GET['s']) : 'เปรียบเทียบประมาณการและยอดจัดเก็บค่าส่วนกลาง'; ?>">
-                    
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">รายงานเปรียบเทียบประมาณการและยอดจัดเก็บค่าส่วนกลาง (รายเดือน - รายปี)</h1>
+                        <h1 class="h3 mb-0 text-gray-800"><?php echo urldecode($_GET['s']) ?></h1>
+                        <input type="hidden" id="main_menu" value="<?php echo urldecode($_GET['m']) ?>">
+                        <input type="hidden" id="sub_menu" value="<?php echo urldecode($_GET['s']) ?>">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a></li>
-                            <li class="breadcrumb-item"><?php echo isset($_GET['m']) ? urldecode($_GET['m']) : 'รายงาน'; ?></li>
-                            <li class="breadcrumb-item active" aria-current="page">เปรียบเทียบประมาณการ vs ยอดจัดเก็บจริง</li>
+                            <li class="breadcrumb-item"><a href="<?php echo $_SESSION['dashboard_page'] ?>">Home</a>
+                            </li>
+                            <li class="breadcrumb-item"><?php echo urldecode($_GET['m']) ?></li>
+                            <li class="breadcrumb-item active"
+                                aria-current="page"><?php echo urldecode($_GET['s']) ?></li>
                         </ol>
                     </div>
 
