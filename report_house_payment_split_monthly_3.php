@@ -94,8 +94,11 @@ if (strlen($_SESSION['alogin']) == "") {
                                         <a href="report_house_payment_split_monthly_2.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('สรุปจำนวนบ้านที่ชำระค่าส่วนกลาง (ตามปี)'); ?>" class="btn btn-sm btn-outline-primary ml-2">
                                             <i class="fas fa-home"></i> แสดงจำนวนบ้านที่ชำระ
                                         </a>
-                                        <a href="report_house_payment_split_monthly_3.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('คาดการณ์การจัดเก็บค่าส่วนกลาง (ตามปี)'); ?>" class="btn btn-sm btn-primary ml-2">
+                                        <a href="report_house_payment_split_monthly_3.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('คาดการณ์การจัดเก็บค่าส่วนกลาง (ตามปี)'); ?>" class="btn btn-sm btn-outline-primary ml-2">
                                             <i class="fas fa-chart-line"></i> แสดงเป้าหมายคาดการณ์
+                                        </a>
+                                        <a href="report_common_fee_estimate.php?m=<?php echo isset($_GET['m']) ? urlencode($_GET['m']) : urlencode('รายงานต่าง ๆ'); ?>&s=<?php echo urlencode('เปรียบเทียบประมาณการและยอดจัดเก็บค่าส่วนกลาง'); ?>" class="btn btn-sm btn-primary ml-2">
+                                            <i class="fas fa-balance-scale"></i> เปรียบเทียบเป้าหมาย vs ยอดจริง
                                         </a>
                                     </div>
                                 </div>
