@@ -26,17 +26,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'optimize' && isset($_GET['tabl
             exit;
         }
 
-        $engine = strtoupper($info['ENGINE']);
-
-        // ข้าม Engine ที่ไม่รองรับ
-        if (!in_array($engine, ['INNODB', 'MYISAM', 'ARIA'])) {
-            $response['skipped']  = true;
-            $response['success']  = true;
-            $response['message']  = "⏭️ ข้าม: `$table` [$engine ไม่รองรับ OPTIMIZE]";
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
-        }
+        $engine = strtoupper($info['ENGINE'] ?? '');
 
         // วัดขนาดก่อน
         $sizeQuery = "SELECT ROUND(((data_length + index_length) / 1024 / 1024), 2) 
@@ -45,6 +35,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'optimize' && isset($_GET['tabl
         $stmtSize = $conn->prepare($sizeQuery);
         $stmtSize->execute(['table' => $table]);
         $response['before'] = (float)$stmtSize->fetchColumn();
+
+        // แปลง / Rebuild Engine เป็น InnoDB ทุกตาราง
+        $conn->exec("ALTER TABLE `$table` ENGINE = InnoDB");
 
         // ANALYZE TABLE (อัปเดต index statistics)
         $analyzeResult = $conn->query("ANALYZE TABLE `$table`")->fetchAll(PDO::FETCH_ASSOC);
@@ -60,7 +53,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'optimize' && isset($_GET['tabl
 
         $response['success'] = true;
         $saved = max(0, $response['before'] - $response['after']);
-        $response['message'] = "✅ [$engine] `$table` [{$response['before']} MB → {$response['after']} MB] ลดไป: " . round($saved, 2) . " MB | ANALYZE: $analyzeMsg | OPTIMIZE: $optMsg";
+        $engineChangeNote = ($engine !== 'INNODB' && $engine !== '') ? " (เปลี่ยน $engine → InnoDB)" : " [InnoDB]";
+        $response['message'] = "✅$engineChangeNote `$table` [{$response['before']} MB → {$response['after']} MB] ลดไป: " . round($saved, 2) . " MB | ANALYZE: $analyzeMsg | OPTIMIZE: $optMsg";
 
     } catch (PDOException $e) {
         $response['message'] = "❌ ผิดพลาด: `$table` - " . $e->getMessage();

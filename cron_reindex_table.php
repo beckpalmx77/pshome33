@@ -43,14 +43,7 @@ try {
 
         $engine = strtoupper($info['ENGINE'] ?? '');
 
-        // Skip Engines that don't support OPTIMIZE
-        if (!in_array($engine, ['INNODB', 'MYISAM', 'ARIA'])) {
-            echo "[SKIP] `$table` ($engine) does not support OPTIMIZE\n";
-            $skippedCount++;
-            continue;
-        }
-
-        echo "Optimizing `$table` [$engine]... ";
+        echo "Optimizing `$table` (Engine: " . ($engine ?: 'Unknown') . " -> InnoDB)... ";
 
         // Measure size before
         $sizeQuery = "SELECT ROUND(((data_length + index_length) / 1024 / 1024), 2) 
@@ -59,6 +52,9 @@ try {
         $stmtSize = $conn->prepare($sizeQuery);
         $stmtSize->execute(['table' => $table]);
         $sizeBefore = (float)$stmtSize->fetchColumn();
+
+        // Convert / Rebuild Engine to InnoDB
+        $conn->exec("ALTER TABLE `$table` ENGINE = InnoDB");
 
         // ANALYZE TABLE (updates index statistics)
         $conn->query("ANALYZE TABLE `$table`")->execute();
