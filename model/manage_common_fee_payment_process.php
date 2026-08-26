@@ -1,12 +1,14 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 error_reporting(0); // It's recommended to turn this off in a production environment.
 
-include('../config/connect_db.php'); // Database connection file
-include('../util/gl_util.php'); // Utility for GL
-include('../config/lang.php'); // Language file
-include('../util/record_util.php'); // Utility for records
-include('../util/reorder_record.php'); // Utility for reordering records
+include(__DIR__ . '/../config/connect_db.php'); // Database connection file
+include(__DIR__ . '/../util/gl_util.php'); // Utility for GL
+include(__DIR__ . '/../config/lang.php'); // Language file
+include(__DIR__ . '/../util/record_util.php'); // Utility for records
+include(__DIR__ . '/../util/reorder_record.php'); // Utility for reordering records
 
 // Define success messages (can be moved to lang.php)
 $save_success = "บันทึกข้อมูลสำเร็จ";
@@ -464,27 +466,54 @@ if ($_POST["action"] === 'DELETE') {
     exit;
 }
 
-// Fetch data for the DataTable
-if ($_POST["action"] === 'GET_COMMON_FEE') {
+// Action: EXPLAIN_ANALYZE_PROFILE for dedicated query profiling & explain analyze
+if ($_POST["action"] === 'EXPLAIN_ANALYZE_PROFILE') {
+    $profiler_start = microtime(true);
+    $queries_log = [];
 
-    ## Read value from DataTable's request
-    $draw = $_POST['draw'];
-    $row = $_POST['start'];
-    $rowperpage = $_POST['length']; // Number of rows per page
-    $columnIndex = $_POST['order'][0]['column']; // Index of the column to sort by
-    $columnName = $_POST['columns'][$columnIndex]['data']; // Column name for sorting
-    $columnSortOrder = 'desc'; // Always sort descending
-    $searchValue = isset($_POST['search']['value']) ? $_POST['search']['value'] : ''; // User-input search value
-    $searchHouseNumber = isset($_POST['searchHouseNumber']) ? $_POST['searchHouseNumber'] : ''; // Exact House Number search
+    $row = isset($_POST['start']) ? intval($_POST['start']) : 0;
+    $rowperpage = isset($_POST['length']) ? intval($_POST['length']) : 10;
+    if ($rowperpage <= 0) $rowperpage = 10;
+
+    $searchValue = isset($_POST['searchValue']) ? trim($_POST['searchValue']) : '';
+    $searchHouseNumber = isset($_POST['searchHouseNumber']) ? trim($_POST['searchHouseNumber']) : '';
+
+    $where_house_number = "";
+    $where_house_number_qualified = "";
+    if (isset($_SESSION['account_type']) && $_SESSION['account_type'] === "user") {
+        $where_house_number = " AND house_number = " . $conn->quote($_SESSION['house_number']);
+        $where_house_number_qualified = " AND h.house_number = " . $conn->quote($_SESSION['house_number']);
+    }
 
     $searchArray = array();
+    $searchQuery = "";
+    $forceIndex = "";
 
-    ## Search Query
-    $searchQuery = " ";
-    if ($searchHouseNumber != '') {
+    // 1. Total Count Query
+    $t0 = microtime(true);
+    $sql_total = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
+    $stmt = $conn->prepare($sql_total);
+    $stmt->execute();
+    $totalRecords = (int)$stmt->fetchColumn();
+    $t1 = microtime(true);
+    $queries_log[] = [
+        'type' => 'Total Count',
+        'sql' => $sql_total,
+        'time_ms' => round(($t1 - $t0) * 1000, 2),
+        'rows' => 1
+    ];
+
+    // 2. Filtered Count Query
+    $t0 = microtime(true);
+    if ($searchHouseNumber !== '') {
         $searchQuery = " AND h.house_number = :house_number_exact ";
         $searchArray['house_number_exact'] = $searchHouseNumber;
-    } elseif ($searchValue != '') {
+
+        $sql_filter = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE house_number = :house_number_exact " . $where_house_number;
+        $stmt = $conn->prepare($sql_filter);
+        $stmt->execute(['house_number_exact' => $searchHouseNumber]);
+        $totalRecordwithFilter = (int)$stmt->fetchColumn();
+    } elseif ($searchValue !== '') {
         $searchQuery = " AND (h.doc_id LIKE :search1 OR 
                              h.house_number LIKE :search2 OR 
                              h.detail LIKE :search3 OR 
@@ -495,48 +524,32 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         $searchArray['search3'] = "%$searchValue%";
         $searchArray['search4'] = "%$searchValue%";
         $searchArray['search5'] = "%$searchValue%";
-    }
 
-    $where_house_number = " ";
-    $where_house_number_qualified = " ";
-    if ($_SESSION['account_type'] === "user") {
-        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
-        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
-    }
-
-    ## Total number of records without filtering
-    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
-    $stmt = $conn->prepare($sql_getdata);
-    $stmt->execute();
-    $records = $stmt->fetch();
-    $totalRecords = $records['allcount'];
-
-    ## Total number of records with filtering
-    if ($searchQuery === " " || trim($searchQuery) === "") {
-        $totalRecordwithFilter = $totalRecords;
-    } else {
-        $sql_getdata = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
+        $sql_filter = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
                         LEFT JOIN ims_house house ON h.house_number = house.house_number
                         WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
-        $stmt = $conn->prepare($sql_getdata);
+        $stmt = $conn->prepare($sql_filter);
         $stmt->execute($searchArray);
-        $records = $stmt->fetch();
-        $totalRecordwithFilter = $records['allcount'];
+        $totalRecordwithFilter = (int)$stmt->fetchColumn();
+    } else {
+        $totalRecordwithFilter = $totalRecords;
+        $sql_filter = "Skipped (Same as Total Count: " . $totalRecords . ")";
+        $forceIndex = "FORCE INDEX (PRIMARY)";
     }
+    $t1 = microtime(true);
+    $queries_log[] = [
+        'type' => 'Filtered Count',
+        'sql' => $sql_filter,
+        'time_ms' => round(($t1 - $t0) * 1000, 2),
+        'rows' => 1
+    ];
 
-    ## Fetch records
+    // 3. Main Data Query
     $sql_getdata = "SELECT 
         h.id, h.runno, h.doc_id, h.payment_date, h.house_number, h.detail, 
         h.period_month_start, h.period_month_to, h.period_year, h.amount, 
         h.picture_payment, h.remark, h.payment_type, h.payment_status,
-        CASE 
-            WHEN h.payment_status = 'Y' THEN 'ชำระเรียบร้อยแล้ว' 
-            WHEN h.payment_status = 'N' THEN 'ยังไม่ยืนยันการชำระ' 
-            ELSE 'ไม่ทราบสถานะ' 
-        END AS payment_status_desc,
         h.created_at, h.updated_at, h.print_first_date, h.print_last_date, h.print_status,
-        m_start.month_name AS month_name_start,
-        m_to.month_name AS month_name_to,
         house.alley,
         house.contact_name,
         house.phone_number,
@@ -549,14 +562,235 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         h.create_by,
         h.approve_by,
         h.update_count
-     FROM ims_house_payment h
-     LEFT JOIN ims_month m_start ON h.period_month_start = m_start.month
-     LEFT JOIN ims_month m_to ON h.period_month_to = m_to.month
+     FROM ims_house_payment h {$forceIndex}
      LEFT JOIN ims_house house ON h.house_number = house.house_number
      LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
      WHERE 1=1 " . $searchQuery . $where_house_number_qualified
-     . " ORDER BY h.id DESC LIMIT :limit,:offset";
+     . " ORDER BY h.id DESC LIMIT :limit, :offset";
 
+    $t0 = microtime(true);
+    $stmt = $conn->prepare($sql_getdata);
+    foreach ($searchArray as $key => $val) {
+        $stmt->bindValue(':' . $key, $val, PDO::PARAM_STR);
+    }
+    $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $t1 = microtime(true);
+    $data_query_time = round(($t1 - $t0) * 1000, 2);
+
+    $queries_log[] = [
+        'type' => 'Main Data Fetch',
+        'sql' => $sql_getdata,
+        'time_ms' => $data_query_time,
+        'rows' => count($rows)
+    ];
+
+    // 4. Run EXPLAIN ANALYZE on Main Data Query
+    $explain_analyze_raw = "";
+    $explain_analyze_time = 0;
+    try {
+        $sql_explain_analyze = "EXPLAIN ANALYZE " . str_replace([':limit', ':offset'], [(int)$row, (int)$rowperpage], $sql_getdata);
+        foreach ($searchArray as $key => $val) {
+            $sql_explain_analyze = str_replace(':' . $key, $conn->quote($val), $sql_explain_analyze);
+        }
+        $t0 = microtime(true);
+        $stmt_ea = $conn->query($sql_explain_analyze);
+        $ea_res = $stmt_ea->fetchAll(PDO::FETCH_ASSOC);
+        $t1 = microtime(true);
+        $explain_analyze_time = round(($t1 - $t0) * 1000, 2);
+        foreach ($ea_res as $r) {
+            $explain_analyze_raw .= ($r['EXPLAIN'] ?? '') . "\n";
+        }
+    } catch (Exception $e) {
+        $explain_analyze_raw = "EXPLAIN ANALYZE error: " . $e->getMessage();
+    }
+
+    // 5. Run Traditional EXPLAIN
+    $explain_table = [];
+    try {
+        $sql_explain = "EXPLAIN " . str_replace([':limit', ':offset'], [(int)$row, (int)$rowperpage], $sql_getdata);
+        foreach ($searchArray as $key => $val) {
+            $sql_explain = str_replace(':' . $key, $conn->quote($val), $sql_explain);
+        }
+        $stmt_exp = $conn->query($sql_explain);
+        $explain_table = $stmt_exp->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $explain_table = [['error' => $e->getMessage()]];
+    }
+
+    $profiler_end = microtime(true);
+    $total_elapsed_ms = round(($profiler_end - $profiler_start) * 1000, 2);
+
+    // 6. Intelligent Recommendations
+    $recommendations = [];
+    $has_all_scan = false;
+    $has_filesort = false;
+
+    foreach ($explain_table as $exp_row) {
+        if (($exp_row['type'] ?? '') === 'ALL') {
+            $has_all_scan = true;
+            $table_name = $exp_row['table'] ?? 'table';
+            $recommendations[] = [
+                'level' => 'warning',
+                'title' => "Full Table Scan ตรวจพบในตาราง {$table_name}",
+                'detail' => "Query ทำการสแกนทุกแถวโดยไม่ได้ใช้ Index บนตาราง {$table_name} อาจทำให้ช้าเมื่อข้อมูลมีปริมาณมาก"
+            ];
+        }
+        if (strpos($exp_row['Extra'] ?? '', 'Using filesort') !== false) {
+            $has_filesort = true;
+            $recommendations[] = [
+                'level' => 'info',
+                'title' => "Using filesort ตรวจพบในการจัดเรียง (ORDER BY)",
+                'detail' => "MySQL มีการจัดเรียงผลลัพธ์ในหน่วยความจำ แนะนำให้ใช้ Composite Index หรือ Index Scan บนคอลัมน์เรียงลำดับ"
+            ];
+        }
+    }
+
+    if (!$has_all_scan && !$has_filesort) {
+        $recommendations[] = [
+            'level' => 'success',
+            'title' => "⚡ ประสิทธิภาพยอดเยี่ยม (Optimal Query Performance)",
+            'detail' => "Query ใช้ Index Scan (PRIMARY / idx_house_number) ครบถ้วน ไม่เกิด Full Table Scan หรือ Filesort ความเร็วระดับมิลลิวินาที"
+        ];
+    }
+
+    $mysql_version = "MySQL";
+    try {
+        $mysql_version = $conn->getAttribute(PDO::ATTR_SERVER_VERSION);
+    } catch (Exception $e) {}
+
+    echo json_encode([
+        'status' => 'success',
+        'total_time_ms' => $total_elapsed_ms,
+        'data_query_time_ms' => $data_query_time,
+        'explain_analyze_time_ms' => $explain_analyze_time,
+        'memory_peak_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
+        'queries' => $queries_log,
+        'total_queries' => count($queries_log),
+        'total_records' => $totalRecords,
+        'filtered_records' => $totalRecordwithFilter,
+        'returned_rows' => count($rows),
+        'explain_analyze' => trim($explain_analyze_raw),
+        'explain_table' => $explain_table,
+        'recommendations' => $recommendations,
+        'mysql_version' => $mysql_version
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// Fetch data for the DataTable
+if ($_POST["action"] === 'GET_COMMON_FEE') {
+    $profiler_start = microtime(true);
+    $queries_log = [];
+
+    ## Read value from DataTable's request
+    $draw = isset($_POST['draw']) ? intval($_POST['draw']) : 1;
+    $row = isset($_POST['start']) ? intval($_POST['start']) : 0;
+    $rowperpage = isset($_POST['length']) ? intval($_POST['length']) : 10;
+    if ($rowperpage <= 0) $rowperpage = 10;
+
+    $searchValue = isset($_POST['search']['value']) ? trim($_POST['search']['value']) : '';
+    $searchHouseNumber = isset($_POST['searchHouseNumber']) ? trim($_POST['searchHouseNumber']) : '';
+
+    $thaiMonths = [
+        1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน',
+        5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม',
+        9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
+    ];
+
+    $searchArray = array();
+    $searchQuery = "";
+    $forceIndex = "";
+
+    $where_house_number = "";
+    $where_house_number_qualified = "";
+    if (isset($_SESSION['account_type']) && $_SESSION['account_type'] === "user") {
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
+    }
+
+    ## 1. Total number of records without filtering
+    $t0 = microtime(true);
+    $sql_total = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
+    $stmt = $conn->prepare($sql_total);
+    $stmt->execute();
+    $totalRecords = (int)$stmt->fetchColumn();
+    $t1 = microtime(true);
+    $queries_log[] = [
+        'type' => 'Total Count Query',
+        'sql' => $sql_total,
+        'time_ms' => round(($t1 - $t0) * 1000, 2),
+        'rows' => 1
+    ];
+
+    ## 2. Total number of records with filtering
+    $t0 = microtime(true);
+    if ($searchHouseNumber !== '') {
+        $searchQuery = " AND h.house_number = :house_number_exact ";
+        $searchArray['house_number_exact'] = $searchHouseNumber;
+
+        $sql_filter = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE house_number = :house_number_exact " . $where_house_number;
+        $stmt = $conn->prepare($sql_filter);
+        $stmt->execute(['house_number_exact' => $searchHouseNumber]);
+        $totalRecordwithFilter = (int)$stmt->fetchColumn();
+    } elseif ($searchValue !== '') {
+        $searchQuery = " AND (h.doc_id LIKE :search1 OR 
+                             h.house_number LIKE :search2 OR 
+                             h.detail LIKE :search3 OR 
+                             house.alley LIKE :search4 OR 
+                             h.remark LIKE :search5) ";
+        $searchArray['search1'] = "%$searchValue%";
+        $searchArray['search2'] = "%$searchValue%";
+        $searchArray['search3'] = "%$searchValue%";
+        $searchArray['search4'] = "%$searchValue%";
+        $searchArray['search5'] = "%$searchValue%";
+
+        $sql_filter = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
+                        LEFT JOIN ims_house house ON h.house_number = house.house_number
+                        WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
+        $stmt = $conn->prepare($sql_filter);
+        $stmt->execute($searchArray);
+        $totalRecordwithFilter = (int)$stmt->fetchColumn();
+    } else {
+        $totalRecordwithFilter = $totalRecords;
+        $sql_filter = "Skipped (Same as Total Count)";
+        $forceIndex = "FORCE INDEX (PRIMARY)";
+    }
+    $t1 = microtime(true);
+    $queries_log[] = [
+        'type' => 'Filtered Count Query',
+        'sql' => $sql_filter,
+        'time_ms' => round(($t1 - $t0) * 1000, 2),
+        'rows' => 1
+    ];
+
+    ## 3. Fetch records (Optimized with direct index scan & PHP month mapping)
+    $sql_getdata = "SELECT 
+        h.id, h.runno, h.doc_id, h.payment_date, h.house_number, h.detail, 
+        h.period_month_start, h.period_month_to, h.period_year, h.amount, 
+        h.picture_payment, h.remark, h.payment_type, h.payment_status,
+        h.created_at, h.updated_at, h.print_first_date, h.print_last_date, h.print_status,
+        house.alley,
+        house.contact_name,
+        house.phone_number,
+        h.line_user_id,
+        h.line_picture_profile_show,
+        hm.area_size,
+        hm.garbage_collection_fee,
+        hm.common_fee,
+        h.payment_method,
+        h.create_by,
+        h.approve_by,
+        h.update_count
+     FROM ims_house_payment h {$forceIndex}
+     LEFT JOIN ims_house house ON h.house_number = house.house_number
+     LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
+     WHERE 1=1 " . $searchQuery . $where_house_number_qualified
+     . " ORDER BY h.id DESC LIMIT :limit, :offset";
+
+    $t0 = microtime(true);
     $stmt = $conn->prepare($sql_getdata);
 
     // Bind values
@@ -567,71 +801,103 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
     $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
     $stmt->execute();
-    $empRecords = $stmt->fetchAll();
+    $empRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $t1 = microtime(true);
+    $data_fetch_time = round(($t1 - $t0) * 1000, 2);
+
+    $queries_log[] = [
+        'type' => 'Main Data Fetch Query',
+        'sql' => $sql_getdata,
+        'time_ms' => $data_fetch_time,
+        'rows' => count($empRecords)
+    ];
+
     $data = array();
 
-    $isUser = $_SESSION['account_type'] === "user";
-    $isManager = $_SESSION['account_type'] === "manager";
-    $isMaster = $_POST['sub_action'] === "GET_MASTER";
+    $isUser = isset($_SESSION['account_type']) && $_SESSION['account_type'] === "user";
+    $isManager = isset($_SESSION['account_type']) && $_SESSION['account_type'] === "manager";
+    $isMaster = isset($_POST['sub_action']) && $_POST['sub_action'] === "GET_MASTER";
 
     $statusMeta = [
         'Y' => ['desc' => "ชำระเรียบร้อยแล้ว", 'color' => 'green', 'can_print' => true],
         'N' => ['desc' => "ยังไม่ยืนยันการชำระ", 'color' => 'gray', 'can_print' => false],
     ];
 
-    foreach ($empRecords as $row) {
+    foreach ($empRecords as $rowItem) {
         if ($isMaster) {
-            $status = $row['payment_status'];
+            $status = $rowItem['payment_status'];
             $meta = $statusMeta[$status] ?? ['desc' => '-', 'color' => 'gray', 'can_print' => false];
 
+            $month_start_no = (int)($rowItem['period_month_start'] ?? 0);
+            $month_to_no = (int)($rowItem['period_month_to'] ?? 0);
+            $month_name_start = $thaiMonths[$month_start_no] ?? '';
+            $month_name_to = $thaiMonths[$month_to_no] ?? '';
+            $month_name_period = ($month_name_start && $month_name_to) ? "{$month_name_start} - {$month_name_to}" : ($month_name_start ?: $month_name_to);
+
             $data[] = [
-                "id" => $row['id'],
-                "doc_id" => $row['doc_id'],
-                "payment_date" => $row['payment_date'],
-                "detail" => $row['detail'],
-                "house_number" => $row['house_number'],
-                "alley" => $row['alley'],
-                "contact_name" => $row['contact_name'],
-                "phone_number" => $row['phone_number'],
-                "payment_type" => $row['payment_type'],
-                "period_month_start" => $row['period_month_start'],
-                "period_month_to" => $row['period_month_to'],
-                "month_name_start" => $row['month_name_start'],
-                "month_name_to" => $row['month_name_to'],
-                "month_name_period" => $row['month_name_start'] . " - " . $row['month_name_to'],
-                "period_year" => $row['period_year'],
-                "area_size" => $row['area_size'],
-                "garbage_collection_fee" => $row['garbage_collection_fee'],
-                "common_fee" => $row['common_fee'],
-                "amount" => $row['amount'],
-                "payment_status" => $row['payment_status'],
-                "line_picture_profile" => "<img src='" . ($row['line_picture_profile_show'] ?: 'img/icon/none_img.png') . "' alt='image' style='width: 50px; height: auto;'>",
+                "id" => $rowItem['id'],
+                "doc_id" => $rowItem['doc_id'],
+                "payment_date" => $rowItem['payment_date'],
+                "detail" => $rowItem['detail'],
+                "house_number" => $rowItem['house_number'],
+                "alley" => $rowItem['alley'],
+                "contact_name" => $rowItem['contact_name'],
+                "phone_number" => $rowItem['phone_number'],
+                "payment_type" => $rowItem['payment_type'],
+                "period_month_start" => $rowItem['period_month_start'],
+                "period_month_to" => $rowItem['period_month_to'],
+                "month_name_start" => $month_name_start,
+                "month_name_to" => $month_name_to,
+                "month_name_period" => $month_name_period,
+                "period_year" => $rowItem['period_year'],
+                "area_size" => $rowItem['area_size'],
+                "garbage_collection_fee" => $rowItem['garbage_collection_fee'],
+                "common_fee" => $rowItem['common_fee'],
+                "amount" => $rowItem['amount'],
+                "payment_status" => $rowItem['payment_status'],
+                "line_picture_profile" => "<img src='" . ($rowItem['line_picture_profile_show'] ?: 'img/icon/none_img.png') . "' alt='image' style='width: 50px; height: auto;'>",
                 "payment_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
-                "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
-                "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
+                "print" => "<button type='button' name='print' id='{$rowItem['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
+                "slip" => "<button type='button' name='slip' id='{$rowItem['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
                 "update" => $isUser ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
-                    : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                    : "<button type='button' name='update' id='{$rowItem['id']}' class='btn btn-info btn-xs update'>Update</button>",
                 "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
-                    : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
-                "remark" => $row['remark']
+                    : "<button type='button' name='delete' id='{$rowItem['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
+                "remark" => $rowItem['remark']
             ];
         } else {
             $data[] = [
-                "id" => $row['id'],
-                "house_number" => $row['house_number'],
-                "contact_name" => $row['contact_name'],
-                "select" => "<button type='button' name='select' id='{$row['house_number']}@{$row['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
+                "id" => $rowItem['id'],
+                "house_number" => $rowItem['house_number'],
+                "contact_name" => $rowItem['contact_name'],
+                "select" => "<button type='button' name='select' id='{$rowItem['house_number']}@{$rowItem['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
             ];
         }
     }
 
-    ## Response Return Value for DataTable
+    $profiler_end = microtime(true);
+    $total_elapsed_ms = round(($profiler_end - $profiler_start) * 1000, 2);
+
+    ## Response Return Value for DataTable including Profiler info
     $response = array(
         "draw" => intval($draw),
         "iTotalRecords" => $totalRecords,
         "iTotalDisplayRecords" => $totalRecordwithFilter,
-        "aaData" => $data
+        "aaData" => $data,
+        "profiler" => [
+            "total_time_ms" => $total_elapsed_ms,
+            "data_query_time_ms" => $data_fetch_time,
+            "memory_peak_mb" => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
+            "queries" => $queries_log,
+            "total_queries" => count($queries_log),
+            "row_count" => count($data),
+            "filtered_count" => $totalRecordwithFilter,
+            "total_records" => $totalRecords,
+            "search_house_number" => $searchHouseNumber,
+            "search_value" => $searchValue
+        ]
     );
 
     echo json_encode($response);
+    exit;
 }

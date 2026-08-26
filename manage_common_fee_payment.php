@@ -122,7 +122,7 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card mb-12">
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-start flex-wrap">
                                     <button type="button" id="btnReload" class="btn btn-outline-success btn-xs" data-toggle="tooltip" title="Reload Data">
                                         <i class="fa fa-refresh"></i> Reload Data
                                     </button>
@@ -140,6 +140,12 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                     <a href="show_duplicate_payments.php?m=ข้อมูลเกี่ยวกับการเงิน&s=ตรวจสอบรายการชำระค่าส่วนกลางบันทึกซ้ำ" class="btn btn-outline-warning ml-2">
                                         <i class="fas fa-copy"></i> ตรวจสอบบันทึกซ้ำ
                                     </a>
+                                    <button type="button" id="btnQueryProfiler" class="btn btn-outline-info btn-xs ml-2" data-toggle="tooltip" title="Query Performance Profiler & EXPLAIN ANALYZE">
+                                        <i class="fas fa-chart-line"></i> Query Profiler
+                                    </button>
+                                    <span id="perfBadge" class="badge badge-success ml-2" style="font-size: 12px; padding: 6px 10px; cursor: pointer; display: none;" data-toggle="tooltip" title="คลิกเพื่อดู Query Performance & EXPLAIN ANALYZE">
+                                        <i class="fas fa-bolt"></i> <span id="perfTimeText">0.0 ms</span>
+                                    </span>
                                 </div>
                                 <div class="card-body">
                                     <section class="container-fluid">
@@ -473,6 +479,210 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Modal Query Performance Profiler & EXPLAIN ANALYZE -->
+                                        <div class="modal fade" id="queryProfilerModal" tabindex="-1" role="dialog" aria-labelledby="queryProfilerModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-xl" role="document" style="max-width: 90%;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-dark text-white py-2">
+                                                        <h5 class="modal-title d-flex align-items-center" id="queryProfilerModalLabel">
+                                                            <i class="fas fa-tachometer-alt text-warning mr-2"></i> Query Performance Profiler & EXPLAIN ANALYZE
+                                                            <span id="modalMysqlVersionBadge" class="badge badge-info ml-2" style="font-size: 11px;">MySQL</span>
+                                                        </h5>
+                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body p-3">
+                                                        <!-- Nav Tabs -->
+                                                        <ul class="nav nav-tabs mb-3" id="profilerTabs" role="tablist">
+                                                            <li class="nav-item">
+                                                                <a class="nav-link active" id="tab-overview-link" data-toggle="tab" href="#tab-overview" role="tab">
+                                                                    <i class="fas fa-bolt text-warning"></i> ภาพรวมประสิทธิภาพ (Live Profiler)
+                                                                </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" id="tab-analyze-link" data-toggle="tab" href="#tab-analyze" role="tab">
+                                                                    <i class="fas fa-project-diagram text-info"></i> EXPLAIN ANALYZE (Execution Tree)
+                                                                </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" id="tab-explain-link" data-toggle="tab" href="#tab-explain" role="tab">
+                                                                    <i class="fas fa-table text-success"></i> ตาราง Execution Plan (EXPLAIN)
+                                                                </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" id="tab-tester-link" data-toggle="tab" href="#tab-tester" role="tab">
+                                                                    <i class="fas fa-vial text-primary"></i> เครื่องมือทดสอบ Query (Live Tester)
+                                                                </a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" id="tab-insights-link" data-toggle="tab" href="#tab-insights" role="tab">
+                                                                    <i class="fas fa-lightbulb text-warning"></i> คำแนะนำและข้อสังเกต (Insights)
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+
+                                                        <!-- Tab Contents -->
+                                                        <div class="tab-content" id="profilerTabContent">
+                                                            <!-- Tab 1: Overview & KPI Cards -->
+                                                            <div class="tab-pane fade show active" id="tab-overview" role="tabpanel">
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                                        <div class="card border-left-success shadow-sm h-100 py-2">
+                                                                            <div class="card-body py-1">
+                                                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Execution Time</div>
+                                                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiTotalTime">0.00 ms</div>
+                                                                                <small class="text-muted" id="kpiDataQueryTime">Data Query: 0.00 ms</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                                        <div class="card border-left-primary shadow-sm h-100 py-2">
+                                                                            <div class="card-body py-1">
+                                                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Peak Memory Usage</div>
+                                                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiMemory">0.00 MB</div>
+                                                                                <small class="text-muted">PHP Engine Peak RAM</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                                        <div class="card border-left-info shadow-sm h-100 py-2">
+                                                                            <div class="card-body py-1">
+                                                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Queries Executed</div>
+                                                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiQueriesCount">3 queries</div>
+                                                                                <small class="text-muted">Total + Filter + Data</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                                        <div class="card border-left-warning shadow-sm h-100 py-2">
+                                                                            <div class="card-body py-1">
+                                                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Records Processed</div>
+                                                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiRecordsInfo">0 / 0</div>
+                                                                                <small class="text-muted" id="kpiReturnedRows">Returned: 0 rows</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <h6 class="font-weight-bold text-gray-800 mb-2"><i class="fas fa-list-ol mr-1"></i> รายการ Query ที่ทำงานในคำขอนี้ (Query Breakdown):</h6>
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-sm table-bordered table-striped" id="queriesBreakdownTable">
+                                                                        <thead class="thead-light">
+                                                                            <tr>
+                                                                                <th style="width: 15%;">ประเภท Query</th>
+                                                                                <th style="width: 12%;">เวลาที่ใช้</th>
+                                                                                <th style="width: 10%;">จำนวนแถว</th>
+                                                                                <th style="width: 55%;">คำสั่ง SQL ที่ประมวลผล</th>
+                                                                                <th style="width: 8%;">Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="queriesBreakdownTbody">
+                                                                            <tr><td colspan="5" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Tab 2: EXPLAIN ANALYZE Execution Tree -->
+                                                            <div class="tab-pane fade" id="tab-analyze" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <span class="text-muted small">
+                                                                        <i class="fas fa-info-circle text-info"></i> ผลลัพธ์จริงจากคำสั่ง <code>EXPLAIN ANALYZE</code> (Actual Time, Row Counts, Cost & Loops per Step)
+                                                                    </span>
+                                                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnCopyExplainAnalyze">
+                                                                        <i class="fas fa-copy"></i> คัดลอก Tree
+                                                                    </button>
+                                                                </div>
+                                                                <div style="background-color: #1a202c; color: #68d391; border-radius: 6px; padding: 15px; font-family: Consolas, 'Courier New', monospace; font-size: 13px; line-height: 1.5; max-height: 480px; overflow-y: auto;">
+                                                                    <pre id="explainAnalyzeContent" style="color: #68d391; margin: 0; white-space: pre-wrap; font-family: inherit;">ไม่มีข้อมูล EXPLAIN ANALYZE</pre>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Tab 3: EXPLAIN Plan Table -->
+                                                            <div class="tab-pane fade" id="tab-explain" role="tabpanel">
+                                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                    <span class="text-muted small">
+                                                                        <i class="fas fa-info-circle text-info"></i> การเข้าถึงข้อมูลของตาราง (Table Access Methods & Key Selection)
+                                                                    </span>
+                                                                </div>
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-sm table-bordered table-hover" id="explainPlanTable">
+                                                                        <thead class="thead-dark">
+                                                                            <tr>
+                                                                                <th>id</th>
+                                                                                <th>select_type</th>
+                                                                                <th>table</th>
+                                                                                <th>type</th>
+                                                                                <th>possible_keys</th>
+                                                                                <th>key (Index Used)</th>
+                                                                                <th>key_len</th>
+                                                                                <th>ref</th>
+                                                                                <th>rows</th>
+                                                                                <th>filtered %</th>
+                                                                                <th>Extra</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="explainPlanTbody">
+                                                                            <tr><td colspan="11" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Tab 4: Live Query Tester -->
+                                                            <div class="tab-pane fade" id="tab-tester" role="tabpanel">
+                                                                <div class="card bg-light mb-3">
+                                                                    <div class="card-body py-2">
+                                                                        <form id="formQueryTester" class="form-inline d-flex flex-wrap align-items-center">
+                                                                            <label class="mr-2 font-weight-bold">บ้านเลขที่ (Exact):</label>
+                                                                            <input type="text" id="testerHouseNumber" class="form-control form-control-sm mr-3 mb-2" placeholder="เช่น 99/1" style="width: 150px;">
+
+                                                                            <label class="mr-2 font-weight-bold">คำค้นหาทั่วไป:</label>
+                                                                            <input type="text" id="testerSearchValue" class="form-control form-control-sm mr-3 mb-2" placeholder="ค้นหาชื่อ/ซอย/ข้อความ" style="width: 180px;">
+
+                                                                            <label class="mr-2 font-weight-bold">จำนวนแถว (Limit):</label>
+                                                                            <select id="testerLength" class="form-control form-control-sm mr-3 mb-2" style="width: 100px;">
+                                                                                <option value="10" selected>10 แถว</option>
+                                                                                <option value="20">20 แถว</option>
+                                                                                <option value="50">50 แถว</option>
+                                                                                <option value="100">100 แถว</option>
+                                                                            </select>
+
+                                                                            <button type="button" id="btnRunTester" class="btn btn-primary btn-sm mb-2">
+                                                                                <i class="fas fa-play mr-1"></i> Run EXPLAIN ANALYZE
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="testerResultContainer">
+                                                                    <div class="alert alert-info">
+                                                                        <i class="fas fa-info-circle mr-1"></i> กรอกเงื่อนไขด้านบนแล้วคลิก <strong>"Run EXPLAIN ANALYZE"</strong> เพื่อทดสอบประสิทธิภาพและการทำงานของ Index ในแบบ Real-time
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Tab 5: Insights & Recommendations -->
+                                                            <div class="tab-pane fade" id="tab-insights" role="tabpanel">
+                                                                <div id="insightsContainer">
+                                                                    <div class="alert alert-success">
+                                                                        <h6 class="font-weight-bold mb-1"><i class="fas fa-check-circle mr-1"></i> ⚡ ประสิทธิภาพยอดเยี่ยม (Optimal Query Performance)</h6>
+                                                                        <p class="mb-0">Query ได้รับการปรับแต่งให้ใช้ Index Scan บน PRIMARY KEY และ idx_house_number หลีกเลี่ยง Cartesian join ทำให้ความเร็วการตอบสนองอยู่ในระดับมิลลิวินาที</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer py-2 justify-content-between">
+                                                        <span class="text-muted small" id="profilerTimestamp"><i class="far fa-clock mr-1"></i> Last updated: -</span>
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">
+                                                            <i class="fas fa-times mr-1"></i> ปิด
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </section>
                                 </div>
                             </div>
@@ -569,8 +779,16 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
                 'preXhr': function (xhr, data) {
                 },
                 'xhr': function (data) {
+                    if (data && data.profiler) {
+                        window.lastProfilerData = data.profiler;
+                        updateProfilerBadge(data.profiler);
+                    }
                 },
                 'initComplete': function (settings, json) {
+                    if (json && json.profiler) {
+                        window.lastProfilerData = json.profiler;
+                        updateProfilerBadge(json.profiler);
+                    }
                 }
             });
 
@@ -988,6 +1206,260 @@ if (strlen($_SESSION['alogin']) == "" || strlen($_SESSION['house_number']) == ""
 
             return result;
         }
+
+        // =======================================================
+        // Query Performance Profiler & EXPLAIN ANALYZE Logic
+        // =======================================================
+        window.lastProfilerData = null;
+
+        function updateProfilerBadge(profiler) {
+            if (!profiler) return;
+            let totalTime = parseFloat(profiler.total_time_ms) || 0;
+            let badge = $('#perfBadge');
+            let timeText = $('#perfTimeText');
+
+            timeText.text(totalTime.toFixed(1) + ' ms');
+
+            badge.removeClass('badge-success badge-warning badge-danger');
+            if (totalTime < 50) {
+                badge.addClass('badge-success');
+            } else if (totalTime < 200) {
+                badge.addClass('badge-warning');
+            } else {
+                badge.addClass('badge-danger');
+            }
+            badge.fadeIn();
+        }
+
+        function renderProfilerModal(data) {
+            if (!data) return;
+
+            if (data.mysql_version) {
+                $('#modalMysqlVersionBadge').text('MySQL ' + data.mysql_version);
+            }
+
+            let totalTime = parseFloat(data.total_time_ms) || 0;
+            let dataTime = parseFloat(data.data_query_time_ms) || 0;
+            $('#kpiTotalTime').text(totalTime.toFixed(2) + ' ms');
+            $('#kpiDataQueryTime').text('Data Query: ' + dataTime.toFixed(2) + ' ms');
+            $('#kpiMemory').text((data.memory_peak_mb || 0) + ' MB');
+            $('#kpiQueriesCount').text((data.total_queries || 0) + ' queries');
+            
+            let filteredRec = data.filtered_records !== undefined ? data.filtered_records : (data.filtered_count !== undefined ? data.filtered_count : 0);
+            let totalRec = data.total_records !== undefined ? data.total_records : 0;
+            let retRows = data.returned_rows !== undefined ? data.returned_rows : (data.row_count !== undefined ? data.row_count : 0);
+            
+            $('#kpiRecordsInfo').text(filteredRec + ' / ' + totalRec);
+            $('#kpiReturnedRows').text('Returned: ' + retRows + ' rows');
+
+            // 1. Queries Breakdown
+            let queriesHtml = '';
+            if (data.queries && data.queries.length > 0) {
+                data.queries.forEach(function(q, idx) {
+                    let timeMs = parseFloat(q.time_ms) || 0;
+                    let timeColor = timeMs < 10 ? 'text-success font-weight-bold' : (timeMs < 50 ? 'text-warning font-weight-bold' : 'text-danger font-weight-bold');
+                    queriesHtml += '<tr>';
+                    queriesHtml += '<td><span class="badge badge-secondary py-1 px-2">' + (q.type || 'Query #' + (idx+1)) + '</span></td>';
+                    queriesHtml += '<td class="' + timeColor + '">' + timeMs.toFixed(2) + ' ms</td>';
+                    queriesHtml += '<td>' + (q.rows !== undefined ? q.rows : '-') + '</td>';
+                    queriesHtml += '<td><code style="font-size: 11px; white-space: pre-wrap; word-break: break-all; color: #2b6cb0;">' + escapeHtml(q.sql) + '</code></td>';
+                    queriesHtml += '<td class="text-center"><button type="button" class="btn btn-outline-primary btn-xs btnCopySql" data-sql="' + encodeURIComponent(q.sql) + '" title="คัดลอก SQL"><i class="fas fa-copy"></i></button></td>';
+                    queriesHtml += '</tr>';
+                });
+            } else {
+                queriesHtml = '<tr><td colspan="5" class="text-center text-muted">ไม่มีข้อมูล Query</td></tr>';
+            }
+            $('#queriesBreakdownTbody').html(queriesHtml);
+
+            // 2. EXPLAIN ANALYZE Content
+            if (data.explain_analyze) {
+                $('#explainAnalyzeContent').text(data.explain_analyze);
+            } else {
+                $('#explainAnalyzeContent').text('ไม่มีข้อมูล EXPLAIN ANALYZE สำหรับคำขอนี้');
+            }
+
+            // 3. EXPLAIN Plan Table
+            let planHtml = '';
+            if (data.explain_table && data.explain_table.length > 0) {
+                data.explain_table.forEach(function(row) {
+                    let typeBadge = 'badge-secondary';
+                    let t = (row.type || '').toLowerCase();
+                    if (t === 'const' || t === 'eq_ref' || t === 'ref') {
+                        typeBadge = 'badge-success';
+                    } else if (t === 'range' || t === 'index') {
+                        typeBadge = 'badge-info';
+                    } else if (t === 'all') {
+                        typeBadge = 'badge-danger';
+                    }
+
+                    planHtml += '<tr>';
+                    planHtml += '<td>' + (row.id || '-') + '</td>';
+                    planHtml += '<td>' + (row.select_type || '-') + '</td>';
+                    planHtml += '<td><strong>' + (row.table || '-') + '</strong></td>';
+                    planHtml += '<td><span class="badge ' + typeBadge + '">' + (row.type || '-') + '</span></td>';
+                    planHtml += '<td><small>' + (row.possible_keys || '-') + '</small></td>';
+                    planHtml += '<td><strong class="text-primary">' + (row.key || '-') + '</strong></td>';
+                    planHtml += '<td>' + (row.key_len || '-') + '</td>';
+                    planHtml += '<td><small>' + (row.ref || '-') + '</small></td>';
+                    planHtml += '<td>' + (row.rows || '-') + '</td>';
+                    planHtml += '<td>' + (row.filtered !== undefined ? row.filtered + '%' : '-') + '</td>';
+                    planHtml += '<td><small>' + (row.Extra || '-') + '</small></td>';
+                    planHtml += '</tr>';
+                });
+            } else {
+                planHtml = '<tr><td colspan="11" class="text-center text-muted">ไม่มีข้อมูล Execution Plan</td></tr>';
+            }
+            $('#explainPlanTbody').html(planHtml);
+
+            // 4. Insights & Recommendations
+            let insightsHtml = '';
+            if (data.recommendations && data.recommendations.length > 0) {
+                data.recommendations.forEach(function(rec) {
+                    let alertClass = 'alert-info';
+                    let icon = 'fa-info-circle';
+                    if (rec.level === 'success') {
+                        alertClass = 'alert-success';
+                        icon = 'fa-check-circle';
+                    } else if (rec.level === 'warning') {
+                        alertClass = 'alert-warning';
+                        icon = 'fa-exclamation-triangle';
+                    } else if (rec.level === 'danger') {
+                        alertClass = 'alert-danger';
+                        icon = 'fa-times-circle';
+                    }
+
+                    insightsHtml += '<div class="alert ' + alertClass + ' mb-2">';
+                    insightsHtml += '<h6 class="font-weight-bold mb-1"><i class="fas ' + icon + ' mr-1"></i> ' + escapeHtml(rec.title) + '</h6>';
+                    insightsHtml += '<p class="mb-0 small">' + escapeHtml(rec.detail) + '</p>';
+                    insightsHtml += '</div>';
+                });
+            } else {
+                insightsHtml = '<div class="alert alert-success"><i class="fas fa-check-circle mr-1"></i> ไม่พบปัญหาคอขวดด้านประสิทธิภาพของ Query</div>';
+            }
+            $('#insightsContainer').html(insightsHtml);
+
+            let d = new Date();
+            $('#profilerTimestamp').html('<i class="far fa-clock mr-1"></i> Last updated: ' + d.toLocaleTimeString());
+        }
+
+        function runLiveExplainAnalyze(params) {
+            let houseNumber = params && params.searchHouseNumber !== undefined ? params.searchHouseNumber : ($('#search_house_number').val() || '');
+            let searchVal = params && params.searchValue !== undefined ? params.searchValue : ($('#TableRecordList_filter input').val() || '');
+            let length = params && params.length ? params.length : 10;
+
+            $('#testerResultContainer').html('<div class="text-center p-3"><span class="spinner-border spinner-border-sm text-primary" role="status"></span> กำลังประมวลผล EXPLAIN ANALYZE...</div>');
+
+            $.ajax({
+                url: 'model/manage_common_fee_payment_process.php',
+                type: 'POST',
+                data: {
+                    action: 'EXPLAIN_ANALYZE_PROFILE',
+                    searchHouseNumber: houseNumber,
+                    searchValue: searchVal,
+                    start: 0,
+                    length: length
+                },
+                dataType: 'json',
+                success: function(response) {
+                    renderProfilerModal(response);
+                    $('#testerResultContainer').html('<div class="alert alert-success py-2"><i class="fas fa-check-circle mr-1"></i> วิเคราะห์ผลสำเร็จในเวลา <strong>' + response.total_time_ms + ' ms</strong> (Data Query: ' + response.data_query_time_ms + ' ms) ดูรายละเอียดได้ในแท็บต่างๆ</div>');
+                },
+                error: function(xhr, status, error) {
+                    $('#testerResultContainer').html('<div class="alert alert-danger py-2"><i class="fas fa-exclamation-triangle mr-1"></i> เกิดข้อผิดพลาดในการรัน EXPLAIN ANALYZE: ' + error + '</div>');
+                }
+            });
+        }
+
+        function copyTextToClipboard(text, successMsg) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function() {
+                    if (typeof alertify !== 'undefined') {
+                        alertify.success(successMsg || "คัดลอกเรียบร้อยแล้ว");
+                    } else {
+                        alert(successMsg || "คัดลอกเรียบร้อยแล้ว");
+                    }
+                }).catch(function() {
+                    fallbackCopyText(text, successMsg);
+                });
+            } else {
+                fallbackCopyText(text, successMsg);
+            }
+        }
+
+        function fallbackCopyText(text, successMsg) {
+            let textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                if (typeof alertify !== 'undefined') {
+                    alertify.success(successMsg || "คัดลอกเรียบร้อยแล้ว");
+                } else {
+                    alert(successMsg || "คัดลอกเรียบร้อยแล้ว");
+                }
+            } catch (err) {
+                alert("ไม่สามารถคัดลอกได้");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Open Query Profiler Modal from button or badge
+        $('#btnQueryProfiler, #perfBadge').on('click', function() {
+            let currentHouseNumber = $('#search_house_number').val() || '';
+            let currentSearch = $('#TableRecordList_filter input').val() || '';
+            $('#testerHouseNumber').val(currentHouseNumber);
+            $('#testerSearchValue').val(currentSearch);
+
+            $('#queryProfilerModal').modal('show');
+
+            if (window.lastProfilerData) {
+                renderProfilerModal(window.lastProfilerData);
+            }
+            runLiveExplainAnalyze({
+                searchHouseNumber: currentHouseNumber,
+                searchValue: currentSearch,
+                length: 10
+            });
+        });
+
+        // Run live tester button
+        $('#btnRunTester').on('click', function() {
+            let hNumber = $('#testerHouseNumber').val();
+            let sValue = $('#testerSearchValue').val();
+            let len = $('#testerLength').val();
+            runLiveExplainAnalyze({
+                searchHouseNumber: hNumber,
+                searchValue: sValue,
+                length: len
+            });
+        });
+
+        // Copy SQL handler
+        $('#queriesBreakdownTable').on('click', '.btnCopySql', function() {
+            let sql = decodeURIComponent($(this).data('sql') || '');
+            copyTextToClipboard(sql, "คัดลอก SQL แล้ว");
+        });
+
+        // Copy EXPLAIN ANALYZE Tree
+        $('#btnCopyExplainAnalyze').on('click', function() {
+            let content = $('#explainAnalyzeContent').text();
+            copyTextToClipboard(content, "คัดลอก EXPLAIN ANALYZE Tree แล้ว");
+        });
     </script>
     </body>
     </html>
