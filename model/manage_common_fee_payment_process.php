@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 error_reporting(0); // It's recommended to turn this off in a production environment.
 
 include('../config/connect_db.php'); // Database connection file
@@ -470,46 +468,23 @@ if ($_POST["action"] === 'DELETE') {
 if ($_POST["action"] === 'GET_COMMON_FEE') {
 
     ## Read value from DataTable's request
-    $draw = intval($_POST['draw']);
-    $row = intval($_POST['start']);
-    $rowperpage = intval($_POST['length']); // Number of rows per page
-    $searchValue = isset($_POST['search']['value']) ? trim($_POST['search']['value']) : ''; // User-input search value
-    $searchHouseNumber = isset($_POST['searchHouseNumber']) ? trim($_POST['searchHouseNumber']) : ''; // Exact House Number search
-
-    $thaiMonths = [
-        1 => 'มกราคม', 2 => 'กุมภาพันธ์', 3 => 'มีนาคม', 4 => 'เมษายน',
-        5 => 'พฤษภาคม', 6 => 'มิถุนายน', 7 => 'กรกฎาคม', 8 => 'สิงหาคม',
-        9 => 'กันยายน', 10 => 'ตุลาคม', 11 => 'พฤศจิกายน', 12 => 'ธันวาคม'
-    ];
+    $draw = $_POST['draw'];
+    $row = $_POST['start'];
+    $rowperpage = $_POST['length']; // Number of rows per page
+    $columnIndex = $_POST['order'][0]['column']; // Index of the column to sort by
+    $columnName = $_POST['columns'][$columnIndex]['data']; // Column name for sorting
+    $columnSortOrder = 'desc'; // Always sort descending
+    $searchValue = isset($_POST['search']['value']) ? $_POST['search']['value'] : ''; // User-input search value
+    $searchHouseNumber = isset($_POST['searchHouseNumber']) ? $_POST['searchHouseNumber'] : ''; // Exact House Number search
 
     $searchArray = array();
 
-    $where_house_number = "";
-    $where_house_number_qualified = "";
-    if ($_SESSION['account_type'] === "user") {
-        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
-        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
-    }
-
-    ## Total number of records without filtering
-    $sql_total = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
-    $stmt = $conn->prepare($sql_total);
-    $stmt->execute();
-    $totalRecords = $stmt->fetchColumn() ?: 0;
-
-    ## Search Query & Index Hint
-    $searchQuery = "";
-    $forceIndex = "";
-
-    if ($searchHouseNumber !== '') {
+    ## Search Query
+    $searchQuery = " ";
+    if ($searchHouseNumber != '') {
         $searchQuery = " AND h.house_number = :house_number_exact ";
         $searchArray['house_number_exact'] = $searchHouseNumber;
-
-        $sql_filter = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE house_number = :house_number_exact " . $where_house_number;
-        $stmt = $conn->prepare($sql_filter);
-        $stmt->execute(['house_number_exact' => $searchHouseNumber]);
-        $totalRecordwithFilter = $stmt->fetchColumn() ?: 0;
-    } elseif ($searchValue !== '') {
+    } elseif ($searchValue != '') {
         $searchQuery = " AND (h.doc_id LIKE :search1 OR 
                              h.house_number LIKE :search2 OR 
                              h.detail LIKE :search3 OR 
@@ -520,24 +495,48 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         $searchArray['search3'] = "%$searchValue%";
         $searchArray['search4'] = "%$searchValue%";
         $searchArray['search5'] = "%$searchValue%";
-
-        $sql_filter = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
-                        LEFT JOIN ims_house house ON h.house_number = house.house_number
-                        WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
-        $stmt = $conn->prepare($sql_filter);
-        $stmt->execute($searchArray);
-        $totalRecordwithFilter = $stmt->fetchColumn() ?: 0;
-    } else {
-        $totalRecordwithFilter = $totalRecords;
-        $forceIndex = "FORCE INDEX (PRIMARY)";
     }
 
-    ## Fetch records (optimized: removed duplicate ims_month joins, using direct index scan)
+    $where_house_number = " ";
+    $where_house_number_qualified = " ";
+    if ($_SESSION['account_type'] === "user") {
+        $where_house_number = " AND house_number = '" . $_SESSION['house_number'] . "'";
+        $where_house_number_qualified = " AND h.house_number = '" . $_SESSION['house_number'] . "'";
+    }
+
+    ## Total number of records without filtering
+    $sql_getdata = "SELECT COUNT(id) AS allcount FROM ims_house_payment WHERE 1=1 " . $where_house_number;
+    $stmt = $conn->prepare($sql_getdata);
+    $stmt->execute();
+    $records = $stmt->fetch();
+    $totalRecords = $records['allcount'];
+
+    ## Total number of records with filtering
+    if ($searchQuery === " " || trim($searchQuery) === "") {
+        $totalRecordwithFilter = $totalRecords;
+    } else {
+        $sql_getdata = "SELECT COUNT(h.id) AS allcount FROM ims_house_payment h 
+                        LEFT JOIN ims_house house ON h.house_number = house.house_number
+                        WHERE 1=1 " . $searchQuery . $where_house_number_qualified;
+        $stmt = $conn->prepare($sql_getdata);
+        $stmt->execute($searchArray);
+        $records = $stmt->fetch();
+        $totalRecordwithFilter = $records['allcount'];
+    }
+
+    ## Fetch records
     $sql_getdata = "SELECT 
         h.id, h.runno, h.doc_id, h.payment_date, h.house_number, h.detail, 
         h.period_month_start, h.period_month_to, h.period_year, h.amount, 
         h.picture_payment, h.remark, h.payment_type, h.payment_status,
+        CASE 
+            WHEN h.payment_status = 'Y' THEN 'ชำระเรียบร้อยแล้ว' 
+            WHEN h.payment_status = 'N' THEN 'ยังไม่ยืนยันการชำระ' 
+            ELSE 'ไม่ทราบสถานะ' 
+        END AS payment_status_desc,
         h.created_at, h.updated_at, h.print_first_date, h.print_last_date, h.print_status,
+        m_start.month_name AS month_name_start,
+        m_to.month_name AS month_name_to,
         house.alley,
         house.contact_name,
         house.phone_number,
@@ -550,11 +549,13 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         h.create_by,
         h.approve_by,
         h.update_count
-     FROM ims_house_payment h {$forceIndex}
+     FROM ims_house_payment h
+     LEFT JOIN ims_month m_start ON h.period_month_start = m_start.month
+     LEFT JOIN ims_month m_to ON h.period_month_to = m_to.month
      LEFT JOIN ims_house house ON h.house_number = house.house_number
      LEFT JOIN ims_house_master hm ON hm.house_number = h.house_number
      WHERE 1=1 " . $searchQuery . $where_house_number_qualified
-     . " ORDER BY h.id DESC LIMIT :limit, :offset";
+     . " ORDER BY h.id DESC LIMIT :limit,:offset";
 
     $stmt = $conn->prepare($sql_getdata);
 
@@ -566,7 +567,7 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
     $stmt->bindValue(':limit', (int)$row, PDO::PARAM_INT);
     $stmt->bindValue(':offset', (int)$rowperpage, PDO::PARAM_INT);
     $stmt->execute();
-    $empRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $empRecords = $stmt->fetchAll();
     $data = array();
 
     $isUser = $_SESSION['account_type'] === "user";
@@ -578,54 +579,48 @@ if ($_POST["action"] === 'GET_COMMON_FEE') {
         'N' => ['desc' => "ยังไม่ยืนยันการชำระ", 'color' => 'gray', 'can_print' => false],
     ];
 
-    foreach ($empRecords as $rowItem) {
+    foreach ($empRecords as $row) {
         if ($isMaster) {
-            $status = $rowItem['payment_status'];
+            $status = $row['payment_status'];
             $meta = $statusMeta[$status] ?? ['desc' => '-', 'color' => 'gray', 'can_print' => false];
 
-            $month_start_no = (int)($rowItem['period_month_start'] ?? 0);
-            $month_to_no = (int)($rowItem['period_month_to'] ?? 0);
-            $month_name_start = $thaiMonths[$month_start_no] ?? '';
-            $month_name_to = $thaiMonths[$month_to_no] ?? '';
-            $month_name_period = ($month_name_start && $month_name_to) ? "{$month_name_start} - {$month_name_to}" : ($month_name_start ?: $month_name_to);
-
             $data[] = [
-                "id" => $rowItem['id'],
-                "doc_id" => $rowItem['doc_id'],
-                "payment_date" => $rowItem['payment_date'],
-                "detail" => $rowItem['detail'],
-                "house_number" => $rowItem['house_number'],
-                "alley" => $rowItem['alley'],
-                "contact_name" => $rowItem['contact_name'],
-                "phone_number" => $rowItem['phone_number'],
-                "payment_type" => $rowItem['payment_type'],
-                "period_month_start" => $rowItem['period_month_start'],
-                "period_month_to" => $rowItem['period_month_to'],
-                "month_name_start" => $month_name_start,
-                "month_name_to" => $month_name_to,
-                "month_name_period" => $month_name_period,
-                "period_year" => $rowItem['period_year'],
-                "area_size" => $rowItem['area_size'],
-                "garbage_collection_fee" => $rowItem['garbage_collection_fee'],
-                "common_fee" => $rowItem['common_fee'],
-                "amount" => $rowItem['amount'],
-                "payment_status" => $rowItem['payment_status'],
-                "line_picture_profile" => "<img src='" . ($rowItem['line_picture_profile_show'] ?: 'img/icon/none_img.png') . "' alt='image' style='width: 50px; height: auto;'>",
+                "id" => $row['id'],
+                "doc_id" => $row['doc_id'],
+                "payment_date" => $row['payment_date'],
+                "detail" => $row['detail'],
+                "house_number" => $row['house_number'],
+                "alley" => $row['alley'],
+                "contact_name" => $row['contact_name'],
+                "phone_number" => $row['phone_number'],
+                "payment_type" => $row['payment_type'],
+                "period_month_start" => $row['period_month_start'],
+                "period_month_to" => $row['period_month_to'],
+                "month_name_start" => $row['month_name_start'],
+                "month_name_to" => $row['month_name_to'],
+                "month_name_period" => $row['month_name_start'] . " - " . $row['month_name_to'],
+                "period_year" => $row['period_year'],
+                "area_size" => $row['area_size'],
+                "garbage_collection_fee" => $row['garbage_collection_fee'],
+                "common_fee" => $row['common_fee'],
+                "amount" => $row['amount'],
+                "payment_status" => $row['payment_status'],
+                "line_picture_profile" => "<img src='" . ($row['line_picture_profile_show'] ?: 'img/icon/none_img.png') . "' alt='image' style='width: 50px; height: auto;'>",
                 "payment_status_desc" => "<span style='color: {$meta['color']}'>{$meta['desc']}</span>",
-                "print" => "<button type='button' name='print' id='{$rowItem['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
-                "slip" => "<button type='button' name='slip' id='{$rowItem['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
+                "print" => "<button type='button' name='print' id='{$row['id']}' class='btn btn-outline-success btn-xs print' " . ($meta['can_print'] ? "" : "disabled") . ">Print</button>",
+                "slip" => "<button type='button' name='slip' id='{$row['id']}' class='btn btn-info btn-xs slip'>Slip</button>",
                 "update" => $isUser ? "<button type='button' class='btn btn-info btn-xs update' disabled>Update</button>"
-                    : "<button type='button' name='update' id='{$rowItem['id']}' class='btn btn-info btn-xs update'>Update</button>",
+                    : "<button type='button' name='update' id='{$row['id']}' class='btn btn-info btn-xs update'>Update</button>",
                 "delete" => $isUser || $isManager ? "<button type='button' class='btn btn-danger btn-xs delete' disabled>Delete</button>"
-                    : "<button type='button' name='delete' id='{$rowItem['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
-                "remark" => $rowItem['remark']
+                    : "<button type='button' name='delete' id='{$row['id']}' class='btn btn-danger btn-xs delete'>Delete</button>",
+                "remark" => $row['remark']
             ];
         } else {
             $data[] = [
-                "id" => $rowItem['id'],
-                "house_number" => $rowItem['house_number'],
-                "contact_name" => $rowItem['contact_name'],
-                "select" => "<button type='button' name='select' id='{$rowItem['house_number']}@{$rowItem['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
+                "id" => $row['id'],
+                "house_number" => $row['house_number'],
+                "contact_name" => $row['contact_name'],
+                "select" => "<button type='button' name='select' id='{$row['house_number']}@{$row['contact_name']}' class='btn btn-outline-success btn-xs select'>select <i class='fa fa-check'></i></button>"
             ];
         }
     }
