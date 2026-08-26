@@ -1,10 +1,12 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 error_reporting(0);
 
-include('../config/connect_db.php');
-include('../config/lang.php');
-include('../util/record_util.php');
+include(__DIR__ . '/../config/connect_db.php');
+include(__DIR__ . '/../config/lang.php');
+include(__DIR__ . '/../util/record_util.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_date = $_POST['payment_date'];
@@ -36,17 +38,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // --- ส่วนที่เพิ่มเข้ามาสำหรับการตรวจสอบข้อมูลซ้ำซ้อน ---
-    $check_stmt = $conn->prepare("SELECT COUNT(*) FROM ims_house_payment WHERE house_number = :house_number AND period_month_start = :period_month_start AND period_year = :period_year");
+    // --- ส่วนตรวจสอบช่วงเดือนทับซ้อนอย่างสมบูรณ์ (Comprehensive Interval Overlap Check ตาม check_payment.html) ---
+    $check_sql = "SELECT id, doc_id, period_month_start, period_month_to, period_year, payment_status, amount 
+                  FROM ims_house_payment 
+                  WHERE house_number = :house_number 
+                    AND period_year = :period_year 
+                    AND (:new_start <= period_month_to AND :new_to >= period_month_start)
+                  LIMIT 1";
+    $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bindParam(':house_number', $house_number);
-    $check_stmt->bindParam(':period_month_start', $period_month_start);
     $check_stmt->bindParam(':period_year', $period_year);
+    $check_stmt->bindParam(':new_start', $period_month_start, PDO::PARAM_INT);
+    $check_stmt->bindParam(':new_to', $period_month_to, PDO::PARAM_INT);
     $check_stmt->execute();
-    $count = $check_stmt->fetchColumn();
+    $existing_dup = $check_stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($count > 0) { // ถ้าพบข้อมูลซ้ำ
-        echo 2;
-        exit; // หยุดการทำงานของ script
+    if ($existing_dup) {
+        $thai_months = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        $dup_s = $thai_months[intval($existing_dup['period_month_start'])] ?? $existing_dup['period_month_start'];
+        $dup_e = $thai_months[intval($existing_dup['period_month_to'])] ?? $existing_dup['period_month_to'];
+        $dup_desc = ($existing_dup['period_month_start'] == $existing_dup['period_month_to']) ? "งวดเดือน {$dup_s}" : "งวดเดือน {$dup_s} ถึง {$dup_e}";
+        
+        if ($existing_dup['payment_status'] === 'Y') {
+            $msg = "มีข้อมูลการชำระค่าส่วนกลาง{$dup_desc} ปี {$period_year} เรียบร้อยแล้ว (เลขที่เอกสาร: {$existing_dup['doc_id']}) ไม่สามารถบันทึกซ้ำได้";
+        } else {
+            $msg = "มีรายการโอนเงิน{$dup_desc} ปี {$period_year} อยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบ (เลขที่เอกสาร: {$existing_dup['doc_id']})";
+        }
+        
+        echo json_encode([
+            'status' => 'duplicate',
+            'code' => 2,
+            'message' => $msg,
+            'doc_id' => $existing_dup['doc_id']
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
     }
 
     $result_save = 0;

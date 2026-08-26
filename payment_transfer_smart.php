@@ -22,6 +22,81 @@ $house_number = isset($house_number) ? $house_number : '';
 
 <!DOCTYPE html>
 <html lang="th">
+<head>
+    <style>
+        .month-status-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin: 10px 0;
+        }
+        @media (min-width: 768px) {
+            .month-status-grid {
+                grid-template-columns: repeat(12, 1fr);
+            }
+        }
+        .m-status-box {
+            text-align: center;
+            padding: 6px 2px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+        .m-status-box.paid {
+            background: #dcfce7 !important;
+            border-color: #86efac !important;
+            color: #166534 !important;
+        }
+        .m-status-box.pending {
+            background: #fef3c7 !important;
+            border-color: #fcd34d !important;
+            color: #92400e !important;
+        }
+        .m-status-box.selecting {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        .m-status-box.conflict {
+            background: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+            animation: pulseWarning 1.5s infinite;
+        }
+        @keyframes pulseWarning {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(0.98); }
+        }
+        .month-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            margin-top: 6px;
+            justify-content: flex-end;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .dot-paid { background: #22c55e; }
+        .dot-pending { background: #f59e0b; }
+        .dot-available { background: #cbd5e1; }
+        .dot-conflict { background: #ef4444; }
+    </style>
+</head>
 
 <body id="page-top">
 <div id="wrapper">
@@ -164,6 +239,26 @@ $house_number = isset($house_number) ? $house_number : '';
                                                 ?>
                                             </select>
                                         </div>
+                                    </div>
+
+                                    <!-- กล่องแสดงสถานะการชำระ 12 เดือน และแจ้งเตือนข้อมูลซ้ำซ้อน (Real-time Overlap Check) -->
+                                    <div id="month_status_wrapper" class="mb-3 p-3 bg-light rounded border" style="display: none;">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="font-weight-bold text-gray-700">
+                                                <i class="fa fa-calendar-check-o text-primary"></i> ประวัติการชำระค่าส่วนกลาง ปี <span id="lbl_status_year"></span>
+                                            </small>
+                                            <span id="lbl_house_target" class="badge badge-info text-white"></span>
+                                        </div>
+                                        <div id="month_status_grid" class="month-status-grid">
+                                            <!-- 12 กล่องเดือนจะถูก render ผ่าน JavaScript -->
+                                        </div>
+                                        <div class="month-legend text-muted">
+                                            <span class="legend-item"><span class="legend-dot dot-paid"></span> ชำระแล้ว</span>
+                                            <span class="legend-item"><span class="legend-dot dot-pending"></span> รอตรวจสอบ</span>
+                                            <span class="legend-item"><span class="legend-dot dot-available"></span> ว่าง</span>
+                                            <span class="legend-item"><span class="legend-dot dot-conflict"></span> ทับซ้อน (ซ้ำ)</span>
+                                        </div>
+                                        <div id="overlap_warning_box" class="mt-2" style="display: none;"></div>
                                     </div>
 
                                     <div class="form-group has-success">
@@ -497,6 +592,10 @@ $house_number = isset($house_number) ? $house_number : '';
                 amountInput.readOnly = true;
                 calculateAmount();
             }
+
+            if (typeof window.checkPaymentOverlapRealtime === 'function') {
+                window.checkPaymentOverlapRealtime();
+            }
         }
 
         // Event Listeners
@@ -544,6 +643,10 @@ $house_number = isset($house_number) ? $house_number : '';
                 // ถ้าไม่มีโปร ให้เลือกรายเดือนปกติ
                 document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
                 updatePaymentLogic();
+            }
+
+            if (typeof window.checkPaymentOverlapRealtime === 'function') {
+                window.checkPaymentOverlapRealtime();
             }
         };
     });
@@ -614,14 +717,113 @@ $house_number = isset($house_number) ? $house_number : '';
         }
 
         // Bind Event Handlers
-        startSelect.on('change', function() { updateMonthLogic('range'); });
-        endSelect.on('change', function() { updateMonthLogic('range'); });
+        startSelect.on('change', function() {
+            updateMonthLogic('range');
+            window.checkPaymentOverlapRealtime();
+        });
+        endSelect.on('change', function() {
+            updateMonthLogic('range');
+            window.checkPaymentOverlapRealtime();
+        });
 
         typeInput.on('input change', function() {
             // หน่วงเวลาเล็กน้อยเพื่อให้ user พิมพ์เสร็จ (กรณีพิมพ์เลข)
             updateMonthLogic('duration');
+            window.checkPaymentOverlapRealtime();
+        });
+
+        $("#period_year, input[name='payment_option']").on('change', function() {
+            window.checkPaymentOverlapRealtime();
         });
     });
+
+    // --- ฟังก์ชันตรวจสอบความซ้ำซ้อนและแสดงสถานะ 12 เดือนแบบ Real-time (ตาม check_payment.html) ---
+    window.checkPaymentOverlapRealtime = function() {
+        let houseNumber = $("#house_number").val();
+        let periodYear = parseInt($("#period_year").val()) || new Date().getFullYear();
+        let isYearly = $("#option_yearly").is(":checked");
+        let startMonth = isYearly ? 1 : (parseInt($("#period_month_start").val()) || 0);
+        let endMonth = isYearly ? 12 : (parseInt($("#period_month_to").val()) || startMonth);
+
+        if (!houseNumber || houseNumber.trim() === '') {
+            $("#month_status_wrapper").hide();
+            return;
+        }
+
+        $("#lbl_status_year").text(periodYear);
+        $("#lbl_house_target").text('บ้านเลขที่ ' + houseNumber);
+        $("#month_status_wrapper").slideDown(200);
+
+        $.ajax({
+            url: "model/check_payment_overlap.php",
+            type: "POST",
+            data: {
+                house_number: houseNumber,
+                period_year: periodYear,
+                period_month_start: startMonth,
+                period_month_to: endMonth
+            },
+            dataType: "json",
+            success: function(res) {
+                if (res && res.status === 'success') {
+                    renderMonthGrid(res.months_status, startMonth, endMonth, res.has_overlap);
+
+                    if (res.has_overlap) {
+                        let alertClass = (res.overlap_type === 'paid') ? 'alert-danger' : 'alert-warning';
+                        let iconClass = (res.overlap_type === 'paid') ? 'fa-ban' : 'fa-clock-o';
+                        $("#overlap_warning_box").html(
+                            `<div class="alert ${alertClass} mb-0 p-2" style="font-size: 13px;">
+                                <i class="fa ${iconClass} mr-1"></i> <strong>แจ้งเตือน:</strong> ${res.overlap_message}
+                            </div>`
+                        ).slideDown();
+
+                        $("#submit_btn").prop("disabled", true);
+                    } else {
+                        $("#overlap_warning_box").slideUp();
+                        $("#submit_btn").prop("disabled", false);
+                    }
+                }
+            },
+            error: function(xhr, err) {
+                console.error("Check overlap error:", err);
+            }
+        });
+    };
+
+    function renderMonthGrid(monthsStatus, selStart, selEnd, hasOverlap) {
+        if (!monthsStatus || !Array.isArray(monthsStatus)) return;
+        let gridHtml = '';
+        const shortNames = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+        monthsStatus.forEach(function(m) {
+            let isSelected = (selStart > 0 && selEnd > 0 && m.month >= selStart && m.month <= selEnd);
+            let statusClass = m.status; // 'paid', 'pending', 'available'
+            let iconHtml = '';
+
+            if (m.status === 'paid') {
+                iconHtml = '<i class="fa fa-check text-success"></i> ';
+            } else if (m.status === 'pending') {
+                iconHtml = '<i class="fa fa-clock-o text-warning"></i> ';
+            }
+
+            let conflictClass = '';
+            if (isSelected && (m.status === 'paid' || m.status === 'pending')) {
+                conflictClass = 'conflict';
+            } else if (isSelected) {
+                conflictClass = 'selecting';
+            }
+
+            let docInfo = m.doc_id ? ` (${m.doc_id})` : '';
+            gridHtml += `
+                <div class="m-status-box ${statusClass} ${conflictClass}" title="${m.month_name} : ${m.status_text}${docInfo}">
+                    <div>${shortNames[m.month]}</div>
+                    <div style="font-size: 9px; margin-top: 2px;">${iconHtml}${m.status_text}</div>
+                </div>
+            `;
+        });
+
+        $("#month_status_grid").html(gridHtml);
+    }
 </script>
 
 <script>
@@ -976,12 +1178,24 @@ $house_number = isset($house_number) ? $house_number : '';
                         } else {
                             alertify.error("ไม่ได้เปิดใน LINE App (ข้อความจะไม่ถูกส่ง)");
                         }
-                    } else if (response == 2) {
-                        alertify.error(`มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`);
-                        $("#submit_btn").prop("disabled", false);
                     } else {
-                        alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + response);
-                        $("#submit_btn").prop("disabled", false);
+                        let resObj = null;
+                        try {
+                            resObj = (typeof response === 'object') ? response : JSON.parse(response);
+                        } catch (e) {}
+
+                        if (response == 2 || (resObj && (resObj.status === 'duplicate' || resObj.code == 2))) {
+                            let msg = (resObj && resObj.message) ? resObj.message : `มีข้อมูลการชำระค่าส่วนกลางงวดเดือน ${period_month_start_name} ปี ${period_year} แล้ว ไม่สามารถบันทึกได้`;
+                            alertify.error(msg);
+                            $("#submit_btn").prop("disabled", true);
+                            if (typeof window.checkPaymentOverlapRealtime === 'function') {
+                                window.checkPaymentOverlapRealtime();
+                            }
+                        } else {
+                            let msg = (resObj && resObj.message) ? resObj.message : response;
+                            alertify.error("ไม่สามารถบันทึกข้อมูลได้: " + msg);
+                            $("#submit_btn").prop("disabled", false);
+                        }
                     }
                 },
                 error: function () {

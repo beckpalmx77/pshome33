@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แนวคิด ขั้นตอน และวิธีการตรวจสอบข้อมูลซ้ำซ้อนการชำระค่าส่วนกลาง - payment_transfer_smart.php</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--gray-900);
+            color: #ffffff;
+            padding: 2.5rem 2rem;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .header p {
+            color: var(--gray-300);
+            font-size: 0.95rem;
+        }
+
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-700);
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .meta-item strong {
+            color: #e2e8f0;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 1.25rem 0 0.5rem;
+        }
+
+        p, li {
+            font-size: 0.95rem;
+            color: var(--gray-700);
+            margin-bottom: 0.75rem;
+        }
+
+        ul, ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-danger { background: var(--danger-light); color: var(--danger); border: 1px solid #fca5a5; }
+        .badge-warning { background: var(--warning-light); color: var(--warning); border: 1px solid #fcd34d; }
+        .badge-success { background: var(--success-light); color: var(--success); border: 1px solid #86efac; }
+        .badge-primary { background: var(--primary-light); color: var(--primary); border: 1px solid #93c5fd; }
+
+        .callout {
+            border-left: 4px solid var(--primary);
+            background-color: var(--gray-50);
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .callout-danger {
+            border-left-color: var(--danger);
+            background-color: var(--danger-light);
+        }
+
+        .callout-warning {
+            border-left-color: var(--warning);
+            background-color: var(--warning-light);
+        }
+
+        .callout-success {
+            border-left-color: var(--success);
+            background-color: var(--success-light);
+        }
+
+        .callout-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .callout-danger .callout-title { color: var(--danger); }
+        .callout-warning .callout-title { color: var(--warning); }
+        .callout-success .callout-title { color: var(--success); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.25rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border: 1px solid var(--gray-200);
+        }
+
+        th {
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--gray-100);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            color: #d946ef;
+            border: 1px solid var(--gray-200);
+        }
+
+        pre {
+            background: var(--gray-900);
+            color: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            border: none;
+            color: #38bdf8;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .card {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.25rem;
+            background: #ffffff;
+        }
+
+        .card-header-sm {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Flow steps styling */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .flow-step {
+            display: flex;
+            gap: 1rem;
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 700;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .step-body {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        /* Interactive Month Visualizer Mock */
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        @media (min-width: 640px) {
+            .month-grid {
+                grid-template-columns: repeat(12, 1fr);
+            }
+        }
+
+        .month-box {
+            text-align: center;
+            padding: 0.5rem 0.25rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid var(--gray-200);
+        }
+
+        .month-box.paid {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .month-box.pending {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+
+        .month-box.available {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            color: #64748b;
+        }
+
+        .month-box.overlap-conflict {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #991b1b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .footer {
+            background: var(--gray-100);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            border-top: 1px solid var(--gray-200);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>แนวคิด ขั้นตอน และวิธีการตรวจสอบข้อมูลซ้ำซ้อนการชำระค่าส่วนกลาง</h1>
+        <p>เอกสารข้อกำหนดเชิงเทคนิคและการออกแบบระบบตรวจสอบก่อนบันทึกข้อมูล (Pre-Validation & Duplicate Prevention Specification)</p>
+        <div class="meta-bar">
+            <div class="meta-item"><strong>หน้าจอเป้าหมาย:</strong> payment_transfer_smart.php (และ payment_transfer.php)</div>
+            <div class="meta-item"><strong>ประมวลผลหลังบ้าน:</strong> model/manage_payment_transfer_smart.php</div>
+            <div class="meta-item"><strong>ตารางฐานข้อมูล:</strong> ims_house_payment, ims_house</div>
+            <div class="meta-item"><strong>สถานะเอกสาร:</strong> ฉบับสมบูรณ์ (Draft Specification)</div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- Section 1: Problem Statement -->
+        <h2>1. ปัญหาและช่องโหว่ของการตรวจสอบข้อมูลซ้ำในปัจจุบัน</h2>
+        
+        <div class="callout callout-danger">
+            <div class="callout-title">⚠️ ช่องโหว่ของคำสั่ง SQL เดิมใน <code>manage_payment_transfer_smart.php</code></div>
+            <p>เดิมระบบใช้คำสั่ง:</p>
+            <code>SELECT COUNT(*) FROM ims_house_payment WHERE house_number = :house_number AND period_month_start = :period_month_start AND period_year = :period_year</code>
+        </div>
+
+        <p>คำสั่ง SQL ดังกล่าวมีช่องโหว่ร้ายแรง <strong>4 ประการ</strong> ที่ทำให้เกิดข้อมูลชำระซ้ำในฐานข้อมูลได้:</p>
+        
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-header-sm">
+                    <span>1. กรณีชำระหลายเดือน (Partial Overlap)</span>
+                    <span class="badge badge-danger">ตรวจไม่พบ</span>
+                </div>
+                <p><strong>ตัวอย่าง:</strong> ลูกบ้านชำระงวดเดือน 1 ถึง 6 ไปแล้ว (Start=1, To=6) ต่อมามีคนมาคีย์ชำระงวดเดือน 3 ถึง 12 (Start=3, To=12)</p>
+                <p>ระบบเดิมจะเช็คเฉพาะ <code>period_month_start = 3</code> ซึ่งในระบบเดิมเริ่มที่ 1 จึงไม่พบข้อมูลซ้ำ ทำให้เดือน 3, 4, 5, 6 ถูกบันทึกซ้ำซ้อน!</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header-sm">
+                    <span>2. กรณีชำระรายปีแล้วชำระรายเดือนซ้ำ</span>
+                    <span class="badge badge-danger">ตรวจไม่พบ</span>
+                </div>
+                <p><strong>ตัวอย่าง:</strong> ลูกบ้านชำระรายปี ม.ค. - ธ.ค. (Start=1, To=12) แล้วต่อมาลูกบ้านลืม เข้ามาจ่ายเดือน ก.พ. (Start=2, To=2)</p>
+                <p>ระบบเดิมตรวจ <code>period_month_start = 2</code> ไม่พบ จึงยอมให้บันทึกซ้ำ ทั้งๆ ที่เดือน 2 ถูกจ่ายเหมาทั้งปีไปแล้ว</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header-sm">
+                    <span>3. ไม่ตรวจสอบสถานะรายการ (Payment Status)</span>
+                    <span class="badge badge-warning">ไม่แยกแยะ</span>
+                </div>
+                <p>ไม่ได้ตรวจสอบว่ารายการเดิมที่พบเป็น <code>Y</code> (อนุมัติแล้ว) หรือ <code>N</code> (รอตรวจสอบสลิป)</p>
+                <p>หากมีรายการ <code>N</code> ค้างอยู่ ควรแจ้งเตือนลูกบ้านว่ามีรายการโอนเงินรอบนี้รอการตรวจสอบอยู่ เพื่อป้องกันการโอนซ้ำ</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header-sm">
+                    <span>4. การตรวจจับล่าช้า (Post-Upload Check)</span>
+                    <span class="badge badge-warning">UX ไม่ดี</span>
+                </div>
+                <p>ผู้ใช้ต้องกรอกข้อมูลครบ แนบรูปสลิปขนาดใหญ่ (สูงสุด 30MB) และกด Submit ก่อน ระบบถึงจะแจ้งเตือนว่าซ้ำ</p>
+                <p>ควรมี Real-time Pre-check ทันทีที่เลือกรอบเดือน-ปีบนหน้าจอ</p>
+            </div>
+        </div>
+
+        <!-- Section 2: Comprehensive Checklist -->
+        <h2>2. รายการสิ่งที่ต้องตรวจสอบทั้งหมด (Checklist 6 มิติ)</h2>
+        <p>ก่อนที่ระบบจะบันทึกข้อมูลการชำระเงินลงในตาราง <code>ims_house_payment</code> จะต้องผ่านการตรวจสอบตาม Checklist ทั้ง 6 มิติต่อไปนี้:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">มิติการตรวจสอบ</th>
+                    <th style="width: 35%;">เงื่อนไขและสิ่งที่ต้องเช็ค</th>
+                    <th style="width: 25%;">ผลลัพธ์เมื่อพบปัญหา</th>
+                    <th style="width: 20%;">จุดที่ดำเนินการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. ช่วงเดือนทับซ้อน<br>(Period Month Overlap)</strong></td>
+                    <td>ตรวจว่าช่วงเดือนที่เลือก [Start_A, To_A] ทับซ้อนกับรายการเดิม [Start_B, To_B] ในปีเดียวกันหรือไม่ ทั้งแบบตรงตัว, ซ้อนบางส่วน, หรือครอบคลุม</td>
+                    <td><span class="badge badge-danger">ปฏิเสธการบันทึก</span><br>แสดงเดือนที่ชนกันและเลขที่เอกสารเดิม</td>
+                    <td>Client (AJAX) + Backend (SQL)</td>
+                </tr>
+                <tr>
+                    <td><strong>2. ความถูกต้องของบ้านเลขที่และปี</strong></td>
+                    <td>- บ้านเลขที่ต้องมีอยู่ในระบบ <code>ims_house</code><br>- ปีงวดต้องเป็นตัวเลข 4 หลัก (พ.ศ./ค.ศ. สอดคล้องกัน)<br>- เดือนเริ่ม (1-12) ต้องไม่เกินเดือนสิ้นสุด</td>
+                    <td><span class="badge badge-danger">ปฏิเสธการบันทึก</span><br>แจ้งให้เลือกช่วงเดือนให้ถูกต้อง</td>
+                    <td>Client Form Validate + Backend Sanitization</td>
+                </tr>
+                <tr>
+                    <td><strong>3. สถานะรายการเดิม (Status)</strong></td>
+                    <td>- หากพบรายการทับซ้อนที่มีสถานะ <code>Y</code> (ชำระแล้ว) -> ห้ามบันทึกเด็ดขาด<br>- หากพบสถานะ <code>N</code> (รอตรวจ) -> แจ้งเตือนว่ามีสลิปรอเจ้าหน้าที่ตรวจสอบอยู่</td>
+                    <td><span class="badge badge-danger">บล็อก (ถ้า Y)</span><br><span class="badge badge-warning">เตือนรออนุมัติ (ถ้า N)</span></td>
+                    <td>Backend Database Check</td>
+                </tr>
+                <tr>
+                    <td><strong>4. ป้องกัน Double Submit</strong></td>
+                    <td>ป้องกันการกดย้ำปุ่ม "บันทึกข้อมูล" หลายครั้งขณะเน็ตช้า หรือเปิดส่งข้อมูลพร้อมกันหลายแท็บ (Race Condition)</td>
+                    <td>Disable ปุ่ม Submit ทันที + เช็ค Duplicate Request Token หรือ Transaction Lock</td>
+                    <td>Client JS State + Backend DB Transaction</td>
+                </tr>
+                <tr>
+                    <td><strong>5. ความซ้ำซ้อนของสลิปโอนเงิน</strong></td>
+                    <td>- ตรวจสอบว่าไฟล์สลิปหรือ Hash ของรูปสลิปเคยถูกใช้ในรายการอื่นไปแล้วหรือไม่<br>- ตรวจสอบ QR Code บนสลิป (ถ้ามี) ว่ายอดเงินและบัญชีตรงกัน</td>
+                    <td><span class="badge badge-danger">แจ้งเตือนสลิปซ้ำ</span></td>
+                    <td>Frontend jsQR + Backend File Hash Check</td>
+                </tr>
+                <tr>
+                    <td><strong>6. ความถูกต้องของยอดเงิน</strong></td>
+                    <td>ยอดเงินที่ชำระต้องสัมพันธ์กับ <code>ค่าส่วนกลางรายเดือน x จำนวนเดือน</code> หรือตรงกับยอดโปรโมชั่นรายปีที่กำหนด</td>
+                    <td><span class="badge badge-warning">แจ้งเตือนยอดเงินไม่ตรง</span></td>
+                    <td>Client Calculator + Backend Verification</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Section 3: Mathematical Overlap Formula & SQL -->
+        <h2>3. หลักการคำนวณและสูตร SQL สำหรับตรวจจับช่วงเดือนทับซ้อน</h2>
+        <p>การเปรียบเทียบช่วงเวลาสองช่วง $[A_{start}, A_{end}]$ (ช่วงใหม่ที่ต้องการบันทึก) และ $[B_{start}, B_{end}]$ (ช่วงเดิมที่มีในฐานข้อมูล) ในปีเดียวกัน จะเกิดการทับซ้อน (Overlap) ก็ต่อเมื่อ:</p>
+
+        <div class="callout callout-success">
+            <div class="callout-title">📐 สูตรคณิตศาสตร์การตรวจสอบช่วงทับซ้อน (Interval Overlap Formula)</div>
+            <p style="font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0;">
+                <code>(New_Start &le; Existing_To) AND (New_End &ge; Existing_Start)</code>
+            </p>
+            <p class="small text-muted" style="margin-bottom: 0;">สูตรนี้ครอบคลุมการทับซ้อนทุกรูปแบบ: ซ้ำตรงตัว 100%, ซ้ำช่วงต้น, ซ้ำช่วงท้าย, ซ้ำแบบช่วงใหม่อยู่ข้างใน, และซ้ำแบบช่วงใหม่ครอบช่วงเดิมทั้งหมด</p>
+        </div>
+
+        <h3>ตารางตัวอย่างกรณีทดสอบการทับซ้อน (Scenario Matrix):</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>กรณี</th>
+                    <th>รายการเดิมในระบบ (B)</th>
+                    <th>รายการใหม่ที่กำลังบันทึก (A)</th>
+                    <th>การคำนวณตามสูตร</th>
+                    <th>ผลลัพธ์</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1. ไม่ทับซ้อน (ปกติ)</td>
+                    <td>งวด 1 ถึง 3 (ม.ค. - มี.ค.)</td>
+                    <td>งวด 4 ถึง 6 (เม.ย. - มิ.ย.)</td>
+                    <td>(4 &le; 3 = เท็จ) AND (6 &ge; 1 = จริง) &rarr; <strong>เท็จ</strong></td>
+                    <td><span class="badge badge-success">ผ่าน (บันทึกได้)</span></td>
+                </tr>
+                <tr>
+                    <td>2. ซ้ำตรงตัว 100%</td>
+                    <td>งวด 1 ถึง 12 (ทั้งปี)</td>
+                    <td>งวด 1 ถึง 12 (ทั้งปี)</td>
+                    <td>(1 &le; 12 = จริง) AND (12 &ge; 1 = จริง) &rarr; <strong>จริง</strong></td>
+                    <td><span class="badge badge-danger">ซ้ำ (ไม่อนุญาต)</span></td>
+                </tr>
+                <tr>
+                    <td>3. รายการใหม่อยู่ข้างในรายการเดิม</td>
+                    <td>งวด 1 ถึง 6 (ม.ค. - มิ.ย.)</td>
+                    <td>งวด 3 ถึง 4 (มี.ค. - เม.ย.)</td>
+                    <td>(3 &le; 6 = จริง) AND (4 &ge; 1 = จริง) &rarr; <strong>จริง</strong></td>
+                    <td><span class="badge badge-danger">ซ้ำ (ไม่อนุญาต)</span></td>
+                </tr>
+                <tr>
+                    <td>4. รายการใหม่ครอบรายการเดิมทั้งหมด</td>
+                    <td>งวด 4 ถึง 6 (เม.ย. - มิ.ย.)</td>
+                    <td>งวด 1 ถึง 12 (ม.ค. - ธ.ค.)</td>
+                    <td>(1 &le; 6 = จริง) AND (12 &ge; 4 = จริง) &rarr; <strong>จริง</strong></td>
+                    <td><span class="badge badge-danger">ซ้ำ (ไม่อนุญาต)</span></td>
+                </tr>
+                <tr>
+                    <td>5. ทับซ้อนช่วงต้น (Overlap Start)</td>
+                    <td>งวด 5 ถึง 10 (พ.ค. - ต.ค.)</td>
+                    <td>งวด 1 ถึง 6 (ม.ค. - มิ.ย.)</td>
+                    <td>(1 &le; 10 = จริง) AND (6 &ge; 5 = จริง) &rarr; <strong>จริง</strong> (ชนเดือน 5, 6)</td>
+                    <td><span class="badge badge-danger">ซ้ำ (ไม่อนุญาต)</span></td>
+                </tr>
+                <tr>
+                    <td>6. ทับซ้อนช่วงท้าย (Overlap End)</td>
+                    <td>งวด 1 ถึง 5 (ม.ค. - พ.ค.)</td>
+                    <td>งวด 4 ถึง 9 (เม.ย. - ก.ย.)</td>
+                    <td>(4 &le; 5 = จริง) AND (9 &ge; 1 = จริง) &rarr; <strong>จริง</strong> (ชนเดือน 4, 5)</td>
+                    <td><span class="badge badge-danger">ซ้ำ (ไม่อนุญาต)</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>คำสั่ง SQL Query ที่ถูกต้องสมบูรณ์สำหรับตรวจสอบในระบบ:</h3>
+        <pre><code>-- ค้นหารายการที่มีการทับซ้อนของงวดเดือนสำหรับบ้านเลขที่และปีที่ระบุ
+SELECT 
+    id,
+    doc_id,
+    payment_date,
+    period_month_start,
+    period_month_to,
+    period_year,
+    amount,
+    payment_status,
+    create_by,
+    created_at
+FROM ims_house_payment
+WHERE house_number = :house_number
+  AND period_year = :period_year
+  AND (:new_month_start &lt;= period_month_to AND :new_month_to &gt;= period_month_start)
+ORDER BY period_month_start ASC;</code></pre>
+
+        <!-- Section 4: Step-by-Step Workflow -->
+        <h2>4. ขั้นตอนการทำงานที่เป็นระบบ (Step-by-Step Execution Order)</h2>
+
+        <div class="flow-container">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-body">
+                    <div class="step-title">ขั้นตอนที่ 1: Real-time Pre-Check บนหน้าจอ (Client-side AJAX)</div>
+                    <p>เมื่อผู้ใช้ทำการเลือก <strong>บ้านเลขที่</strong>, <strong>งวดปี</strong> หรือเปลี่ยน <strong>เดือนเริ่มต้น / สิ้นสุด</strong>:</p>
+                    <ul>
+                        <li>JavaScript ยิง AJAX ไปที่ <code>check_payment_overlap.php</code> หรือ <code>action: CHECK_OVERLAP</code></li>
+                        <li>ระบบคืนค่าประวัติเดือนที่ชำระแล้วทั้ง 12 เดือนของปีนั้น</li>
+                        <li>หน้าจอเรนเดอร์แถบสีสถานะเดือน 1-12 ทันที (สีเขียว = ชำระแล้ว, สีส้ม = รอตรวจ, สีฟ้า = ว่าง)</li>
+                        <li>หากเดือนที่ผู้ใช้เลือกมีส่วนที่ทับซ้อน จะขึ้นกล่องเตือนสีแดงทันที พร้อมระบุชัดเจนว่า <em>"เดือน ... ชำระแล้วตามเอกสาร ..."</em></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-body">
+                    <div class="step-title">ขั้นตอนที่ 2: การตรวจสอบก่อนส่งฟอร์ม (Form Submission Validation)</div>
+                    <p>เมื่อผู้ใช้กดปุ่ม <strong>"บันทึกข้อมูล"</strong>:</p>
+                    <ul>
+                        <li>ตรวจสอบ Client Validation (เลือกรูปสลิป, ยอดเงิน > 0, เดือนเริ่ม &le; เดือนจบ)</li>
+                        <li>ล็อกปุ่ม Submit (<code>disabled = true</code>) และแสดง Spinner ป้องกัน Double Click</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-body">
+                    <div class="step-title">ขั้นตอนที่ 3: การตรวจสอบความซ้ำซ้อนระดับ Database (Backend Strict Verification)</div>
+                    <p>ที่ฝั่ง Server (<code>model/manage_payment_transfer_smart.php</code>):</p>
+                    <ul>
+                        <li>รันคำสั่ง SQL ตรวจสอบ Overlap Formula <code>(start &le; period_month_to AND to &ge; period_month_start)</code></li>
+                        <li>หากพบรายการที่มีสถานะ <code>Y</code> &rarr; ส่ง Response Error รหัส <code>DUPLICATE_PAID</code> พร้อมรายละเอียดเดือนที่ชนกัน</li>
+                        <li>หากพบรายการที่มีสถานะ <code>N</code> &rarr; ส่ง Response Error รหัส <code>PENDING_EXISTS</code> เตือนว่ามีรายการรอตรวจสอบอยู่</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-body">
+                    <div class="step-title">ขั้นตอนที่ 4: การตรวจสอบไฟล์รูปภาพสลิปและการสร้างเอกสาร</div>
+                    <p>เมื่อผ่านการตรวจสอบทั้งหมด:</p>
+                    <ul>
+                        <li>ตรวจสอบ MIME Type และขนาดไฟล์สลิป</li>
+                        <li>คำนวณ MD5 / SHA256 Hash ของไฟล์สลิป เพื่อป้องกันการอัปโหลดไฟล์ซ้ำ</li>
+                        <li>สร้างเลขที่เอกสาร <code>doc_id</code> ผ่านฟังก์ชัน <code>LAST_DOCUMENT_NUMBER()</code></li>
+                        <li>บันทึกรูปลงเครื่องและส่งขึ้น Google Drive Backup</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-body">
+                    <div class="step-title">ขั้นตอนที่ 5: บันทึกข้อมูลและส่งแจ้งเตือน LINE Flex Message</div>
+                    <ul>
+                        <li>รันคำสั่ง <code>INSERT INTO ims_house_payment</code></li>
+                        <li>ส่งข้อความสรุปการชำระเงิน Flex Message ไปยัง LINE ของลูกบ้าน</li>
+                        <li>รีเซ็ตฟอร์ม และแจ้งเตือนความสำเร็จผ่าน Alertify / SweetAlert</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: UI/UX Design Mockup -->
+        <h2>5. การออกแบบ UI/UX ใหม่สำหรับหน้าจอ payment_transfer_smart.php</h2>
+        <p>ตัวอย่างการแสดงผลแถบสถานะการชำระเงิน 12 เดือน (12-Month Payment Status Visualizer) ที่จะเพิ่มเข้าไปในหน้าจอ:</p>
+
+        <div class="card" style="background: var(--gray-50); margin-bottom: 1.5rem;">
+            <div class="card-header-sm">
+                <span>🗓️ สถานะการชำระค่าส่วนกลาง บ้านเลขที่ 99/1 ปี 2026</span>
+                <span class="small text-muted">ตัวอย่างการแสดงผลบนหน้าจอ</span>
+            </div>
+            
+            <div class="month-grid">
+                <div class="month-box paid">ม.ค.<br>✓ จ่ายแล้ว</div>
+                <div class="month-box paid">ก.พ.<br>✓ จ่ายแล้ว</div>
+                <div class="month-box paid">มี.ค.<br>✓ จ่ายแล้ว</div>
+                <div class="month-box pending">เม.ย.<br>⏳ รอตรวจ</div>
+                <div class="month-box available">พ.ค.<br>ว่าง</div>
+                <div class="month-box available">มิ.ย.<br>ว่าง</div>
+                <div class="month-box available">ก.ค.<br>ว่าง</div>
+                <div class="month-box available">ส.ค.<br>ว่าง</div>
+                <div class="month-box available">ก.ย.<br>ว่าง</div>
+                <div class="month-box available">ต.ค.<br>ว่าง</div>
+                <div class="month-box available">พ.ย.<br>ว่าง</div>
+                <div class="month-box available">ธ.ค.<br>ว่าง</div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; font-size: 0.8rem; margin-top: 0.5rem; justify-content: flex-end;">
+                <span><span class="badge badge-success">✓ จ่ายแล้ว</span> (ชำระแล้ว)</span>
+                <span><span class="badge badge-warning">⏳ รอตรวจ</span> (มีสลิปรอตรวจ)</span>
+                <span><span class="badge badge-primary">ว่าง</span> (สามารถเลือกชำระได้)</span>
+            </div>
+        </div>
+
+        <!-- Section 6: Proposed Implementation Code -->
+        <h2>6. แนวทางการปรับปรุงโค้ดจริง (Code Implementation)</h2>
+
+        <h3>6.1 ส่วน Backend: ฟังก์ชันตรวจสอบใน <code>model/manage_payment_transfer_smart.php</code></h3>
+        <pre><code>// --- ตรวจสอบช่วงเดือนทับซ้อนอย่างสมบูรณ์ (Comprehensive Range Overlap Check) ---
+$check_sql = "SELECT id, doc_id, period_month_start, period_month_to, period_year, payment_status 
+              FROM ims_house_payment 
+              WHERE house_number = :house_number 
+                AND period_year = :period_year 
+                AND (:month_start &lt;= period_month_to AND :month_to &gt;= period_month_start)
+              LIMIT 1";
+
+$check_stmt = $conn->prepare($check_sql);
+$check_stmt->execute([
+    ':house_number' => $house_number,
+    ':period_year'  => $period_year,
+    ':month_start'  => $period_month_start,
+    ':month_to'     => $period_month_to
+]);
+$existing_payment = $check_stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($existing_payment) {
+    $thai_months = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+    $dup_start = $thai_months[$existing_payment['period_month_start']];
+    $dup_to    = $thai_months[$existing_payment['period_month_to']];
+    $dup_period_desc = ($existing_payment['period_month_start'] == $existing_payment['period_month_to']) ? $dup_start : "{$dup_start} - {$dup_to}";
+
+    if ($existing_payment['payment_status'] === 'Y') {
+        echo json_encode([
+            'status'  => 'error',
+            'code'    => 'DUPLICATE_PAID',
+            'message' => "มีรายการชำระค่าส่วนกลางงวด {$dup_period_desc} ปี {$period_year} เรียบร้อยแล้ว (เอกสารเลขที่ {$existing_payment['doc_id']})"
+        ], JSON_UNESCAPED_UNICODE);
+    } else {
+        echo json_encode([
+            'status'  => 'error',
+            'code'    => 'PENDING_EXISTS',
+            'message' => "มีรายการโอนเงินงวด {$dup_period_desc} ปี {$period_year} อยู่ระหว่างรอเจ้าหน้าที่ตรวจสอบ (เอกสารเลขที่ {$existing_payment['doc_id']})"
+        ], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}</code></pre>
+
+        <h3>6.2 ส่วน Frontend: Real-time Pre-check ใน <code>payment_transfer_smart.php</code></h3>
+        <pre><code>// ฟังก์ชันตรวจสอบความซ้ำซ้อนแบบ Real-time เมื่อเลือกงวดเดือน/ปี
+function checkPaymentOverlapRealtime() {
+    let houseNumber = $('#house_number').val();
+    let periodYear = $('#period_year').val();
+    let monthStart = $('#period_month_start').val();
+    let monthTo = $('#period_month_to').val();
+
+    if (!houseNumber || !periodYear || !monthStart || !monthTo) return;
+
+    $.ajax({
+        url: 'model/check_payment_overlap.php',
+        type: 'POST',
+        data: {
+            house_number: houseNumber,
+            period_year: periodYear,
+            period_month_start: monthStart,
+            period_month_to: monthTo
+        },
+        dataType: 'json',
+        success: function(res) {
+            if (res.has_overlap) {
+                $('#overlap_warning_box').html(
+                    `&lt;div class="alert alert-danger"&gt;&lt;i class="fa fa-exclamation-triangle"&gt;&lt;/i&gt; ${res.message}&lt;/div&gt;`
+                ).show();
+                $('#submit_btn').prop('disabled', true);
+            } else {
+                $('#overlap_warning_box').hide();
+                $('#submit_btn').prop('disabled', false);
+            }
+        }
+    });
+}
+
+$('#period_month_start, #period_month_to, #period_year').on('change', checkPaymentOverlapRealtime);</code></pre>
+
+        <!-- Section 7: Summary Table -->
+        <h2>7. สรุปประโยชน์ที่จะได้รับหลังปรับปรุง</h2>
+        <ul>
+            <li><strong>ขจัดปัญหาการบันทึกซ้ำ 100%:</strong> รองรับทั้งการชำระรายเดือน, รายหลายเดือน, และรายปี โดยไม่มีช่องโหว่ของการซ้อนทับ</li>
+            <li><strong>ประสบการณ์ผู้ใช้งานที่ดีขึ้น (Better UX):</strong> ทราบสถานะเดือนที่ว่างทันทีก่อนอัปโหลดสลิป ไม่ต้องรอลุ้นตอนกดส่ง</li>
+            <li><strong>ลดภาระงานของเจ้าหน้าที่นิติบุคคล:</strong> ลดปัญหาสลิปซ้ำ ยอดเงินไม่ตรง และไม่ต้องเสียเวลาลบข้อมูลซ้ำในหน้า <code>show_duplicate_payments.php</code></li>
+            <li><strong>ความถูกต้องของรายงานบัญชีและ GL:</strong> ป้องกันการลงบัญชีรายได้และภาษีซ้ำซ้อนในระบบบัญชีหมู่บ้าน</li>
+        </ul>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>เอกสารประกอบการพัฒนาระบบชำระค่าส่วนกลางอัจฉริยะ โครงการ พีเอสโฮม 33</p>
+        <p>ไฟล์: <code>check_payment.html</code> | อัปเดตล่าสุด: สิงหาคม 2026</p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -206,6 +206,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+    // --- ส่วนตรวจสอบช่วงเดือนทับซ้อน (Comprehensive Interval Overlap Check ตาม check_payment.html) ---
+    $check_sql = "SELECT id, doc_id, period_month_start, period_month_to, period_year, payment_status, amount 
+                  FROM ims_house_payment 
+                  WHERE house_number = :house_number 
+                    AND period_year = :period_year 
+                    AND (:new_start <= period_month_to AND :new_to >= period_month_start)
+                  LIMIT 1";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bindParam(':house_number', $house_number);
+    $check_stmt->bindParam(':period_year', $period_year);
+    $check_stmt->bindParam(':new_start', $period_month_start, PDO::PARAM_INT);
+    $check_stmt->bindParam(':new_to', $period_month_to, PDO::PARAM_INT);
+    $check_stmt->execute();
+    $existing_dup = $check_stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existing_dup) {
+        $thai_months = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        $dup_s = $thai_months[intval($existing_dup['period_month_start'])] ?? $existing_dup['period_month_start'];
+        $dup_e = $thai_months[intval($existing_dup['period_month_to'])] ?? $existing_dup['period_month_to'];
+        $dup_desc = ($existing_dup['period_month_start'] == $existing_dup['period_month_to']) ? "งวดเดือน {$dup_s}" : "งวดเดือน {$dup_s} ถึง {$dup_e}";
+        
+        $msg = "มีข้อมูลการชำระค่าส่วนกลาง{$dup_desc} ปี {$period_year} เรียบร้อยแล้ว (เลขที่เอกสาร: {$existing_dup['doc_id']}) ไม่สามารถบันทึกซ้ำได้";
+        writeToCustomLog("Blocked duplicate payment for house {$house_number}: {$msg}");
+        echo $msg;
+        exit;
+    }
+
     // --- ส่วนที่ 3: สร้าง runno และ doc_id สำหรับ ims_house_payment ---
     if (!isset($conn) || !is_object($conn)) {
         writeToCustomLog("Error: Database connection object is not valid before LAST_DOCUMENT_NUMBER.");
