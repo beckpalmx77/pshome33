@@ -45,6 +45,12 @@ $house_number = isset($house_number) ? $house_number : '';
             background: #f8fafc;
             color: #64748b;
             transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .m-status-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
         }
         .m-status-box.paid {
             background: #dcfce7 !important;
@@ -57,10 +63,10 @@ $house_number = isset($house_number) ? $house_number : '';
             color: #92400e !important;
         }
         .m-status-box.selecting {
-            background: #eff6ff;
-            border-color: #3b82f6;
-            color: #1d4ed8;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            background: #eff6ff !important;
+            border-color: #3b82f6 !important;
+            color: #1d4ed8 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
         }
         .m-status-box.conflict {
             background: #fee2e2 !important;
@@ -503,6 +509,30 @@ $house_number = isset($house_number) ? $house_number : '';
     }
 
     // 2. ฟังก์ชันหลักสำหรับ Logic การคำนวณเงินและส่วนลด
+    window.calculatePaymentAmount = function() {
+        const paymentTypeInput = document.getElementById('payment_type');
+        const commonFeeInput = document.getElementById('common_fee');
+        const amountInput = document.getElementById('amount');
+        const monthYearCalculatorInput = document.getElementById('month_year_calculator');
+        const isYearly = document.getElementById('option_yearly') && document.getElementById('option_yearly').checked;
+
+        const commonFee = parseFloat(commonFeeInput ? commonFeeInput.value : 0) || 0;
+        let calculatedAmount = 0;
+
+        if (!isYearly) {
+            const paymentMonths = parseInt(paymentTypeInput ? paymentTypeInput.value : 1) || 1;
+            calculatedAmount = commonFee * paymentMonths;
+        } else {
+            const monthsToCharge = parseFloat(monthYearCalculatorInput ? monthYearCalculatorInput.value : 12) || 12;
+            calculatedAmount = commonFee * monthsToCharge;
+        }
+
+        if (amountInput) {
+            amountInput.value = calculatedAmount.toFixed(2);
+        }
+        return calculatedAmount;
+    };
+
     document.addEventListener('DOMContentLoaded', function () {
         const paymentTypeInput = document.getElementById('payment_type');
         const commonFeeInput = document.getElementById('common_fee');
@@ -512,24 +542,8 @@ $house_number = isset($house_number) ? $house_number : '';
         const monthYearCalculatorInput = document.getElementById('month_year_calculator');
         const remarkInput = document.getElementById('remark');
 
-        function calculateAmount() {
-            const commonFee = parseFloat(commonFeeInput.value) || 0;
-            const isYearly = document.getElementById('option_yearly').checked;
-            let calculatedAmount = 0;
-
-            if (!isYearly) {
-                const paymentMonths = parseInt(paymentTypeInput.value) || 0;
-                calculatedAmount = commonFee * paymentMonths;
-            } else {
-                const monthsToCharge = parseFloat(monthYearCalculatorInput.value) || 12;
-                calculatedAmount = commonFee * monthsToCharge;
-            }
-
-            amountInput.value = calculatedAmount.toFixed(2);
-        }
-
         // --- ฟังก์ชันสำคัญ: จัดการเงื่อนไขโปรโมชั่นและการ Lock ปี ---
-        function updatePaymentLogic() {
+        window.updatePaymentLogic = function() {
             const isYearly = document.getElementById('option_yearly').checked;
             const currentDate = new Date();
             const currentRealYear = currentDate.getFullYear();
@@ -574,47 +588,52 @@ $house_number = isset($house_number) ? $house_number : '';
                 $("#period_month_to").prop("disabled", true).val(12);
                 $("#payment_type").prop("disabled", true).val(12);
 
-                amountInput.readOnly = false;
-                calculateAmount();
+                if (amountInput) amountInput.readOnly = false;
+                window.calculatePaymentAmount();
 
             } else {
                 // กรณีเลือกจ่ายรายเดือน
                 $(remarkInput).val("-");
                 $("#period_month_start").prop("disabled", false);
                 $("#period_month_to").prop("disabled", false);
-                $("#payment_type").prop("disabled", false).val(1);
+                $("#payment_type").prop("disabled", false);
 
-                // รีเซ็ตค่าเดือนเริ่ม/สิ้นสุดเป็นเดือนปัจจุบันเมื่อสลับกลับมา
-                let thisMonth = new Date().getMonth() + 1;
-                if(!$("#period_month_start").val()) $("#period_month_start").val(thisMonth);
-                if(!$("#period_month_to").val()) $("#period_month_to").val(thisMonth);
+                let curStart = parseInt($("#period_month_start").val());
+                if (!curStart || isNaN(curStart)) {
+                    let thisMonth = new Date().getMonth() + 1;
+                    $("#period_month_start").val(thisMonth);
+                    $("#period_month_to").val(thisMonth);
+                    $("#payment_type").val(1);
+                }
 
-                amountInput.readOnly = true;
-                calculateAmount();
+                if (amountInput) amountInput.readOnly = true;
+                window.calculatePaymentAmount();
             }
 
             if (typeof window.checkPaymentOverlapRealtime === 'function') {
                 window.checkPaymentOverlapRealtime();
             }
-        }
+        };
 
         // Event Listeners
-        paymentTypeInput.addEventListener('input', calculateAmount);
-        commonFeeInput.addEventListener('input', () => {
-            if (commonFeeInput.value !== '') {
-                commonFeeInput.value = parseFloat(commonFeeInput.value).toFixed(2);
-            }
-            calculateAmount();
-        });
+        if (paymentTypeInput) paymentTypeInput.addEventListener('input', window.calculatePaymentAmount);
+        if (commonFeeInput) {
+            commonFeeInput.addEventListener('input', () => {
+                if (commonFeeInput.value !== '') {
+                    commonFeeInput.value = parseFloat(commonFeeInput.value).toFixed(2);
+                }
+                window.calculatePaymentAmount();
+            });
+        }
 
         paymentOptionInputs.forEach(el =>
-            el.addEventListener('change', updatePaymentLogic)
+            el.addEventListener('change', window.updatePaymentLogic)
         );
 
         // *** เมื่อเปลี่ยนปี (Dropdown) ให้คำนวณโปรโมชั่นใหม่ทันที ***
-        periodYearInput.addEventListener('change', updatePaymentLogic);
+        if (periodYearInput) periodYearInput.addEventListener('change', window.updatePaymentLogic);
 
-        monthYearCalculatorInput.addEventListener('change', calculateAmount);
+        if (monthYearCalculatorInput) monthYearCalculatorInput.addEventListener('change', window.calculatePaymentAmount);
 
         // ฟังก์ชัน Init (เรียกใช้หลังจาก LIFF ดึงข้อมูลเสร็จ)
         window.initWithCommonFeeInput = function () {
@@ -637,16 +656,15 @@ $house_number = isset($house_number) ? $house_number : '';
 
                 setTimeout(function () { $('#promotionModal').modal('show'); }, 500);
 
-                // เรียกคำนวณทันที
-                updatePaymentLogic();
+                window.updatePaymentLogic();
             } else {
                 // ถ้าไม่มีโปร ให้เลือกรายเดือนปกติ
                 document.querySelector('input[name="payment_option"][value="monthly"]').checked = true;
-                updatePaymentLogic();
+                window.updatePaymentLogic();
             }
 
             if (typeof window.checkPaymentOverlapRealtime === 'function') {
-                window.checkPaymentOverlapRealtime();
+                window.checkPaymentOverlapRealtime(true);
             }
         };
     });
@@ -663,82 +681,112 @@ $house_number = isset($house_number) ? $house_number : '';
         const monthlyOption = $("#option_monthly");
 
         // ฟังก์ชันหลัก: คำนวณและตรวจสอบ
-        function updateMonthLogic(source) {
+        window.updateMonthLogic = function(source) {
             // ถ้าเลือกเป็นรายปี ไม่ต้องทำอะไร
             if (!monthlyOption.is(":checked")) return;
 
             let start = parseInt(startSelect.val());
             let end = parseInt(endSelect.val());
-            let duration = parseInt(typeInput.val());
+            let duration = parseInt(typeInput.val()) || 1;
 
-            if (isNaN(start)) return; // ถ้ายังไม่ได้เลือกเดือนเริ่ม ก็ทำอะไรไม่ได้
+            if (isNaN(start)) return;
 
-            if (source === 'range') {
-                // 1. กรณีผู้ใช้เปลี่ยน "เดือนเริ่ม" หรือ "เดือนสิ้นสุด" -> คำนวณ "จำนวนเดือน"
-                if (isNaN(end)) {
-                    // ถ้าเดือนจบว่าง ให้ตั้งค่าเท่ากับเดือนเริ่ม
+            if (source === 'start') {
+                // ผู้ใช้เปลี่ยนเดือนเริ่มต้น
+                if (isNaN(end) || end < start) {
                     end = start;
-                    endSelect.val(end);
+                    duration = 1;
+                } else {
+                    duration = end - start + 1;
                 }
+                endSelect.val(end);
+                typeInput.val(duration);
 
-                // *** ตรวจสอบเงื่อนไข Start ต้องไม่มากกว่า End ***
-                if (start > end) {
-                    alert('เดือนเริ่มต้น ต้องไม่มากกว่า เดือนสิ้นสุด');
-                    // Reset เดือนสิ้นสุดให้เท่ากับเดือนเริ่มต้น
-                    end = start;
-                    endSelect.val(end);
+            } else if (source === 'end') {
+                // ผู้ใช้เปลี่ยนเดือนสิ้นสุด
+                if (isNaN(end) || end < start) {
+                    start = end;
+                    startSelect.val(start);
+                    duration = 1;
+                } else {
+                    duration = end - start + 1;
                 }
-
-                // คำนวณจำนวนเดือน
-                let newDuration = end - start + 1;
-                typeInput.val(newDuration);
+                typeInput.val(duration);
 
             } else if (source === 'duration') {
-                // 2. กรณีผู้ใช้เปลี่ยน "จำนวนเดือน" -> คำนวณ "เดือนสิ้นสุด"
+                // ผู้ใช้เปลี่ยนจำนวนเดือน
                 if (isNaN(duration) || duration < 1) {
-                    duration = 1; // บังคับขั้นต่ำ 1 เดือน
+                    duration = 1;
                 }
 
                 let newEnd = start + duration - 1;
-
-                // ถ้าเกิน 12 (ธันวาคม) ให้ปัดกลับมาเป็น 12 และปรับ duration (เพราะจ่ายข้ามปีไม่ได้ในระบบนี้)
                 if (newEnd > 12) {
                     newEnd = 12;
                     duration = 12 - start + 1;
-                    typeInput.val(duration); // ปรับค่าใน Input ให้ตรงความจริง
-                    alert('ไม่สามารถเลือกข้ามปีได้ กรุณาทำรายการแยกปี');
+                    typeInput.val(duration);
+                    if (typeof alertify !== 'undefined') {
+                        alertify.warning('ไม่สามารถเลือกข้ามปีได้ กรุณาทำรายการแยกปี');
+                    }
                 }
-
                 endSelect.val(newEnd);
             }
 
-            // Trigger ให้ calculateAmount ทำงานด้วย (เพื่ออัพเดทตัวเงิน)
-            typeInput.trigger('input');
-        }
+            // คำนวณยอดเงินและตรวจสอบความซ้ำซ้อนทันที
+            if (typeof window.calculatePaymentAmount === 'function') {
+                window.calculatePaymentAmount();
+            }
+            if (typeof window.checkPaymentOverlapRealtime === 'function') {
+                window.checkPaymentOverlapRealtime();
+            }
+        };
 
         // Bind Event Handlers
         startSelect.on('change', function() {
-            updateMonthLogic('range');
-            window.checkPaymentOverlapRealtime();
+            window.updateMonthLogic('start');
         });
+
         endSelect.on('change', function() {
-            updateMonthLogic('range');
-            window.checkPaymentOverlapRealtime();
+            window.updateMonthLogic('end');
         });
 
         typeInput.on('input change', function() {
-            // หน่วงเวลาเล็กน้อยเพื่อให้ user พิมพ์เสร็จ (กรณีพิมพ์เลข)
-            updateMonthLogic('duration');
-            window.checkPaymentOverlapRealtime();
+            window.updateMonthLogic('duration');
         });
 
         $("#period_year, input[name='payment_option']").on('change', function() {
-            window.checkPaymentOverlapRealtime();
+            if (typeof window.checkPaymentOverlapRealtime === 'function') {
+                window.checkPaymentOverlapRealtime();
+            }
         });
     });
 
+    // --- ฟังก์ชันคลิกเลือกเดือนจาก Grid 12 เดือนโดยตรง ---
+    window.selectMonthFromGrid = function(monthNum) {
+        if (!monthNum || monthNum < 1 || monthNum > 12) return;
+
+        // ถ้าอยู่ในโหมดรายปี ให้สลับมาเป็นรายเดือน
+        const monthlyRadio = document.getElementById('option_monthly');
+        if (monthlyRadio && !monthlyRadio.checked) {
+            monthlyRadio.checked = true;
+            if (typeof window.updatePaymentLogic === 'function') {
+                window.updatePaymentLogic();
+            }
+        }
+
+        $("#period_month_start").prop("disabled", false).val(monthNum);
+        $("#period_month_to").prop("disabled", false).val(monthNum);
+        $("#payment_type").prop("disabled", false).val(1);
+
+        if (typeof window.calculatePaymentAmount === 'function') {
+            window.calculatePaymentAmount();
+        }
+        if (typeof window.checkPaymentOverlapRealtime === 'function') {
+            window.checkPaymentOverlapRealtime();
+        }
+    };
+
     // --- ฟังก์ชันตรวจสอบความซ้ำซ้อนและแสดงสถานะ 12 เดือนแบบ Real-time (ตาม check_payment.html) ---
-    window.checkPaymentOverlapRealtime = function() {
+    window.checkPaymentOverlapRealtime = function(autoSelectFirstAvailable = false) {
         let houseNumber = $("#house_number").val();
         let periodYear = parseInt($("#period_year").val()) || new Date().getFullYear();
         let isYearly = $("#option_yearly").is(":checked");
@@ -766,21 +814,59 @@ $house_number = isset($house_number) ? $house_number : '';
             dataType: "json",
             success: function(res) {
                 if (res && res.status === 'success') {
+                    // หากเลือกให้ auto-select เดือนถัดไปที่ยังว่าง (สำหรับโหลดเริ่มต้น)
+                    if (autoSelectFirstAvailable && res.has_overlap && !isYearly && Array.isArray(res.months_status)) {
+                        let targetAvail = res.months_status.find(m => m.month > endMonth && m.status === 'available') 
+                                       || res.months_status.find(m => m.status === 'available');
+                        if (targetAvail) {
+                            $("#period_month_start").val(targetAvail.month);
+                            $("#period_month_to").val(targetAvail.month);
+                            $("#payment_type").val(1);
+                            if (typeof window.calculatePaymentAmount === 'function') {
+                                window.calculatePaymentAmount();
+                            }
+                            window.checkPaymentOverlapRealtime(false);
+                            return;
+                        }
+                    }
+
                     renderMonthGrid(res.months_status, startMonth, endMonth, res.has_overlap);
 
                     if (res.has_overlap) {
                         let alertClass = (res.overlap_type === 'paid') ? 'alert-danger' : 'alert-warning';
                         let iconClass = (res.overlap_type === 'paid') ? 'fa-ban' : 'fa-clock-o';
+                        
+                        // หาเดือนถัดไปที่ว่างหลังช่วงที่ซ้ำ
+                        let nextAvail = res.months_status.find(m => m.month > endMonth && m.status === 'available') 
+                                     || res.months_status.find(m => m.status === 'available');
+                        let nextActionHtml = '';
+                        if (nextAvail) {
+                            nextActionHtml = `
+                                <div class="mt-2 pt-1 border-top" style="border-color: rgba(0,0,0,0.08) !important;">
+                                    <button type="button" class="btn btn-sm btn-outline-dark bg-white font-weight-bold" 
+                                            onclick="window.selectMonthFromGrid(${nextAvail.month})"
+                                            style="font-size: 12px; border-radius: 6px;">
+                                        <i class="fa fa-arrow-circle-right text-primary mr-1"></i> เปลี่ยนไปชำระเดือน <strong>${nextAvail.month_name}</strong> ทันที
+                                    </button>
+                                </div>
+                            `;
+                        }
+
                         $("#overlap_warning_box").html(
                             `<div class="alert ${alertClass} mb-0 p-2" style="font-size: 13px;">
                                 <i class="fa ${iconClass} mr-1"></i> <strong>แจ้งเตือน:</strong> ${res.overlap_message}
+                                ${nextActionHtml}
                             </div>`
                         ).slideDown();
 
-                        $("#submit_btn").prop("disabled", true);
+                        $("#submit_btn").prop("disabled", true).addClass("disabled");
                     } else {
-                        $("#overlap_warning_box").slideUp();
-                        $("#submit_btn").prop("disabled", false);
+                        // ไม่มีการชำระซ้ำ -> รีเฟรชหน้าจอ เคลียร์ข้อความเตือน คำนวณเงินใหม่ และเปิดปุ่มบันทึก
+                        $("#overlap_warning_box").slideUp(150).empty();
+                        $("#submit_btn").prop("disabled", false).removeClass("disabled");
+                        if (typeof window.calculatePaymentAmount === 'function') {
+                            window.calculatePaymentAmount();
+                        }
                     }
                 }
             },
@@ -815,7 +901,9 @@ $house_number = isset($house_number) ? $house_number : '';
 
             let docInfo = m.doc_id ? ` (${m.doc_id})` : '';
             gridHtml += `
-                <div class="m-status-box ${statusClass} ${conflictClass}" title="${m.month_name} : ${m.status_text}${docInfo}">
+                <div class="m-status-box ${statusClass} ${conflictClass}" 
+                     onclick="window.selectMonthFromGrid(${m.month})"
+                     title="คลิกเพื่อเลือกงวดเดือน ${m.month_name} : ${m.status_text}${docInfo}">
                     <div>${shortNames[m.month]}</div>
                     <div style="font-size: 9px; margin-top: 2px;">${iconHtml}${m.status_text}</div>
                 </div>
@@ -990,11 +1078,11 @@ $house_number = isset($house_number) ? $house_number : '';
             $("#loading").show();
 
             let formData = new FormData(this);
-            formData.append('period_month_start', $("#period_month_start").val());
-            formData.append('period_month_to', $("#period_month_to").val());
-            formData.append('payment_type', $("#payment_type").val());
-            formData.append('amount', parseFloat($("#amount").val()).toFixed(2));
-            formData.append('remark', $("#remark").val());
+            formData.set('period_month_start', $("#period_month_start").val());
+            formData.set('period_month_to', $("#period_month_to").val());
+            formData.set('payment_type', $("#payment_type").val());
+            formData.set('amount', parseFloat($("#amount").val()).toFixed(2));
+            formData.set('remark', $("#remark").val());
 
 
             $.ajax({
