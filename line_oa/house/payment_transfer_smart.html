@@ -3,47 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คู่มือระบบชำระค่าส่วนกลาง (LINE OA) - PS33 Home System</title>
+    <title>คู่มือระบบชำระค่าส่วนกลางอัจฉริยะ (Smart Payment) - PS33 Home System</title>
+    <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- FontAwesome 6 CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Sarabun & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-green: #00B900;
+            --primary-dark: #008f00;
+            --navy-blue: #1e3d59;
+            --teal-accent: #17b978;
+            --bg-light: #f4f7f6;
+            --card-border: #e2e8f0;
+            --status-paid: #166534;
+            --status-paid-bg: #dcfce7;
+            --status-pending: #92400e;
+            --status-pending-bg: #fef3c7;
+            --status-conflict: #b91c1c;
+            --status-conflict-bg: #fee2e2;
+        }
+
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
+            background-color: var(--bg-light);
+            color: #2d3748;
+            font-size: 0.95rem;
+            line-height: 1.65;
         }
-        .container {
-            max-width: 900px;
-            margin-top: 40px;
-            margin-bottom: 50px;
+
+        h1, h2, h3, h4, h5, h6, .heading-font {
+            font-family: 'Prompt', sans-serif;
         }
-        .card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        .header-section {
-            background: linear-gradient(135deg, #00B900 0%, #008f00 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 16px 16px 0 0;
-            text-align: center;
-        }
-        .header-section img {
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
-            margin-bottom: 15px;
-        }
-        .section-title {
-            color: #00B900;
-            border-bottom: 2px solid #00B900;
-            padding-bottom: 8px;
+
+        .container-custom {
+            max-width: 1060px;
             margin-top: 30px;
-            margin-bottom: 20px;
-            font-weight: 700;
+            margin-bottom: 60px;
         }
-        .step-number {
-            background-color: #00B900;
+
+        .header-section {
+            background: linear-gradient(135deg, #1e3d59 0%, #00B900 100%);
+            color: white;
+            padding: 40px 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 185, 0, 0.18);
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 350px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .nav-pills {
+            background-color: #ffffff;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            margin-bottom: 25px;
+            gap: 6px;
+        }
+
+        .nav-pills .nav-link {
+            font-family: 'Prompt', sans-serif;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            padding: 8px 14px;
+            transition: all 0.25s ease;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: #f1f5f9;
+            color: var(--primary-dark);
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-green);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 185, 0, 0.3);
+        }
+
+        .card-custom {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background-color: #ffffff;
+            border-bottom: 1px solid #edf2f7;
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .step-circle {
+            background-color: var(--primary-green);
             color: white;
             width: 32px;
             height: 32px;
@@ -51,191 +126,747 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
             font-weight: bold;
-            font-size: 1rem;
-        }
-        .step-item {
-            margin-bottom: 25px;
-            padding-left: 20px;
-            border-left: 3px solid #00B900;
-        }
-        .note-box {
-            background-color: #e8f5e9;
-            border-left: 5px solid #2e7d32;
-            padding: 15px 20px;
-            border-radius: 8px;
             font-size: 0.95rem;
-            color: #1b5e20;
-            margin: 20px 0;
+            margin-right: 10px;
+            flex-shrink: 0;
         }
+
+        .highlight-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid var(--primary-green);
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 0.92rem;
+        }
+
+        .info-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 0.92rem;
+        }
+
         .warning-box {
-            background-color: #fff3cd;
-            border-left: 5px solid #ffc107;
-            padding: 15px 20px;
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 14px 18px;
             border-radius: 8px;
-            font-size: 0.95rem;
-            color: #856404;
-            margin: 20px 0;
+            margin: 16px 0;
+            font-size: 0.92rem;
         }
-        .code-inline {
-            background-color: #eaeaea;
-            color: #d63031;
+
+        .danger-box {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 0.92rem;
+        }
+
+        .code-tag {
+            background-color: #f1f5f9;
+            color: #d97706;
+            font-family: 'Consolas', monospace;
             padding: 2px 6px;
             border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            font-size: 0.9em;
+            font-size: 0.88em;
+            font-weight: 600;
         }
+
         .file-badge {
-            background-color: #e1f5fe;
-            color: #0288d1;
-            padding: 3px 8px;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-family: 'Consolas', monospace;
+            padding: 2px 8px;
             border-radius: 4px;
-            font-family: monospace;
             font-size: 0.85em;
         }
-        .table {
-            border-radius: 8px;
-            overflow: hidden;
+
+        /* Mockup Calendar Grid */
+        .mock-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin: 15px 0;
         }
-        .table-light th {
+        @media (min-width: 768px) {
+            .mock-grid {
+                grid-template-columns: repeat(12, 1fr);
+            }
+        }
+        .mock-month {
+            text-align: center;
+            padding: 8px 2px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 600;
-            background-color: #eceff1;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #64748b;
+        }
+        .mock-month.paid {
+            background: var(--status-paid-bg);
+            border-color: #86efac;
+            color: var(--status-paid);
+        }
+        .mock-month.pending {
+            background: var(--status-pending-bg);
+            border-color: #fcd34d;
+            color: var(--status-pending);
+        }
+        .mock-month.conflict {
+            background: var(--status-conflict-bg);
+            border-color: #ef4444;
+            color: var(--status-conflict);
+        }
+        .mock-month.selecting {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+        }
+
+        /* Flex Card Mockup */
+        .flex-card-mockup {
+            max-width: 340px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin: 15px auto;
+        }
+        .flex-header {
+            text-align: center;
+            padding: 16px 12px 10px 12px;
+        }
+        .flex-body {
+            padding: 10px 18px 18px 18px;
+            font-size: 13px;
+        }
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .flex-row .label { color: #888888; flex: 4; }
+        .flex-row .val { color: #333333; font-weight: 500; flex: 6; text-align: right; }
+        .flex-footer {
+            padding: 10px 16px 16px 16px;
+        }
+
+        .table-custom th {
+            background-color: #f8fafc;
+            color: #334155;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card">
-        <!-- ส่วนหัวข้อ -->
-        <div class="header-section">
-            <img src="ps33_logo.png" width="80" alt="PS33 Logo">
-            <h1 class="h2 mb-2 font-weight-bold">คู่มือระบบชำระค่าส่วนกลางผ่าน LINE OA</h1>
-            <p class="mb-0 opacity-75">รายละเอียดระบบ หน้าจอการกรอกข้อมูลชำระเงิน และการอนุมัติหลังบ้าน</p>
-        </div>
-
-        <div class="card-body p-4 p-md-5">
-            <!-- ส่วนนำ -->
-            <div class="mb-5">
-                <h4 class="section-title"><i class="fas fa-info-circle"></i> 1. ภาพรวมระบบ (System Overview)</h4>
-                <p>
-                    ระบบชำระค่าส่วนกลางผ่าน LINE OA ได้รับการออกแบบขึ้นเพื่ออำนวยความสะดวกให้แก่ลูกบ้านในการส่งหลักฐานการโอนเงิน (Slip) 
-                    เพื่อชำระค่าส่วนกลาง โดยระบบจะเชื่อมต่อข้อมูลสิทธิ์ลูกบ้าน ดึงบ้านเลขที่ อัตราค่าส่วนกลางรายเดือน และช่องทางการโอนเงินปลายทางมาแสดงผลให้อัตโนมัติ 
-                    ช่วยลดขั้นตอนการกรอกข้อมูลและลดข้อผิดพลาดในการตรวจสอบของเจ้าหน้าที่นิติบุคคล
+<div class="container container-custom">
+    
+    <!-- ส่วนหัวข้อหลัก (Header Banner) -->
+    <div class="header-section">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center text-md-start mb-3 mb-md-0">
+                <img src="ps33_logo.png" width="85" alt="PS33 Logo" class="img-fluid drop-shadow" onerror="this.src='../../img/logo/niti_ps33_header200.png'">
+            </div>
+            <div class="col-md-10 text-center text-md-start">
+                <span class="badge bg-light text-success fw-bold mb-2 px-3 py-1 rounded-pill">LINE OA & Web Architecture Manual</span>
+                <h1 class="h3 fw-bold mb-1">คู่มือระบบชำระค่าส่วนกลางอัจฉริยะ (Smart Payment)</h1>
+                <p class="mb-0 text-white-50 small">
+                    เจาะลึกโครงสร้างหน้าจอ <span class="text-white fw-bold">payment_transfer_smart.php</span> พร้อมเปรียบเทียบกับหน้าจอหลัก <span class="text-white fw-bold">payment_transfer.php</span>
                 </p>
             </div>
-
-            <!-- ส่วนหน้าจอสำหรับลูกบ้าน -->
-            <div class="mb-5">
-                <h4 class="section-title"><i class="fas fa-mobile-alt"></i> 2. การทำงานฝั่งหน้าจอระบบ (payment_transfer_smart)</h4>
-                <p class="text-muted">เมื่อลูกบ้านกดเข้าเมนู "ชำระค่าส่วนกลาง" ระบบจะเปิดผ่าน LINE LIFF และประมวลผลข้อมูลหน้าฟอร์มดังนี้:</p>
-                
-                <div class="step-item">
-                    <h5>การดึงและเตรียมข้อมูลอัตโนมัติ (LIFF Loading)</h5>
-                    <p class="text-muted small">
-                        ระบบจะเรียกใช้ LINE LIFF SDK เพื่อขอรับโปรไฟล์ของลูกบ้าน และดึงเบอร์โทร/บ้านเลขที่จากตาราง <code>ims_house_line_user</code> 
-                        และข้อมูลอัตราค่าส่วนกลางมาแสดงในช่องกรอกข้อมูลอัตโนมัติ หากไม่มีประวัติลงทะเบียนในระบบ จะแจ้งเตือนให้ไปลงทะเบียนก่อน
-                    </p>
-                </div>
-
-                <div class="step-item">
-                    <h5>รายละเอียดฟิลด์และการเลือกการชำระเงิน</h5>
-                    <p class="text-muted small">ลูกบ้านระบุข้อมูลการชำระเงินในฟอร์มประกอบด้วย:</p>
-                    <ul class="text-muted small">
-                        <li class="mb-1"><strong>ตัวเลือกการชำระ:</strong> เลือกชำระแบบ <strong>"รายเดือน"</strong> หรือ <strong>"รายปี"</strong></li>
-                        <li class="mb-1"><strong>จำนวนเดือนที่ชำระ:</strong> กำหนดจำนวนงวดเดือนที่ต้องการชำระ (1 - 12 งวด) โดยระบบจะนำไปคำนวณร่วมกับค่าส่วนกลางต่อเดือนเพื่อป้อนยอดเงินให้เบื้องต้น</li>
-                        <li class="mb-1"><strong>งวดเดือน/งวดปี:</strong> ระบุช่วงงวดเดือนที่ประสงค์ชำระเงิน (เริ่มงวดเดือน - ถึงงวดเดือน) และปีของงวด</li>
-                        <li class="mb-1"><strong>ชื่อผู้ชำระ:</strong> ระบบดึงชื่อจากฐานข้อมูลขึ้นมาแสดงให้อัตโนมัติ (สามารถแก้ไขได้)</li>
-                        <li class="mb-1"><strong>จำนวนเงินที่ชำระ (บาท):</strong> ยอดเงินรวมที่โอนชำระ</li>
-                        <li class="mb-1"><strong>แนบ Slip/ใบโอนเงิน:</strong> ลูกบ้านอัปโหลดไฟล์สลิปโอนเงิน (ระบบมีไลบรารีพิเศษ <code>heic2any</code> รองรับการแปลงไฟล์สกุล HEIC จากกล้อง iPhone เป็น JPEG อัตโนมัติเพื่อความเข้ากันได้ของระบบ)</li>
-                    </ul>
-                </div>
-
-                <div class="step-item">
-                    <h5>แสดงบัญชีธนาคารปลายทาง</h5>
-                    <p class="text-muted small">
-                        ข้อมูลบัญชีปลายทาง (ธนาคาร, ชื่อบัญชี, เลขที่บัญชี) จะถูกดึงมาจากข้อมูลมาสเตอร์ของนิติบุคคลโครงการ (ตาราง <code>ims_company</code>) มาแสดงเพื่อป้องกันความสับสน
-                    </p>
-                </div>
-            </div>
-
-            <!-- ส่วนการประมวลผลทางเซิร์ฟเวอร์ -->
-            <div class="mb-5">
-                <h4 class="section-title"><i class="fas fa-server"></i> 3. กระบวนการหลังบ้านและตารางข้อมูล (Backend Processing)</h4>
-                <p class="text-muted">เมื่อกดปุ่มส่งข้อมูล ระบบจะส่งข้อมูลแบบ AJAX ไปยังปลายทาง <span class="file-badge">model/manage_payment_transfer_smart</span>:</p>
-                
-                <div class="step-item">
-                    <h5>การตรวจสอบการส่งซ้ำ (Duplicate Submission Check)</h5>
-                    <p class="text-muted small">
-                        ระบบจะตรวจเช็กตาราง <code>ims_house_payment</code> ด้วย <strong>"บ้านเลขที่, งวดเดือนเริ่มต้น, งวดปี"</strong> หากพบว่ามีรายการส่งสลิปรอตรวจสอบอยู่งวดดังกล่าวแล้ว ระบบจะตอบกลับรหัสความผิดพลาดเพื่อบล็อกรายการและเตือนลูกบ้านทันทีเพื่อป้องกันการส่งซ้ำซ้อน
-                    </p>
-                </div>
-
-                <div class="step-item">
-                    <h5>การจัดเก็บไฟล์สลิปโอนเงิน</h5>
-                    <p class="text-muted small">
-                        สลิปจะถูกเก็บเข้าสู่เซิร์ฟเวอร์ในโฟลเดอร์ <span class="code-inline">uploads/slips/</span> และระบบจะทำการเชื่อมต่อไปยัง <strong>Google Drive API</strong> 
-                        เพื่ออัปโหลดไฟล์สำรองขึ้นไปยังคลาวด์ตามโฟลเดอร์ที่ตั้งค่าไว้ใน <span class="file-badge">config/google_drive_config</span>
-                    </p>
-                </div>
-
-                <div class="step-item">
-                    <h5>การบันทึกฐานข้อมูล</h5>
-                    <p class="text-muted small">
-                        ข้อมูลจะบันทึกลงในตาราง <code>ims_house_payment</code> โดยมีการกำหนดเลขที่เอกสารในรูปแบบ <span class="code-inline">P-[บ้านเลขที่]-[งวดปี]-[รันนิ่งนัมเบอร์]</span> (เช่น P-99/99-2026-001) และตั้งค่าสถานะเริ่มต้นเป็น <strong>"รอตรวจสอบ" (N)</strong>
-                    </p>
-                </div>
-
-                <div class="step-item">
-                    <h5>การตอบกลับแชท LINE (LINE Flex Message Notification)</h5>
-                    <p class="text-muted small">
-                        เมื่อบันทึกข้อมูลเรียบร้อยแล้ว API จะส่งการ์ด Flex Message สรุปข้อมูลการโอนเงิน (เลขที่เอกสาร, บ้านเลขที่, งวดที่ชำระ, ยอดเงิน) ยิงตรงกลับเข้าไปยังหน้าต่างแชท LINE OA ของลูกบ้านโดยตรง เพื่อเป็นหลักฐานยืนยันความสำเร็จ
-                    </p>
-                </div>
-            </div>
-
-            <!-- ส่วนตรวจสอบและอนุมัติโดยนิติบุคคล -->
-            <div class="mb-5">
-                <h4 class="section-title"><i class="fas fa-check-double"></i> 4. ขั้นตอนการตรวจสอบและอนุมัติ (Juristic Verification Flow)</h4>
-                <p class="text-muted">ข้อมูลสลิปที่ลูกบ้านส่งมาจะเข้าสู่ระบบหลังบ้านเพื่อให้เจ้าหน้าที่นิติบุคคลตรวจสอบความถูกต้อง:</p>
-                
-                <div class="step-item">
-                    <h5>หน้าจอแสดงรายการตรวจสอบ (Pending Payments)</h5>
-                    <p class="text-muted small">
-                        เจ้าหน้าที่เข้าเมนู <strong>"อนุมัติชำระเงินค่าส่วนกลาง"</strong> (หน้าจอ <span class="file-badge">manage_common_fee_payment_approve</span>) รายการที่ลูกบ้านส่งผ่าน LINE OA จะปรากฏขึ้นในสถานะรออนุมัติ พร้อมแสดงภาพสลิปที่ส่งมาเปรียบเทียบ
-                    </p>
-                </div>
-
-                <div class="step-item">
-                    <h5>การอนุมัติและออกใบเสร็จ (Approval & E-Receipt)</h5>
-                    <p class="text-muted small">
-                        เมื่อเจ้าหน้าที่ตรวจสอบสลิปแล้วว่ายอดเงินโอนและงวดเดือนถูกต้อง จะทำการกด <strong>"อนุมัติ" (Approve)</strong> 
-                        ระบบจะทำการเปลี่ยนสถานะการชำระเงินในตาราง <code>ims_house_payment</code> เป็นชำระแล้ว (Y) และพิมพ์เลขที่ใบเสร็จรับเงินลงตาราง 
-                        รวมถึงยิง Flex Message ใบรับเงินอิเล็กทรอนิกส์ส่งกลับเข้าสู่แชท LINE ของลูกบ้านโดยตรงเพื่อแจ้งให้ทราบทันที
-                    </p>
-                </div>
-            </div>
-
-            <!-- ข้อควรทราบเพิ่มเติม -->
-            <div class="note-box">
-                <h5 class="font-weight-bold mb-2"><i class="fas fa-lightbulb text-warning"></i> หมายเหตุสำหรับผู้ดูแลระบบ</h5>
-                <ul class="mb-0 ps-3 small text-muted">
-                    <li class="mb-1">ไฟล์สคริปต์หลักที่ควบคุมหน้าจอลูกบ้านคือ <span class="file-badge">payment_transfer_smart</span> ในโฟลเดอร์หลัก</li>
-                    <li class="mb-1">กระบวนการบันทึกข้อมูลและส่ง Flex Message ทำงานผ่าน API <span class="file-badge">model/manage_payment_transfer_smart</span></li>
-                    <li class="mb-1">ในหน้าจอชำระเงินนี้ มีการใช้ฟังก์ชันตรวจสอบโปรโมชั่นและการคำนวณส่วนลดตามนโยบายของนิติบุคคลซึ่งรันผ่านสคริปต์หลังบ้านอัตโนมัติ</li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="card-footer text-center bg-white border-0 py-4 border-top">
-            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
         </div>
     </div>
+
+    <!-- Navigation Tabs เมนูนำทาง -->
+    <ul class="nav nav-pills justify-content-center justify-content-md-start" id="manualTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-overview-btn" data-bs-toggle="pill" data-bs-target="#tab-overview" type="button" role="tab">
+                <i class="fa-solid fa-house-laptop me-1"></i> 1. ภาพรวมระบบ
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-grid-btn" data-bs-toggle="pill" data-bs-target="#tab-grid" type="button" role="tab">
+                <i class="fa-solid fa-calendar-days text-success me-1"></i> 2. ปฏิทิน 12 เดือน & ตรวจซ้ำ
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-promo-btn" data-bs-toggle="pill" data-bs-target="#tab-promo" type="button" role="tab">
+                <i class="fa-solid fa-gift text-warning me-1"></i> 3. คำนวณเงิน & โปรโมชั่น
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-upload-btn" data-bs-toggle="pill" data-bs-target="#tab-upload" type="button" role="tab">
+                <i class="fa-solid fa-file-image text-primary me-1"></i> 4. สลิป & HEIC iOS
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-line-btn" data-bs-toggle="pill" data-bs-target="#tab-line" type="button" role="tab">
+                <i class="fa-brands fa-line text-success me-1"></i> 5. Flex Message & อนุมัติ
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-compare-btn" data-bs-toggle="pill" data-bs-target="#tab-compare" type="button" role="tab">
+                <i class="fa-solid fa-code-compare text-info me-1"></i> 6. เปรียบเทียบ 2 หน้าจอ
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-faq-btn" data-bs-toggle="pill" data-bs-target="#tab-faq" type="button" role="tab">
+                <i class="fa-solid fa-circle-question text-danger me-1"></i> 7. FAQ & การรักษาความปลอดภัย
+            </button>
+        </li>
+    </ul>
+
+    <!-- เนื้อหา Tab แต่ละส่วน -->
+    <div class="tab-content" id="manualTabContent">
+
+        <!-- ==================== TAB 1: ภาพรวมระบบ ==================== -->
+        <div class="tab-pane fade show active" id="tab-overview" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-primary fw-bold"><i class="fa-solid fa-circle-nodes me-2"></i>ภาพรวมระบบชำระค่าส่วนกลางอัจฉริยะ (System Overview)</span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">Smart LIFF Integration</span>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead" style="font-size: 1.05rem;">
+                        หน้าจอ <strong>payment_transfer_smart.php</strong> ถูกพัฒนาขึ้นเป็นพิเศษสำหรับลูกบ้านในโครงการหมู่บ้านจัดสรร PS33 ให้สามารถแจ้งชำระเงินและส่งสลิปโอนเงินค่าส่วนกลางผ่านทาง <strong>LINE Official Account (LINE OA)</strong> ได้สะดวก ง่าย และแม่นยำสูงสุด
+                    </p>
+
+                    <div class="row g-4 my-2">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <h6 class="fw-bold text-success"><i class="fa-solid fa-bolt me-2"></i>Auto-Profile Login</h6>
+                                <p class="small text-muted mb-0">
+                                    เชื่อมต่อ <strong>LINE LIFF SDK</strong> ตรวจจับตัวตนลูกบ้านอัตโนมัติ โดยไม่ต้องจำ Username/Password ระบบดึงบ้านเลขที่ ชื่อผู้พักอาศัย และอัตราค่าส่วนกลางมาให้อัตโนมัติ
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <h6 class="fw-bold text-primary"><i class="fa-solid fa-calendar-check me-2"></i>Real-time Overlap Shield</h6>
+                                <p class="small text-muted mb-0">
+                                    มีปฏิทิน 12 เดือนตรวจสอบประวัติการชำระเงินจริงจากฐานข้อมูล แสดงสถานะ ชำระแล้ว/รอตรวจสอบ/ว่าง ทันที ป้องกันการจ่ายซ้ำซ้อน 100%
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <h6 class="fw-bold text-warning"><i class="fa-brands fa-line me-2"></i>Instant Flex Receipt</h6>
+                                <p class="small text-muted mb-0">
+                                    เมื่อบันทึกข้อมูลเรียบร้อย ระบบจะส่งการ์ด Flex Message ยืนยันการโอนเงินกลับเข้าแชท LINE ของลูกบ้านทันที พร้อมปุ่มตรวจสอบประวัติ
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box mt-4">
+                        <h6 class="fw-bold text-success mb-1"><i class="fa-solid fa-diagram-project me-2"></i>กระบวนการทำงานหลัก (Workflow Pipeline)</h6>
+                        <ol class="mb-0 ps-3 small">
+                            <li>ลูกบ้านแตะเมนู <strong>"ชำระค่าส่วนกลาง"</strong> จาก Rich Menu ใน LINE OA</li>
+                            <li>ระบบเปิดหน้าต่าง LIFF ดึงข้อมูลบ้านเลขที่และค่าส่วนกลางจากตาราง <span class="code-tag">ims_house_line_user</span></li>
+                            <li>ปฏิทิน 12 เดือนโหลดข้อมูลสถานะงวดปีจาก <span class="file-badge">model/check_payment_overlap.php</span></li>
+                            <li>ลูกบ้านเลือกประเภทการชำระ (รายเดือน / รายปี) และอัปโหลดสลิป (รองรับไฟล์ HEIC จากกล้อง iPhone)</li>
+                            <li>ระบบส่งข้อมูลบันทึกลงตาราง <span class="code-tag">ims_house_payment</span> และอัปโหลดสลิปสำรองขึ้น <strong>Google Drive</strong></li>
+                            <li>ระบบยิงการ์ด <strong>LINE Flex Message</strong> สรุปยอดเงินและเลขที่เอกสารกลับเข้าแชทลูกบ้านทันที</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: ปฏิทิน 12 เดือน & ตรวจซ้ำ ==================== -->
+        <div class="tab-pane fade" id="tab-grid" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-success fw-bold"><i class="fa-solid fa-calendar-check me-2"></i>ปฏิทินสถานะ 12 เดือน และระบบตรวจจับการชำระซ้ำแบบ Real-time</span>
+                    <span class="badge bg-primary text-white">Smart Month Status Grid</span>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">
+                        หนึ่งในฟังก์ชันอัจฉริยะที่โดดเด่นของ <span class="file-badge">payment_transfer_smart.php</span> คือ <strong>Month Status Grid 12 เดือน</strong> ซึ่งเชื่อมต่อกับ <span class="file-badge">model/check_payment_overlap.php</span> เพื่อตรวจสอบความถูกต้องทันทีที่ผู้ใช้งานเลือกปีงวด
+                    </p>
+
+                    <h6 class="fw-bold text-dark mt-4 mb-2">ตัวอย่างหน้าจอจำลอง ปฏิทินสถานะ 12 เดือน (Month Status Grid)</h6>
+                    <div class="p-3 bg-light border rounded-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold small text-secondary"><i class="fa fa-calendar-check text-primary"></i> ประวัติการชำระค่าส่วนกลาง ปี 2026</span>
+                            <span class="badge bg-info text-white">บ้านเลขที่ 99/123</span>
+                        </div>
+                        
+                        <!-- จำลอง Grid 12 เดือน -->
+                        <div class="mock-grid">
+                            <div class="mock-month paid"><i class="fa fa-check text-success"></i> ม.ค.<br><span style="font-size: 9px;">ชำระแล้ว</span></div>
+                            <div class="mock-month paid"><i class="fa fa-check text-success"></i> ก.พ.<br><span style="font-size: 9px;">ชำระแล้ว</span></div>
+                            <div class="mock-month pending"><i class="fa fa-clock text-warning"></i> มี.ค.<br><span style="font-size: 9px;">รอตรวจ</span></div>
+                            <div class="mock-month selecting">เม.ย.<br><span style="font-size: 9px;">เลือกอยู่</span></div>
+                            <div class="mock-month selecting">พ.ค.<br><span style="font-size: 9px;">เลือกอยู่</span></div>
+                            <div class="mock-month">มิ.ย.<br><span style="font-size: 9px;">ว่าง</span></div>
+                            <div class="mock-month">ก.ค.<br><span style="font-size: 9px;">ว่าง</span></div>
+                            <div class="mock-month">ส.ค.<br><span style="font-size: 9px;">ว่าง</span></div>
+                            <div class="mock-month">ก.ย.<br><span style="font-size: 9px;">ว่าง</span></div>
+                            <div class="mock-month">ต.ค.<br><span style="font-size: 9px;">ว่าง</span></div>
+                            <div class="mock-month">พ.ย.<br><span style="font-size: 9px;">ว่าง</span></div>
+                            <div class="mock-month">ธ.ค.<br><span style="font-size: 9px;">ว่าง</span></div>
+                        </div>
+
+                        <div class="d-flex flex-wrap justify-content-end gap-3 small text-muted mt-2">
+                            <span><span class="badge bg-success" style="width: 10px; height: 10px; padding: 0;"> </span> ชำระแล้ว (อนุมัติ)</span>
+                            <span><span class="badge bg-warning text-dark" style="width: 10px; height: 10px; padding: 0;"> </span> รอตรวจสอบสลิป</span>
+                            <span><span class="badge bg-secondary" style="width: 10px; height: 10px; padding: 0;"> </span> ว่าง (เลือกชำระได้)</span>
+                            <span><span class="badge bg-danger" style="width: 10px; height: 10px; padding: 0;"> </span> ทับซ้อน (เลือกซ้ำ)</span>
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-dark mt-4 mb-2">จุดเด่นของการทำงานในระบบตรวจซ้ำ:</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100 bg-white">
+                                <h6 class="fw-bold text-primary"><i class="fa-solid fa-hand-pointer me-2"></i>Interactive Quick-Select</h6>
+                                <p class="small text-muted mb-0">
+                                    ลูกบ้านสามารถ <strong>"คลิกที่กล่องเดือน"</strong> ในปฏิทินได้โดยตรง ระบบจะทำการสลับช่วงงวดเดือนเริ่มต้นและสิ้นสุดให้ตรงกับเดือนที่คลิกทันทีโดยไม่ต้องไปเลื่อน Dropdown
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100 bg-white">
+                                <h6 class="fw-bold text-success"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>Next Available Auto-Suggestion</h6>
+                                <p class="small text-muted mb-0">
+                                    หากเดือนที่เลือกล่วงหน้ามีรายการอยู่แล้ว ระบบจะแสดงปุ่มแนะนำเดือนว่างถัดไปให้อัตโนมัติ (เช่น <em>"เปลี่ยนไปชำระเดือน มิถุนายน ทันที"</em>)
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100 bg-white">
+                                <h6 class="fw-bold text-danger"><i class="fa-solid fa-shield-halved me-2"></i>Real-time Safety Submit Lock</h6>
+                                <p class="small text-muted mb-0">
+                                    เมื่อตรวจพบการเลือกเดือนที่ซ้ำซ้อนกับรายการเดิม ปุ่ม <strong>"บันทึกข้อมูล"</strong> จะถูก Disable (ล็อค) ทันที พร้อมแสดงกล่องเตือนสีแดงกระพริบเพื่อป้องกันลูกบ้านส่งสลิปซ้ำ
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 h-100 bg-white">
+                                <h6 class="fw-bold text-info"><i class="fa-solid fa-server me-2"></i>Backend Double Validation</h6>
+                                <p class="small text-muted mb-0">
+                                    มีสูตร Interval Overlap Check <span class="code-tag">(Start &le; Ex_To AND End &ge; Ex_Start)</span> ป้องกันซ้ำทั้งในระดับ JavaScript และในระดับ PHP Server-side
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: คำนวณเงิน & โปรโมชั่น ==================== -->
+        <div class="tab-pane fade" id="tab-promo" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-warning fw-bold"><i class="fa-solid fa-calculator me-2"></i>ตรรกะการคำนวณเงิน & แคมเปญส่วนลดรายปี (Promotion Logic)</span>
+                    <span class="badge bg-warning text-dark">Early Bird Discount System</span>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light p-3 rounded-3">
+                                <h5 class="fw-bold text-success mb-2"><i class="fa-solid fa-calendar-check me-2"></i>1. โหมดชำระรายปี (Yearly Payment)</h5>
+                                <p class="small text-muted mb-2">เหมาะสำหรับลูกบ้านที่ต้องการชำระเหมาล่วงหน้าทั้งปี (12 เดือน)</p>
+                                <ul class="small ps-3 mb-0 text-secondary">
+                                    <li>ระบบล็อคเดือนเริ่มต้นเป็น <strong>มกราคม (1)</strong> และเดือนสิ้นสุดเป็น <strong>ธันวาคม (12)</strong> อัตโนมัติ</li>
+                                    <li>ช่องจำนวนเดือนที่ชำระจะถูกล็อคค่าเป็น <span class="code-tag">12</span></li>
+                                    <li>หากอยู่ในช่วงโปรโมชั่น ระบบจะคำนวณยอดเงินเพียง <strong>11 เดือน</strong> ให้อัตโนมัติ (รับส่วนลด 1 เดือนฟรี)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light p-3 rounded-3">
+                                <h5 class="fw-bold text-warning mb-2"><i class="fa-solid fa-calendar-minus me-2"></i>2. โหมดชำระรายเดือน (Monthly Payment)</h5>
+                                <p class="small text-muted mb-2">สำหรับชำระรายเดือน หรือชำระครั้งละ 2 - 11 เดือน</p>
+                                <ul class="small ps-3 mb-0 text-secondary">
+                                    <li>ผู้ใช้สามารถเลือกช่วงเดือนเริ่มต้น - ถึงงวดเดือน ได้อย่างอิสระ</li>
+                                    <li>ระบบมีฟังก์ชัน <span class="code-tag">updateMonthLogic</span> ซิงค์ความสัมพันธ์ระหว่างเดือนเริ่มต้น, เดือนสิ้นสุด และจำนวนเดือนให้อัตโนมัติ</li>
+                                    <li>ป้องกันการเลือกเดือนย้อนกลับ (เช่น Start &gt; End) และแจ้งเตือนไม่ให้เลือกข้ามปี</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h5 class="fw-bold text-success mb-2"><i class="fa-solid fa-gift me-2"></i>แคมเปญส่วนลดพิเศษ: ชำระรายปีล่วงหน้า (Early Bird Promotion)</h5>
+                        <p class="small mb-2">
+                            ระบบได้รับการตั้งโปรแกรมตรวจสอบวันที่ปัจจุบันแบบ Dynamic เพื่อมอบสิทธิประโยชน์ส่วนลดแก่นิติบุคคล:
+                        </p>
+                        <table class="table table-sm table-bordered bg-white small mb-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ช่วงเวลาของแคมเปญ</th>
+                                    <th>เงื่อนไขปีที่เลือก</th>
+                                    <th>สิทธิประโยชน์ส่วนลด</th>
+                                    <th>หมายเหตุในเอกสาร</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>15 ธ.ค. – 31 ธ.ค.</strong></td>
+                                    <td>ต้องเลือกชำระสำหรับ <strong>ปีถัดไป (Next Year)</strong></td>
+                                    <td><span class="badge bg-success">ลด 1 เดือน</span> (จ่าย 11 เดือน)</td>
+                                    <td>ชำระรายปีล่วงหน้า (ส่วนลด 1 เดือน)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>1 ม.ค. – 31 ม.ค.</strong></td>
+                                    <td>เลือกชำระสำหรับ <strong>ปีปัจจุบัน (Current Year)</strong> หรือปีถัดไป</td>
+                                    <td><span class="badge bg-success">ลด 1 เดือน</span> (จ่าย 11 เดือน)</td>
+                                    <td>ชำระรายปีล่วงหน้า (ส่วนลด 1 เดือน)</td>
+                                </tr>
+                                <tr>
+                                    <td>ช่วงเวลาปกติ / จ่ายย้อนหลัง</td>
+                                    <td>เลือกปีปัจจุบัน หรือปีในอดีต (ไม่เข้าเงื่อนไข)</td>
+                                    <td>คิดเต็ม 12 เดือนปกติ</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="small text-muted mt-1">
+                            <i class="fa-solid fa-circle-info text-primary"></i> เมื่อลูกบ้านเปิดเข้าระบบในช่วงโปรโมชั่น ระบบจะแสดง <strong>Promotion Modal Pop-up</strong> ประชาสัมพันธ์ทันที
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: สลิป & HEIC iOS ==================== -->
+        <div class="tab-pane fade" id="tab-upload" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-primary fw-bold"><i class="fa-solid fa-image me-2"></i>การอัปโหลด Slip & ระบบแปลงไฟล์ HEIC จาก iPhone อัตโนมัติ</span>
+                    <span class="badge bg-info text-white">Client-side HEIC Converter</span>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">
+                        การส่งสลิปโอนเงินผ่านสมาร์ทโฟนของลูกบ้านมักประสบปัญหาความเข้ากันได้ของชนิดไฟล์ โดยเฉพาะผู้ใช้ iPhone/iPad ที่บันทึกภาพในฟอร์แมต <strong>HEIC / HEIF</strong>
+                    </p>
+
+                    <div class="row g-4 my-2">
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 bg-white h-100">
+                                <h6 class="fw-bold text-success"><i class="fa-brands fa-apple me-2"></i>ระบบแปลงภาพ HEIC อัตโนมัติ (heic2any)</h6>
+                                <p class="small text-muted mb-2">
+                                    ในหน้าจอ <span class="file-badge">payment_transfer_smart.php</span> ได้ผสานไลบรารี <span class="code-tag">heic2any</span> 
+                                    เมื่อลูกบ้านเลือกไฟล์ภาพสลิปสกุล <span class="code-tag">.heic</span> หรือ <span class="code-tag">.heif</span> ตัวสคริปต์บนเบราว์เซอร์จะทำการแปลงเป็น <span class="code-tag">JPEG</span> ให้ทันทีแบบเบื้องหลัง ก่อนส่งไปยังเซิร์ฟเวอร์
+                                </p>
+                                <ul class="small text-muted ps-3 mb-0">
+                                    <li>ไม่ต้องใช้แอปพลิเคชันแปลงภาพเสริม</li>
+                                    <li>ภาพสลิปเปิดดูได้ทันทีบนระบบหลังบ้านและทุกเบราว์เซอร์</li>
+                                    <li>รักษาคุณภาพความคมชัดของหลักฐานโอนเงิน</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 bg-white h-100">
+                                <h6 class="fw-bold text-primary"><i class="fa-solid fa-cloud-arrow-up me-2"></i>การจัดเก็บและสำรองข้อมูลขึ้น Google Drive</h6>
+                                <p class="small text-muted mb-2">
+                                    เมื่อบันทึกข้อมูลสำเร็จ ไฟล์ภาพจะถูกประมวลผลสองทางพร้อมกัน:
+                                </p>
+                                <ul class="small text-muted ps-3 mb-0">
+                                    <li><strong>เซิร์ฟเวอร์หลัก:</strong> บันทึกเก็บในโฟลเดอร์ <span class="code-tag">uploads/slips/</span> โดยตั้งชื่อไฟล์ด้วย Timestamp ป้องกันชื่อซ้ำ</li>
+                                    <li><strong>Google Drive Cloud:</strong> เชื่อมต่อผ่าน <span class="file-badge">util/google_drive_util.php</span> เพื่ออัปโหลดสำรองขึ้น Cloud โครงการตาม Folder ID ที่กำหนดไว้</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h6 class="fw-bold text-primary mb-1"><i class="fa-solid fa-list-check me-2"></i>ข้อกำหนดและเงื่อนไขการแนบไฟล์</h6>
+                        <ul class="mb-0 ps-3 small text-muted">
+                            <li><strong>ชนิดไฟล์ที่รองรับ:</strong> JPEG, JPG, PNG, GIF และ HEIC</li>
+                            <li><strong>ขนาดไฟล์สูงสุด:</strong> ไม่เกิน 30 MB ต่อภาพ</li>
+                            <li><strong>การแสดงผลตัวอย่าง (Preview):</strong> ทันทีที่เลือกไฟล์ จะมีรูปตัวอย่างสลิปปรากฏด้านล่างเพื่อให้ลูกบ้านตรวจทานความถูกต้องก่อนกดยืนยัน</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 5: Flex Message & อนุมัติ ==================== -->
+        <div class="tab-pane fade" id="tab-line" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-success fw-bold"><i class="fa-brands fa-line me-2"></i>การส่ง LINE Flex Message & ขั้นตอนการตรวจสอบของนิติบุคคล</span>
+                    <span class="badge bg-success text-white">Automated Messaging & Approval</span>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-dark mb-2">การ์ดแจ้งเตือนอัตโนมัติ (LINE Flex Message)</h5>
+                            <p class="small text-muted">
+                                เมื่อลูกบ้านกดส่งข้อมูลสำเร็จ ระบบจะประมวลผลสร้างเลขที่เอกสารในรูปแบบ <span class="code-tag">P-[บ้านเลขที่]-[งวดปี]-[Running]</span> 
+                                และยิงการ์ด Flex Message เข้าห้องแชทของลูกบ้านโดยตรง เพื่อเป็นหลักฐานยืนยันธุรกรรมทันที
+                            </p>
+                            
+                            <div class="highlight-box">
+                                <h6 class="fw-bold text-success mb-1">จุดเด่นของการ์ด Flex Message:</h6>
+                                <ul class="mb-0 ps-3 small text-muted">
+                                    <li>แสดงโลโก้นิติบุคคลโครงการ PS33 ชัดเจน สวยงาม</li>
+                                    <li>ระบุเลขที่เอกสาร, บ้านเลขที่, ยอดเงินชำระ, ช่วงเดือน และวันเวลาทำรายการ</li>
+                                    <li>มีปุ่ม <strong>"ดูประวัติการชำระ"</strong> ที่เปิดหน้าประวัติผ่าน LINE LIFF ได้ทันที</li>
+                                    <li>หน้าต่างบันทึกข้อมูลจะทำการปิดตัวเองอัตโนมัติหลังทำรายการ 2 วินาที</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- จำลอง Flex Message -->
+                        <div class="col-md-6 text-center">
+                            <div class="flex-card-mockup text-start">
+                                <div class="flex-header">
+                                    <img src="../../img/logo/niti_ps33_header200.png" onerror="this.src='ps33_logo.png'" width="120" alt="Logo" class="d-block mx-auto mb-2">
+                                    <h6 class="fw-bold text-center mb-0" style="color: #000;">แจ้งการโอนเงิน</h6>
+                                </div>
+                                <div class="flex-body">
+                                    <div class="flex-row">
+                                        <span class="label">บ้านเลขที่:</span>
+                                        <span class="val">99/123</span>
+                                    </div>
+                                    <div class="flex-row">
+                                        <span class="label">จำนวนเงิน:</span>
+                                        <span class="val text-success fw-bold">6,600.00 บาท</span>
+                                    </div>
+                                    <div class="flex-row">
+                                        <span class="label">ช่วงเดือน:</span>
+                                        <span class="val">มกราคม - ธันวาคม 2026</span>
+                                    </div>
+                                    <div class="flex-row">
+                                        <span class="label">วันที่รายการ:</span>
+                                        <span class="val" style="font-size: 11px;">27-08-2026 16:30:00</span>
+                                    </div>
+                                </div>
+                                <div class="flex-footer">
+                                    <button class="btn btn-sm btn-success w-100 fw-bold" style="background-color: #1DB954; border-radius: 8px;">
+                                        <i class="fa-solid fa-receipt me-1"></i> ดูประวัติการชำระ
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-1">ภาพจำลองการ์ด LINE Flex Message ที่ส่งเข้าแชทลูกบ้าน</small>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- ขั้นตอนการตรวจสอบของนิติบุคคล -->
+                    <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-user-check text-primary me-2"></i>ขั้นตอนการตรวจสอบและอนุมัติโดยนิติบุคคล (Juristic Approval Flow)</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <span class="step-circle">1</span>
+                                <strong class="text-dark d-block mt-2 mb-1">รายการรออนุมัติ</strong>
+                                <p class="small text-muted mb-0">
+                                    เจ้าหน้าที่นิติบุคคลเปิดหน้าจอ <span class="file-badge">manage_common_fee_payment_approve</span> รายการที่ลูกบ้านส่งผ่าน Smart Payment จะขึ้นสถานะ <strong>"รอตรวจสอบ" (Status = N)</strong>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <span class="step-circle">2</span>
+                                <strong class="text-dark d-block mt-2 mb-1">เทียบสลิปกับ Statement</strong>
+                                <p class="small text-muted mb-0">
+                                    เจ้าหน้าที่คลิกดูภาพสลิปที่ส่งมา ตรวจสอบยอดเงิน วันที่ และบัญชีรับโอน เทียบกับยอดเงินเข้าในบัญชีธนาคารของนิติบุคคล
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100">
+                                <span class="step-circle">3</span>
+                                <strong class="text-dark d-block mt-2 mb-1">อนุมัติ & ออกใบรับเงิน</strong>
+                                <p class="small text-muted mb-0">
+                                    เมื่อกด <strong>"อนุมัติ" (Approve)</strong> ระบบจะเปลี่ยนสถานะเป็น <span class="badge bg-success">ชำระแล้ว (Y)</span> พร้อมบันทึกเลขที่ใบเสร็จรับเงิน และส่งข้อความใบเสร็จอิเล็กทรอนิกส์กลับเข้า LINE ลูกบ้าน
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 6: เปรียบเทียบ 2 หน้าจอ ==================== -->
+        <div class="tab-pane fade" id="tab-compare" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-info fw-bold"><i class="fa-solid fa-code-compare me-2"></i>เปรียบเทียบความแตกต่างระหว่าง 2 หน้าจอการทำงาน</span>
+                    <span class="badge bg-secondary text-white">payment_transfer_smart.php vs payment_transfer.php</span>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">
+                        ระบบ PS33 Home มีหน้าจอการบันทึกการชำระเงิน 2 รูปแบบ ซึ่งถูกออกแบบมาเพื่อรองรับกลุ่มผู้ใช้และอุปกรณ์ที่แตกต่างกันอย่างชัดเจน:
+                    </p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-custom align-middle small">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%;">คุณสมบัติ / ฟังก์ชันการทำงาน</th>
+                                    <th style="width: 37.5%;" class="text-success"><i class="fa-brands fa-line me-1"></i> payment_transfer_smart.php</th>
+                                    <th style="width: 37.5%;" class="text-primary"><i class="fa-solid fa-desktop me-1"></i> payment_transfer.php</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold">1. ช่องทางการเข้าใช้งานหลัก</td>
+                                    <td><strong>LINE OA ผ่าน LINE LIFF SDK</strong> (สมาร์ทโฟน)</td>
+                                    <td><strong>Web Browser บนคอมพิวเตอร์ / แท็บเล็ต</strong> (Web Portal)</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">2. กลุ่มผู้ใช้งานเป้าหมาย</td>
+                                    <td>ลูกบ้านโครงการที่ลงทะเบียนผูกบัญชี LINE แล้ว</td>
+                                    <td>เจ้าหน้าที่นิติบุคคล / แอดมิน / ลูกบ้านบนเว็บหลัก</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">3. การระบุตัวตนและดึงข้อมูล</td>
+                                    <td>ตรวจจับ LINE User ID อัตโนมัติ ล็อคบ้านเลขที่และชื่อผู้ชำระ</td>
+                                    <td>ล็อกอินด้วยรหัสผ่าน แอดมินสามารถพิมพ์ค้นหาบ้านเลขที่ใดก็ได้</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">4. ปฏิทิน 12 เดือนแสดงสถานะ Real-time</td>
+                                    <td><span class="badge bg-success"><i class="fa fa-check"></i> มี (Interactive Grid)</span> คลิกเลือกเดือนได้</td>
+                                    <td><span class="badge bg-secondary"><i class="fa fa-times"></i> ไม่มี</span> (ใช้การเลือก Dropdown เริ่ม-สิ้นสุด)</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">5. ระบบแนะนำเดือนว่างถัดไป</td>
+                                    <td><span class="badge bg-success"><i class="fa fa-check"></i> มีปุ่มแนะนำ</span> สลับเดือนว่างถัดไปทันที</td>
+                                    <td><span class="badge bg-secondary"><i class="fa fa-times"></i> ไม่มี</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">6. วิธีการชำระเงินที่รองรับ</td>
+                                    <td><strong>โอนเงินผ่านธนาคาร</strong> (แนบสลิปบังคับ)</td>
+                                    <td><strong>โอนเงิน</strong> หรือ <strong>เงินสด (Cash)</strong></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">7. ระบบคำนวณเงินสด & เงินทอน</td>
+                                    <td><span class="badge bg-secondary"><i class="fa fa-times"></i> ไม่มี</span> (เนื่องจากเป็นการโอนผ่านแอป)</td>
+                                    <td><span class="badge bg-success"><i class="fa fa-check"></i> มีช่อง "รับเงินสด"</span> และคำนวณเงินทอนอัตโนมัติ</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">8. การแปลงไฟล์รูปสลิป HEIC (iPhone)</td>
+                                    <td><span class="badge bg-success"><i class="fa fa-check"></i> มี (heic2any)</span> แปลงเป็น JPG บนเครื่องทันที</td>
+                                    <td>Preview รูปภาพทั่วไป (JPEG / PNG)</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">9. การแจ้งเตือนหลังบันทึก</td>
+                                    <td>ส่ง <strong>LINE Flex Message</strong> เข้าแชทลูกบ้านทันที</td>
+                                    <td>แสดงข้อความ Alertify บนหน้าจอเว็บ</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">10. ระบบสำรองข้อมูล Google Drive</td>
+                                    <td><span class="badge bg-success"><i class="fa fa-check"></i> บันทึก & ซิงค์ Cloud</span> ผ่าน API</td>
+                                    <td>บันทึกเก็บใน Server Local Directory</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 7: FAQ & การรักษาความปลอดภัย ==================== -->
+        <div class="tab-pane fade" id="tab-faq" role="tabpanel">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <span class="text-danger fw-bold"><i class="fa-solid fa-circle-question me-2"></i>คำถามที่พบบ่อย & มาตรฐานความปลอดภัย (FAQ & Security)</span>
+                    <span class="badge bg-danger text-white">Security & PDPA Policy</span>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="accordion" id="manualFaqAccordion">
+                        <div class="accordion-item mb-2 border rounded-3">
+                            <h2 class="accordion-header" id="faqHead1">
+                                <button class="accordion-button fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Q1: หากเปิดหน้าจอแล้วระบบแจ้งเตือน "ไม่พบผู้ใช้งานในระบบ" ต้องทำอย่างไร?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#manualFaqAccordion">
+                                <div class="accordion-body small text-muted">
+                                    <strong>สาเหตุ:</strong> บัญชี LINE ของลูกบ้านยังไม่ได้ทำการลงทะเบียนผูกกับบ้านเลขที่ในโครงการ<br>
+                                    <strong>วิธีแก้ไข:</strong> ให้ลูกบ้านแตะเมนู <strong>"ลงทะเบียนลูกบ้าน"</strong> บน Rich Menu ของ LINE OA ก่อน เพื่อบันทึกข้อมูลเบอร์โทรศัพท์และบ้านเลขที่เข้าสู่ตาราง <span class="code-tag">ims_house_line_user</span> จากนั้นจะสามารถเข้าใช้งานหน้าจอชำระค่าส่วนกลางได้ทันที
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item mb-2 border rounded-3">
+                            <h2 class="accordion-header" id="faqHead2">
+                                <button class="accordion-button fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Q2: ปุ่ม "บันทึกข้อมูล" เป็นสีเทา (Disabled) กดไม่ได้ เกิดจากอะไร?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#manualFaqAccordion">
+                                <div class="accordion-body small text-muted">
+                                    <strong>สาเหตุที่ 1:</strong> ช่วงงวดเดือนที่เลือกเกิดการ <strong>ทับซ้อน (Conflict)</strong> กับประวัติการชำระเงินเดิมที่ชำระแล้วหรือกำลังรอตรวจสอบอยู่ ให้สังเกตกล่องเดือนสีแดงในปฏิทิน 12 เดือน และคลิกปุ่มแนะนำเพื่อเปลี่ยนไปชำระเดือนถัดไป<br>
+                                    <strong>สาเหตุที่ 2:</strong> ยังไม่ได้ทำการเลือกไฟล์ภาพสลิปโอนเงิน หรือยอดเงินชำระเป็น 0 บาท
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item mb-2 border rounded-3">
+                            <h2 class="accordion-header" id="faqHead3">
+                                <button class="accordion-button fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Q3: หากลูกบ้านโอนเงินผิดยอด หรือแนบสลิปผิดใบ จะต้องดำเนินการอย่างไร?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#manualFaqAccordion">
+                                <div class="accordion-body small text-muted">
+                                    เมื่อรายการถูกส่งเข้าสู่ระบบ รายการจะมีสถานะเป็น <strong>"รอตรวจสอบ" (N)</strong> ยังไม่ถือว่าการชำระเงินเสร็จสมบูรณ์ เจ้าหน้าที่นิติบุคคลสามารถตรวจสอบพบข้อผิดพลาดและทำการปฏิเสธรายการ พร้อมแจ้งให้ลูกบ้านส่งสลิปที่ถูกต้องเข้ามาใหม่ได้ผ่านระบบจัดการหลังบ้าน
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item mb-2 border rounded-3">
+                            <h2 class="accordion-header" id="faqHead4">
+                                <button class="accordion-button fw-bold text-dark collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    Q4: การชำระเงินข้ามปี (เช่น เริ่ม ธ.ค. 2026 ถึง ม.ค. 2027) ทำได้หรือไม่?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#manualFaqAccordion">
+                                <div class="accordion-body small text-muted">
+                                    ระบบออกแบบให้บันทึกรายการแยกตามปีงบประมาณเพื่อความถูกต้องของระบบบัญชีและภาษี หากต้องการชำระข้ามปี ให้ทำรายการของปีปัจจุบันให้เสร็จสิ้นก่อน แล้วจึงทำรายการของปีถัดไปแยกอีก 1 รายการ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box mt-4">
+                        <h6 class="fw-bold text-warning-emphasis mb-1"><i class="fa-solid fa-user-shield me-2"></i>นโยบายความคุ้มครองข้อมูลส่วนบุคคล (PDPA & Data Protection)</h6>
+                        <p class="small text-muted mb-0">
+                            ไฟล์ภาพสลิปและข้อมูลการเงินจะถูกจัดเก็บในโครงสร้าง Directory ที่มีการจำกัดสิทธิ์การเข้าถึง และแสดงผลเฉพาะเจ้าของบ้านเลขที่และคณะกรรมการนิติบุคคลที่มีสิทธิ์ตรวจสอบเท่านั้น ข้อมูลทั้งหมดได้รับการเข้ารหัสและสำรองข้อมูลบน Cloud ตามมาตรฐานความปลอดภัยสากล
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ส่วนท้ายเอกสาร (Footer) -->
+    <div class="text-center text-muted small py-4 border-top">
+        <p class="mb-1"><strong>PS33 Home System</strong> &bull; ระบบบริหารจัดการโครงการหมู่บ้านจัดสรรอัจฉริยะ</p>
+        <p class="mb-0 text-secondary" style="font-size: 0.82rem;">เอกสารคู่มือการใช้งานเวอร์ชันล่าสุด &copy; 2026 PS33 Village Management. All rights reserved.</p>
+    </div>
+
 </div>
 
+<!-- Bootstrap 5 JS Bundle CDN -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
