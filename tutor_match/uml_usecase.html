@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorMatch AI - Use Cases & UML Architecture Design</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid.js for Diagrams -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#e0e7ff',
+                primaryTextColor: '#1e1b4b',
+                primaryBorderColor: '#6366f1',
+                lineColor: '#4f46e5',
+                secondaryColor: '#ecfdf5',
+                tertiaryColor: '#f8fafc',
+                fontFamily: "'Inter', 'Noto Sans Thai', sans-serif"
+            },
+            flowchart: { curve: 'basis', htmlLabels: true },
+            sequence: { actorFontSize: 13, noteFontSize: 12, messageFontSize: 12 }
+        });
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(226, 232, 240, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --primary: #7c3aed;
+            --primary-glow: rgba(124, 58, 237, 0.08);
+            --secondary: #059669;
+            --accent: #2563eb;
+            --warning: #d97706;
+            --danger: #e11d48;
+            --line-green: #06c755;
+            --gradient-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            --font-main: 'Inter', 'Noto Sans Thai', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow-sm: 0 2px 8px -1px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 10px 25px -3px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.07) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.07) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            padding-bottom: 90px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 50px 20px 35px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 3px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .badge {
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            border: 1px solid rgba(219, 39, 119, 0.3);
+            color: #db2777;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 750px;
+            margin: 0 auto 20px;
+            font-weight: 400;
+        }
+
+        /* Quick Navigation Bar */
+        .quick-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 25px 0 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12);
+        }
+
+        /* Section & Cards */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 40px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title span.icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pill-tag {
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-family: var(--font-code);
+            text-transform: uppercase;
+        }
+
+        .pill-purple { background: rgba(124, 58, 237, 0.1); color: var(--primary); border: 1px solid rgba(124, 58, 237, 0.2); }
+        .pill-blue { background: rgba(37, 99, 235, 0.1); color: var(--accent); border: 1px solid rgba(37, 99, 235, 0.2); }
+        .pill-green { background: rgba(5, 150, 105, 0.1); color: var(--secondary); border: 1px solid rgba(5, 150, 105, 0.2); }
+        .pill-amber { background: rgba(217, 119, 6, 0.1); color: var(--warning); border: 1px solid rgba(217, 119, 6, 0.2); }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 15px 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(248, 250, 252, 0.7);
+        }
+
+        /* Diagrams Container */
+        .diagram-box {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+            text-align: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .diagram-caption {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        /* Use Case Details Grid */
+        .uc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .uc-item {
+            background: #fff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .uc-id {
+            font-family: var(--font-code);
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .uc-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .uc-field {
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .uc-field strong {
+            color: var(--text-primary);
+        }
+
+        /* Footer Link */
+        .portal-bar {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 25px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gradient-1);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+            transition: all 0.3s;
+        }
+
+        .btn-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .section-title { font-size: 1.35rem; }
+            .card { padding: 20px; }
+            .uc-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="badge">Architecture & Design Specification</div>
+            <h1>TutorMatch AI: Use Cases & UML Diagrams</h1>
+            <p class="subtitle">เอกสารวิเคราะห์และออกแบบเชิงระบบ แผนภาพยูสเคส (Use Case Diagram) และสถาปัตยกรรม UML ครบวงจรสำหรับระบบจับคู่ติวเตอร์อัจฉริยะ</p>
+            
+            <!-- Quick Navigation -->
+            <div class="quick-nav">
+                <a href="#actors" class="nav-btn">👤 Actors</a>
+                <a href="#use-case-diagram" class="nav-btn">📊 Use Case Diagram</a>
+                <a href="#specifications" class="nav-btn">📝 Use Case Specs</a>
+                <a href="#class-diagram" class="nav-btn">🏛️ Class Diagram</a>
+                <a href="#sequence-diagrams" class="nav-btn">⏱️ Sequence Diagrams</a>
+                <a href="#activity-diagram" class="nav-btn">🔄 Activity Diagram</a>
+                <a href="#state-diagram" class="nav-btn">🚦 State Machine</a>
+                <a href="#component-diagram" class="nav-btn">📦 Deployment</a>
+            </div>
+        </header>
+
+        <!-- SECTION 1: ACTORS -->
+        <section id="actors">
+            <h2 class="section-title"><span class="icon">👥</span> 1. ผู้กระทำในระบบ (System Actors)</h2>
+            <div class="card">
+                <p style="margin-bottom: 16px; color: var(--text-secondary);">
+                    ระบบ <strong>TutorMatch AI</strong> มีผู้มีส่วนได้ส่วนเสียและระบบภายนอกที่เข้ามามีปฏิสัมพันธ์กับระบบ แบ่งออกเป็น 2 กลุ่มหลัก:
+                </p>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 22%;">Actor Name</th>
+                                <th style="width: 18%;">ประเภท (Type)</th>
+                                <th>บทบาทและหน้าที่ในระบบ (Role & Responsibility)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ผู้เรียน (Student)</strong></td>
+                                <td><span class="pill-tag pill-blue">Primary Human</span></td>
+                                <td>ผู้เรียนหรือผู้ปกครองที่เข้ามาค้นหาผู้สอน ลงทะเบียน ยืนยันตัวตนด้วยใบหน้า ระบุความต้องการภาษาไทย คัดกรองติวเตอร์ และติดต่อนัดหมายเวลาเรียน</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ผู้สอน / ติวเตอร์ (Tutor)</strong></td>
+                                <td><span class="pill-tag pill-purple">Primary Human</span></td>
+                                <td>ผู้สอนที่เข้ามาเปิดรับสอนพิเศษ ลงทะเบียน สแกนใบหน้าเพื่อความปลอดภัย บันทึกโปรไฟล์ ความเชี่ยวชาญ สไตล์การสอน อัตราค่าเรียน และพิจารณารับคำขอนัดหมาย</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ผู้ดูแลระบบ (Admin)</strong></td>
+                                <td><span class="pill-tag pill-amber">Secondary Human</span></td>
+                                <td>ผู้ดูแลความเรียบร้อยของระบบ ตรวจสอบประวัติการใช้งาน และจำลองชุดข้อมูลติวเตอร์ตัวอย่าง (Mock Data Seed) สำหรับทดสอบระบบ</td>
+                            </tr>
+                            <tr>
+                                <td><strong>AI Engine (Biometrics & NLP)</strong></td>
+                                <td><span class="pill-tag pill-purple">Internal Subsystem</span></td>
+                                <td>ระบบตรวจจับและรู้จำใบหน้า (Haar Cascade & LBPH) และระบบประมวลผลภาษาธรรมชาติ (PyThaiNLP Tokenizer + TF-IDF Vectorizer + Cosine Similarity)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LINE Platform (OA & LIFF)</strong></td>
+                                <td><span class="pill-tag pill-green">External System</span></td>
+                                <td>ช่องทางหน้ากากติดต่อผู้ใช้งาน (LINE Front-end Framework) และระบบส่งข้อความแจ้งเตือน (Messaging API & Flex Messages)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: USE CASE DIAGRAM -->
+        <section id="use-case-diagram">
+            <h2 class="section-title"><span class="icon">📊</span> 2. แผนภาพยูสเคส (Use Case Diagram)</h2>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">TutorMatch AI Overall Use Case Diagram</div>
+                    <span class="pill-tag pill-purple">UML 2.5</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    แสดงขอบเขตของระบบ (System Boundary), Use Case หลักทั้ง 9 รายการ, ความสัมพันธ์กับ Actors รวมถึงการพึ่งพากลไก AI และ LINE Platform ผ่านความสัมพันธ์ <code>&lt;&lt;include&gt;&gt;</code> และ <code>&lt;&lt;extend&gt;&gt;</code>:
+                </p>
+
+                <div class="diagram-box">
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Actors ["ผู้กระทำ (Actors)"]
+        Student(("🧑‍🎓 ผู้เรียน / นักเรียน\n(Student)"))
+        Tutor(("👨‍🏫 ผู้สอน / ติวเตอร์\n(Tutor)"))
+        Admin(("🛡️ ผู้ดูแลระบบ\n(System Admin)"))
+    end
+
+    subgraph System ["ระบบ TutorMatch AI Core System"]
+        UC1(["UC-01: สมัครสมาชิกและเลือกบทบาท"])
+        UC2(["UC-02: สแกนลงทะเบียนใบหน้าชีวมิติ"])
+        UC3(["UC-03: ล็อกอินยืนยันตัวตนด้วยใบหน้า"])
+        UC4(["UC-04: บันทึกข้อมูลประวัติและสไตล์การสอน"])
+        UC5(["UC-05: ค้นหาและจับคู่ติวเตอร์ด้วย AI"])
+        UC6(["UC-06: จองนัดหมายเวลาเรียน"])
+        UC7(["UC-07: จัดการคำขอนัดหมาย (อนุมัติ/ปฏิเสธ)"])
+        UC8(["UC-08: สื่อสารตรงผ่าน LINE Official Account"])
+        UC9(["UC-09: จำลองข้อมูลติวเตอร์ตัวอย่าง (Seeding)"])
+    end
+
+    subgraph Subsystems ["ระบบประมวลผลภายนอก / AI Engines"]
+        FaceAI["📸 AI Face Engine\n(Haar Cascade + LBPH)"]
+        MatchAI["🧠 AI Semantic Match Engine\n(PyThaiNLP + TF-IDF)"]
+        LineGateway["💬 LINE Messaging Platform\n(LIFF & Flex Message)"]
+    end
+
+    Student --> UC1
+    Student --> UC2
+    Student --> UC3
+    Student --> UC5
+    Student --> UC6
+    Student --> UC8
+
+    Tutor --> UC1
+    Tutor --> UC2
+    Tutor --> UC3
+    Tutor --> UC4
+    Tutor --> UC7
+    Tutor --> UC8
+
+    Admin --> UC9
+
+    UC2 -.->|&lt;&lt;include&gt;&gt;| FaceAI
+    UC3 -.->|&lt;&lt;include&gt;&gt;| FaceAI
+    UC5 -.->|&lt;&lt;include&gt;&gt;| MatchAI
+    UC8 -.->|&lt;&lt;include&gt;&gt;| LineGateway
+    UC6 -.->|&lt;&lt;extend&gt;&gt;| UC7
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 1: แผนภาพ Use Case Diagram แสดงความสัมพันธ์ระหว่าง Actor, Use Cases และระบบบริการภายนอก</div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: DETAILED SPECIFICATIONS -->
+        <section id="specifications">
+            <h2 class="section-title"><span class="icon">📝</span> 3. รายละเอียดข้อกำหนดการใช้งาน (Use Case Specifications)</h2>
+            
+            <div class="uc-grid">
+                <!-- UC-01 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-01</div>
+                    <div class="uc-name">สมัครสมาชิกและกำหนดบทบาท (User Registration)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ผู้เรียน (Student), ติวเตอร์ (Tutor)</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> ผู้ใช้เปิดหน้าเว็บ LINE LIFF</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ผู้ใช้กรอก Username (ภาษาอังกฤษ) และชื่อ-นามสกุลจริง<br>
+                        2. เลือกบทบาทเป็น 'student' หรือ 'tutor'<br>
+                        3. ระบบตรวจสอบ Username ซ้ำ และบันทึกบัญชีลงตาราง <code>User</code>
+                    </div>
+                    <div class="uc-field"><strong>Post-condition:</strong> ได้รับ User ID และนำไปสู่ขั้นตอนสแกนใบหน้า</div>
+                </div>
+
+                <!-- UC-02 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-02</div>
+                    <div class="uc-name">ลงทะเบียนใบหน้าชีวมิติ (Face Biometric Enrollment)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ผู้เรียน, ติวเตอร์</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> มีบัญชีผู้ใช้ในระบบแล้ว และเปิดกล้องเว็บแคม</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ผู้ใช้ส่องหน้าตรงในกรอบกล้องบน LIFF<br>
+                        2. กดปุ่มบันทึกรูปเพื่อลงทะเบียนใบหน้า<br>
+                        3. ระบบตรวจจับใบหน้าด้วย Haar Cascade ตัดครอบขนาด 150x150 Grayscale<br>
+                        4. เข้ารหัสเป็น Base64 บันทึกลงตาราง <code>BiometricProfile</code>
+                    </div>
+                    <div class="uc-field"><strong>Post-condition:</strong> เทมเพลตใบหน้าพร้อมใช้งานสำหรับล็อกอิน</div>
+                </div>
+
+                <!-- UC-03 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-03</div>
+                    <div class="uc-name">ล็อกอินยืนยันตัวตนด้วยใบหน้า (Biometric Login)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ผู้เรียน, ติวเตอร์</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> ได้ทำการลงทะเบียนใบหน้าไว้ล่วงหน้าแล้ว</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ผู้ใช้กรอก Username และเปิดกล้องเว็บแคม<br>
+                        2. ระบบส่งภาพถ่ายปัจจุบันเทียบกับเทมเพลตเดิมด้วย LBPH Model<br>
+                        3. หากระยะห่าง (Distance) &lt; 75.0 ถือว่าผ่านการยืนยันตัวตน<br>
+                        4. ระบบสร้าง Session อนุญาตให้เข้าสู่ฟังก์ชันตามบทบาท
+                    </div>
+                    <div class="uc-field"><strong>Exception:</strong> Distance &gt;= 75.0 หรือไม่พบใบหน้า แสดงข้อความแจ้งเตือน</div>
+                </div>
+
+                <!-- UC-04 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-04</div>
+                    <div class="uc-name">บันทึกข้อมูลประวัติติวเตอร์ (Manage Tutor Profile)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ติวเตอร์ (Tutor)</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> ยืนยันตัวตนเข้าสู่ระบบในบทบาทติวเตอร์สำเร็จ</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. กรอกประวัติการศึกษา, รายวิชาที่เปิดสอน (เช่น คณิต, ฟิสิกส์)<br>
+                        2. ระบุรายละเอียดความเชี่ยวชาญ, สไตล์การสอน, อัตราค่าเรียนต่อชั่วโมง<br>
+                        3. กรอก LINE ID, เบอร์โทรศัพท์ และคำแนะนำการนัดหมาย<br>
+                        4. ระบบรวมข้อความสร้าง Index Text บันทึกลง <code>TutorProfile</code>
+                    </div>
+                    <div class="uc-field"><strong>Post-condition:</strong> โปรไฟล์ปรากฏในการค้นหาของ AI Matching Engine</div>
+                </div>
+
+                <!-- UC-05 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-05</div>
+                    <div class="uc-name">ค้นหาและจับคู่ติวเตอร์ด้วย AI (Semantic Tutor Match)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ผู้เรียน (Student)</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> เข้าสู่ระบบในบทบาทผู้เรียน</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ผู้เรียนพิมพ์ข้อความความต้องการอิสระภาษาไทย (เช่น 'อยากได้พี่ใจดี สอนฟิสิกส์ ม.ปลาย เน้นปูพื้นฐาน')<br>
+                        2. ระบุวิชาหลักที่เจาะจง และงบประมาณสูงสุดต่อชั่วโมง<br>
+                        3. AI กรองเงื่อนไข Hard Filter (งบประมาณและวิชา)<br>
+                        4. AI ทำ Tokenization ด้วย PyThaiNLP และคำนวณ TF-IDF Cosine Similarity<br>
+                        5. แสดงผลรายชื่อติวเตอร์เรียงตาม Match Score (%) พร้อมประวัติและช่องทางติดต่อ
+                    </div>
+                    <div class="uc-field"><strong>Post-condition:</strong> ผู้เรียนได้รับรายชื่อติวเตอร์ที่เหมาะสมที่สุด</div>
+                </div>
+
+                <!-- UC-06 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-06</div>
+                    <div class="uc-name">จองนัดหมายเวลาเรียน (Appointment Scheduling)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ผู้เรียน (Student)</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> เลือกติวเตอร์ที่ต้องการจากผลการจับคู่</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ผู้เรียนเลือกวันนัดหมาย (YYYY-MM-DD) และระบุช่วงเวลาเรียน<br>
+                        2. กรอกหัวข้อหรือเนื้อหาที่ต้องการเน้นเป็นพิเศษ<br>
+                        3. ส่งคำขอนัดหมาย บันทึกลงตาราง <code>Appointment</code> สถานะ 'pending'<br>
+                        4. รายการนัดหมายปรากฏในหน้าต่างตารางนัดหมายของผู้เรียนและติวเตอร์
+                    </div>
+                    <div class="uc-field"><strong>Post-condition:</strong> สร้างนัดหมายใหม่รอการอนุมัติจากติวเตอร์</div>
+                </div>
+
+                <!-- UC-07 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-07</div>
+                    <div class="uc-name">จัดการคำขอนัดหมาย (Manage Appointments)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ติวเตอร์ (Tutor)</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> มีรายการนัดหมายเข้ามาในระบบ</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ติวเตอร์ตรวจสอบรายละเอียด วันเวลา และหัวข้อที่นักเรียนขอเรียน<br>
+                        2. กดปุ่ม 'อนุมัติ (Approved)' เพื่อยืนยัน หรือ 'ปฏิเสธ (Declined)'<br>
+                        3. ระบบอัปเดตสถานะในตาราง <code>Appointment</code> และแสดงผลให้ผู้เรียนเห็นทันที
+                    </div>
+                    <div class="uc-field"><strong>Post-condition:</strong> สถานะคำขอนัดหมายเปลี่ยนเป็น Approved หรือ Declined</div>
+                </div>
+
+                <!-- UC-08 -->
+                <div class="uc-item">
+                    <div class="uc-id">UC-08</div>
+                    <div class="uc-name">ติดต่อตรงผ่าน LINE Official Account (LINE Direct Link)</div>
+                    <div class="uc-field"><strong>Actor:</strong> ผู้เรียน, ติวเตอร์</div>
+                    <div class="uc-field"><strong>Pre-condition:</strong> พบติวเตอร์ที่ต้องการจากผลการค้นหา</div>
+                    <div class="uc-field"><strong>Main Flow:</strong> 
+                        1. ผู้เรียนกดปุ่ม 'ทักทาง LINE OA' จากการ์ดผลลัพธ์ของติวเตอร์<br>
+                        2. ระบบเปิดลิงก์แชท LINE Direct เชื่อมโยงไปยังบัญชีติวเตอร์ทันที<br>
+                        3. ทั้งสองฝ่ายสามารถพูดคุย ส่งเอกสารการสอน หรือยืนยันสถานที่เรียนได้โดยตรง
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CLASS DIAGRAM -->
+        <section id="class-diagram">
+            <h2 class="section-title"><span class="icon">🏛️</span> 4. แผนภาพคลาส (Class Diagram)</h2>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Domain Entities & AI Service Architecture</div>
+                    <span class="pill-tag pill-blue">Database & Backend</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    แผนภาพคลาสแสดงโครงสร้างข้อมูลเชิงสัมพันธ์ (ORM Entity Models) ในระบบ ได้แก่ <code>User</code>, <code>BiometricProfile</code>, <code>TutorProfile</code>, <code>Appointment</code> และคลาสบริการ <code>AIEngine</code>:
+                </p>
+
+                <div class="diagram-box">
+                    <pre class="mermaid">
+classDiagram
+    direction TB
+
+    class User {
+        +Integer id
+        +String username
+        +String name
+        +String role
+        +String line_id
+        +DateTime registered_at
+        +BiometricProfile biometric_profile
+        +TutorProfile tutor_profile
+    }
+
+    class BiometricProfile {
+        +Integer id
+        +Integer user_id
+        +Text face_landmarks
+        +DateTime updated_at
+        +User user
+    }
+
+    class TutorProfile {
+        +Integer id
+        +Integer user_id
+        +String education
+        +String subjects
+        +Text expertise
+        +String teaching_style
+        +Integer price_per_hour
+        +String availability
+        +String contact_line
+        +String contact_phone
+        +String contact_email
+        +Text appointment_instruction
+        +Text profile_vector_text
+        +DateTime updated_at
+        +User user
+    }
+
+    class Appointment {
+        +Integer id
+        +Integer student_id
+        +Integer tutor_id
+        +String appointment_date
+        +String appointment_time
+        +Text notes
+        +String status
+        +DateTime created_at
+        +User student
+        +User tutor
+    }
+
+    class AIEngine {
+        <<Service / Utility>>
+        +extract_face_landmarks(image_bytes) String
+        +verify_faces(reg_b64, current_bytes, threshold) Tuple
+        +compute_tf(tokens) Dict
+        +compute_idf(docs) Dict
+        +calculate_cosine_similarity(vec1, vec2) Float
+        +match_tutors(student_req, tutors, budget, subject_filter) List
+    }
+
+    class FastAPIController {
+        <<Web API / Router>>
+        +register_user(req)
+        +register_face(req)
+        +verify_face_login(req)
+        +update_tutor_profile(req)
+        +match_tutors_api(req)
+        +create_appointment_api(req)
+        +update_appointment_status(req)
+        +seed_mock_tutors()
+    }
+
+    User "1" *-- "1" BiometricProfile : 1-to-1 Cascade
+    User "1" *-- "0..1" TutorProfile : 1-to-1 Cascade
+    User "1" --> "0..*" Appointment : books (as student)
+    User "1" --> "0..*" Appointment : receives (as tutor)
+
+    FastAPIController ..> AIEngine : delegates AI tasks
+    FastAPIController ..> User : queries & persists
+    FastAPIController ..> Appointment : manages lifecycle
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 2: แผนภาพ Class Diagram แสดงโครงสร้าง Data Models และ AI Service Integration</div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SEQUENCE DIAGRAMS -->
+        <section id="sequence-diagrams">
+            <h2 class="section-title"><span class="icon">⏱️</span> 5. แผนภาพลำดับการทำงาน (Sequence Diagrams)</h2>
+
+            <!-- Sequence 1: Face Login -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">5.1 กระบวนการเข้าสู่ระบบด้วยการสแกนใบหน้าชีวมิติ (Biometric Face Login)</div>
+                    <span class="pill-tag pill-purple">Biometric Flow</span>
+                </div>
+                <div class="diagram-box">
+                    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as 👤 ผู้ใช้งาน (Student/Tutor)
+    participant LIFF as 📱 LINE LIFF Client (Webcam)
+    participant API as ⚡ FastAPI Backend
+    participant AI as 🧠 AI Engine (LBPH Model)
+    participant DB as 💾 Database (SQLAlchemy)
+
+    User->>LIFF: เปิดหน้าต่างเข้าสู่ระบบ และกด "เปิดกล้อง"
+    LIFF->>User: แสดงภาพใบหน้าสดจากกล้องหน้า
+    User->>LIFF: กรอก Username และกด "สแกนและยืนยันตัวตน"
+    LIFF->>API: POST /api/biometrics/verify (username, face_image_base64)
+    API->>DB: Query User & BiometricProfile by username
+    DB-->>API: คืนค่า registered_face_template (Base64)
+    
+    API->>AI: verify_faces(registered_template, current_image_bytes)
+    Note over AI: 1. Haar Cascade Detect Face<br/>2. Crop & Resize 150x150<br/>3. Train LBPH & Predict Distance
+    AI-->>API: คืนค่า (verified: bool, distance: float)
+    
+    alt Distance < 75.0 (ยืนยันสำเร็จ)
+        API-->>LIFF: 200 OK (verified: true, user_info, role)
+        LIFF-->>User: แสดงข้อความ "ยินดีต้อนรับ" และเปิดหน้าจัดการข้อมูล
+    else Distance >= 75.0 หรือไม่พบใบหน้า
+        API-->>LIFF: 400 Bad Request (verified: false, error_msg)
+        LIFF-->>User: แสดงคำเตือน "ใบหน้าไม่ตรงกัน กรุณาจัดแสงและลองใหม่"
+    end
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 3.1: Sequence Diagram แสดงการตรวจสอบและยืนยันตัวตนด้วยชีวมิติใบหน้า</div>
+            </div>
+
+            <!-- Sequence 2: AI Tutor Matching -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">5.2 กระบวนการค้นหาและจับคู่ติวเตอร์ด้วย AI (Semantic Tutor Matching)</div>
+                    <span class="pill-tag pill-blue">AI Matching Flow</span>
+                </div>
+                <div class="diagram-box">
+                    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Student as 🧑‍🎓 ผู้เรียน (Student)
+    participant LIFF as 📱 LINE LIFF UI
+    participant API as ⚡ FastAPI Backend
+    participant AI as 🧠 AI Matching Engine
+    participant DB as 💾 Database
+
+    Student->>LIFF: ป้อนข้อความความต้องการ (เช่น "อยากได้พี่ใจดี สอนฟิสิกส์ ปูพื้นฐาน")
+    Student->>LIFF: เลือกระบุวิชาหลัก และงบประมาณต่อชั่วโมงสูงสุด
+    Student->>LIFF: กดปุ่ม "วิเคราะห์และจับคู่ติวเตอร์อัจฉริยะ"
+    
+    LIFF->>API: POST /api/match/tutors (student_req, subject_filter, budget)
+    API->>DB: Query รายชื่อติวเตอร์ทั้งหมดที่มีในระบบ
+    DB-->>API: รายชื่อติวเตอร์ (subjects, expertise, style, price)
+    
+    API->>AI: match_tutors(student_req, tutors, budget, subject_filter)
+    Note over AI: 1. กรอง Hard Filter (วิชา & งบประมาณ)<br/>2. PyThaiNLP ตัดคำไทย ('newmm')<br/>3. คำนวณ TF-IDF Vectors<br/>4. คำนวณ Cosine Similarity
+    AI-->>API: รายชื่อติวเตอร์ที่ผ่านเกณฑ์ เรียงตาม Match Score (%)
+    
+    API-->>LIFF: 200 OK (matched_tutors: [ {name, subjects, match_score, line_id} ])
+    LIFF-->>Student: แสดงผลการ์ดติวเตอร์ พร้อมคะแนน % ความเข้ากันได้ และปุ่มนัดหมาย
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 3.2: Sequence Diagram แสดงการคำนวณจับคู่ติวเตอร์ด้วยภาษาธรรมชาติและเวกเตอร์</div>
+            </div>
+
+            <!-- Sequence 3: Appointment Booking -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">5.3 กระบวนการนัดหมายเวลาเรียน (Appointment Booking & Status Management)</div>
+                    <span class="pill-tag pill-green">Booking Flow</span>
+                </div>
+                <div class="diagram-box">
+                    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Student as 🧑‍🎓 ผู้เรียน (Student)
+    participant LIFF as 📱 LINE LIFF UI
+    participant API as ⚡ FastAPI Backend
+    participant DB as 💾 Database
+    actor Tutor as 👨‍🏫 ติวเตอร์ (Tutor)
+
+    Student->>LIFF: กด "นัดหมายเวลาเรียน" เลือกวันที่, เวลา และกรอกหัวข้อที่ต้องการเรียน
+    LIFF->>API: POST /api/appointments (student_id, tutor_id, date, time, notes)
+    API->>DB: INSERT into appointments (status='pending')
+    DB-->>API: คืนค่า appointment_id
+    API-->>LIFF: 200 OK (status: 'pending')
+    LIFF-->>Student: แสดงตารางนัดหมายสถานะ "⏳ รอการยืนยัน (Pending)"
+    
+    Note over Tutor, API: เมื่อติวเตอร์เข้าสู่ระบบตรวจสอบนัดหมาย
+    Tutor->>LIFF: ดูรายการนัดหมายใหม่ที่เข้ามา
+    LIFF->>API: GET /api/appointments?tutor_id=X
+    API->>DB: Query pending appointments
+    DB-->>API: รายการคำขอนัดหมาย
+    API-->>LIFF: แสดงการ์ดคำขอนัดหมาย
+    
+    Tutor->>LIFF: กดปุ่ม "อนุมัติ (Approved)"
+    LIFF->>API: PUT /api/appointments/{id}/status (status='approved')
+    API->>DB: UPDATE appointments SET status='approved'
+    DB-->>API: ยืนยันการอัปเดต
+    API-->>LIFF: 200 OK
+    LIFF-->>Tutor: อัปเดตสถานะเป็น "✅ ยืนยันแล้ว"
+    LIFF-->>Student: ตารางฝั่งผู้เรียนอัปเดตสถานะเป็น "✅ ยืนยันแล้ว (Approved)"
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 3.3: Sequence Diagram แสดงขั้นตอนการจองและอนุมัติเวลาเรียน</div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: ACTIVITY DIAGRAM -->
+        <section id="activity-diagram">
+            <h2 class="section-title"><span class="icon">🔄</span> 6. แผนภาพกิจกรรม (Activity Diagram)</h2>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">End-to-End User Matching & Appointment Workflow</div>
+                    <span class="pill-tag pill-purple">Business Workflow</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    แสดงกิจกรรมการทำงานตั้งแต่เริ่มต้นเข้าใช้งานระบบ ตรวจสอบความถูกต้องทางชีวมิติ การค้นหาจับคู่ จนถึงการสื่อสารและนัดหมาย:
+                </p>
+
+                <div class="diagram-box">
+                    <pre class="mermaid">
+flowchart TD
+    Start([จุดเริ่มต้น: เข้าใช้งาน LINE LIFF]) --> CheckAuth{มีบัญชีผู้ใช้แล้วหรือไม่?}
+    
+    CheckAuth -- ยังไม่มี --> Register[สมัครสมาชิก: กรอก Username & เลือก Role]
+    Register --> CaptureEnroll[ถ่ายภาพสแกนใบหน้า เพื่อบันทึก Biometric Profile]
+    CaptureEnroll --> SaveProfile[บันทึกเทมเพลตใบหน้าลงฐานข้อมูล]
+    SaveProfile --> RoleCheck{บทบาทคือ?}
+
+    CheckAuth -- มีแล้ว --> LoginFace[เปิดกล้อง และสแกนใบหน้าเพื่อเข้าสู่ระบบ]
+    LoginFace --> VerifyBiometric{ผลตรวจใบหน้า Distance < 75.0 ?}
+    
+    VerifyBiometric -- ไม่ผ่าน --> ShowAlert[แสดงข้อความเตือน & ให้สแกนใหม่]
+    ShowAlert --> LoginFace
+    
+    VerifyBiometric -- ผ่าน --> RoleCheck
+    
+    RoleCheck -- ติวเตอร์ (Tutor) --> TutorForm[บันทึก/แก้ไขข้อมูลวิชา สไตล์การสอน เรทราคา LINE ID]
+    TutorForm --> TutorWait[รอรับคำขอนัดหมาย & ตรวจสอบตารางเรียน]
+    TutorWait --> CheckAppt{มีคำขอจองใหม่?}
+    CheckAppt -- มี --> Decision[พิจารณา: อนุมัติ หรือ ปฏิเสธ]
+    Decision --> EndTutor([เสร็จสิ้นขั้นตอนติวเตอร์])
+    
+    RoleCheck -- ผู้เรียน (Student) --> StudentForm[ป้อนความต้องการอิสระภาษาไทย วิชาหลัก และงบประมาณ]
+    StudentForm --> AIEngine[AI Engine: กรองงบประมาณ + ตัดคำไทย + Cosine TF-IDF]
+    AIEngine --> DisplayMatch[แสดงผลรายชื่อติวเตอร์ เรียงตาม Match Score %]
+    
+    DisplayMatch --> ActionChoice{เลือกวิธีติดต่อสื่อสาร?}
+    ActionChoice -- ทักตรงผ่าน LINE OA --> OpenLine[คลิกเปิดหน้าแชท LINE OA ติวเตอร์]
+    ActionChoice -- จองนัดหมายในระบบ --> BookClass[เลือกวัน-เวลาเรียน และส่งคำขอ Pending]
+    
+    OpenLine --> EndStudent([เริ่มการเรียนการสอน])
+    BookClass --> EndStudent
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 4: แผนภาพ Activity Diagram แสดงการไหลของกิจกรรมตลอดกระบวนการ</div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: STATE MACHINE DIAGRAM -->
+        <section id="state-diagram">
+            <h2 class="section-title"><span class="icon">🚦</span> 7. แผนภาพสถานะ (State Machine Diagram)</h2>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Appointment Lifecycle Statechart</div>
+                    <span class="pill-tag pill-amber">State Transition</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    แสดงสถานะและการเปลี่ยนผ่านสถานะของคำขอนัดหมายเรียน (Appointment) ตลอดวงจรชีวิตในระบบ:
+                </p>
+
+                <div class="diagram-box">
+                    <pre class="mermaid">
+stateDiagram-v2
+    [*] --> Pending : นักเรียนส่งคำขอจองวัน-เวลาเรียน (Create Appointment)
+    
+    Pending --> Approved : ติวเตอร์ตรวจสอบเวลาว่างแล้วกดยืนยัน (Approve)
+    Pending --> Declined : ติวเตอร์ติดธุระหรือไม่สะดวกสอนเวลานั้น (Decline)
+    Pending --> Cancelled : นักเรียนกดยกเลิกคำขอก่อนติวเตอร์พิจารณา (Cancel)
+    
+    Approved --> Completed : ดำเนินการเรียนการสอนเสร็จสิ้นตามวันนัดหมาย
+    Approved --> Cancelled : เกิดเหตุสุดวิสัย แจ้งยกเลิกคลาสเรียน
+    
+    Declined --> [*]
+    Cancelled --> [*]
+    Completed --> [*]
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 5: State Machine Diagram แสดงสถานะของรายการนัดหมาย (Pending ➔ Approved / Declined ➔ Completed)</div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: COMPONENT & DEPLOYMENT DIAGRAM -->
+        <section id="component-diagram">
+            <h2 class="section-title"><span class="icon">📦</span> 8. แผนภาพการติดตั้งและองค์ประกอบระบบ (Component & Deployment Diagram)</h2>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Physical Deployment & Subsystems Topology</div>
+                    <span class="pill-tag pill-blue">Infrastructure</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    แสดงสถาปัตยกรรมทางกายภาพของฮาร์ดแวร์ บริการคลาวด์ และคอมโพเนนต์ซอฟต์แวร์ในการนำระบบไปติดตั้งใช้งานจริง:
+                </p>
+
+                <div class="diagram-box">
+                    <pre class="mermaid">
+flowchart TB
+    subgraph ClientNode ["Client Tier (อุปกรณ์ผู้ใช้งาน)"]
+        MobileClient["📱 Smartphone (iOS / Android)\n• LINE Mobile Application\n• WebRTC Camera (Video Capture)"]
+        DesktopClient["💻 Desktop / Laptop\n• Modern Web Browser (Chrome/Edge)\n• Webcam Device"]
+    end
+
+    subgraph LineCloud ["LINE Developer Platform (Cloud Tier)"]
+        LineLIFFServer["🌐 LINE LIFF CDN & Hosting\n• LIFF SDK (JavaScript)\n• User ID & Profile Token"]
+        LineMessagingServer["💬 LINE Messaging API Gateway\n• Webhook Event Delivery\n• Flex Message Push Channel"]
+    end
+
+    subgraph AppServer ["Application Server (Backend Tier)"]
+        direction TB
+        NginxServer["🛡️ Reverse Proxy / SSL (Nginx / Cloudflare)"]
+        
+        subgraph FastAPIApp ["FastAPI Application Runtime (Python 3.10+)"]
+            Router["Web API Routers\n(/api/users, /api/biometrics, /api/match)"]
+            AuthModule["Biometric Authentication Guard"]
+            AppointmentModule["Appointment Lifecycle Manager"]
+            
+            subgraph AIEngineModule ["AI Intelligence Subsystem"]
+                CV["OpenCV & Haar Cascade\n(Face Crop & Grayscale)"]
+                LBPH["LBPH Face Recognizer\n(Biometric Distance Match)"]
+                NLP["PyThaiNLP Engine\n(Thai Tokenization 'newmm')"]
+                VectorSearch["TF-IDF & Cosine Similarity\n(Semantic Scoring)"]
+            end
+        end
+    end
+
+    subgraph DataTier ["Data Persistence Tier (Storage Node)"]
+        SQLDB[("🗄️ Relational Database\n• SQLite / PostgreSQL\n• Tables: users, biometric_profiles,\n  tutor_profiles, appointments")]
+        VectorStore[("⚡ Vector & Template Cache\n• Base64 Image Templates\n• Precomputed Profile Index")]
+    end
+
+    ClientNode <-->|HTTPS / TLS| LineLIFFServer
+    ClientNode <-->|HTTPS / WebRTC| NginxServer
+    LineMessagingServer <-->|Webhook POST| NginxServer
+    
+    NginxServer <--> Router
+    Router <--> AuthModule
+    Router <--> AppointmentModule
+    
+    AuthModule <--> CV
+    CV <--> LBPH
+    Router <--> NLP
+    NLP <--> VectorSearch
+    
+    FastAPIApp <-->|SQLAlchemy ORM| SQLDB
+    FastAPIApp <-->|In-Memory / Disk| VectorStore
+                    </pre>
+                </div>
+                <div class="diagram-caption">รูปที่ 6: Deployment & Component Diagram แสดงสถาปัตยกรรมระดับ Infrastructure</div>
+            </div>
+        </section>
+
+        <!-- Back to Portal Link -->
+        <div class="portal-bar">
+            <a href="http://127.0.0.1:8000" class="btn-link">🌐 เข้าสู่หน้าหลัก TutorMatch AI Web Portal</a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการใช้งาน - TutorMatch AI User Manual</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(226, 232, 240, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --primary: #7c3aed; /* Violet */
+            --secondary: #059669; /* Emerald */
+            --accent: #2563eb; /* Blue */
+            --warning: #d97706;
+            --line-green: #06c755;
+            --gradient-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            --font-main: 'Inter', 'Noto Sans Thai', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --shadow-md: 0 10px 25px -3px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .badge {
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            border: 1px solid rgba(219, 39, 119, 0.3);
+            color: #db2777;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards Layout */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .card-icon {
+            font-size: 1.6rem;
+        }
+
+        /* Steps Timeline styling */
+        .step-block {
+            position: relative;
+            padding-left: 55px;
+            margin-bottom: 35px;
+        }
+
+        .step-block:last-child {
+            margin-bottom: 10px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);
+        }
+
+        .step-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .step-highlight {
+            background: #fff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 0.92rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .highlight-title {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Info Alerts */
+        .alert {
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            color: #1e40af;
+            padding: 15px 20px;
+            border-radius: var(--radius-md);
+            margin-top: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-warning {
+            background: rgba(217, 119, 6, 0.05);
+            border: 1px solid rgba(217, 119, 6, 0.15);
+            color: #92400e;
+        }
+
+        .alert-icon {
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
+        /* Flow Diagrams */
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px dashed rgba(15, 23, 42, 0.12);
+        }
+
+        .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .flow-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-width: 130px;
+            text-align: center;
+        }
+
+        .flow-text {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        /* Back to Portal Button Link */
+        .portal-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-1);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 1rem;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
+            transition: all 0.3s;
+        }
+
+        .portal-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="badge">คู่มือระบบ Portal</div>
+            <h1>คู่มือการใช้งานระบบ TutorMatch AI</h1>
+            <p class="subtitle">คำแนะนำขั้นตอนการใช้งานระบบยืนยันตัวตนด้วยใบหน้าและการจับคู่ติวเตอร์ด้วยปัญญาประดิษฐ์</p>
+            
+            <a href="http://127.0.0.1:8000" class="portal-btn">🌐 เข้าสู่หน้าเว็บหลักของระบบ</a>
+        </header>
+
+        <!-- CARD 1: GETTING STARTED -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">🚀</span>
+                <h2>การเริ่มต้นใช้งานครั้งแรก (Getting Started)</h2>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                ระบบทำงานในรูปแบบของ LINE LIFF Web Application บน FastAPI หลังบ้าน ในการเริ่มต้นใช้งานครั้งแรกโปรดทำตามขั้นตอนดังนี้:
+            </p>
+
+            <div class="step-block">
+                <div class="step-number">1</div>
+                <div class="step-title">เปิดใช้งานกล้องบนบราวเซอร์</div>
+                <div class="step-desc">
+                    เนื่องจากระบบต้องใช้ฟังก์ชันการยืนยันตัวตนผ่านกล้อง (Webcam) รบกวนกด **"เปิดกล้อง"** ในหน้าเว็บบอร์ดล็อกอินฝั่งซ้าย และกดอนุมัติ (Allow) สิทธิ์ในการแชร์กล้องของเบราว์เซอร์
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">2</div>
+                <div class="step-title">จำลองข้อมูลประวัติติวเตอร์ตัวอย่าง</div>
+                <div class="step-desc">
+                    กดปุ่ม **"🌱 จำลองบัญชีติวเตอร์ตัวอย่าง (5 ราย)"** ที่การ์ดต้อนรับด้านบนสุด ระบบจะประมวลผลข้อมูลติวเตอร์จำลอง 5 ราย ในสาขาวิชาคณิตศาสตร์, ฟิสิกส์, อังกฤษ, ไทย และจีน เข้าฐานข้อมูลให้อัตโนมัติ เพื่อให้ผู้เรียนใช้ค้นหาคู่ AI ได้ในทันที
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: TUTOR USER MANUAL -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">👨‍🏫</span>
+                <h2>คู่มือสำหรับผู้สอน (Tutor Manual)</h2>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                สำหรับติวเตอร์ที่ต้องการมาลงทะเบียนเปิดสอนพิเศษและให้ระบบ AI แนะนำรายชื่อของตนเองแก่นักเรียน:
+            </p>
+
+            <div class="step-block">
+                <div class="step-number">1</div>
+                <div class="step-title">สมัครสมาชิกติวเตอร์ใหม่</div>
+                <div class="step-desc">
+                    ไปที่แท็บฝั่งซ้าย เลือก **"2. สมัครสมาชิก"** กรอก Username (ภาษาอังกฤษ) และชื่อ-นามสกุลจริง เลือกประเภทเป็น **"ติวเตอร์ (Tutor)"** แล้วกดสมัครสมาชิก
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">2</div>
+                <div class="step-title">บันทึกรูปเพื่อลงทะเบียนใบหน้า (สแกนความปลอดภัย)</div>
+                <div class="step-desc">
+                    ระบบจะเปิดกล้องเว็บแคม จัดใบหน้าให้อยู่ในกรอบวงกลม แล้วกดปุ่ม **"💾 บันทึกรูปเพื่อลงทะเบียนใบหน้า"** เพื่อสกัดลักษณะใบหน้าและบันทึกรหัสลงฐานข้อมูล
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">3</div>
+                <div class="step-title">สแกนใบหน้าเข้าสู่ระบบ</div>
+                <div class="step-desc">
+                    กรอก Username แล้วคลิกปุ่ม **"🔍 สแกนและยืนยันตัวตน"** เมื่อระบบตรวจพบว่าใบหน้าตรงกัน จะเข้าสู่ระบบสำเร็จและแสดงแบบฟอร์มข้อมูลประวัติติวเตอร์
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">4</div>
+                <div class="step-title">บันทึกประวัติ ความถนัด และช่องทางนัดหมาย</div>
+                <div class="step-desc">
+                    กรอกประวัติการศึกษา, วิชาที่สอน, ความเชี่ยวชาญ/ความถนัด, สไตล์การสอน, อัตราค่าเรียน และกรอก **LINE ID, เบอร์ติดต่อหลัก** รวมถึงคำแนะนำการจองเรียน เมื่อกรอกครบแล้วกด **"บันทึกข้อมูล"** เพื่อสร้าง Vector Index สำหรับระบบค้นหาเชิงภาษา
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 3: STUDENT USER MANUAL -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">🎓</span>
+                <h2>คู่มือสำหรับผู้เรียน (Student Manual)</h2>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                สำหรับนักเรียนและผู้ปกครองที่ต้องการวิเคราะห์หาติวเตอร์ที่มีความถนัดตรงตามความต้องการ:
+            </p>
+
+            <div class="step-block">
+                <div class="step-number">1</div>
+                <div class="step-title">สมัครสมาชิกและยืนยันตัวตนด้วยใบหน้า</div>
+                <div class="step-desc">
+                    เช่นเดียวกับติวเตอร์ ไปที่แท็บ **"2. สมัครสมาชิก"** เลือกบทบาทเป็น **"ผู้เรียน (Student)"** ถ่ายภาพลงทะเบียน และยืนยันตัวตนด้วยใบหน้าเพื่อเข้าใช้งาน
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">2</div>
+                <div class="step-title">กรอกความต้องการการเรียนพิเศษ (ภาษาไทยอิสระ)</div>
+                <div class="step-desc">
+                    ในแบบฟอร์มค้นหา ให้ป้อนสิ่งที่อยากเรียน คาดหวัง หรือรูปแบบติวเตอร์ที่ชอบลงไป เช่น
+                    <div class="step-highlight">
+                        <div class="highlight-title">📌 ตัวอย่างการเขียน Requirement:</div>
+                        <i>"อยากได้พี่ใจดี สอนฟิสิกส์ ม.ปลาย เน้นสอนช้า ๆ ค่อย ๆ อธิบายสูตร เพื่อช่วยปูพื้นฐานทำเกรดให้ดีขึ้นในโรงเรียน"</i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">3</div>
+                <div class="step-title">ป้อนตัวกรอง (ฟิลเตอร์ด่วน)</div>
+                <div class="step-desc">
+                    สามารถระบุ **วิชาหลักที่เจาะจง** (เช่น ฟิสิกส์) และ **งบประมาณต่อชั่วโมงสูงสุด** (เช่น 300) เพื่อคัดกรองติวเตอร์เบื้องต้นก่อนส่งวิเคราะห์
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">4</div>
+                <div class="step-title">การดูผลลัพธ์การจับคู่ของ AI (AI Match Result)</div>
+                <div class="step-desc">
+                    กดปุ่ม **"วิเคราะห์และจับคู่ติวเตอร์อัจฉริยะ"** ระบบจะคำนวณและแสดงคะแนนความเข้ากันได้ เช่น **AI Match: 94.2%** พร้อมแสดง **ประวัติ, LINE ID, เบอร์โทรศัพท์, และอีเมล** ของติวเตอร์ทันที
+                </div>
+            </div>
+
+            <div class="step-block">
+                <div class="step-number">5</div>
+                <div class="step-title">ติดต่อนัดหมายเรียนพิเศษ</div>
+                <div class="step-desc">
+                    นักเรียนสามารถจองเวลาได้ 2 วิธี:
+                    <div class="flow-container">
+                        <div class="flow-item">
+                            <div class="flow-badge">วิธีที่ 1: แชทผ่าน LINE OA</div>
+                            <div class="flow-text">กดปุ่ม "ทักทาง LINE OA" เพื่อลิงก์เปิดหน้าแชทติดต่อติวเตอร์ตรง</div>
+                        </div>
+                        <div class="flow-item">
+                            <div class="flow-badge">วิธีที่ 2: นัดหมายจองผ่านระบบ</div>
+                            <div class="flow-text">กดปุ่ม "นัดหมายเวลาเรียน" เลือกวันที่ และช่วงเวลาเรียนเพื่อส่งคำขอจองคลาสเรียนทดลองไปยังติวเตอร์</div>
+                        </div>
+                    </div>
+                    สถานะการจองนัดหมายจะแสดงในการ์ด **"ตารางนัดหมายเรียนของฉัน"** (ด้านซ้ายล่าง) เพื่ออัปเดตความคืบหน้าการจอง
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 4: TROUBLESHOOTING -->
+        <div class="card">
+            <div class="card-title">
+                <span class="card-icon">🛠️</span>
+                <h2>การแก้ไขปัญหาเบื้องต้น (Troubleshooting)</h2>
+            </div>
+            
+            <div class="alert alert-warning">
+                <span class="alert-icon">⚠️</span>
+                <div>
+                    <strong>กล้องใช้งานไม่ได้หรือเปิดกล้องไม่ขึ้น:</strong><br/>
+                    ตรวจสอบให้มั่นใจว่าไม่ได้เปิดโปรแกรมอื่นที่ใช้กล้องค้างไว้ (เช่น Zoom, Discord หรือ Teams) และอนุญาตให้เว็บบราวเซอร์ (Chrome, Edge หรือ Safari) เข้าถึงอุปกรณ์ถ่ายภาพได้
+                </div>
+            </div>
+
+            <div class="alert">
+                <span class="alert-icon">💡</span>
+                <div>
+                    <strong>สแกนใบหน้าแล้วไม่ผ่าน (Distance สูงเกินไป):</strong><br/>
+                    - จัดตำแหน่งกล้องให้อยู่หน้าตรง ไม่ก้มหรือเงยหน้าจนเกินไป<br/>
+                    - หลีกเลี่ยงสถานที่ ๆ มีแสงย้อนแสงหรือแสงมืดเกินไป<br/>
+                    - ในกรณีเปลี่ยนสภาพแวดล้อมหรือกล้องใหม่ สามารถเปิดแท็บ "สมัครสมาชิก" อีกครั้ง ป้อน Username เดิม แล้วสแกนกด **"บันทึกรูปเพื่อลงทะเบียนใบหน้า"** เพื่อทับข้อมูลพิกัดใบหน้าใหม่ให้เป็นปัจจุบันได้ทันที
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

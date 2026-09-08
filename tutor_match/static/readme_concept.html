@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorMatch AI - Concept & Architecture Design</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(226, 232, 240, 0.8);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --primary: #7c3aed;
+            --primary-glow: rgba(124, 58, 237, 0.08);
+            --secondary: #059669;
+            --secondary-glow: rgba(5, 150, 105, 0.08);
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.08);
+            --warning: #d97706;
+            --line-green: #06c755;
+            --gradient-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            --font-main: 'Inter', 'Noto Sans Thai', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(236, 72, 153, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        .badge {
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            border: 1px solid rgba(219, 39, 119, 0.3);
+            color: #db2777;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(219, 39, 119, 0.2); }
+            100% { transform: scale(1.03); box-shadow: 0 0 10px 2px rgba(219, 39, 119, 0.05); }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 40px 0 20px;
+            background: rgba(15, 23, 42, 0.03);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            backdrop-filter: blur(8px);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: var(--font-main);
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(15, 23, 42, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: var(--gradient-1);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
+        }
+
+        /* Tab Content Section */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Layout */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            transition: background 0.3s;
+        }
+
+        .card.card-primary::before { background: var(--primary); }
+        .card.card-secondary::before { background: var(--secondary); }
+        .card.card-accent::before { background: var(--accent); }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(124, 58, 237, 0.12);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        .card-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #fff;
+        }
+
+        .card-primary .card-icon { background: rgba(124, 58, 237, 0.1); border: 1px solid var(--primary); color: var(--primary); }
+        .card-secondary .card-icon { background: rgba(5, 150, 105, 0.1); border: 1px solid var(--secondary); color: var(--secondary); }
+        .card-accent .card-icon { background: rgba(37, 99, 235, 0.1); border: 1px solid var(--accent); color: var(--accent); }
+        .card-line .card-icon { background: rgba(6, 199, 85, 0.1); border: 1px solid var(--line-green); color: var(--line-green); }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        /* Tech Badges */
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: rgba(15, 23, 42, 0.03);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            color: var(--text-primary);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: var(--font-code);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag.tag-python { color: #0284c7; border-color: rgba(2, 132, 199, 0.3); background: rgba(2, 132, 199, 0.05); }
+        .tag.tag-ai { color: #7c3aed; border-color: rgba(124, 58, 237, 0.3); background: rgba(124, 58, 237, 0.05); }
+        .tag.tag-line { color: #059669; border-color: rgba(5, 150, 105, 0.3); background: rgba(5, 150, 105, 0.05); }
+        .tag.tag-db { color: #e11d48; border-color: rgba(225, 29, 72, 0.3); background: rgba(225, 29, 72, 0.05); }
+
+        /* Grid System */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Workflow Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--accent) 50%, var(--secondary) 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -30px;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--primary);
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:nth-child(2) .timeline-marker { border-color: var(--accent); }
+        .timeline-item:nth-child(3) .timeline-marker { border-color: var(--warning); }
+        .timeline-item:nth-child(4) .timeline-marker { border-color: var(--secondary); }
+
+        .timeline-item:hover .timeline-marker {
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .timeline-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .step-num {
+            font-size: 0.8rem;
+            background: rgba(15, 23, 42, 0.05);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: var(--font-code);
+            color: var(--text-secondary);
+        }
+
+        /* Lists */
+        ul {
+            list-style-type: none;
+        }
+
+        li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .card-secondary li::before {
+            color: var(--secondary);
+        }
+
+        .card-accent li::before {
+            color: var(--accent);
+        }
+
+        /* Flow Diagram Placeholder */
+        .diagram-container {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px dashed rgba(15, 23, 42, 0.12);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .diagram-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .diagram-node {
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 8px;
+            padding: 12px 20px;
+            min-width: 140px;
+            font-weight: 500;
+            color: var(--text-primary);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .diagram-node.active-node {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.1);
+            background: rgba(124, 58, 237, 0.02);
+        }
+
+        .diagram-arrow {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+        }
+
+        /* Code Block */
+        pre {
+            background: #f1f5f9;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 8px;
+            padding: 18px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            color: #0f172a;
+        }
+
+        .code-comment { color: #64748b; }
+        .code-keyword { color: #d946ef; }
+        .code-string { color: #2563eb; }
+        .code-function { color: #d97706; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .tabs { flex-direction: column; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .diagram-flow { flex-direction: column; }
+            .diagram-arrow { transform: rotate(90deg); margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <div class="badge">AI-Powered Systems</div>
+            <h1>TutorMatch AI</h1>
+            <p class="subtitle">ระบบจับคู่ติวเตอร์อัจฉริยะด้วยปัญญาประดิษฐ์ ผ่าน LINE Official Account ยืนยันตัวตนด้วยใบหน้า และวิเคราะห์การจับคู่ด้วย Semantic Match</p>
+            
+            <!-- Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('concept')">1. แนวคิดระบบ</button>
+                <button class="tab-btn" onclick="switchTab('architecture')">2. สถาปัตยกรรม & เทคโนโลยี</button>
+                <button class="tab-btn" onclick="switchTab('ai')">3. กลไก AI & อัลกอริทึม</button>
+                <button class="tab-btn" onclick="switchTab('steps')">4. ขั้นตอนการพัฒนาระบบ</button>
+            </div>
+        </header>
+
+        <!-- TAB 1: CONCEPT -->
+        <section id="concept" class="tab-content active">
+            <div class="card card-primary">
+                <div class="card-title-wrapper">
+                    <div class="card-icon">💡</div>
+                    <h2>ที่มาและแนวคิดของโครงการ (Project Concept)</h2>
+                </div>
+                <p><strong>TutorMatch AI</strong> ถูกออกแบบขึ้นเพื่อแก้ปัญหาความยุ่งยากในการค้นหาผู้สอน (Tutor) ที่ตรงกับสไตล์การเรียน ความรู้พื้นฐาน งบประมาณ และเวลาของนักเรียน โดยการผสานสองเทคโนโลยีที่ทรงพลังเข้าด้วยกัน:</p>
+                <ul>
+                    <li><strong>LINE Official Account & LINE LIFF:</strong> เป็นช่องทางหลักที่อำนวยความสะดวกให้ผู้ใช้งานสามารถเข้าถึงระบบได้ทันทีโดยไม่ต้องติดตั้งแอปพลิเคชันเพิ่มเติม</li>
+                    <li><strong>Artificial Intelligence (AI):</strong> ใช้ในการตรวจสอบความปลอดภัย (ยืนยันตัวตนด้วยใบหน้า) และประมวลผลวิเคราะห์ข้อมูลเพื่อทำนายและแนะนำติวเตอร์ที่เหมาะสมที่สุด (Tutor Matching Engine)</li>
+                </ul>
+            </div>
+
+            <div class="grid-2">
+                <div class="card card-accent">
+                    <div class="card-title-wrapper">
+                        <div class="card-icon">👤</div>
+                        <h2>ระบบการลงทะเบียนและการยืนยันตัวตน</h2>
+                    </div>
+                    <p>เพื่อความปลอดภัยและความน่าเชื่อถือของแพลตฟอร์ม ทั้งผู้เรียนและติวเตอร์จะต้องผ่านระบบยืนยันตัวตนด้วยใบหน้า:</p>
+                    <ul>
+                        <li><strong>การสมัครสมาชิก:</strong> ผู้ใช้งานบันทึกข้อมูลส่วนตัว ประวัติ และถ่ายรูปใบหน้าเก็บไว้เปรียบเทียบในฐานข้อมูล</li>
+                        <li><strong>การเข้าใช้งาน (Login / Verification):</strong> เมื่อจะเข้าใช้งานระบบสแกนใบหน้าผ่านกล้องบน LINE LIFF เพื่อจับคู่พิกัดของใบหน้ากับฐานข้อมูล เป็นการเพิ่มความปลอดภัยและความมั่นใจให้กับผู้เรียน</li>
+                    </ul>
+                </div>
+
+                <div class="card card-secondary">
+                    <div class="card-title-wrapper">
+                        <div class="card-icon">🎯</div>
+                        <h2>ระบบวิเคราะห์ความถนัดและการจับคู่ติวเตอร์</h2>
+                    </div>
+                    <p>ระบบการจับคู่ที่มีประสิทธิภาพสูงกว่าการค้นหาด้วย Keyword แบบเดิม โดยใช้หลักการ AI ประเมินผล:</p>
+                    <ul>
+                        <li><strong>ข้อมูลติวเตอร์:</strong> ประวัติ, วิชาที่สอน, ระดับชั้น, ความถนัดเฉพาะตัว, ระดับราคา, สไตล์การสอน (เช่น เน้นสนุกสนาน, เน้นสอบแข่งขัน, เน้นเข้าใจพื้นฐาน)</li>
+                        <li><strong>ข้อมูลความต้องการผู้เรียน:</strong> วิชาที่ต้องการเรียน, คะแนนเป้าหมาย, งบประมาณ, สไตล์การเรียนที่ชอบ, ข้อความอธิบายความคาดหวัง</li>
+                        <li><strong>AI Engine:</strong> ทำการคำนวณและวิเคราะห์ความเข้ากันได้แบบหลายมิติและแสดงผลลัพธ์เป็นคะแนนความเหมาะสม (Matching Score)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: ARCHITECTURE & TECH -->
+        <section id="architecture" class="tab-content">
+            <div class="card card-accent">
+                <div class="card-title-wrapper">
+                    <div class="card-icon">🛠️</div>
+                    <h2>สถาปัตยกรรมระบบ (System Architecture)</h2>
+                </div>
+                <p>ระบบทำงานในรูปแบบของ Microservice หรือ Web Application ขนาดเล็กที่ประสานงานกับบริการของ LINE:</p>
+                
+                <div class="diagram-container">
+                    <div class="diagram-flow">
+                        <div class="diagram-node active-node">📱 LINE Client / App</div>
+                        <div class="diagram-arrow">➔</div>
+                        <div class="diagram-node">🔗 LINE LIFF / Webhook</div>
+                        <div class="diagram-arrow">➔</div>
+                        <div class="diagram-node active-node">⚙️ Python FastAPI Backend</div>
+                        <div class="diagram-arrow">➔</div>
+                        <div class="diagram-node">🤖 AI Model / Vector Search</div>
+                        <div class="diagram-arrow">➔</div>
+                        <div class="diagram-node active-node">💾 Database (PostgreSQL)</div>
+                    </div>
+                </div>
+                <br>
+                <p>การทำงานของระบบหลังบ้าน (Backend): เมื่อ LINE Webhook หรือ LINE LIFF ส่ง Request เข้ามา FastAPI จะประมวลผล คุยกับฐานข้อมูลและส่งไปคำนวณที่ AI Engine ก่อนส่งข้อมูลกลับไปแสดงผลเป็น Flex Message สวยงามบนแชท LINE</p>
+            </div>
+
+            <div class="card card-line">
+                <div class="card-title-wrapper">
+                    <div class="card-icon">🚀</div>
+                    <h2>ชุดเทคโนโลยีที่เลือกใช้ (Technology Stack)</h2>
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <h3>Backend & UI Integration</h3>
+                        <ul>
+                            <li><strong>Python 3.10+:</strong> ภาษาหลักในการพัฒนาระบบหลังบ้านและเขียนโมเดล AI</li>
+                            <li><strong>FastAPI:</strong> Web Framework ของ Python ที่ทำงานได้เร็วมาก (Asynchronous) รองรับ OpenAPI auto-doc</li>
+                            <li><strong>LINE Messaging API SDK:</strong> ไลบรารีควบคุมการส่งและรับข้อความใน LINE</li>
+                            <li><strong>LINE LIFF (LINE Front-end Framework):</strong> ใช้สร้างหน้าเว็บแอปย่อยๆ ฝังใน LINE สำหรับหน้าจอลงทะเบียน ค้นหาติวเตอร์ และสแกนกล้อง</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>AI / Database & Tools</h3>
+                        <ul>
+                            <li><strong>DeepFace / OpenCV / MediaPipe:</strong> ไลบรารี Python สำหรับจับใบหน้า (Face Detection) และแปลงใบหน้าเป็น Embedded Vector เพื่อเปรียบเทียบในระบบ Face Recognition</li>
+                            <li><strong>Sentence-Transformers (HuggingFace) / Gemini API:</strong> แปลงข้อความความถนัดของติวเตอร์และความต้องการของผู้เรียนเป็นเวกเตอร์ หรือใช้ Generative AI วิเคราะห์จับคู่เชิงความหมาย</li>
+                            <li><strong>PostgreSQL + pgvector:</strong> ฐานข้อมูลหลักที่รองรับการเก็บรูปภาพเวกเตอร์สำหรับสแกนใบหน้าและข้อมูลประวัติติวเตอร์</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tech-tags">
+                    <span class="tag tag-python">🐍 Python</span>
+                    <span class="tag tag-python">⚡ FastAPI</span>
+                    <span class="tag tag-line">💬 LINE Messaging API</span>
+                    <span class="tag tag-line">📱 LINE LIFF</span>
+                    <span class="tag tag-ai">🤖 DeepFace & OpenCV</span>
+                    <span class="tag tag-ai">🧠 NLP Embeddings</span>
+                    <span class="tag tag-db">🗄️ PostgreSQL (pgvector)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: AI MECHANISM -->
+        <section id="ai" class="tab-content">
+            <div class="card card-primary">
+                <div class="card-title-wrapper">
+                    <div class="card-icon">🧠</div>
+                    <h2>โมดูลปัญญาประดิษฐ์ (AI Engine Logic)</h2>
+                </div>
+                <p>ระบบ AI แบ่งการทำงานออกเป็นสองส่วนหลักอย่างชัดเจน:</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card card-accent">
+                    <div class="card-title-wrapper">
+                        <div class="card-icon">📸</div>
+                        <h2>1. การยืนยันตัวตนด้วยใบหน้า (Face Verification)</h2>
+                    </div>
+                    <p>ระบบจะใช้แนวคิด <strong>Face Recognition Metric Learning</strong> ในการเปรียบเทียบ:</p>
+                    <ol style="list-style-type: decimal; padding-left: 20px; color: var(--text-secondary); margin-bottom: 15px;">
+                        <li style="margin-bottom: 8px;"><strong>สแกนกล้องบน LIFF:</strong> ถ่ายรูปผู้ใช้อัปโหลดไปยังเซิร์ฟเวอร์</li>
+                        <li style="margin-bottom: 8px;"><strong>Face Embedding Generation:</strong> ใช้ DeepFace โหลดโมเดล (เช่น ArcFace, VGG-Face) สกัดค่าลักษณะใบหน้าออกมาเป็นเวกเตอร์ตัวเลข 128 หรือ 512 มิติ</li>
+                        <li style="margin-bottom: 8px;"><strong>Cosine Distance Comparison:</strong> คำนวณความห่างของเวกเตอร์ใบหน้าใหม่เทียบกับใบหน้าที่ลงทะเบียนไว้ หากความต่างต่ำกว่าค่า Threshold (เช่น &lt; 0.40) จะถือว่าเป็นบุคคลเดียวกัน</li>
+                    </ol>
+                    <pre><code><span class="code-comment"># ตัวอย่างโครงสร้างการสแกนเปรียบเทียบใบหน้า</span>
+<span class="code-keyword">from</span> deepface <span class="code-keyword">import</span> DeepFace
+
+<span class="code-keyword">def</span> <span class="code-function">verify_user_face</span>(img_path_1, img_path_2):
+    result = DeepFace.verify(
+        img1_path=img_path_1, 
+        img2_path=img_path_2, 
+        model_name=<span class="code-string">"ArcFace"</span>,
+        enforce_detection=<span class="code-keyword">False</span>
+    )
+    <span class="code-keyword">return</span> result[<span class="code-string">"verified"</span>], result[<span class="code-string">"distance"</span>]
+</code></pre>
+                </div>
+
+                <div class="card card-secondary">
+                    <div class="card-title-wrapper">
+                        <div class="card-icon">🤝</div>
+                        <h2>2. ระบบวิเคราะห์จับคู่ (Tutor Matching Algorithm)</h2>
+                    </div>
+                    <p>เราขับเคลื่อนการค้นหาด้วย <strong>Semantic Search</strong> เพื่อไม่ให้ยึดติดกับคำค้นหาตรงๆ:</p>
+                    <ol style="list-style-type: decimal; padding-left: 20px; color: var(--text-secondary); margin-bottom: 15px;">
+                        <li style="margin-bottom: 8px;"><strong>แปลงประวัติติวเตอร์เป็นเวกเตอร์:</strong> รวมข้อมูล "ประวัติการศึกษา + วิชาถนัด + สไตล์การสอน + วิธีการสอน" แล้วประมวลผลเป็น Vector Embedding ด้วย Sentence Transformers</li>
+                        <li style="margin-bottom: 8px;"><strong>วิเคราะห์ฝั่งผู้เรียน:</strong> ความต้องการ "ต้องการเน้นสอบเข้า ม.4 วิชาวิทยาศาสตร์ พี่ผู้สอนอารมณ์ดี ไม่เครียด" จะถูกแปลงเป็นเวกเตอร์เช่นกัน</li>
+                        <li style="margin-bottom: 8px;"><strong>Cosine Similarity:</strong> คำนวณค่าความคล้ายคลึงระหว่างเวกเตอร์ผู้เรียนและติวเตอร์ทั้งหมด ดึงรายชื่อติวเตอร์ที่ได้คะแนนสูงสุด 3 ลำดับแรก</li>
+                        <li style="margin-bottom: 8px;"><strong>เงื่อนไขกรองเบื้องต้น (Hard Filters):</strong> นำเกณฑ์เช่น งบประมาณ ช่วงเวลาว่าง วิชาหลัก มาคัดกรองก่อนทำการ Match</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: IMPLEMENTATION STEPS -->
+        <section id="steps" class="tab-content">
+            <div class="card card-primary">
+                <div class="card-title-wrapper">
+                    <div class="card-icon">📝</div>
+                    <h2>แผนการพัฒนาระบบทีละขั้นตอน (Implementation Steps)</h2>
+                </div>
+                <p>โครงร่างกระบวนการพัฒนาระบบทีละขั้น จากการออกแบบฐานข้อมูลจนเปิดใช้งานจริง:</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">
+                            <span>ขั้นตอนที่ 1: ตั้งค่าโครงการและจัดเตรียมสิ่งแวดล้อม (Project Setup)</span>
+                            <span class="step-num">Step 01</span>
+                        </div>
+                        <p>ติดตั้ง Library ที่สำคัญ เช่น fastapi, uvicorn, pythainlp, face-recognition, opencv-python, pgvector, line-bot-sdk-python และเชื่อมต่อกับ LINE Developer Console สร้าง Webhook API และ LIFF App ใน Developer Console</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">
+                            <span>ขั้นตอนที่ 2: สร้างระบบยืนยันตัวตนด้วยใบหน้า (Face Recognition LIFF & API)</span>
+                            <span class="step-num">Step 02</span>
+                        </div>
+                        <p>เขียนหน้าจอ LIFF ให้สามารถเข้าใช้งานกล้องหน้ามือถือ ถ่ายรูปใบหน้าผู้ใช้งานและส่งภาพกลับไปยัง API เพื่อทำการจดจำลักษณะใบหน้าและนำมาตรวจสอบสิทธิ์ในการลงชื่อเข้าใช้งานของแอปพลิเคชัน</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">
+                            <span>ขั้นตอนที่ 3: ระบบป้อนข้อมูลประวัติความถนัดของติวเตอร์ (Tutor Input System)</span>
+                            <span class="step-num">Step 03</span>
+                        </div>
+                        <p>สร้างหน้าจอลงทะเบียนติวเตอร์บน LINE LIFF ให้ติวเตอร์ระบุ ประวัติการศึกษา, วิชาที่ถนัด, ประสบการณ์การสอน และสไตล์การสอน เมื่อบันทึกระบบจะรวบรวมข้อความความถนัดส่งเข้าโมเดล Sentence-Transformer เพื่อสร้าง Vector Embedding เก็บลงฐานข้อมูล</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">
+                            <span>ขั้นตอนที่ 4: ระบบรับความต้องการของผู้เรียนและประมวลผลจับคู่ (AI Matching Engine & Result)</span>
+                            <span class="step-num">Step 04</span>
+                        </div>
+                        <p>ผู้เรียนกรอกความต้องการในระบบ เช่น "ต้องการเรียนเลข ม.ปลาย ติวเตรียมสอบเข้าจุฬาฯ ติวเตอร์ใจเย็น" ระบบแปลงความต้องการเป็นเวกเตอร์ เปรียบเทียบเวกเตอร์ด้วยคำสั่ง Cosine Similarity บน PostgreSQL (pgvector) และแสดงผลลัพธ์ผ่าน LINE Flex Message ให้ติวเตอร์และนักเรียนเชื่อมต่อกันได้ทันที</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Tab Logic Script -->
+    <script>
+        function switchTab(tabId) {
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Remove active class from all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Find clicked button and add active class
+            event.currentTarget.classList.add('active');
+
+            // Find target content and add active class
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
