@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบยกเลิกบัญชีผู้ใช้งานด้วยตนเอง - PS33 Home System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header-section {
+            background-color: #00B900;
+            color: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #00B900;
+            border-bottom: 2px solid #00B900;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .step-number {
+            background-color: #00B900;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .step-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 3px solid #00B900;
+        }
+        .note-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffecb5;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+        .code-inline {
+            background-color: #f1f2f6;
+            color: #c0392b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="header-section">
+            <h2 class="mb-2"><i class="fas fa-user-minus"></i> ระบบยกเลิกบัญชีผู้ใช้งานด้วยตนเอง</h2>
+            <p class="mb-0">คู่มือสถาปัตยกรรม แนวคิด ขั้นตอน และวิธีการทำงานของระบบลงทะเบียนใหม่ (Self-Service Reset Account)</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+
+            <!-- SECTION 1: แนวคิด -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-lightbulb"></i> 1. แนวคิดและเหตุผล (Concept & Rationale)</h4>
+                <p class="text-muted">
+                    เมื่อเกิดกรณีที่ลูกบ้านเปลี่ยนโทรศัพท์มือถือใหม่ สมัครบัญชี LINE ใหม่ หรือมีเบอร์โทรศัพท์ใหม่ ระบบลงทะเบียนเดิมจะปฏิเสธการลงทะเบียนเนื่องจากเบอร์โทรและ LINE ID ซ้ำซ้อนกับข้อมูลที่มีอยู่ในระบบแล้ว
+                </p>
+                <div class="note-box my-3">
+                    <strong>ปัญหาเดิม:</strong> นิติบุคคลต้องลบข้อมูลผ่านหน้าหลังบ้านให้เป็นรายคน ทำให้ล่าช้าและเพิ่มภาระงาน
+                </div>
+                <p class="text-muted">
+                    <strong>แนวคิดของฟีเจอร์ยกเลิกบัญชีด้วยตัวเอง:</strong> ลูกบ้านสามารถกดยกเลิกการผูกบัญชีเดิมจากหน้าจอบน LINE Mini App (LIFF) ได้ทันที โดยระบบจะล้างข้อมูลเดิมเพื่อรองรับการลงทะเบียนใหม่ด้วย LINE บัญชีใหม่ หรือเบอร์โทรใหม่ได้ทันที สะดวก รวดเร็ว และเพิ่มความคล่องตัว 100%
+                </p>
+            </div>
+
+            <!-- SECTION 2: สถาปัตยกรรมและโครงสร้างข้อมูล -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-database"></i> 2. โครงสร้างฐานข้อมูลที่เกี่ยวข้อง (Database Relationships)</h4>
+                <p class="text-muted">
+                    เมื่อผู้ใช้งานกดยืนยันยกเลิกบัญชี ระบบจะทำธุรกรรมแบบ <strong>DB Transaction</strong> เพื่อลบข้อมูลผู้ใช้ออกจากตารางหลัก 2 ตารางดังนี้:
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%;">ชื่อตาราง</th>
+                                <th style="width: 30%;">ฟิลด์ข้อมูลสำคัญ</th>
+                                <th style="width: 45%;">บทบาท/หน้าที่</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ims_house_line_user</strong></td>
+                                <td><span class="code-inline">line_user_id</span>, <span class="code-inline">line_phone</span>, <span class="code-inline">house_number</span></td>
+                                <td>เก็บความสัมพันธ์การจับคู่บัญชี LINE ID เข้ากับเบอร์โทรและบ้านเลขที่ เพื่อรับข้อความแจ้งเตือนส่วนกลาง</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ims_user</strong></td>
+                                <td><span class="code-inline">user_id</span> (ใช้เบอร์โทร), <span class="code-inline">password</span> (แบบ hash)</td>
+                                <td>บัญชีหลักในการล็อกอินเข้าระบบ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="alert alert-info mt-3" style="font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> <strong>การรักษาประวัติประชากร:</strong> ตารางข้อมูลประวัติบ้านโครงการ (<span class="code-inline">ims_house</span>) จะ<strong>ไม่มีการลบข้อมูล</strong> เพื่อรักษาประวัติการเงินเดิมและประวัติการแจ้งซ่อมของบ้านเลขที่นั้น ๆ ไว้กับนิติบุคคลเช่นเดิม
+                </div>
+            </div>
+
+            <!-- SECTION 3: ขั้นตอนการทำงาน -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-tasks"></i> 3. ขั้นตอนการทำงาน (Step-by-Step Workflow)</h4>
+                
+                <div class="step-item">
+                    <h5><span class="step-number">1</span>เปิดลิงก์ลงทะเบียน</h5>
+                    <p class="text-muted">
+                        เมื่อเปิดหน้าระบบลงทะเบียน <span class="code-inline">line_oa/house/register_house_user.php</span> ผ่าน LINE หากพบว่าลูกบ้านลงทะเบียนไว้แล้ว จะแสดงป๊อปอัปแจ้งสถานะการผูกบัญชีเดิม พร้อมเพิ่มปุ่ม <strong>"ยกเลิกบัญชีผู้ใช้นี้"</strong>
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">2</span>ยืนยันตัวตนด้วยรหัสผ่านเดิม</h5>
+                    <p class="text-muted">
+                        เมื่อคลิกปุ่มยกเลิก ระบบจะแสดงกล่องรับข้อมูลให้กรอก <strong>"รหัสผ่านเดิม"</strong> ของบัญชี เพื่อความปลอดภัยป้องกันไม่ให้ผู้อื่นเข้ามากดยกเลิกบัญชีของลูกบ้านท่านอื่นเล่น
+                    </p>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">3</span>การทำงานผ่าน API หลังบ้าน</h5>
+                    <p class="text-muted">
+                        ระบบส่งข้อมูลรหัสผ่านไปยัง <span class="code-inline">line_oa/house/cancel_account_api.php</span>
+                    </p>
+                    <ul class="text-muted small">
+                        <li>ดึงข้อมูลจากตารางผู้ใช้งานมาตรวจสอบความถูกต้องของรหัสผ่านผ่านฟังก์ชัน <span class="code-inline">password_verify()</span></li>
+                        <li>หากถูกต้อง จะเริ่ม Transaction ลบข้อมูลประวัติผู้ใช้ออกจากทั้ง 2 ตาราง</li>
+                        <li>เขียนประวัติความปลอดภัยการ Deactivate บัญชีลงใน Log ไฟล์ <span class="code-inline">line_house_user_register_log.txt</span></li>
+                    </ul>
+                </div>
+
+                <div class="step-item">
+                    <h5><span class="step-number">4</span>รีเซ็ตหน้าจอเพื่อลงทะเบียนใหม่</h5>
+                    <p class="text-muted">
+                        เมื่อลบสำเร็จ ระบบจะแสดงการแจ้งเตือนและรีเซ็ตช่องข้อมูลฟอร์มลงทะเบียนเดิมให้สามารถสมัครสมาชิกและผูกบัญชี LINE ใหม่ หรือใส่เบอร์โทรศัพท์ใหม่ได้ทันที
+                    </p>
+                </div>
+            </div>
+
+            <!-- SECTION 4: ด้านความปลอดภัย -->
+            <div class="mb-5">
+                <h4 class="section-title"><i class="fas fa-shield-alt"></i> 4. มาตรการรักษาความปลอดภัย (Security Controls)</h4>
+                <ul>
+                    <li class="mb-2 text-muted"><strong>Password-Protected Deactivation:</strong> บังคับให้ลูกบ้านกรอกรหัสผ่านเพื่อจำกัดสิทธิ์ให้เฉพาะเจ้าของรหัสผ่านที่แท้จริงเท่านั้นที่กดยกเลิกบัญชีได้</li>
+                    <li class="mb-2 text-muted"><strong>Transactional Operations:</strong> การลบข้อมูลใช้การทำงานแบบ Database Transaction ป้องกันความผิดพลาดของข้อมูลหลงเหลือ (Orphaned Data)</li>
+                    <li class="mb-2 text-muted"><strong>Detailed Access Logs:</strong> ทุกการยกเลิกบัญชีจะถูกบันทึกวันเวลาและข้อมูลเบอร์โทรศัพท์ลงสู่ Log File เพื่อให้นิติบุคคลตรวจสอบย้อนหลังได้</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-footer text-center bg-white border-0 py-3">
+            <p class="text-muted small mb-0">&copy; 2026 PS33 Home System. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
