@@ -1,0 +1,6 @@
+สำหรับดึงข้อความจาก  กลุ่ม LINE
+https://www.ps33home.com/webhook_ps33_niti_msg_send.php
+
+
+สำหรับหาชื่อกลุ่ม LINE
+https://www.ps33home.com/webhook.php
